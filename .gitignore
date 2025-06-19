@@ -1,6 +1,5 @@
 *debug.ipynb
-database/raw/
-database/processed/
+database/*/*.pt
 results/
 
 # Byte-compiled / optimized / DLL files

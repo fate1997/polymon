@@ -4,11 +4,12 @@ import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence
 
-from pfam_classifier.module import ResidualCNNBlock, get_positional_encoding
+from polymon.data.polymer import Polymer
+from polymon.model.module import ResidualCNNBlock, get_positional_encoding
 
 
-class TransformerClassifier(nn.Module):
-    """Transformer classifier.
+class Transformer(nn.Module):
+    """Transformer.
     
     Args:
         vocab_size (int): The size of the vocabulary.
@@ -31,7 +32,7 @@ class TransformerClassifier(nn.Module):
         num_layers: int = 6,
         dim_feedforward: int = 2048,
         dropout: float = 0.1,
-        num_classes: int = 1000,
+        num_classes: int = 1,
         max_seq_len: int = 300,
         pos_encoding_type: Literal["sin", "learnable", "rope"] = "sin",
         padding_idx: int = 0
@@ -120,20 +121,19 @@ class TransformerClassifier(nn.Module):
 
         return output[:, 0]
     
-    def forward(self, seq: torch.Tensor, seq_len: torch.Tensor) -> torch.Tensor:
+    def forward(self, batch: Polymer) -> torch.Tensor:
         """Forward pass.
         
         Args:
-            seq (torch.Tensor): Sequence tensor. Shape: [batch_size, seq_len].
-            seq_len (torch.Tensor): Length of the sequence. Shape: [batch_size].
+            batch (Polymer): The batch of data.
         """
-        output = self.get_seq_repr(seq, seq_len)
+        output = self.get_seq_repr(batch.seq, batch.seq_len)
         output = self.classifier(output)
         return output
 
 
-class GRUClassifier(nn.Module):
-    """GRU classifier.
+class GRU(nn.Module):
+    """GRU.
     
     Args:
         vocab_size (int): The size of the vocabulary.
@@ -149,7 +149,7 @@ class GRUClassifier(nn.Module):
         d_model: int = 256,
         num_layers: int = 3,
         dropout: float = 0.2,
-        num_classes: int = 1000,
+        num_classes: int = 1,
         padding_idx: int = 0
     ):
         super().__init__()
@@ -167,20 +167,19 @@ class GRUClassifier(nn.Module):
         )
         self.fc = nn.Linear(d_model * 2, num_classes)
     
-    def forward(self, seq: torch.Tensor, seq_len: torch.Tensor) -> torch.Tensor:
+    def forward(self, batch: Polymer) -> torch.Tensor:
         """Forward pass.
         
         Args:
-            seq (torch.Tensor): Sequence tensor. Shape: [batch_size, seq_len].
-            seq_len (torch.Tensor): Length of the sequence. Shape: [batch_size].
+            batch (Polymer): The batch of data.
 
         Returns:
             `torch.Tensor`: The output tensor. Shape: [batch_size, num_classes].
         """
-        input_emb = self.emb_dropout(self.embedding(seq))
+        input_emb = self.emb_dropout(self.embedding(batch.seq))
         packed_input = pack_padded_sequence(
             input_emb, 
-            seq_len.tolist(), 
+            batch.seq_len.tolist(), 
             batch_first=True, 
             enforce_sorted=False
         )
@@ -190,8 +189,8 @@ class GRUClassifier(nn.Module):
         return output
 
 
-class CNNClassifier(nn.Module):
-    """CNN classifier.
+class CNN(nn.Module):
+    """CNN.
     
     Args:
         vocab_size (int): The size of the vocabulary.
@@ -229,17 +228,16 @@ class CNNClassifier(nn.Module):
         self.flatten = nn.Flatten()
         self.fc = nn.Linear(d_model * max_seq_len // 3, num_classes)
 
-    def forward(self, seq: torch.Tensor, seq_len: torch.Tensor) -> torch.Tensor:
+    def forward(self, batch: Polymer) -> torch.Tensor:
         """Forward pass.
         
         Args:
-            seq (torch.Tensor): Sequence tensor. Shape: [batch_size, seq_len].
-            seq_len (torch.Tensor): Length of the sequence. Shape: [batch_size].
+            batch (Polymer): The batch of data.
 
         Returns:
             `torch.Tensor`: The output tensor. Shape: [batch_size, num_classes].
         """
-        x = self.embedding(seq)
+        x = self.embedding(batch.seq)
         x = x.transpose(1, 2)
         for conv in self.convs:
             x = conv(x)

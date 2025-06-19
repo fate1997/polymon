@@ -9,12 +9,9 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 from torch.utils.data import DataLoader
-from torchmetrics.classification import (MulticlassAccuracy, MulticlassAUROC,
-                                         MulticlassConfusionMatrix,
-                                         MulticlassF1Score,
-                                         MulticlassPrecision, MulticlassRecall)
+from torchmetrics.regression import MeanAbsoluteError, R2Score
 
-from pfam_classifier.utils import EMA, EarlyStopping, get_logger
+from polymon.exp.utils import EMA, EarlyStopping, get_logger
 
 
 class Trainer:
@@ -44,23 +41,19 @@ class Trainer:
         model: nn.Module,
         lr: float,
         num_epochs: int,
-        num_classes: int,
         logger: logging.Logger = None,
         report_every: int = 500,
         ema_decay: float = 0.0,
         device: torch.device = 'cuda',
         early_stopping_patience: int = 10,
-        class_weights: torch.Tensor = None,
     ):
         os.makedirs(out_dir, exist_ok=True)
         self.out_dir = out_dir
-        self.num_classes = num_classes
         self.report_every = report_every
         self.lr = lr
         self.num_epochs = num_epochs
         self.device = device
         self.model = model
-        self.class_weights = class_weights
         self.logger = logger if logger is not None else \
             get_logger(out_dir, 'training')
         
@@ -107,8 +100,9 @@ class Trainer:
         epoch_digits = len(str(self.num_epochs))
         step_digits = len(str(len(train_loader)))
         
-        f1_score = MulticlassF1Score(self.num_classes).to(self.device)
-        for i, (seq, seq_len, y) in enumerate(train_loader):
+        mae_score = MeanAbsoluteError().to(self.device)
+        r2_score = R2Score().to(self.device)
+        for i, batch in enumerate(train_loader):
             # Set model to training mode
             self.model.train()
             self.model.to(self.device)
@@ -118,17 +112,12 @@ class Trainer:
 
             # Forward and backward pass
             optimizer.zero_grad()
-            seq = seq.to(self.device)
-            seq_len = seq_len.to(self.device)
-            y = y.to(self.device)
-            y_pred = self.model(seq, seq_len)
-            if self.class_weights is not None:
-                weight = self.class_weights.to(self.device)
-            else:
-                weight = None
-            loss = F.cross_entropy(y_pred, y, weight=weight)
-            f1_score.update(y_pred, y)
-    
+            batch = batch.to(self.device)
+            y_pred = self.model(batch)
+
+            loss = F.mse_loss(y_pred, batch.y)
+            mae_score.update(y_pred, batch.y)
+            r2_score.update(y_pred, batch.y)
             loss.backward()
             optimizer.step()
 
@@ -138,16 +127,18 @@ class Trainer:
 
             # Report progress
             if (i + 1) % self.report_every == 0:
-                val_f1 = self.eval(val_loader, ['f1_score'])['f1_score']
+                val_metrics = self.eval(val_loader, ['mae', 'r2'])
                 self.logger.info(
                     f'[{str(ith_epoch).zfill(epoch_digits)}/{self.num_epochs}]'
                     f'[{str(i + 1).zfill(step_digits)}/{len(train_loader)}] '
                     f'[Loss: {loss.item():.2f}]'
-                    f'[Train F1: {f1_score.compute():.3f}]'
-                    f'[Dev F1: {val_f1:.3f}]'
+                    f'[Train MAE: {mae_score.compute():.3f}]'
+                    f'[Train R2: {r2_score.compute():.3f}]'
+                    f'[Dev MAE: {val_metrics["mae"]:.3f}]'
+                    f'[Dev R2: {val_metrics["r2"]:.3f}]'
                 )
-        val_f1 = self.eval(val_loader, ['f1_score'])['f1_score']
-        return val_f1
+        val_metrics = self.eval(val_loader, ['mae', 'r2'])
+        return val_metrics['mae']
 
     def train(
         self,
@@ -165,7 +156,7 @@ class Trainer:
         start_time = perf_counter()
         optimizer = self.build_optimizer()
         for ith_epoch in range(self.num_epochs):
-            val_f1_score = self.train_step(
+            val_mae = self.train_step(
                 ith_epoch, 
                 train_loader, 
                 val_loader, 
@@ -174,7 +165,7 @@ class Trainer:
 
             # Early stopping
             model = self.model_ema if self.ema is not None else self.model
-            self.early_stopping(val_f1_score, model, ith_epoch)
+            self.early_stopping(-val_mae, model, ith_epoch)
             if self.early_stopping.early_stop:
                 self.logger.info(f'Early stopping at epoch {ith_epoch}')
                 break
@@ -192,12 +183,7 @@ class Trainer:
         # Evaluate the best model on the test set
         test_metrics = self.eval(test_loader, None)
         for metric_name, metric_value in test_metrics.items():
-            if metric_name == 'confusion_matrix':
-                cm_path = os.path.join(self.out_dir, f'{metric_name}.pt')
-                torch.save(metric_value, cm_path)
-                self.logger.info(f'Saved {metric_name} to {cm_path}')
-            else:
-                self.logger.info(f'{metric_name}: {metric_value:.3f}')
+            self.logger.info(f'{metric_name}: {metric_value:.3f}')
 
         end_time = perf_counter()
         self.logger.info(f'Time taken: {end_time - start_time:.2f} seconds')
@@ -206,16 +192,14 @@ class Trainer:
     def eval(
         self,
         loader: DataLoader,
-        metrics: List[Literal['accuracy', 'auroc', 'f1_score', 
-                              'precision', 'recall', 'confusion_matrix']] = None
+        metrics: List[Literal['mae', 'r2']] = None
     ) -> Dict[str, float]:
         """Evaluate the model on the given data loader.
         
         Args:
             loader (DataLoader): The data loader.
-            metrics (List[Literal['accuracy', 'auroc', 'f1_score', 
-                'precision', 'recall', 'confusion_matrix']]): The metrics to 
-                evaluate. If `None`, all metrics will be evaluated.
+            metrics (List[Literal['mae', 'r2']]): The metrics to evaluate. If
+                `None`, all metrics will be evaluated.
         
         Returns:
             `Dict[str, float]`: The metrics and their values.
@@ -225,12 +209,8 @@ class Trainer:
         model.to(self.device)
         
         metric_dict = {
-            'accuracy': MulticlassAccuracy(self.num_classes),
-            'auroc': MulticlassAUROC(self.num_classes),
-            'f1_score': MulticlassF1Score(self.num_classes),
-            'precision': MulticlassPrecision(self.num_classes),
-            'recall': MulticlassRecall(self.num_classes),
-            'confusion_matrix': MulticlassConfusionMatrix(self.num_classes),
+            'mae': MeanAbsoluteError(),
+            'r2': R2Score(),
         }
         if metrics is None:
             metrics = list(metric_dict.keys())
@@ -239,12 +219,11 @@ class Trainer:
         }
         
         # Evaluate the model
-        for i, (seq, seq_len, y) in enumerate(loader):
-            seq = seq.to(self.device)
-            y = y.to(self.device)
-            y_pred = model(seq, seq_len)
+        for i, batch in enumerate(loader):
+            batch = batch.to(self.device)
+            y_pred = model(batch)
             for metric_fn in metric_dict.values():
-                metric_fn.update(y_pred, y)
+                metric_fn.update(y_pred, batch.y)
         return {
             name: metric_fn.compute() for name, metric_fn in metric_dict.items()
         }

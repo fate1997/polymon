@@ -8,7 +8,7 @@ setup(
     author="PolyMon Group",
     description="PolyMon",
     name='polymon',
-    packages=find_packages(include=['polymon', 'polymon.*']),
+    packages=find_packages(include=['polymon', 'polymon.*', 'polymon.*.*']),
     package_data={'': ['*.yml']},
     install_requires=[
         'torch',

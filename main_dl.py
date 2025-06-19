@@ -5,11 +5,11 @@ import torch
 import yaml
 from torch.utils.data import DataLoader
 
-from pfam_classifier.data import PfamRawDataset
-from pfam_classifier.model import (CNNClassifier, GRUClassifier,
-                                   TransformerClassifier)
-from pfam_classifier.train import Trainer
-from pfam_classifier.utils import get_logger, seed_everything
+from polymon.data.dataset import PolymerDataset
+from polymon.exp.utils import get_logger
+from polymon.model.seq_model import CNNClassifier, GRUClassifier, TransformerClassifier
+from polymon.exp.train import Trainer
+from polymon.exp.utils import seed_everything
 
 
 def parse_args():
