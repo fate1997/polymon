@@ -3,10 +3,12 @@ import os
 import random
 import sys
 from glob import glob
+from typing import Tuple
 
 import numpy as np
 import torch
 from torch import nn
+from torch.utils.data import DataLoader
 
 
 def get_logger(out_dir: str, name: str) -> logging.Logger:
@@ -142,3 +144,12 @@ def seed_everything(seed: int):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+
+
+def loader2numpy(loader: DataLoader) -> Tuple[np.ndarray, np.ndarray]:
+    x = []
+    y = []
+    for batch in loader:
+        x.append(batch.descriptors.numpy())
+        y.append(batch.y.numpy().ravel())
+    return np.concatenate(x, 0), np.concatenate(y, 0)

@@ -1,0 +1,4 @@
+model,Tg,FFV,Tc,Density,Rg,extra_info
+rf-Tg-rdkit2d,57.6498,0.0071,0.0245,0.0304,2.2072,non-normalized
+xgb-Tg-rdkit2d,0.0825,,,,,
+rf-Tg-rdkit2d,0.0918,0.0127,0.0510,0.0285,0.0886,normalized

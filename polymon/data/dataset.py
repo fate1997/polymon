@@ -1,6 +1,6 @@
 import os.path as osp
 import os
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import pandas as pd
 import torch
@@ -85,10 +85,16 @@ class PolymerDataset(Dataset):
     def get_loaders(
         self,
         batch_size: int,
-        n_train: int,
-        n_val: int,
+        n_train: Union[int, float],
+        n_val: Union[int, float],
         num_workers: int = 0
     ) -> Tuple[DataLoader, DataLoader, DataLoader]:
+        
+        if isinstance(n_train, float):
+            n_train = int(n_train * len(self))
+        if isinstance(n_val, float):
+            n_val = int(n_val * len(self))
+        
         dataset = self.shuffle(self)
         assert n_train + n_val < len(dataset)
         train_loader = DataLoader(

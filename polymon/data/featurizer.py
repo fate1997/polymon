@@ -7,6 +7,7 @@ from rdkit import Chem
 from rdkit.Chem import Descriptors as RDKitDescriptors
 from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
+from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from scipy.sparse import coo_matrix
 
 from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
@@ -204,21 +205,51 @@ class SeqFeaturizer(Featurizer):
 
 @register_cls('desc')
 class DescFeaturizer(Featurizer):
-    def __init__(self):
+    """Featurize descriptors of a molecule. Features should be [1, num_features]
+    """
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'polycl']
+    def __init__(
+        self,
+        feature_names: List[str] = None,
+    ):
+        super().__init__(feature_names)
+    
+    def __call__(
+        self,
+        rdmol: Chem.Mol,
+    ) -> Dict[str, torch.Tensor]:
+        descriptors = []
+        for feature_name in self.feature_names:
+            descriptors.append(getattr(self, feature_name)(rdmol))
+        return {'descriptors': torch.concatenate(descriptors, dim=1)}
+
+    def rdkit2d(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
         unrobust_indices = [10, 11, 12, 13, 14, 18, 19, 20, 21, 22, 23, 24, 25]
         desc_names = [
             x[0] for i, x in enumerate(RDKitDescriptors._descList) \
                 if i not in unrobust_indices
         ]
-        self.desc_calculator = MolecularDescriptorCalculator(desc_names)
-
-    def __call__(
+        desc_calculator = MolecularDescriptorCalculator(desc_names)
+        descs = desc_calculator.CalcDescriptors(rdmol)
+        descs = torch.tensor(list(descs), dtype=torch.float).unsqueeze(0)
+        return descs
+    
+    def ecfp4(
         self,
         rdmol: Chem.Mol,
-    ) -> Dict[str, torch.Tensor]:
-        descs = self.desc_calculator.CalcDescriptors(rdmol)
-        descs = torch.tensor(list(descs), dtype=torch.float).unsqueeze(0)
-        return {'descriptors': descs}
+    ) -> torch.Tensor:
+        ecfp4 = GetMorganFingerprintAsBitVect(rdmol, 4)
+        ecfp4 = torch.tensor(list(ecfp4), dtype=torch.float).unsqueeze(0)
+        return ecfp4
+    
+    def polycl(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        pass
 
 
 ########################################################
