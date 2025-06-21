@@ -1,5 +1,7 @@
 # https://www.kaggle.com/code/metric/open-polymer-2025
 
+from typing import List
+
 import numpy as np
 import pandas as pd
 
@@ -19,6 +21,12 @@ MINMAX_DICT =  {
 NULL_FOR_SUBMISSION = -9999
 
 
+def normalize_property_weight(property_weight: List[int]) -> np.ndarray:
+    property_weight = np.array(property_weight)
+    property_weight = np.sqrt(1 / property_weight)
+    property_weight = (property_weight / np.sum(property_weight)) * len(property_weight)
+    return property_weight
+
 def scaling_error(labels, preds, property):
     error = np.abs(labels - preds)
     min_val, max_val = MINMAX_DICT[property]
@@ -31,9 +39,7 @@ def get_property_weights(labels):
     for property in MINMAX_DICT.keys():
         valid_num = np.sum(labels[property] != NULL_FOR_SUBMISSION)
         property_weight.append(valid_num)
-    property_weight = np.array(property_weight)
-    property_weight = np.sqrt(1 / property_weight)
-    return (property_weight / np.sum(property_weight)) * len(property_weight)
+    return normalize_property_weight(property_weight)
 
 
 def score(solution: pd.DataFrame, submission: pd.DataFrame, row_id_column_name: str) -> float:
