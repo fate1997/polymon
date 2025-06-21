@@ -9,11 +9,20 @@ from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from scipy.sparse import coo_matrix
+#from transformers import AutoTokenizer, AutoModel, AutoConfig
+#from polymon.model.polycl import polycl
 
 from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
+# to psmiles(polyBERT)
+def to_psmiles(smiles):
+    return smiles.replace("*", "[*]")
+
+# to smiles
+def to_smiles(psmiles):
+    return  psmiles.replace("[*]", "*")
 
 def register_cls(name: str):
     def decorator(cls):
@@ -207,7 +216,7 @@ class SeqFeaturizer(Featurizer):
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'polycl']
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'pretrain']
     def __init__(
         self,
         feature_names: List[str] = None,
@@ -245,11 +254,6 @@ class DescFeaturizer(Featurizer):
         ecfp4 = torch.tensor(list(ecfp4), dtype=torch.float).unsqueeze(0)
         return ecfp4
     
-    def polycl(
-        self,
-        rdmol: Chem.Mol,
-    ) -> torch.Tensor:
-        pass
 
 
 ########################################################

@@ -33,7 +33,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--raw-csv-path', type=str, default='database/internal/train.csv')
     parser.add_argument('--label', choices=TARGETS, default='Tg')
-    parser.add_argument('--feature-names', type=str, nargs='+', default=['rdkit2d'])
+    parser.add_argument('--feature-names', type=str, nargs='+', default=['rdkit2d'])  # polycl or polybert
     parser.add_argument('--model', choices=MODELS.keys(), default='rf')
     parser.add_argument('--optimize-hparams', action='store_true')
     parser.add_argument('--out-dir', type=str, default='./results')

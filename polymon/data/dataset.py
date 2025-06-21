@@ -9,9 +9,12 @@ from torch_geometric.data import Batch, Dataset
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
-from polymon.data.featurizer import ComposeFeaturizer
+from polymon.data.featurizer import ComposeFeaturizer, to_psmiles, to_smiles
 from polymon.data.polymer import Polymer
 from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS
+
+from transformers import AutoTokenizer, AutoModel, AutoConfig
+from polymon.model.polycl import polycl
 
 
 class PolymerDataset(Dataset):
@@ -45,6 +48,7 @@ class PolymerDataset(Dataset):
             df_nonan = df.dropna(subset=[label_column])
         
             data_list = []
+            smiles_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
                 row = df_nonan.iloc[i]
                 rdmol = Chem.MolFromSmiles(row[smiles_column])
@@ -55,11 +59,57 @@ class PolymerDataset(Dataset):
                     config = {'x': {'unique_atom_nums': UNIQUE_ATOM_NUMS}}
                 else:
                     config = {}
-                mol_dict = ComposeFeaturizer(self.feature_names, config)(rdmol)
+                
+                if 'polycl' or 'polybert' in self.feature_names:
+                    mol_dict = {}
+                else:
+                    mol_dict = ComposeFeaturizer(self.feature_names, config)(rdmol)
+
                 mol_dict['y'] = torch.tensor(label).unsqueeze(0).unsqueeze(0)
                 mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
+                smiles_list.append(to_psmiles(mol_dict['smiles']))
                 data_list.append(Polymer(**mol_dict))
+            
+            if 'polycl'in self.feature_names:
+                model_config = polycl.set_dropout(AutoConfig.from_pretrained('./polymon/model/polycl/model_utils/'), dropout = False)
+                model_arc = AutoModel.from_config(config = model_config)
+                model = polycl.polyCL(encoder = model_arc, pooler = "cls")
+
+                # load the pre-trained weights trained by PolyCL
+                model.from_pretrained('./polymon/model/polycl/polycl.pth')
+                model.eval()
+                # load the tokenizer
+                tokenizer = AutoTokenizer.from_pretrained('./polymon/model/polycl/model_utils/')
+                polymer_encoding = tokenizer(smiles_list, max_length= 512, padding="max_length", truncation=False, return_tensors='pt')
+
+                # get the embeddings of polymers
+                with torch.no_grad():
+                    polymer_embeddings, _ = model(polymer_encoding)
+
+                for i, polymer in enumerate(data_list):
+                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0)  # shape (1, D)
+
+            elif 'polybert'in self.feature_names:
+
+                def mean_pooling(model_output, attention_mask):
+                    token_embeddings = model_output[0] #First element of model_output contains all token embeddings
+                    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+                    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+
+                model_config = AutoConfig.from_pretrained('kuelumbus/polyBERT')
+                model = AutoModel.from_pretrained('kuelumbus/polyBERT', config = model_config)
+                model.eval()
+                encoded_input = tokenizer(smiles_list, padding=True, truncation=True, return_tensors='pt')
+
+                # Compute token embeddings
+                with torch.no_grad():
+                    model_output = model(**encoded_input)
+                
+                polymer_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
+                for i, polymer in enumerate(data_list):
+                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0)  # shape (1, D)
+
             self.data_list = data_list
             
             if save_processed:
