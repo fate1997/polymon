@@ -106,7 +106,7 @@ def get_tabpfn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """
     
     param = {
-        "n_estimators": trial.suggest_int("n_estimators", 8, 32),
+        "n_estimators": trial.suggest_int("n_estimators", 8, 64),
     }
 
     return param

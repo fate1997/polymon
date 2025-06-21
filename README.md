@@ -1,6 +1,13 @@
 # polymon
 This is for the Kaggle competition about polymer property prediction.
 
+## Requirements
+
+```bash
+pip install tabpfn==2.0.9
+pip install rdkit==2023.09.3
+```
+
 ## TODO
 - [ ] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
 - [ ] Incorporate more atom features and bond features and tried more GNN models.

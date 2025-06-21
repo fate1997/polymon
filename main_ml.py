@@ -1,5 +1,5 @@
 import argparse
-import logging
+import pickle
 import os
 from typing import List, Tuple
 
@@ -53,8 +53,9 @@ def train(
     seed_everything(42)
     out_dir = os.path.join(out_dir, model)
     os.makedirs(out_dir, exist_ok=True)
-    name = f'{model}-{"-".join(feature_names)}'
+    name = f'{model}-{label}-{"-".join(feature_names)}'
     logger = get_logger(out_dir, name)
+    model_type = model
 
     # 1. Load data
     logger.info(f'Training {label}...')
@@ -116,9 +117,17 @@ def train(
         logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
         logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     
-    # 3. Save model and results
-    model_path = os.path.join(out_dir, f'{name}.pth')
-    torch.save(model, model_path)
+    # 3. Train production model
+    logger.info(f'Training production model...')
+    model = MODELS[model_type](**study.best_params)
+    X_total = np.concatenate([x_train, x_val, x_test], axis=0)
+    y_total = np.concatenate([y_train, y_val, y_test], axis=0)
+    model.fit(X_total, y_total)
+    
+    # 4. Save model and results
+    model_path = os.path.join(out_dir, f'{name}.pkl')
+    with open(model_path, 'wb') as f:
+        pickle.dump(model, f)
     results_path = os.path.join(out_dir, f'{name}.csv')
     pd.DataFrame({
         'y_true': y_test,
