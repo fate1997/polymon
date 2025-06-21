@@ -1,15 +1,19 @@
 import argparse
 import os
+import logging
 
 import torch
 import yaml
-from torch.utils.data import DataLoader
+import pandas as pd
+import numpy as np
 
 from polymon.data.dataset import PolymerDataset
-from polymon.exp.utils import get_logger
-from polymon.model.seq_model import CNNClassifier, GRUClassifier, TransformerClassifier
+from polymon.exp.utils import get_logger, Normalizer
+from polymon.model.gnn import GATv2, AttentiveFPWrapper, DimeNetPP
 from polymon.exp.train import Trainer
 from polymon.exp.utils import seed_everything
+from polymon.setting import TARGETS, REPO_DIR
+from polymon.exp.score import normalize_property_weight
 
 
 def parse_args():
@@ -18,140 +22,133 @@ def parse_args():
     parser.add_argument('--out-dir', type=str, default='./results')
     
     # Dataset
-    parser.add_argument('--max-seq-len', type=int, default=300)
-    parser.add_argument('--max-families', type=int, default=1000)
-    parser.add_argument('--use-aligned-seq', action='store_true')
-    parser.add_argument('--save-processed', action='store_true')
-    parser.add_argument('--force-reprocess', action='store_true')
     parser.add_argument('--batch-size', type=int, default=128)
-    
+    parser.add_argument('--raw-csv-path', type=str, default='database/internal/train.csv')
+    parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
+
     # Model
     parser.add_argument(
-        '--model-type', 
-        choices=['transformer', 'gru', 'cnn'], 
-        default='transformer'
+        '--model', 
+        choices=['gatv2', 'attentivefp', 'dimenetpp'], 
+        default='gatv2'
     )
-    parser.add_argument('--d-model', type=int, default=128)
-    parser.add_argument('--nhead', type=int, default=8)
-    parser.add_argument('--num-layers', type=int, default=3)
-    parser.add_argument('--dim-feedforward', type=int, default=512)
-    parser.add_argument('--dropout', type=float, default=0.1)
-    parser.add_argument(
-        '--pos-encoding-type', 
-        choices=['sin', 'learnable', 'rope'], 
-        default='sin'
-    )
-    parser.add_argument('--padding-idx', type=int, default=0)
+    parser.add_argument('--hidden-dim', type=int, default=128)
+    parser.add_argument('--num-layers', type=int, default=2)
 
     # Training
-    parser.add_argument('--num-epochs', type=int, default=15)
+    parser.add_argument('--num-epochs', type=int, default=100)
     parser.add_argument('--lr', type=float, default=1e-3)
-    parser.add_argument('--report-every', type=int, default=500)
     parser.add_argument('--ema-decay', type=float, default=0.0)
-    parser.add_argument('--early-stopping-patience', type=int, default=3)
+    parser.add_argument('--early-stopping-patience', type=int, default=1000)
     parser.add_argument('--device', type=str, default='cuda')
-    parser.add_argument('--apply-class-weight', action='store_true')
 
     return parser.parse_args()
 
 
-def main():
+def train(config: dict, out_dir: str, label: str):
     seed_everything(42)
-    
-    config = parse_args().__dict__
-    out_dir = os.path.join(config['out_dir'], config['desc'])
     os.makedirs(out_dir, exist_ok=True)
     logger = get_logger(out_dir, 'training')
     
     # 1. Load dataset
     logger.info('Loading dataset...')
-    raw_dataset = PfamRawDataset.load()
-    train_dataset, dev_dataset, test_dataset, data_info = raw_dataset.process(
-        max_seq_len=config['max_seq_len'],
-        max_families=config['max_families'],
-        use_aligned_seq=config['use_aligned_seq'],
-        save=config['save_processed'],
-        force_reprocess=config['force_reprocess']
+    feature_names = ['x', 'bond', 'z', 'degree', 'is_aromatic']
+    if config['model'].lower() in ['dimenetpp']:
+        feature_names.append('pos')
+    dataset = PolymerDataset(
+        raw_csv_path=config['raw_csv_path'],
+        feature_names=feature_names,
+        label_column=label,
+        force_reload=True,
     )
-    config.update(data_info)
+    train_loader, val_loader, test_loader = dataset.get_loaders(
+        batch_size=config['batch_size'],
+        n_train=0.8,
+        n_val=0.1,
+    )
+    normalizer = Normalizer.from_loader(train_loader)
     logger.info(
-        f'Train: {len(train_dataset)}, '
-        f'Dev: {len(dev_dataset)}, '
-        f'Test: {len(test_dataset)}'
+        f'Train: {len(train_loader.dataset)}, '
+        f'Val: {len(val_loader.dataset)}, '
+        f'Test: {len(test_loader.dataset)}'
     )
     with open(os.path.join(out_dir, 'config.yaml'), 'w') as f:
         save_config = config.copy()
-        save_config.pop('family_counts')
-        save_config.pop('family_names')
         yaml.dump(save_config, f)
-    
-    # 2. Create dataloaders
-    train_loader = DataLoader(
-        train_dataset, 
-        batch_size=config['batch_size'], 
-        shuffle=True
-    )
-    dev_loader = DataLoader(dev_dataset, batch_size=config['batch_size'])
-    test_loader = DataLoader(test_dataset, batch_size=config['batch_size'],)
     
     # 3. Create model
     logger.info('Creating model...')
-    if config['model_type'].lower() == 'transformer':
-        model = TransformerClassifier(
-            vocab_size=config['vocab_size'],
-            d_model=config['d_model'],
-            nhead=config['nhead'],
+    if config['model'].lower() == 'gatv2':
+        model = GATv2(
+            num_atom_features=dataset.num_node_features,
+            hidden_dim=config['hidden_dim'],
             num_layers=config['num_layers'],
-            dim_feedforward=config['dim_feedforward'],
-            dropout=config['dropout'],
-            num_classes=config['num_classes'],
-            max_seq_len=config['max_seq_len'],
-            pos_encoding_type=config['pos_encoding_type'],
-            padding_idx=config['padding_idx']
+            edge_dim=dataset.num_edge_features,
         )
-    elif config['model_type'].lower() == 'gru':
-        model = GRUClassifier(
-            vocab_size=config['vocab_size'],
-            d_model=config['d_model'],
+    elif config['model'].lower() == 'attentivefp':
+        model = AttentiveFPWrapper(
+            in_channels=dataset.num_node_features,
+            hidden_channels=config['hidden_dim'],
+            out_channels=1,
+            edge_dim=dataset.num_edge_features,
             num_layers=config['num_layers'],
-            dropout=config['dropout'],
-            num_classes=config['num_classes']
         )
-    elif config['model_type'].lower() == 'cnn':
-        model = CNNClassifier(
-            vocab_size=config['vocab_size'],
-            d_model=config['d_model'],
-            num_classes=config['num_classes'],
-            num_layers=config['num_layers'],
-            dropout=config['dropout'],
-            max_seq_len=config['max_seq_len'],
+    elif config['model'].lower() == 'dimenetpp':
+        model = DimeNetPP(
+            hidden_channels=config['hidden_dim'],
+            out_channels=1,
+            num_blocks=config['num_layers'],
         )
     else:
-        raise NotImplementedError(f"Model type {config['model_type']} not implemented")
+        raise NotImplementedError(f"Model type {config['model']} not implemented")
     params = sum(p.numel() for p in model.parameters())
     logger.info(f'Model parameters: {params / 1e6:.2f}M')
     
     # 4. Train model
     logger.info('Training model...')
-    if config['apply_class_weight']:
-        class_weights = torch.tensor(config['family_counts'])
-        class_weights = class_weights / class_weights.sum()
-    else:
-        class_weights = None
     trainer = Trainer(
         out_dir=out_dir,
         model=model,
         lr=config['lr'],
         num_epochs=config['num_epochs'],
+        normalizer=normalizer,
         logger=logger,
-        num_classes=config['num_classes'],
-        report_every=config['report_every'],
         ema_decay=config['ema_decay'],
         device=config['device'],
         early_stopping_patience=config['early_stopping_patience'],
-        class_weights=class_weights,
     )
-    trainer.train(train_loader, dev_loader, test_loader)
+    scaling_error = trainer.train(train_loader, val_loader, test_loader, label)
+    return scaling_error, len(test_loader)
+
+
+def main():
+    args = parse_args()
+    out_dir = os.path.join(args.out_dir, args.model)
+    os.makedirs(out_dir, exist_ok=True)
+    performance = {}
+    n_tests = []
+    if args.labels is None:
+        args.labels = TARGETS
+    for label in args.labels:
+        out_dir = os.path.join(args.out_dir, args.model, label)
+        scaling_error, n_test = train(
+            config=args.__dict__,
+            label=label,
+            out_dir=out_dir,
+        )
+        performance[label] = scaling_error
+        n_tests.append(n_test)
+    if set(args.labels) != set(TARGETS):
+        return
+    results_path = os.path.join(REPO_DIR, 'performance.csv')
+    df = pd.read_csv(results_path)
+    property_weight = normalize_property_weight(n_tests)
+    performance['score'] = np.average(list(performance.values()), weights=property_weight)
+    performance['model'] = args.model
+    performance['extra_info'] = f'{args.hidden_dim}-{args.num_layers}-{args.batch_size}-{args.lr}-{args.num_epochs}'
+    new_df = pd.DataFrame(performance, index=[0]).round(4)
+    df = pd.concat([df, new_df], ignore_index=True)
+    df.to_csv(results_path, index=False)
 
 
 if __name__ == '__main__':
