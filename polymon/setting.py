@@ -2,6 +2,10 @@ import pathlib
 
 
 REPO_DIR = pathlib.Path(__file__).parent.parent
+PRETRAINED_MODELS = ['polycl', 'polybert']
+POLYCL_DIR = REPO_DIR / 'polymon' / 'model' / 'polycl' / 'model_utils'
+POLYCL_MODEL_PTH = REPO_DIR / 'polymon' / 'model' / 'polycl' / 'polycl.pth'
+POLYBERT_DIR = 'kuelumbus/polyBERT'
 
 TARGETS = ['Tg', 'FFV', 'Tc', 'Density', 'Rg']
 

@@ -1,5 +1,5 @@
-import os.path as osp
 import os
+import os.path as osp
 from typing import List, Tuple, Union
 
 import pandas as pd
@@ -9,12 +9,12 @@ from torch_geometric.data import Batch, Dataset
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
 
-from polymon.data.featurizer import ComposeFeaturizer, to_psmiles, to_smiles
+from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import Polymer
-from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS
-
-from transformers import AutoTokenizer, AutoModel, AutoConfig
-from polymon.model.polycl import polycl
+from polymon.data.pretrained import (get_polybert_embeddings,
+                                     get_polycl_embeddings,
+                                     assign_pretrained_embeddings)
+from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS, PRETRAINED_MODELS
 
 
 class PolymerDataset(Dataset):
@@ -31,8 +31,6 @@ class PolymerDataset(Dataset):
         remove_hydrogens: bool = True,
     ):
         super().__init__()
-
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
         self.raw_csv_path = raw_csv_path
         self.label_column = label_column
@@ -48,71 +46,42 @@ class PolymerDataset(Dataset):
         else:
             df = pd.read_csv(raw_csv_path)
             df_nonan = df.dropna(subset=[label_column])
+            feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
         
             data_list = []
-            smiles_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
                 row = df_nonan.iloc[i]
                 rdmol = Chem.MolFromSmiles(row[smiles_column])
                 label = row[self.label_column]
                 if remove_hydrogens:
                     rdmol = Chem.RemoveHs(rdmol, sanitize=False)
-                if 'x' in self.feature_names:
+                if 'x' in feature_names:
                     config = {'x': {'unique_atom_nums': UNIQUE_ATOM_NUMS}}
                 else:
                     config = {}
                 
-                if 'polycl' or 'polybert' in self.feature_names:
-                    mol_dict = {}
-                else:
-                    mol_dict = ComposeFeaturizer(self.feature_names, config)(rdmol)
+                mol_dict = ComposeFeaturizer(feature_names, config)(rdmol)
 
                 mol_dict['y'] = torch.tensor(label).unsqueeze(0).unsqueeze(0)
                 mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
-                smiles_list.append(to_psmiles(mol_dict['smiles']))
                 data_list.append(Polymer(**mol_dict))
-            
-            if 'polycl'in self.feature_names:
-                model_config = polycl.set_dropout(AutoConfig.from_pretrained('./polymon/model/polycl/model_utils/'), dropout = False)
-                model_arc = AutoModel.from_config(config = model_config)
-                model = polycl.polyCL(encoder = model_arc, pooler = "cls")
 
-                # load the pre-trained weights trained by PolyCL
-                model.from_pretrained('./polymon/model/polycl/polycl.pth')
-                model = model.to(self.device)
-                model.eval()
-                # load the tokenizer
-                tokenizer = AutoTokenizer.from_pretrained('./polymon/model/polycl/model_utils/')
-                polymer_encoding = tokenizer(smiles_list, max_length= 512, padding="max_length", truncation=False, return_tensors='pt')
-                polymer_encoding = {key: val.to(self.device) for key, val in polymer_encoding.items()}
-                # get the embeddings of polymers
-                with torch.no_grad():
-                    polymer_embeddings, _ = model(polymer_encoding)
-
-                for i, polymer in enumerate(data_list):
-                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0).cpu()  # shape (1, D)
-
-            elif 'polybert'in self.feature_names:
-
-                def mean_pooling(model_output, attention_mask):
-                    token_embeddings = model_output[0] #First element of model_output contains all token embeddings
-                    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
-                    return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
-
-                tokenizer = AutoTokenizer.from_pretrained('kuelumbus/polyBERT')
-                model = AutoModel.from_pretrained('kuelumbus/polyBERT')
-                model = model.to(self.device)
-                model.eval()
-                polymer_encoding = tokenizer(smiles_list, padding=True, truncation=True, return_tensors='pt')
-                polymer_encoding = {key: val.to(self.device) for key, val in polymer_encoding.items()}
-                # Compute token embeddings
-                with torch.no_grad():
-                    model_output = model(**polymer_encoding)
-                
-                polymer_embeddings = mean_pooling(model_output, polymer_encoding['attention_mask'])
-                for i, polymer in enumerate(data_list):
-                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0).cpu()  # shape (1, D)
+            # Add pretrained embeddings
+            if len(self.feature_names) != len(feature_names):
+                print(f'Building pretrained embeddings...')
+            if 'polycl' in self.feature_names:
+                pretrained_embeddings = get_polycl_embeddings(
+                    df_nonan[smiles_column].tolist(),
+                    device='cuda' if torch.cuda.is_available() else 'cpu',
+                )
+                assign_pretrained_embeddings(data_list, pretrained_embeddings)
+            if 'polybert' in self.feature_names:
+                pretrained_embeddings = get_polybert_embeddings(
+                    df_nonan[smiles_column].tolist(),
+                    device='cuda' if torch.cuda.is_available() else 'cpu',
+                )
+                assign_pretrained_embeddings(data_list, pretrained_embeddings)
 
             self.data_list = data_list
             

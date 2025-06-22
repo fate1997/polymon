@@ -9,20 +9,10 @@ from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from scipy.sparse import coo_matrix
-#from transformers import AutoTokenizer, AutoModel, AutoConfig
-#from polymon.model.polycl import polycl
 
 from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
-
-# to psmiles(polyBERT)
-def to_psmiles(smiles):
-    return smiles.replace("*", "[*]")
-
-# to smiles
-def to_smiles(psmiles):
-    return  psmiles.replace("[*]", "*")
 
 def register_cls(name: str):
     def decorator(cls):
@@ -253,7 +243,6 @@ class DescFeaturizer(Featurizer):
         ecfp4 = GetMorganFingerprintAsBitVect(rdmol, 4)
         ecfp4 = torch.tensor(list(ecfp4), dtype=torch.float).unsqueeze(0)
         return ecfp4
-    
 
 
 ########################################################
