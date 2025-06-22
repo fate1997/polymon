@@ -30,20 +30,14 @@ def get_xgb_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """
 
     param = {
-        'tree_method':'gpu_hist',  # this parameter means using the GPU when training our model to speedup the training process
-        'sampling_method': 'gradient_based',
-        'lambda': trial.suggest_loguniform('lambda', 7.0, 17.0),
-        'alpha': trial.suggest_loguniform('alpha', 7.0, 17.0),
-        'eta': trial.suggest_categorical('eta', [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]),
-        'gamma': trial.suggest_categorical('gamma', [18, 19, 20, 21, 22, 23, 24, 25]),
-        'learning_rate': trial.suggest_categorical('learning_rate', [0.008,0.01,0.012,0.014,0.016,0.018, 0.02]),
-        'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.3,0.4,0.5,0.6,0.7,0.8,0.9, 1.0]),
-        'colsample_bynode': trial.suggest_categorical('colsample_bynode', [0.3,0.4,0.5,0.6,0.7,0.8,0.9, 1.0]),
-        'n_estimators': trial.suggest_int('n_estimators', 400, 1000),
-        'min_child_weight': trial.suggest_int('min_child_weight', 8, 600),  
-        'max_depth': trial.suggest_categorical('max_depth', [3, 4, 5, 6, 7]),  
-        'subsample': trial.suggest_categorical('subsample', [0.5,0.6,0.7,0.8,1.0]),
-        'random_state': 42
+        "objective": "reg:squarederror",
+        "n_estimators": 1000,
+        "verbosity": 0,
+        "learning_rate": trial.suggest_float("learning_rate", 1e-3, 0.1, log=True),
+        "max_depth": trial.suggest_int("max_depth", 1, 10),
+        "subsample": trial.suggest_float("subsample", 0.05, 1.0),
+        "colsample_bytree": trial.suggest_float("colsample_bytree", 0.05, 1.0),
+        "min_child_weight": trial.suggest_int("min_child_weight", 1, 20),
     }
     
     return param
@@ -71,10 +65,10 @@ def get_lgbm_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     
     param = {
         'metric': 'mae', 
-        'random_state': 48,
-        'n_estimators': 20000,
-        'reg_alpha': trial.suggest_loguniform('reg_alpha', 1e-3, 10.0),
-        'reg_lambda': trial.suggest_loguniform('reg_lambda', 1e-3, 10.0),
+        'random_state': 2025,
+        'n_estimators': 10000,
+        'reg_alpha': trial.suggest_float('reg_alpha', 1e-3, 10.0, log=True),
+        'reg_lambda': trial.suggest_float('reg_lambda', 1e-3, 10.0, log=True),
         'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.3,0.4,0.5,0.6,0.7,0.8,0.9, 1.0]),
         'subsample': trial.suggest_categorical('subsample', [0.4,0.5,0.6,0.7,0.8,1.0]),
         'learning_rate': trial.suggest_categorical('learning_rate', [0.006,0.008,0.01,0.014,0.017,0.02]),
@@ -93,17 +87,15 @@ def get_catboost_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """
     
     param = {}
-    param['learning_rate'] = trial.suggest_discrete_uniform("learning_rate", 0.001, 0.02, 0.001)
+    param['learning_rate'] = trial.suggest_float("learning_rate", 0.001, 0.02, step=0.001)
     param['depth'] = trial.suggest_int('depth', 9, 15)
-    param['l2_leaf_reg'] = trial.suggest_discrete_uniform('l2_leaf_reg', 1.0, 5.5, 0.5)
+    param['l2_leaf_reg'] = trial.suggest_float('l2_leaf_reg', 1.0, 5.5, step=0.5)
     param['min_child_samples'] = trial.suggest_categorical('min_child_samples', [1, 4, 8, 16, 32])
     param['grow_policy'] = 'Depthwise'
     param['iterations'] = 10000
-    param['use_best_model'] = True
     param['eval_metric'] = 'MAE'
-    param['od_type'] = 'iter'
-    param['od_wait'] = 20
-    param['random_state'] = 42
+    param['loss_function'] = 'MAE'
+    param['random_state'] = 2025
     param['logging_level'] = 'Silent'
 
     return param
@@ -114,10 +106,8 @@ def get_tabpfn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """
     
     param = {
-        "ignore_pretraining_limits": True,
-        "n_estimators": trial.suggest_int("n_estimators", 8, 32),
-        "softmax_temperature": trial.suggest_float("softmax_temperature", 0.1, 1.0),
-        "average_before_softmax": trial.suggest_categorical("average_before_softmax", [True, False]),
+        "n_estimators": trial.suggest_int("n_estimators", 8, 64),
+        'ignore_pretraining_limits': True,
     }
 
     return param

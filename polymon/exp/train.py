@@ -5,14 +5,16 @@ from glob import glob
 from time import perf_counter
 from typing import Dict, List, Literal
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn
 from torch.utils.data import DataLoader
-from torchmetrics.regression import MeanAbsoluteError, R2Score
+from sklearn.metrics import mean_absolute_error, r2_score
 
 from polymon.exp.utils import EMA, EarlyStopping, get_logger
-
+from polymon.exp.score import scaling_error
+from polymon.exp.utils import Normalizer
 
 class Trainer:
     """Trainer for the model.
@@ -22,18 +24,13 @@ class Trainer:
         model (nn.Module): The model to train.
         lr (float): The learning rate.
         num_epochs (int): The number of epochs to train.
-        num_classes (int): The number of classes (families) in the dataset.
         logger (logging.Logger): The logger. If not provided, a logger will be
             created in the `out_dir`.
-        report_every (int): The number of steps to report the training progress.
-            Default is 500.
         ema_decay (float): The decay rate for the EMA. If 0, EMA will not be
             used. Default is 0.
         device (torch.device): The device to train on. Default is `cuda`.
         early_stopping_patience (int): The number of epochs to wait before 
             stopping the training. Default is 10.
-        class_weights (torch.Tensor): The class weights. If not provided, 
-            class weights will not be used.
     """
     def __init__(
         self,
@@ -41,19 +38,19 @@ class Trainer:
         model: nn.Module,
         lr: float,
         num_epochs: int,
+        normalizer: Normalizer,
         logger: logging.Logger = None,
-        report_every: int = 500,
         ema_decay: float = 0.0,
         device: torch.device = 'cuda',
         early_stopping_patience: int = 10,
     ):
         os.makedirs(out_dir, exist_ok=True)
         self.out_dir = out_dir
-        self.report_every = report_every
         self.lr = lr
         self.num_epochs = num_epochs
         self.device = device
         self.model = model
+        self.normalizer = normalizer
         self.logger = logger if logger is not None else \
             get_logger(out_dir, 'training')
         
@@ -85,6 +82,7 @@ class Trainer:
         train_loader: DataLoader,
         val_loader: DataLoader,
         optimizer: torch.optim.Optimizer,
+        label: str,
     ) -> float:
         """Train the model for one epoch.
         
@@ -98,10 +96,7 @@ class Trainer:
             `float`: The F1 score on the validation set.
         """
         epoch_digits = len(str(self.num_epochs))
-        step_digits = len(str(len(train_loader)))
         
-        mae_score = MeanAbsoluteError().to(self.device)
-        r2_score = R2Score().to(self.device)
         for i, batch in enumerate(train_loader):
             # Set model to training mode
             self.model.train()
@@ -114,10 +109,9 @@ class Trainer:
             optimizer.zero_grad()
             batch = batch.to(self.device)
             y_pred = self.model(batch)
+            y_true_transformed = self.normalizer(batch.y)
 
-            loss = F.mse_loss(y_pred, batch.y)
-            mae_score.update(y_pred, batch.y)
-            r2_score.update(y_pred, batch.y)
+            loss = F.huber_loss(y_pred, y_true_transformed)
             loss.backward()
             optimizer.step()
 
@@ -125,19 +119,17 @@ class Trainer:
             if self.ema is not None:
                 self.ema.update_model_average(self.model_ema, self.model)
 
-            # Report progress
-            if (i + 1) % self.report_every == 0:
-                val_metrics = self.eval(val_loader, ['mae', 'r2'])
-                self.logger.info(
-                    f'[{str(ith_epoch).zfill(epoch_digits)}/{self.num_epochs}]'
-                    f'[{str(i + 1).zfill(step_digits)}/{len(train_loader)}] '
-                    f'[Loss: {loss.item():.2f}]'
-                    f'[Train MAE: {mae_score.compute():.3f}]'
-                    f'[Train R2: {r2_score.compute():.3f}]'
-                    f'[Dev MAE: {val_metrics["mae"]:.3f}]'
-                    f'[Dev R2: {val_metrics["r2"]:.3f}]'
-                )
-        val_metrics = self.eval(val_loader, ['mae', 'r2'])
+        # Report progress
+        val_metrics = self.eval(val_loader, label)
+        train_metrics = self.eval(train_loader, label)
+        self.logger.info(
+            f'[{str(ith_epoch).zfill(epoch_digits)}/{self.num_epochs}]'
+            f'[Loss: {loss.item():.2f}]'
+            f'[Train MAE: {train_metrics["mae"]:.3f}]'
+            f'[Train R2: {train_metrics["r2"]:.3f}]'
+            f'[Val MAE: {val_metrics["mae"]:.3f}]'
+            f'[Val R2: {val_metrics["r2"]:.3f}]'
+        )
         return val_metrics['mae']
 
     def train(
@@ -145,6 +137,7 @@ class Trainer:
         train_loader: DataLoader,
         val_loader: DataLoader,
         test_loader: DataLoader,
+        label: str,
     ):
         """Train the model.
         
@@ -160,7 +153,8 @@ class Trainer:
                 ith_epoch, 
                 train_loader, 
                 val_loader, 
-                optimizer
+                optimizer,
+                label,
             )
 
             # Early stopping
@@ -181,18 +175,21 @@ class Trainer:
         self.logger.info(f'Load best model from {save_path}')
         
         # Evaluate the best model on the test set
-        test_metrics = self.eval(test_loader, None)
+        test_metrics = self.eval(test_loader, label)
         for metric_name, metric_value in test_metrics.items():
             self.logger.info(f'{metric_name}: {metric_value:.3f}')
 
         end_time = perf_counter()
         self.logger.info(f'Time taken: {end_time - start_time:.2f} seconds')
+        self.logger.info(f'--------------------------------')
+        self.logger.info(f'Test scaling error: {test_metrics["scaling_error"]:.4f}')
+        return test_metrics['scaling_error']
 
     @torch.no_grad()
     def eval(
         self,
         loader: DataLoader,
-        metrics: List[Literal['mae', 'r2']] = None
+        label: str,
     ) -> Dict[str, float]:
         """Evaluate the model on the given data loader.
         
@@ -208,22 +205,19 @@ class Trainer:
         model.eval()
         model.to(self.device)
         
-        metric_dict = {
-            'mae': MeanAbsoluteError(),
-            'r2': R2Score(),
-        }
-        if metrics is None:
-            metrics = list(metric_dict.keys())
-        metric_dict = {
-            metric: metric_dict[metric].to(self.device) for metric in metrics
-        }
-        
         # Evaluate the model
+        y_trues = []
+        y_preds = []
         for i, batch in enumerate(loader):
             batch = batch.to(self.device)
             y_pred = model(batch)
-            for metric_fn in metric_dict.values():
-                metric_fn.update(y_pred, batch.y)
-        return {
-            name: metric_fn.compute() for name, metric_fn in metric_dict.items()
-        }
+            y_pred = self.normalizer.inverse(y_pred)
+            y_trues.extend(batch.y.detach().cpu().numpy())
+            y_preds.extend(y_pred.detach().cpu().numpy())
+        y_trues = np.array(y_trues)
+        y_preds = np.array(y_preds)
+        metrics = {}
+        metrics['mae'] = mean_absolute_error(y_trues, y_preds)
+        metrics['r2'] = r2_score(y_trues, y_preds)
+        metrics['scaling_error'] = scaling_error(y_trues, y_preds, label)
+        return metrics

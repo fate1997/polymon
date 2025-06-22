@@ -9,6 +9,7 @@ from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from scipy.sparse import coo_matrix
+from rdkit.Chem import AllChem
 
 from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 
@@ -72,7 +73,7 @@ class AtomFeaturizer(Featurizer):
                 atom_features.append(getattr(self, feature_name)(atom))
             x.append(torch.cat(atom_features))
         feature_exclude_atom_num = torch.stack(x, dim=0)
-        return {'x': torch.cat([atom_num, feature_exclude_atom_num], dim=1)}
+        return {'x': torch.cat([atom_num, feature_exclude_atom_num], dim=1).float()}
     
     @staticmethod
     def get_atom_num(
@@ -151,7 +152,13 @@ class BondFeaturizer(Featurizer):
 class PosFeaturizer(Featurizer):
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
         if rdmol.GetNumConformers() == 0:
-            return {'pos': None}
+            # If no conformer, use RDKit to generate one
+            AllChem.EmbedMolecule(rdmol)
+            AllChem.MMFFOptimizeMolecule(rdmol)
+            pos = torch.from_numpy(rdmol.GetConformer().GetPositions()).float()
+            pos -= pos.mean(dim=0)
+            return {'pos': pos}
+
         pos = torch.from_numpy(rdmol.GetConformer().GetPositions()).float()
         pos -= pos.mean(dim=0)
         return {'pos': pos}
