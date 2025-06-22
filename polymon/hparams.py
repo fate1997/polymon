@@ -114,6 +114,7 @@ def get_tabpfn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """
     
     param = {
+        "ignore_pretraining_limits": True,
         "n_estimators": trial.suggest_int("n_estimators", 8, 32),
         "softmax_temperature": trial.suggest_float("softmax_temperature", 0.1, 1.0),
         "average_before_softmax": trial.suggest_categorical("average_before_softmax", [True, False]),

@@ -100,7 +100,7 @@ class PolymerDataset(Dataset):
                     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
                     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-                tokenizer = AutoConfig.from_pretrained('kuelumbus/polyBERT')
+                tokenizer = AutoTokenizer.from_pretrained('kuelumbus/polyBERT')
                 model = AutoModel.from_pretrained('kuelumbus/polyBERT')
                 model = model.to(self.device)
                 model.eval()
