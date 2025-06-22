@@ -56,13 +56,13 @@ class PolymerDataset(Dataset):
                 if remove_hydrogens:
                     rdmol = Chem.RemoveHs(rdmol, sanitize=False)
 
-                if 'pos' in self.feature_names:
+                if 'pos' in feature_names:
                     rdmol = Chem.AddHs(rdmol)
-                if 'x' in self.feature_names:
+                if 'x' in feature_names:
                     config = {'x': {'unique_atom_nums': UNIQUE_ATOM_NUMS}}
                 else:
                     config = {}
-                mol_dict = ComposeFeaturizer(self.feature_names, config)(rdmol)
+                mol_dict = ComposeFeaturizer(feature_names, config)(rdmol)
                 mol_dict['y'] = torch.tensor(label).unsqueeze(0).unsqueeze(0).float()
                 mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
