@@ -31,6 +31,8 @@ class PolymerDataset(Dataset):
         remove_hydrogens: bool = True,
     ):
         super().__init__()
+
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
         self.raw_csv_path = raw_csv_path
         self.label_column = label_column
@@ -78,17 +80,18 @@ class PolymerDataset(Dataset):
 
                 # load the pre-trained weights trained by PolyCL
                 model.from_pretrained('./polymon/model/polycl/polycl.pth')
+                model = model.to(self.device)
                 model.eval()
                 # load the tokenizer
                 tokenizer = AutoTokenizer.from_pretrained('./polymon/model/polycl/model_utils/')
                 polymer_encoding = tokenizer(smiles_list, max_length= 512, padding="max_length", truncation=False, return_tensors='pt')
-
+                polymer_encoding = {key: val.to(self.device) for key, val in polymer_encoding.items()}
                 # get the embeddings of polymers
                 with torch.no_grad():
                     polymer_embeddings, _ = model(polymer_encoding)
 
                 for i, polymer in enumerate(data_list):
-                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0)  # shape (1, D)
+                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0).cpu()  # shape (1, D)
 
             elif 'polybert'in self.feature_names:
 
@@ -97,18 +100,19 @@ class PolymerDataset(Dataset):
                     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
                     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-                model_config = AutoConfig.from_pretrained('kuelumbus/polyBERT')
-                model = AutoModel.from_pretrained('kuelumbus/polyBERT', config = model_config)
+                tokenizer = AutoConfig.from_pretrained('kuelumbus/polyBERT')
+                model = AutoModel.from_pretrained('kuelumbus/polyBERT')
+                model = model.to(self.device)
                 model.eval()
-                encoded_input = tokenizer(smiles_list, padding=True, truncation=True, return_tensors='pt')
-
+                polymer_encoding = tokenizer(smiles_list, padding=True, truncation=True, return_tensors='pt')
+                polymer_encoding = {key: val.to(self.device) for key, val in polymer_encoding.items()}
                 # Compute token embeddings
                 with torch.no_grad():
-                    model_output = model(**encoded_input)
+                    model_output = model(**polymer_encoding)
                 
-                polymer_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
+                polymer_embeddings = mean_pooling(model_output, polymer_encoding['attention_mask'])
                 for i, polymer in enumerate(data_list):
-                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0)  # shape (1, D)
+                    polymer.descriptors =  polymer_embeddings[i].unsqueeze(0).cpu()  # shape (1, D)
 
             self.data_list = data_list
             

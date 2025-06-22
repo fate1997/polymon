@@ -216,7 +216,7 @@ class SeqFeaturizer(Featurizer):
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'pretrain']
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4']
     def __init__(
         self,
         feature_names: List[str] = None,
