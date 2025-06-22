@@ -138,8 +138,6 @@ def main():
         )
         performance[label] = scaling_error
         n_tests.append(n_test)
-    if set(args.labels) != set(TARGETS):
-        return
     results_path = os.path.join(REPO_DIR, 'performance.csv')
     df = pd.read_csv(results_path)
     property_weight = normalize_property_weight(n_tests)

@@ -32,6 +32,7 @@ MODELS = {
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--raw-csv-path', type=str, default='database/internal/train.csv')
+    parser.add_argument('--tag', type=str, default='')
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
     parser.add_argument('--feature-names', type=str, nargs='+', default=['rdkit2d'])
     parser.add_argument('--model', choices=MODELS.keys(), default='rf')
@@ -49,11 +50,12 @@ def train(
     optimize_hparams: bool,
     raw_csv_path: str,
     n_trials: int,
+    tag: str,
 ) -> Tuple[float, float]:
     seed_everything(42)
     out_dir = os.path.join(out_dir, model)
     os.makedirs(out_dir, exist_ok=True)
-    name = f'{model}-{label}-{"-".join(feature_names)}'
+    name = f'{model}-{label}-{"-".join(feature_names)}-{tag}'
     logger = get_logger(out_dir, name)
     model_type = model
 
@@ -110,7 +112,9 @@ def train(
         logger.info(f'--------------------------------')
         logger.info(f'{name}')
         logger.info(f'Best hyper-parameters: {study.best_params}')
-        model = MODELS[model](**study.best_params)
+        hparams = get_hparams(study.best_trial, model)
+        hparams.update(study.best_params)
+        model = MODELS[model](**hparams)
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
         logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
@@ -119,7 +123,7 @@ def train(
     
     # 3. Train production model
     logger.info(f'Training production model...')
-    model = MODELS[model_type](**study.best_params)
+    model = MODELS[model_type](**hparams)
     X_total = np.concatenate([x_train, x_val, x_test], axis=0)
     y_total = np.concatenate([y_train, y_val, y_test], axis=0)
     model.fit(X_total, y_total)
@@ -155,6 +159,7 @@ def main():
             optimize_hparams=args.optimize_hparams,
             raw_csv_path=args.raw_csv_path,
             n_trials=args.n_trials,
+            tag=args.tag,
         )    
         performance[label] = scaling_error
         n_tests.append(n_test)
