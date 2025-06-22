@@ -15,7 +15,6 @@ from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
-
 def register_cls(name: str):
     def decorator(cls):
         FEATURIZER_REGISTRY[name] = cls
@@ -214,7 +213,7 @@ class SeqFeaturizer(Featurizer):
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'polycl']
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4']
     def __init__(
         self,
         feature_names: List[str] = None,
@@ -251,12 +250,6 @@ class DescFeaturizer(Featurizer):
         ecfp4 = GetMorganFingerprintAsBitVect(rdmol, 4)
         ecfp4 = torch.tensor(list(ecfp4), dtype=torch.float).unsqueeze(0)
         return ecfp4
-    
-    def polycl(
-        self,
-        rdmol: Chem.Mol,
-    ) -> torch.Tensor:
-        pass
 
 
 ########################################################

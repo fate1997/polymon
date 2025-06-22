@@ -1,5 +1,5 @@
-import os.path as osp
 import os
+import os.path as osp
 from typing import List, Tuple, Union
 
 import pandas as pd
@@ -11,7 +11,10 @@ from tqdm import tqdm
 
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import Polymer
-from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS
+from polymon.data.pretrained import (get_polybert_embeddings,
+                                     get_polycl_embeddings,
+                                     assign_pretrained_embeddings)
+from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS, PRETRAINED_MODELS
 
 
 class PolymerDataset(Dataset):
@@ -43,6 +46,7 @@ class PolymerDataset(Dataset):
         else:
             df = pd.read_csv(raw_csv_path)
             df_nonan = df.dropna(subset=[label_column])
+            feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
         
             data_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
@@ -51,6 +55,7 @@ class PolymerDataset(Dataset):
                 label = row[self.label_column]
                 if remove_hydrogens:
                     rdmol = Chem.RemoveHs(rdmol, sanitize=False)
+
                 if 'pos' in self.feature_names:
                     rdmol = Chem.AddHs(rdmol)
                 if 'x' in self.feature_names:
@@ -62,6 +67,23 @@ class PolymerDataset(Dataset):
                 mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
                 data_list.append(Polymer(**mol_dict))
+
+            # Add pretrained embeddings
+            if len(self.feature_names) != len(feature_names):
+                print(f'Building pretrained embeddings...')
+            if 'polycl' in self.feature_names:
+                pretrained_embeddings = get_polycl_embeddings(
+                    df_nonan[smiles_column].tolist(),
+                    device='cuda' if torch.cuda.is_available() else 'cpu',
+                )
+                assign_pretrained_embeddings(data_list, pretrained_embeddings)
+            if 'polybert' in self.feature_names:
+                pretrained_embeddings = get_polybert_embeddings(
+                    df_nonan[smiles_column].tolist(),
+                    device='cuda' if torch.cuda.is_available() else 'cpu',
+                )
+                assign_pretrained_embeddings(data_list, pretrained_embeddings)
+
             self.data_list = data_list
             
             if save_processed:
