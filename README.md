@@ -13,8 +13,14 @@ pip install rdkit==2023.09.3
 - [ ] Incorporate more atom features and bond features and tried more GNN models.
 - [ ] log file is only shown in the first one ('Rg')
 - [ ] From the results below, GNN models and tabpfn models are the most promising models. Therefore, the next step is to find more descriptors for `TabPFN` and explore more GNN models.
+- [ ] Allow fine-tuning the `TabPFN` model.
+- [ ] Calculate `Rg` based on `cif` files
 
 ## Progress
+**2025-06-22**
+- `TunedTabPFNRegressor` run faster, but the performance is not as good as vanilla one. Meanwhile, it is hard to use the best parameters for production model. Note this model also has decision tree involved.
+- `AutoTabPFNRegressor` did not give good results.
+
 **2025-06-21**
 Conclusions:
 - `tabpfn`'s performance is incrediable.
