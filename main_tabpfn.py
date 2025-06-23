@@ -1,32 +1,23 @@
 import argparse
-import pickle
 import os
+import pickle
+import sys
 from typing import List, Tuple
+from loguru import logger
 
 import numpy as np
-import optuna
 import pandas as pd
 import torch
-from catboost import CatBoostRegressor
-from lightgbm import LGBMRegressor
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
 from tabpfn import TabPFNRegressor
-from xgboost import XGBRegressor
+from tabpfn_extensions.hpo import TunedTabPFNRegressor
 
 from polymon.data.dataset import PolymerDataset
 from polymon.exp.score import normalize_property_weight, scaling_error
 from polymon.exp.utils import get_logger, loader2numpy, seed_everything
-from polymon.hparams import get_hparams
 from polymon.setting import REPO_DIR, TARGETS
-
-MODELS = {
-    'rf': RandomForestRegressor,
-    'xgb': XGBRegressor,
-    'lgbm': LGBMRegressor,
-    'catboost': CatBoostRegressor,
-    'tabpfn': TabPFNRegressor,
-}
+from hyperopt import hp
+from tabpfn_extensions.post_hoc_ensembles import AutoTabPFNRegressor
 
 
 def parse_args():
@@ -35,7 +26,6 @@ def parse_args():
     parser.add_argument('--tag', type=str, default='debug')
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
     parser.add_argument('--feature-names', type=str, nargs='+', default=['rdkit2d'])
-    parser.add_argument('--model', choices=MODELS.keys(), default='rf')
     parser.add_argument('--optimize-hparams', action='store_true')
     parser.add_argument('--n-trials', type=int, default=25)
     parser.add_argument('--out-dir', type=str, default='./results')
@@ -56,7 +46,7 @@ def train(
     out_dir = os.path.join(out_dir, model)
     os.makedirs(out_dir, exist_ok=True)
     name = f'{model}-{label}-{"-".join(feature_names)}-{tag}'
-    logger = get_logger(out_dir, name)
+    logger.add(os.path.join(out_dir, f'{name}.log'), level='INFO')
     model_type = model
 
     # 1. Load data
@@ -91,42 +81,58 @@ def train(
     # 2. Train model
     if not optimize_hparams:
         logger.info(f'Training {model}...')
-        model = MODELS[model]()
+        model = AutoTabPFNRegressor(
+            ges_scoring_string='mae',
+            device='cuda' if torch.cuda.is_available() else 'cpu',
+            ignore_pretraining_limits=True,
+            random_state=2025,
+        )
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
-        logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
-        logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
-        logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     else:
         logger.info(f'Optimizing hyper-parameters for {model}...')
         
-        def objective(trial: optuna.Trial, model: str = model) -> float:
-            hparams = get_hparams(trial, model)
-            model = MODELS[model](**hparams)
-            model.fit(x_train, y_train)
-            y_pred = model.predict(x_val)
-            return mean_absolute_error(y_val, y_pred)
-        
-        study = optuna.create_study(direction='minimize')
-        study.optimize(objective, n_trials=n_trials)
-        logger.info(f'--------------------------------')
-        logger.info(f'{name}')
-        logger.info(f'Best hyper-parameters: {study.best_params}')
-        hparams = get_hparams(study.best_trial, model)
-        hparams.update(study.best_params)
-        model = MODELS[model](**hparams)
-        model.fit(x_train, y_train)
-        y_pred = model.predict(x_test)
-        
-        logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
-        logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
-        logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
+        if model == 'tabpfn':
+            X_train_val = np.concatenate([x_train, x_val], axis=0)
+            y_train_val = np.concatenate([y_train, y_val], axis=0)
+            model = TunedTabPFNRegressor(
+                n_trials=n_trials,
+                n_validation_size=0.1,
+                metric='mae',
+                random_state=2025,
+                search_space={
+                    'ignore_pretraining_limits': [True],
+                    "n_estimators": hp.choice("n_estimators", [8, 16, 32, 64])
+                }
+            )
+            model.fit(X_train_val, y_train_val)
+            y_pred = model.predict(x_test)
+    logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
+    logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
+    logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     
     # 3. Train production model
     logger.info(f'Training production model...')
-    model = MODELS[model_type](**hparams)
     X_total = np.concatenate([x_train, x_val, x_test], axis=0)
     y_total = np.concatenate([y_train, y_val, y_test], axis=0)
+    if optimize_hparams:
+        model = TunedTabPFNRegressor(
+                n_trials=n_trials,
+                n_validation_size=0.1,
+                metric='mae',
+                random_state=2025,
+                search_space={
+                    'ignore_pretraining_limits': [True],
+                    "n_estimators": hp.choice("n_estimators", [8, 16, 32, 64])
+                }
+            )
+    else:
+        model = AutoTabPFNRegressor(
+            ges_scoring_string='mae',
+            device='cuda' if torch.cuda.is_available() else 'cpu',
+            ignore_pretraining_limits=True,
+            random_state=2025,
+        )
     model.fit(X_total, y_total)
     
     # 4. Save model and results
@@ -154,7 +160,7 @@ def main():
     for label in args.labels:
         scaling_error, n_test = train(
             out_dir=args.out_dir,
-            model=args.model,
+            model='tabpfn',
             label=label,
             feature_names=args.feature_names,
             optimize_hparams=args.optimize_hparams,
@@ -170,8 +176,8 @@ def main():
     df = pd.read_csv(results_path)
     property_weight = normalize_property_weight(n_tests)
     performance['score'] = np.average(list(performance.values()), weights=property_weight)
-    performance['model'] = args.model
-    performance['extra_info'] = '-'.join(args.feature_names) + f'-{args.tag}'
+    performance['model'] = 'tabpfn'
+    performance['extra_info'] = '-'.join(args.feature_names)
     new_df = pd.DataFrame(performance, index=[0]).round(4)
     df = pd.concat([df, new_df], ignore_index=True)
     df.to_csv(results_path, index=False)

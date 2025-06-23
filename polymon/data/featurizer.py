@@ -247,7 +247,7 @@ class DescFeaturizer(Featurizer):
         self,
         rdmol: Chem.Mol,
     ) -> torch.Tensor:
-        ecfp4 = GetMorganFingerprintAsBitVect(rdmol, 4)
+        ecfp4 = GetMorganFingerprintAsBitVect(rdmol, 4, nBits=2048)
         ecfp4 = torch.tensor(list(ecfp4), dtype=torch.float).unsqueeze(0)
         return ecfp4
 
