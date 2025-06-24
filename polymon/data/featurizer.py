@@ -9,7 +9,7 @@ from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from scipy.sparse import coo_matrix
-from rdkit.Chem import AllChem
+from rdkit.Chem import AllChem, Descriptors3D
 
 from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 
@@ -213,7 +213,7 @@ class SeqFeaturizer(Featurizer):
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4']
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'rdkit3d']
     def __init__(
         self,
         feature_names: List[str] = None,
@@ -250,6 +250,37 @@ class DescFeaturizer(Featurizer):
         ecfp4 = GetMorganFingerprintAsBitVect(rdmol, 4, nBits=2048)
         ecfp4 = torch.tensor(list(ecfp4), dtype=torch.float).unsqueeze(0)
         return ecfp4
+    
+    def rdkit3d(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        smiles = Chem.MolToSmiles(rdmol)
+        if rdmol.GetNumConformers() == 0:
+            rdmol = Chem.AddHs(rdmol)
+            for atom in rdmol.GetAtoms():
+                nbrs = atom.GetNeighbors()
+                if len(nbrs) == 0 or atom.GetAtomicNum() != 0:
+                    continue
+                bond = rdmol.GetBondBetweenAtoms(atom.GetIdx(), nbrs[0].GetIdx())
+                if bond.GetBondType() == Chem.rdchem.BondType.SINGLE:
+                    atom.SetAtomicNum(1)
+                elif bond.GetBondType() == Chem.rdchem.BondType.DOUBLE:
+                    atom.SetAtomicNum(8)
+            try:
+                ps = AllChem.ETKDGv3()
+                ps.randomSeed = 42
+                AllChem.EmbedMolecule(rdmol, ps)
+            except Exception as e:
+                return torch.full((1, len(Descriptors3D.descList)), float('inf'))
+
+        if rdmol.GetNumConformers() == 0:
+            return torch.full((1, len(Descriptors3D.descList)), float('inf'))
+    
+        desc_dict = Descriptors3D.CalcMolDescriptors3D(rdmol)
+        descs = list(desc_dict.values())
+        descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
+        return descs
 
 
 ########################################################
