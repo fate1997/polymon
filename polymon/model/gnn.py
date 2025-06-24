@@ -1,6 +1,8 @@
+from typing import Any, Dict, Optional
 import torch
 import torch.nn as nn
-from torch_geometric.nn import GATv2Conv, global_add_pool, global_max_pool, AttentiveFP, DimeNetPlusPlus
+from torch_geometric.nn import GATv2Conv, global_add_pool, global_max_pool, AttentiveFP, DimeNetPlusPlus, GPSConv, GINEConv
+from torch_geometric.nn.attention import PerformerAttention
 
 from polymon.data.polymer import Polymer
 from polymon.model.module import MLP, init_weight
@@ -144,3 +146,75 @@ class DimeNetPP(DimeNetPlusPlus):
     def forward(self, data: Polymer):
         z, pos, batch = data.z, data.pos, data.batch
         return super().forward(z, pos, batch)
+
+class GPS(torch.nn.Module):
+    def __init__(
+        self, 
+        num_atom: int,
+        channels: int, 
+        pe_dim: int, 
+        num_layers: int,
+        edge_dim: int = None,
+        attn_type: str = 'performer', 
+        attn_kwargs: Dict[str, Any] = None):
+        super().__init__()
+
+        self.node_emb = nn.Embedding(num_atom, channels - pe_dim)
+        self.pe_lin = nn.Linear(20, pe_dim)  # 20 is walklength
+        self.pe_norm = nn.BatchNorm1d(20)
+        self.edge_emb = nn.Embedding(edge_dim, channels)
+
+        self.convs = nn.ModuleList()
+        for _ in range(num_layers):
+            neuralnets = nn.Sequential(
+                nn.Linear(channels, channels),
+                nn.ReLU(),
+                nn.Linear(channels, channels),
+            )
+            conv = GPSConv(channels, GINEConv(neuralnets), heads=4,
+                           attn_type=attn_type, attn_kwargs=attn_kwargs)
+            self.convs.append(conv)
+
+        self.mlp = nn.Sequential(
+            nn.Linear(channels, channels // 2),
+            nn.ReLU(),
+            nn.Linear(channels // 2, channels // 4),
+            nn.ReLU(),
+            nn.Linear(channels // 4, 1),
+        )
+        self.redraw_projection = RedrawProjection(
+            self.convs,
+            redraw_interval=1000 if attn_type == 'performer' else None)
+
+    def forward(self, data: Polymer):
+        x, pe, edge_index, edge_attr, batch = data.z, data.pe, data.edge_index, data.edge_attr, data.batch
+        x_pe = self.pe_norm(pe)
+        x = torch.cat((self.node_emb(x.squeeze(-1)), self.pe_lin(x_pe)), 1)
+        edge_attr = self.edge_emb(edge_attr.argmax(dim=-1))
+
+        for conv in self.convs:
+            x = conv(x, edge_index, batch, edge_attr=edge_attr)  # error
+        x = global_add_pool(x, batch)
+        return self.mlp(x)
+
+class RedrawProjection:
+    def __init__(self, model: torch.nn.Module,
+                 redraw_interval: Optional[int] = None):
+        self.model = model
+        self.redraw_interval = redraw_interval
+        self.num_last_redraw = 0
+
+    def redraw_projections(self):
+        if not self.model.training or self.redraw_interval is None:
+            return
+        if self.num_last_redraw >= self.redraw_interval:
+            fast_attentions = [
+                module for module in self.model.modules()
+                if isinstance(module, PerformerAttention)
+            ]
+            for fast_attention in fast_attentions:
+                fast_attention.redraw_projection_matrix()
+            self.num_last_redraw = 0
+            return
+        self.num_last_redraw += 1
+

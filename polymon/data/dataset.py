@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional, Callable
 
 import pandas as pd
 import torch
@@ -29,6 +29,7 @@ class PolymerDataset(Dataset):
         save_processed: bool = True,
         force_reload: bool = False,
         remove_hydrogens: bool = True,
+        pre_transform: Optional[Callable] = None,
     ):
         super().__init__()
         
@@ -67,6 +68,9 @@ class PolymerDataset(Dataset):
                 mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
                 data_list.append(Polymer(**mol_dict))
+
+                if pre_transform is not None:
+                    data_list = [pre_transform(data) for data in data_list]
 
             # Add pretrained embeddings
             if len(self.feature_names) != len(feature_names):

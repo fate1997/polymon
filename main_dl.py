@@ -6,10 +6,11 @@ import torch
 import yaml
 import pandas as pd
 import numpy as np
+import torch_geometric.transforms as T
 
 from polymon.data.dataset import PolymerDataset
 from polymon.exp.utils import get_logger, Normalizer
-from polymon.model.gnn import GATv2, AttentiveFPWrapper, DimeNetPP
+from polymon.model.gnn import GATv2, AttentiveFPWrapper, DimeNetPP, GPS
 from polymon.exp.train import Trainer
 from polymon.exp.utils import seed_everything
 from polymon.setting import TARGETS, REPO_DIR
@@ -29,7 +30,7 @@ def parse_args():
     # Model
     parser.add_argument(
         '--model', 
-        choices=['gatv2', 'attentivefp', 'dimenetpp'], 
+        choices=['gatv2', 'attentivefp', 'dimenetpp', 'gps'], 
         default='gatv2'
     )
     parser.add_argument('--hidden-dim', type=int, default=128)
@@ -55,11 +56,17 @@ def train(config: dict, out_dir: str, label: str):
     feature_names = ['x', 'bond', 'z', 'degree', 'is_aromatic']
     if config['model'].lower() in ['dimenetpp']:
         feature_names.append('pos')
+    
+    if config['model'].lower() == 'gps':
+        pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
+    else:
+        pre_transform = None
     dataset = PolymerDataset(
         raw_csv_path=config['raw_csv_path'],
         feature_names=feature_names,
         label_column=label,
         force_reload=True,
+        pre_transform=pre_transform,
     )
     train_loader, val_loader, test_loader = dataset.get_loaders(
         batch_size=config['batch_size'],
@@ -99,8 +106,19 @@ def train(config: dict, out_dir: str, label: str):
             out_channels=1,
             num_blocks=config['num_layers'],
         )
+    elif config['model'].lower() == 'gps':
+        model = GPS(
+            num_atom_features=dataset.num_node_features,
+            channels=config['hidden_dim'],
+            pe_dim=8,
+            num_layers=config['num_layers'],
+            edge_dim=dataset.num_edge_features,
+            attn_type='performer',
+            attn_kwargs={'dropout': 0.5},
+        )
     else:
         raise NotImplementedError(f"Model type {config['model']} not implemented")
+    
     params = sum(p.numel() for p in model.parameters())
     logger.info(f'Model parameters: {params / 1e6:.2f}M')
     
