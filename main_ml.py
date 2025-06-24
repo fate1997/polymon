@@ -80,6 +80,7 @@ def train(
     mask_train = ~np.isinf(x_train).any(axis=1)
     mask_val = ~np.isinf(x_val).any(axis=1)
     mask_test = ~np.isinf(x_test).any(axis=1)
+    logger.info(f'Train inf: {len(x_train) - mask_train.sum()}, Val inf: {len(x_val) - mask_val.sum()}, Test inf: {len(x_test) - mask_test.sum()}')
     x_train = x_train[mask_train]
     y_train = y_train[mask_train]
     x_val = x_val[mask_val]

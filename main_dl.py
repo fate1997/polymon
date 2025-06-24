@@ -143,7 +143,7 @@ def main():
     property_weight = normalize_property_weight(n_tests)
     performance['score'] = np.average(list(performance.values()), weights=property_weight)
     performance['model'] = args.model
-    performance['extra_info'] = f'{args.hidden_dim}-{args.num_layers}-{args.batch_size}-{args.lr}-{args.num_epochs}'
+    performance['extra_info'] = f'{args.desc}-{args.hidden_dim}-{args.num_layers}-{args.batch_size}-{args.lr}-{args.num_epochs}'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
     df = pd.concat([df, new_df], ignore_index=True)
     df.to_csv(results_path, index=False)
