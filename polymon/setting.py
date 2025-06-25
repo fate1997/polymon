@@ -2,7 +2,7 @@ import pathlib
 
 
 REPO_DIR = pathlib.Path(__file__).parent.parent
-PRETRAINED_MODELS = ['polycl', 'polybert']
+PRETRAINED_MODELS = ['polycl', 'polybert', 'gaff2_mod']
 POLYCL_DIR = REPO_DIR / 'polymon' / 'model' / 'polycl' / 'model_utils'
 POLYCL_MODEL_PTH = REPO_DIR / 'polymon' / 'model' / 'polycl' / 'polycl.pth'
 POLYBERT_DIR = 'kuelumbus/polyBERT'

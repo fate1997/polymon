@@ -117,3 +117,30 @@ def to_psmiles(smiles):
 # to smiles
 def to_smiles(psmiles):
     return  psmiles.replace("[*]", "*")
+
+
+def get_gaff2_features(
+    smiles_list: List[str],
+    mp: int = 30,
+    n: int = 10,
+    nk: int = 20,
+    mu: List[float] = None,
+) -> torch.Tensor:
+    from radonpy.ff.gaff2_mod import GAFF2_mod
+    from radonpy.ff.descriptor import FF_descriptor
+    import pandas as pd
+
+    sigma = 1/nk/2
+    ff_desc = FF_descriptor(GAFF2_mod(), polar = True)
+    desc = ff_desc.ffkm_mp(
+        smiles_list,
+        mp = mp,
+        cyclic = n,
+        nk = nk,
+        s = sigma,
+        mu = mu
+    )
+    desc_names = ff_desc.ffkm_desc_names(nk = nk)
+    desc_df = pd.DataFrame(desc, columns = desc_names)
+    gaff2_mod_desc = torch.tensor(desc_df.values, dtype=torch.float)
+    return gaff2_mod_desc

@@ -13,7 +13,8 @@ from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import Polymer
 from polymon.data.pretrained import (get_polybert_embeddings,
                                      get_polycl_embeddings,
-                                     assign_pretrained_embeddings)
+                                     assign_pretrained_embeddings,
+                                     get_gaff2_features)
 from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS, PRETRAINED_MODELS
 
 
@@ -83,6 +84,12 @@ class PolymerDataset(Dataset):
                     device='cuda' if torch.cuda.is_available() else 'cpu',
                 )
                 assign_pretrained_embeddings(data_list, pretrained_embeddings)
+
+            if 'gaff2_mod' in self.feature_names:
+                gaff2_mod_desc = get_gaff2_features(
+                    df_nonan[smiles_column].tolist(),
+                )
+                assign_pretrained_embeddings(data_list, gaff2_mod_desc)
 
             self.data_list = data_list
             

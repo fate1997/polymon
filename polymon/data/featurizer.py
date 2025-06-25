@@ -3,15 +3,14 @@ from typing import Dict, List
 
 import numpy as np
 import torch
+from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 from rdkit import Chem
+from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors as RDKitDescriptors
+from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
-from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from scipy.sparse import coo_matrix
-from rdkit.Chem import AllChem
-
-from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
@@ -213,7 +212,7 @@ class SeqFeaturizer(Featurizer):
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4']
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'mordred']
     def __init__(
         self,
         feature_names: List[str] = None,
@@ -250,6 +249,18 @@ class DescFeaturizer(Featurizer):
         ecfp4 = GetMorganFingerprintAsBitVect(rdmol, 4, nBits=2048)
         ecfp4 = torch.tensor(list(ecfp4), dtype=torch.float).unsqueeze(0)
         return ecfp4
+    
+    def mordred(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        '''
+        pip install mordred
+        '''
+        from mordred import Calculator, descriptors
+        calc = Calculator(descriptors, ignore_3D=True)
+        descs = torch.tensor(calc(rdmol)[2:], dtype=torch.float).unsqueeze(0)
+        return descs
 
 
 ########################################################
