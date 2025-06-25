@@ -266,6 +266,8 @@ class DescFeaturizer(Featurizer):
         from mordred import Calculator, descriptors
         calc = Calculator(descriptors, ignore_3D=True)
         descs = torch.tensor(calc(rdmol)[2:], dtype=torch.float).unsqueeze(0)
+
+        return descs
         
     def rdkit3d(
         self,
