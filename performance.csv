@@ -33,4 +33,8 @@ gatv2,0.0348999984562397,,,,,0.0349,debug-32-4-128-0.001-1000
 tabpfn,0.0766000002622604,0.0089999996125698,0.0511999987065792,0.0220999997109174,0.0810000002384185,0.0549,rdkit2d-rdkit3d-3d
 tabpfn,0.0318999998271465,,,,,0.0319,rdkit2d-rdkit3d-merged-3d
 tabpfn,0.0322000011801719,,,,,0.0322,rdkit2d-updated_MD_100_GREA
-tabpfn,0.031300000846385956,,,,,0.0313,rdkit2d-updated_MD_100_GREA
+tabpfn,0.0313000008463859,,,,,0.0313,rdkit2d-updated_MD_100_GREA
+tabpfn,,,0.0529000014066696,,,0.0529,rdkit2d-merged-rtol05-keep-indices
+tabpfn,,,,0.0377999991178512,,0.0378,rdkit2d-merged-rtol010-keep-indices
+tabpfn,,,,0.0377000011503696,,0.0377,rdkit2d-merged-rtol001-keep-indices
+tabpfn,,,,0.01860000006854534,,0.0186,rdkit2d-merged-rtol001-keep-indices
