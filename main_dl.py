@@ -108,7 +108,7 @@ def train(config: dict, out_dir: str, label: str):
         )
     elif config['model'].lower() == 'gps':
         model = GPS(
-            num_atom_features=dataset.num_node_features,
+            num_atom=64,
             channels=config['hidden_dim'],
             pe_dim=8,
             num_layers=config['num_layers'],
