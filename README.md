@@ -16,8 +16,12 @@ pip install rdkit==2023.09.3
 - [ ] Calculate `Rg` based on MD files
 - [ ] Extract more data points from pdb files
 - [ ] Standardize the data point deduplication process
+- [ ] Monomer grow to dimer and then calculate the descriptors
 
 ## Progress
+**2025-06-25**
+- `Rg` + `Tc`: TabPFN - Mordred is great!
+
 **2025-06-23**
 - `Density_merged.csv` is not good, it seems that the data points are not accurate
 - 
