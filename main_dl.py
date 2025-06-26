@@ -18,7 +18,7 @@ from polymon.exp.score import normalize_property_weight
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--desc', type=str, default='debug')
+    parser.add_argument('--tag', type=str, default='debug')
     parser.add_argument('--out-dir', type=str, default='./results')
     
     # Dataset
@@ -34,6 +34,7 @@ def parse_args():
     )
     parser.add_argument('--hidden-dim', type=int, default=128)
     parser.add_argument('--num-layers', type=int, default=2)
+    parser.add_argument('--descriptors', type=str, default=None, nargs='+')
 
     # Training
     parser.add_argument('--num-epochs', type=int, default=100)
@@ -52,15 +53,19 @@ def train(config: dict, out_dir: str, label: str):
     
     # 1. Load dataset
     logger.info('Loading dataset...')
-    feature_names = ['x', 'bond', 'z', 'degree', 'is_aromatic']
+    feature_names = ['x', 'bond', 'z']
     if config['model'].lower() in ['dimenetpp']:
         feature_names.append('pos')
+    if config['descriptors'] is not None:
+        feature_names.extend(config['descriptors'])
     dataset = PolymerDataset(
         raw_csv_path=config['raw_csv_path'],
         feature_names=feature_names,
         label_column=label,
         force_reload=True,
     )
+    
+    logger.info(f'Number of atom features: {dataset[0].x.shape[1]}')
     train_loader, val_loader, test_loader = dataset.get_loaders(
         batch_size=config['batch_size'],
         n_train=0.8,
@@ -78,12 +83,15 @@ def train(config: dict, out_dir: str, label: str):
     
     # 3. Create model
     logger.info('Creating model...')
+    num_descriptors = dataset[0].descriptors.shape[1] if config['descriptors'] is not None else 0
+    logger.info(f'Number of descriptors used: {num_descriptors}')
     if config['model'].lower() == 'gatv2':
         model = GATv2(
             num_atom_features=dataset.num_node_features,
             hidden_dim=config['hidden_dim'],
             num_layers=config['num_layers'],
             edge_dim=dataset.num_edge_features,
+            num_descriptors=num_descriptors,
         )
     elif config['model'].lower() == 'attentivefp':
         model = AttentiveFPWrapper(
@@ -143,7 +151,7 @@ def main():
     property_weight = normalize_property_weight(n_tests)
     performance['score'] = np.average(list(performance.values()), weights=property_weight)
     performance['model'] = args.model
-    performance['extra_info'] = f'{args.desc}-{args.hidden_dim}-{args.num_layers}-{args.batch_size}-{args.lr}-{args.num_epochs}'
+    performance['extra_info'] = f'{args.tag}-{args.hidden_dim}-{args.num_layers}-{args.batch_size}-{args.lr}-{args.num_epochs}'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
     df = pd.concat([df, new_df], ignore_index=True)
     df.to_csv(results_path, index=False)
