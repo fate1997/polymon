@@ -10,8 +10,14 @@ from rdkit.Chem import Descriptors as RDKitDescriptors
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
+from rdkit.Chem import MACCSkeys
 from scipy.sparse import coo_matrix
 from polymon.data.polymer import OligomerBuilder
+
+from rdkit.Chem import AllChem, Descriptors3D
+
+from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
+
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
@@ -49,7 +55,16 @@ class AtomFeaturizer(Featurizer):
     """Featurize atoms in a molecule. Default features include one-hot encoding
     of atomic numbers.
     """
-    _avail_features: List[str] = ['degree', 'is_aromatic']
+    _avail_features: List[str] = [
+        'degree', 
+        'is_aromatic', 
+        'chiral_tag', 
+        'num_hydrogens', 
+        'hybridization', 
+        'mass', 
+        'formal_charge', 
+        'is_attachment',
+    ]
     def __init__(
         self,
         feature_names: List[str] = None,
@@ -57,14 +72,14 @@ class AtomFeaturizer(Featurizer):
     ):
         super().__init__(feature_names)
         self.unique_atom_nums = unique_atom_nums
+        if self.feature_names is None:
+            self.feature_names = self._avail_features
     
     def __call__(
         self,
         rdmol: Chem.Mol,
     ) -> Dict[str, torch.Tensor]:
         atom_num = self.get_atom_num(rdmol, self.unique_atom_nums)
-        if self.feature_names is None:
-            return {'x': atom_num}
         
         x = []
         for atom in rdmol.GetAtoms():
@@ -107,6 +122,45 @@ class AtomFeaturizer(Featurizer):
     
     def is_aromatic(self, atom: Chem.Atom) -> torch.Tensor:
         return torch.tensor([int(atom.GetIsAromatic())])
+    
+    def chiral_tag(self, atom: Chem.Atom) -> torch.Tensor:
+        chiral_tag_choice = list(range(len(Chem.ChiralType.names)-1))
+        chiral_tag = atom.GetChiralTag()
+        onehot = torch.zeros(len(chiral_tag_choice) + 1)
+        try:
+            onehot[chiral_tag_choice.index(chiral_tag)] = 1
+        except ValueError:
+            onehot[-1] = 1
+        return onehot
+    
+    def num_hydrogens(self, atom: Chem.Atom) -> torch.Tensor:
+        num_hydrogen_choice = list(range(len(Chem.rdchem.ChiralType.names)-1))
+        num_hydrogen = atom.GetNumImplicitHs()
+        onehot = torch.zeros(len(num_hydrogen_choice) + 1)
+        try:
+            onehot[num_hydrogen_choice.index(num_hydrogen)] = 1
+        except ValueError:
+            onehot[-1] = 1
+        return onehot
+    
+    def hybridization(self, atom: Chem.Atom) -> torch.Tensor:
+        hybridization_choices = list(range(len(Chem.HybridizationType.names)-1))
+        hybridization = int(atom.GetHybridization())
+        onehot = torch.zeros(len(hybridization_choices) + 1)
+        try:
+            onehot[hybridization_choices.index(hybridization)] = 1
+        except ValueError:
+            onehot[-1] = 1
+        return onehot
+    
+    def mass(self, atom: Chem.Atom) -> torch.Tensor:
+        return torch.tensor([atom.GetMass() / 100])
+    
+    def formal_charge(self, atom: Chem.Atom) -> torch.Tensor:
+        return torch.tensor([atom.GetFormalCharge() / 10])
+    
+    def is_attachment(self, atom: Chem.Atom) -> torch.Tensor:
+        return torch.tensor([int(atom.GetAtomicNum() == 0)])
 
 
 @register_cls('edge')
@@ -143,7 +197,24 @@ class BondFeaturizer(Featurizer):
                 int(bond_type == Chem.rdchem.BondType.TRIPLE),
                 int(bond_type == Chem.rdchem.BondType.AROMATIC)
             ]
-            edge_attr.append(torch.tensor(bond_type_one_hot_encoding))
+            bond_stereo = bond.GetStereo()
+            bond_stereo_one_hot_encoding = [
+                int(bond_stereo == Chem.rdchem.BondStereo.STEREOCIS),
+                int(bond_stereo == Chem.rdchem.BondStereo.STEREOTRANS),
+                int(bond_stereo == Chem.rdchem.BondStereo.STEREOANY),
+                int(bond_stereo == Chem.rdchem.BondStereo.STEREONONE),
+            ]
+            bond_is_in_ring = [int(bond.IsInRing())]
+            bond_is_conjugated = [int(bond.GetIsConjugated())]
+            
+            attr = torch.cat([
+                torch.tensor(bond_type_one_hot_encoding),
+                torch.tensor(bond_stereo_one_hot_encoding),
+                torch.tensor(bond_is_in_ring),
+                torch.tensor(bond_is_conjugated),
+            ], dim=0)
+            edge_attr.append(attr)
+            
         edge_attr = torch.stack(edge_attr, dim=0)
         return {'edge_index': edge_index, 'edge_attr': edge_attr}
 
@@ -214,7 +285,12 @@ class SeqFeaturizer(Featurizer):
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
+<<<<<<< yy_code&data
     _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'mordred', 'oligomer_rdkit2d', 'oligomer_mordred']
+=======
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'rdkit3d', 'mordred', 'maccs']
+
+>>>>>>> main
     def __init__(
         self,
         feature_names: List[str] = None,
@@ -234,7 +310,7 @@ class DescFeaturizer(Featurizer):
         self,
         rdmol: Chem.Mol,
     ) -> torch.Tensor:
-        unrobust_indices = [10, 11, 12, 13, 14, 18, 19, 20, 21, 22, 23, 24, 25]
+        unrobust_indices = [10, 11, 12, 13, 14, 18, 19, 20, 21, 22, 23, 24, 25, 42]
         desc_names = [
             x[0] for i, x in enumerate(RDKitDescriptors._descList) \
                 if i not in unrobust_indices
@@ -262,6 +338,47 @@ class DescFeaturizer(Featurizer):
         from mordred import Calculator, descriptors
         calc = Calculator(descriptors, ignore_3D=True)
         descs = torch.tensor(calc(rdmol)[2:], dtype=torch.float).unsqueeze(0)
+
+        return descs
+    
+    def maccs(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        maccs = list(MACCSkeys.GenMACCSKeys(rdmol))
+        maccs = torch.tensor(maccs, dtype=torch.float).unsqueeze(0)
+        return maccs
+        
+    def rdkit3d(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        smiles = Chem.MolToSmiles(rdmol)
+        if rdmol.GetNumConformers() == 0:
+            rdmol = Chem.AddHs(rdmol)
+            for atom in rdmol.GetAtoms():
+                nbrs = atom.GetNeighbors()
+                if len(nbrs) == 0 or atom.GetAtomicNum() != 0:
+                    continue
+                bond = rdmol.GetBondBetweenAtoms(atom.GetIdx(), nbrs[0].GetIdx())
+                if bond.GetBondType() == Chem.rdchem.BondType.SINGLE:
+                    atom.SetAtomicNum(1)
+                elif bond.GetBondType() == Chem.rdchem.BondType.DOUBLE:
+                    atom.SetAtomicNum(8)
+            try:
+                ps = AllChem.ETKDGv3()
+                ps.randomSeed = 42
+                AllChem.EmbedMolecule(rdmol, ps)
+            except Exception as e:
+                return torch.full((1, len(Descriptors3D.descList)), float('inf'))
+
+        if rdmol.GetNumConformers() == 0:
+            return torch.full((1, len(Descriptors3D.descList)), float('inf'))
+    
+        desc_dict = Descriptors3D.CalcMolDescriptors3D(rdmol)
+        descs = list(desc_dict.values())
+        descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
+
         return descs
     
     def oligomer_rdkit2d(

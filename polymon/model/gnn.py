@@ -1,9 +1,11 @@
 import torch
 import torch.nn as nn
-from torch_geometric.nn import GATv2Conv, global_add_pool, global_max_pool, AttentiveFP, DimeNetPlusPlus
+from torch_geometric.nn import (AttentiveFP, DimeNetPlusPlus, GATv2Conv,
+                                global_add_pool, global_max_pool)
 
 from polymon.data.polymer import Polymer
 from polymon.model.module import MLP, init_weight
+
 
 class GATv2(nn.Module):
     def __init__(
@@ -19,7 +21,8 @@ class GATv2(nn.Module):
         num_tasks: int = 1,
         bias: bool = True, 
         dropout: float = 0.1, 
-        edge_dim: int = None
+        edge_dim: int = None,
+        num_descriptors: int = 0,
     ):
         super(GATv2, self).__init__()
 
@@ -48,13 +51,14 @@ class GATv2(nn.Module):
 
         # prediction phase
         self.predict = MLP(
-            input_dim=feature_per_layer[-1] * 2,
+            input_dim=feature_per_layer[-1] * 2 + num_descriptors,
             hidden_dim=pred_hidden_dim,
             output_dim=num_tasks,
             n_layers=pred_layers,
             dropout=pred_dropout,
             activation=activation
-        )        
+        )
+        self.num_descriptors = num_descriptors
         
     def forward(self, batch: Polymer): 
         x = batch.x.float()
@@ -66,6 +70,9 @@ class GATv2(nn.Module):
         output1 = global_max_pool(x, batch_index)
         output2 = global_add_pool(weighted * x, batch_index)
         output = torch.cat([output1, output2], dim=1)
+        
+        if self.num_descriptors > 0:
+            output = torch.cat([output, batch.descriptors], dim=1)
 
         return self.predict(output)
 

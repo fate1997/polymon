@@ -11,12 +11,21 @@ pip install rdkit==2023.09.3
 ## TODO
 - [ ] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
 - [ ] Incorporate more atom features and bond features and tried more GNN models.
-- [ ] log file is only shown in the first one ('Rg')
-- [ ] From the results below, GNN models and tabpfn models are the most promising models. Therefore, the next step is to find more descriptors for `TabPFN` and explore more GNN models.
+- [ ] log file is only shown in the first one ('Rg'), this might be solved by using `loguru`
 - [ ] Allow fine-tuning the `TabPFN` model.
-- [ ] Calculate `Rg` based on `cif` files
+- [ ] Calculate `Rg` based on MD files
+- [ ] Extract more data points from pdb files
+- [ ] Standardize the data point deduplication process
+- [ ] Monomer grow to dimer and then calculate the descriptors
 
 ## Progress
+**2025-06-25**
+- `Rg` + `Tc`: TabPFN - Mordred is great!
+
+**2025-06-23**
+- `Density_merged.csv` is not good, it seems that the data points are not accurate
+- 
+
 **2025-06-22**
 - `TunedTabPFNRegressor` run faster, but the performance is not as good as vanilla one. Meanwhile, it is hard to use the best parameters for production model. Note this model also has decision tree involved.
 - `AutoTabPFNRegressor` did not give good results.
