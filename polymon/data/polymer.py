@@ -2,7 +2,8 @@ from typing import Optional
 
 import torch
 from torch_geometric.data import Data
-
+from rdkit import Chem
+from rdkit.Chem import rdChemReactions
 
 class Polymer(Data):
     """Data object for multi-modal representation of polymers.
@@ -75,3 +76,47 @@ class Polymer(Data):
     @property
     def num_descriptors(self) -> int:
         return self.descriptors.shape[0]
+    
+    
+class OligomerBuilder:
+    def __init__(self):
+        self._rxn_smarts = [
+            '[*:1][Au].[*:2][Cu]>>[*:1][*:2]',
+            '[*:1]=[Au].[*:2]=[Cu]>>[*:1]=[*:2]',
+        ]
+        self._reactions = [rdChemReactions.ReactionFromSmarts(s) for s in self._rxn_smarts]
+    
+    def _label(self, smiles: str) -> Chem.Mol:
+        labeled = smiles.replace('*', '[Au]', 1).replace('*', '[Cu]', 1)
+        mol = Chem.MolFromSmiles(labeled)
+        if mol is None:
+            raise ValueError(f'Invalid smiles: {smiles}')
+        return mol
+    
+    def _attach(self, chain: Chem.Mol, mono: Chem.Mol) -> str:
+        for rxn in self._reactions:
+            prods = rxn.RunReactants((chain, mono))
+            if prods:
+                smi = Chem.MolToSmiles(prods[0][0])
+                return smi.replace('[Au]', '*').replace('[Cu]', '*')
+        raise ValueError(f'No product found for {Chem.MolToSmiles(mono)}')
+    
+    def _build(self, smiles: str, n: int) -> Chem.Mol:
+        if n < 1:
+            raise ValueError(f'n must be greater than 0, got {n}')
+        current = smiles
+        if current.count('*') != 2:
+            return Chem.MolFromSmiles(smiles)
+
+        for _ in range(n - 1):
+            chain_mol = self._label(current)
+            mono_mol = self._label(smiles)
+            current = self._attach(chain_mol, mono_mol)
+        
+        mol = Chem.MolFromSmiles(current)
+        return mol
+    
+    @staticmethod
+    def get_oligomer(smiles: str, n_oligomer: int) -> Chem.Mol:
+        return OligomerBuilder()._build(smiles, n_oligomer)
+                
