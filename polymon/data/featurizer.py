@@ -5,13 +5,14 @@ import numpy as np
 import torch
 from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 from rdkit import Chem
-from rdkit.Chem import AllChem
+from rdkit.Chem import AllChem, rdChemReactions
 from rdkit.Chem import Descriptors as RDKitDescriptors
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
 from rdkit.Chem import MACCSkeys
 from scipy.sparse import coo_matrix
+from polymon.data.polymer import OligomerBuilder
 
 from rdkit.Chem import AllChem, Descriptors3D
 
@@ -277,13 +278,15 @@ class SeqFeaturizer(Featurizer):
         seq = torch.tensor(seq, dtype=torch.long).unsqueeze(0)
         seq_len = torch.tensor(len(smiles) + 2, dtype=torch.long)
         return {'seq': seq, 'seq_len': seq_len}
+    
 
 
 @register_cls('desc')
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'rdkit3d', 'mordred', 'maccs']
+    
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'rdkit3d', 'mordred', 'maccs', 'oligomer_rdkit2d', 'oligomer_mordred']
 
     def __init__(
         self,
@@ -374,6 +377,22 @@ class DescFeaturizer(Featurizer):
         descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
 
         return descs
+    
+    def oligomer_rdkit2d(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        rdmol_smiles = Chem.MolToSmiles(rdmol)
+        oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 5)
+        return self.rdkit2d(oligomer)
+    
+    def oligomer_mordred(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        rdmol_smiles = Chem.MolToSmiles(rdmol)
+        oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
+        return self.mordred(oligomer)
 
 
 ########################################################
