@@ -285,12 +285,9 @@ class SeqFeaturizer(Featurizer):
 class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
-<<<<<<< yy_code&data
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'mordred', 'oligomer_rdkit2d', 'oligomer_mordred']
-=======
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'rdkit3d', 'mordred', 'maccs']
+    
+    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'rdkit3d', 'mordred', 'maccs', 'oligomer_rdkit2d', 'oligomer_mordred']
 
->>>>>>> main
     def __init__(
         self,
         feature_names: List[str] = None,
