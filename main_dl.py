@@ -1,19 +1,20 @@
 import argparse
-import os
 import logging
+import os
+from typing import Any, Dict
 
+import numpy as np
+import optuna
+import pandas as pd
 import torch
 import yaml
-import pandas as pd
-import numpy as np
-
 from polymon.data.dataset import PolymerDataset
-from polymon.exp.utils import get_logger, Normalizer
-from polymon.model.gnn import GATv2, AttentiveFPWrapper, DimeNetPP
-from polymon.exp.train import Trainer
-from polymon.exp.utils import seed_everything
-from polymon.setting import TARGETS, REPO_DIR
 from polymon.exp.score import normalize_property_weight
+from polymon.exp.train import Trainer
+from polymon.exp.utils import Normalizer, get_logger, seed_everything
+from polymon.hparams import get_hparams
+from polymon.model.gnn import AttentiveFPWrapper, DimeNetPP, GATv2
+from polymon.setting import REPO_DIR, TARGETS
 
 
 def parse_args():
@@ -37,11 +38,13 @@ def parse_args():
     parser.add_argument('--descriptors', type=str, default=None, nargs='+')
 
     # Training
-    parser.add_argument('--num-epochs', type=int, default=100)
+    parser.add_argument('--num-epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--ema-decay', type=float, default=0.0)
-    parser.add_argument('--early-stopping-patience', type=int, default=1000)
+    parser.add_argument('--early-stopping-patience', type=int, default=50)
     parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--n-trials', type=int, default=10)
+    parser.add_argument('--optimize-hparams', action='store_true')
 
     return parser.parse_args()
 
@@ -66,17 +69,7 @@ def train(config: dict, out_dir: str, label: str):
     )
     
     logger.info(f'Number of atom features: {dataset[0].x.shape[1]}')
-    train_loader, val_loader, test_loader = dataset.get_loaders(
-        batch_size=config['batch_size'],
-        n_train=0.8,
-        n_val=0.1,
-    )
-    normalizer = Normalizer.from_loader(train_loader)
-    logger.info(
-        f'Train: {len(train_loader.dataset)}, '
-        f'Val: {len(val_loader.dataset)}, '
-        f'Test: {len(test_loader.dataset)}'
-    )
+
     with open(os.path.join(out_dir, 'config.yaml'), 'w') as f:
         save_config = config.copy()
         yaml.dump(save_config, f)
@@ -85,38 +78,88 @@ def train(config: dict, out_dir: str, label: str):
     logger.info('Creating model...')
     num_descriptors = dataset[0].descriptors.shape[1] if config['descriptors'] is not None else 0
     logger.info(f'Number of descriptors used: {num_descriptors}')
-    if config['model'].lower() == 'gatv2':
-        model = GATv2(
-            num_atom_features=dataset.num_node_features,
-            hidden_dim=config['hidden_dim'],
-            num_layers=config['num_layers'],
-            edge_dim=dataset.num_edge_features,
-            num_descriptors=num_descriptors,
-        )
-    elif config['model'].lower() == 'attentivefp':
-        model = AttentiveFPWrapper(
-            in_channels=dataset.num_node_features,
-            hidden_channels=config['hidden_dim'],
-            out_channels=1,
-            edge_dim=dataset.num_edge_features,
-            num_layers=config['num_layers'],
-        )
-    elif config['model'].lower() == 'dimenetpp':
-        model = DimeNetPP(
-            hidden_channels=config['hidden_dim'],
-            out_channels=1,
-            num_blocks=config['num_layers'],
-        )
-    else:
-        raise NotImplementedError(f"Model type {config['model']} not implemented")
-    params = sum(p.numel() for p in model.parameters())
+
+    def build_model(hparams: Dict[str, Any]):
+        if config['model'].lower() == 'gatv2':
+            return GATv2(
+                num_atom_features=dataset.num_node_features,
+                hidden_dim=hparams['hidden_dim'],
+                num_layers=hparams['num_layers'],
+                edge_dim=dataset.num_edge_features,
+                num_descriptors=num_descriptors,
+            )   
+        elif config['model'].lower() == 'attentivefp':
+            return AttentiveFPWrapper(
+                in_channels=dataset.num_node_features,
+                hidden_channels=hparams['hidden_channels'],
+                out_channels=1,
+                edge_dim=dataset.num_edge_features,
+                num_layers=hparams['num_layers'],   
+            )
+        elif config['model'].lower() == 'dimenetpp':
+            return DimeNetPP(
+                hidden_channels=hparams['hidden_channels'],
+                out_channels=1,
+                num_blocks=hparams['num_blocks'],
+            )
+        else:
+            raise NotImplementedError(f"Model type {config['model']} not implemented")
+        
+    if config.get('optimize_hparams', False):
+        logger.info('Optimizing hyper-parameters... for {}'.format(config['model']))
+
+        def objective(trial: optuna.Trial, model: str = config['model']) -> float:
+            model_hparams = get_hparams(trial, model)
+            train_hparams = {
+                'batch_size': trial.suggest_categorical('batch_size', [16, 32, 64, 128]),
+                'lr': trial.suggest_float('lr', 1e-4, 1e-2, log=True)
+            }
+            train_loader, val_loader, test_loader = dataset.get_loaders(
+                batch_size=train_hparams['batch_size'],
+                n_train=0.8,
+                n_val=0.1,
+            )
+            norm = Normalizer.from_loader(train_loader)
+            model = build_model(model_hparams)
+            trainer = Trainer(
+                out_dir=out_dir,
+                model=model,
+                lr=train_hparams['lr'],
+                num_epochs=config['num_epochs'],
+                normalizer=norm,
+                logger=logger,
+                ema_decay=config['ema_decay'],
+                device=config['device'],
+                early_stopping_patience=config['early_stopping_patience'],
+            )
+            val_err = trainer.train(train_loader, val_loader, test_loader, label)
+            return val_err
+    
+        study = optuna.create_study(direction='minimize')
+        study.optimize(objective, n_trials = config['n_trials'])
+        logger.info(f'--------------------------------')
+        logger.info(f'{config["model"]}')
+        logger.info(f'Best hyper-parameters: {study.best_params}')
+        hparams = get_hparams(study.best_trial, config['model'])
+        hparams.update(study.best_params)
+        config.update(hparams)
+    
+    
+    logger.info('Training production model...')
+    train_loader, val_loader, test_loader = dataset.get_loaders(
+        batch_size=config['batch_size'],
+        n_train=0.8,
+        n_val=0.1,
+    )
+    normalizer = Normalizer.from_loader(train_loader)
+    final_model = build_model(hparams if config.get('optimize_hparams') else config)
+    params = sum(p.numel() for p in final_model.parameters())
     logger.info(f'Model parameters: {params / 1e6:.2f}M')
     
-    # 4. Train model
-    logger.info('Training model...')
+
     trainer = Trainer(
         out_dir=out_dir,
-        model=model,
+        model=final_model,
         lr=config['lr'],
         num_epochs=config['num_epochs'],
         normalizer=normalizer,
