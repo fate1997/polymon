@@ -9,13 +9,7 @@ setup(
     description="PolyMon",
     name='polymon',
     packages=find_packages(include=['polymon', 'polymon.*', 'polymon.*.*']),
-    package_data={'': ['*.yml']},
-    install_requires=[
-        'torch',
-        'pandas',
-        'scikit-learn',
-        'torchmetrics'
-    ],
+    package_data={'': ['*.yml', '*.txt']},
     include_package_data=True,
     version='0.1.0',
 )
