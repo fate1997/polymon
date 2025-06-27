@@ -19,3 +19,7 @@ SMILES_VOCAB = [
 UNIQUE_ATOM_NUMS = [
     0, 1, 5, 6, 7, 8, 9, 11, 14, 15, 16, 17, 20, 32, 34, 35, 48, 50, 52
 ]
+
+with open(REPO_DIR / 'polymon' / 'data' / 'mordred_unstable.txt', 'r') as f:
+    MORDRED_UNSTABLE_IDS = f.read().splitlines()
+    MORDRED_UNSTABLE_IDS = list(map(int, MORDRED_UNSTABLE_IDS))
