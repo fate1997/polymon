@@ -6,6 +6,7 @@ import torch
 import yaml
 import pandas as pd
 import numpy as np
+from torch_geometric.loader import DataLoader
 
 from polymon.data.dataset import PolymerDataset
 from polymon.exp.utils import get_logger, Normalizer
@@ -18,7 +19,7 @@ from polymon.exp.score import normalize_property_weight
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tag', type=str, default='debug')
+    parser.add_argument('--tag', type=str, default='test')
     parser.add_argument('--out-dir', type=str, default='./results')
     
     # Dataset
@@ -126,6 +127,32 @@ def train(config: dict, out_dir: str, label: str):
         early_stopping_patience=config['early_stopping_patience'],
     )
     scaling_error = trainer.train(train_loader, val_loader, test_loader, label)
+    
+    # 5. Production Run Training Without Test Set
+    split = int(len(dataset) - 0.05 * len(dataset))
+    out_dir = os.path.join(out_dir, 'production')
+    os.makedirs(out_dir, exist_ok=True)
+    logger.info(f'Production run training without test set in {out_dir}')
+    dataset = dataset.shuffle()
+    train_loader = DataLoader(
+        dataset[:split], batch_size=config['batch_size'], shuffle=True
+    )
+    val_loader = DataLoader(
+        dataset[split:], batch_size=config['batch_size'], shuffle=True
+    )
+    trainer = Trainer(
+        out_dir=out_dir,
+        model=model,
+        lr=config['lr'],
+        num_epochs=100,
+        normalizer=normalizer,
+        logger=logger,
+        ema_decay=config['ema_decay'],
+        device=config['device'],
+        early_stopping_patience=config['early_stopping_patience'],
+    )
+    trainer.train(train_loader, val_loader, label=label)
+    
     return scaling_error, len(test_loader)
 
 
@@ -138,7 +165,7 @@ def main():
     if args.labels is None:
         args.labels = TARGETS
     for label in args.labels:
-        out_dir = os.path.join(args.out_dir, args.model, label)
+        out_dir = os.path.join(args.out_dir, args.model, label, args.tag)
         scaling_error, n_test = train(
             config=args.__dict__,
             label=label,
@@ -154,7 +181,7 @@ def main():
     performance['extra_info'] = f'{args.tag}-{args.hidden_dim}-{args.num_layers}-{args.batch_size}-{args.lr}-{args.num_epochs}'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
     df = pd.concat([df, new_df], ignore_index=True)
-    df.to_csv(results_path, index=False)
+    df.to_csv(results_path, index=False, float_format="%.4f")
 
 
 if __name__ == '__main__':
