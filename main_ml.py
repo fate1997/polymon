@@ -175,7 +175,7 @@ def main():
     performance['extra_info'] = '-'.join(args.feature_names) + f'-{args.tag}'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
     df = pd.concat([df, new_df], ignore_index=True)
-    df.to_csv(results_path, index=False)
+    df.to_csv(results_path, index=False, float_format="%.4f")
 
 if __name__ == '__main__':
     main()

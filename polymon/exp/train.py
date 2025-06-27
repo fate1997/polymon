@@ -136,8 +136,8 @@ class Trainer:
         self,
         train_loader: DataLoader,
         val_loader: DataLoader,
-        test_loader: DataLoader,
-        label: str,
+        test_loader: DataLoader = None,
+        label: str = 'Rg',
     ):
         """Train the model.
         
@@ -173,17 +173,28 @@ class Trainer:
         else:
             self.model.load_state_dict(torch.load(save_path))
         self.logger.info(f'Load best model from {save_path}')
-        
+
         # Evaluate the best model on the test set
-        test_metrics = self.eval(test_loader, label)
-        for metric_name, metric_value in test_metrics.items():
-            self.logger.info(f'{metric_name}: {metric_value:.3f}')
+        if test_loader is not None:
+            test_metrics = self.eval(test_loader, label)
+            for metric_name, metric_value in test_metrics.items():
+                self.logger.info(f'{metric_name}: {metric_value:.3f}')
+            self.logger.info(f'Test scaling error: {test_metrics["scaling_error"]:.4f}')
 
         end_time = perf_counter()
         self.logger.info(f'Time taken: {end_time - start_time:.2f} seconds')
         self.logger.info(f'--------------------------------')
-        self.logger.info(f'Test scaling error: {test_metrics["scaling_error"]:.4f}')
-        return test_metrics['scaling_error']
+        
+        # Save the model and normalizer
+        torch.save(
+            {
+                'model': self.model.state_dict(),
+                'normalizer': self.normalizer,
+            },
+            os.path.join(self.out_dir, 'final_model.pt'),
+        )
+        
+        return test_metrics['scaling_error'] if test_loader is not None else None
 
     @torch.no_grad()
     def eval(

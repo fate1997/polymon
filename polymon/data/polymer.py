@@ -84,7 +84,9 @@ class OligomerBuilder:
             '[*:1][Au].[*:2][Cu]>>[*:1][*:2]',
             '[*:1]=[Au].[*:2]=[Cu]>>[*:1]=[*:2]',
         ]
-        self._reactions = [rdChemReactions.ReactionFromSmarts(s) for s in self._rxn_smarts]
+        self._reactions = [
+            rdChemReactions.ReactionFromSmarts(s) for s in self._rxn_smarts
+        ]
     
     def _label(self, smiles: str) -> Chem.Mol:
         labeled = smiles.replace('*', '[Au]', 1).replace('*', '[Cu]', 1)

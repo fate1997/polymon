@@ -16,7 +16,7 @@ from polymon.data.polymer import OligomerBuilder
 
 from rdkit.Chem import AllChem, Descriptors3D
 
-from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
+from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB, MORDRED_UNSTABLE_IDS
 
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
@@ -197,23 +197,24 @@ class BondFeaturizer(Featurizer):
                 int(bond_type == Chem.rdchem.BondType.TRIPLE),
                 int(bond_type == Chem.rdchem.BondType.AROMATIC)
             ]
-            bond_stereo = bond.GetStereo()
-            bond_stereo_one_hot_encoding = [
-                int(bond_stereo == Chem.rdchem.BondStereo.STEREOCIS),
-                int(bond_stereo == Chem.rdchem.BondStereo.STEREOTRANS),
-                int(bond_stereo == Chem.rdchem.BondStereo.STEREOANY),
-                int(bond_stereo == Chem.rdchem.BondStereo.STEREONONE),
-            ]
-            bond_is_in_ring = [int(bond.IsInRing())]
-            bond_is_conjugated = [int(bond.GetIsConjugated())]
+            # bond_stereo = bond.GetStereo()
+            # bond_stereo_one_hot_encoding = [
+            #     int(bond_stereo == Chem.rdchem.BondStereo.STEREOCIS),
+            #     int(bond_stereo == Chem.rdchem.BondStereo.STEREOTRANS),
+            #     int(bond_stereo == Chem.rdchem.BondStereo.STEREOANY),
+            #     int(bond_stereo == Chem.rdchem.BondStereo.STEREONONE),
+            # ]
+            # bond_is_in_ring = [int(bond.IsInRing())]
+            # bond_is_conjugated = [int(bond.GetIsConjugated())]
             
-            attr = torch.cat([
-                torch.tensor(bond_type_one_hot_encoding),
-                torch.tensor(bond_stereo_one_hot_encoding),
-                torch.tensor(bond_is_in_ring),
-                torch.tensor(bond_is_conjugated),
-            ], dim=0)
-            edge_attr.append(attr)
+            # attr = torch.cat([
+            #     torch.tensor(bond_type_one_hot_encoding),
+            #     torch.tensor(bond_stereo_one_hot_encoding),
+            #     torch.tensor(bond_is_in_ring),
+            #     torch.tensor(bond_is_conjugated),
+            # ], dim=0)
+            # edge_attr.append(attr)
+            edge_attr.append(torch.tensor(bond_type_one_hot_encoding))
             
         edge_attr = torch.stack(edge_attr, dim=0)
         return {'edge_index': edge_index, 'edge_attr': edge_attr}
@@ -286,7 +287,16 @@ class DescFeaturizer(Featurizer):
     """Featurize descriptors of a molecule. Features should be [1, num_features]
     """
     
-    _avail_features: List[str] = ['rdkit2d', 'ecfp4', 'rdkit3d', 'mordred', 'maccs', 'oligomer_rdkit2d', 'oligomer_mordred']
+    _avail_features: List[str] = [
+        'rdkit2d', 
+        'ecfp4', 
+        'rdkit3d', 
+        'mordred', 
+        'maccs', 
+        'oligomer_rdkit2d', 
+        'oligomer_mordred',
+        'oligomer_ecfp4',
+    ]
 
     def __init__(
         self,
@@ -334,8 +344,9 @@ class DescFeaturizer(Featurizer):
         '''
         from mordred import Calculator, descriptors
         calc = Calculator(descriptors, ignore_3D=True)
-        descs = torch.tensor(calc(rdmol)[2:], dtype=torch.float).unsqueeze(0)
-
+        descs = calc(rdmol)
+        descs = [x for i, x in enumerate(descs) if i not in MORDRED_UNSTABLE_IDS]
+        descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
         return descs
     
     def maccs(
@@ -383,7 +394,7 @@ class DescFeaturizer(Featurizer):
         rdmol: Chem.Mol,
     ) -> torch.Tensor:
         rdmol_smiles = Chem.MolToSmiles(rdmol)
-        oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 5)
+        oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
         return self.rdkit2d(oligomer)
     
     def oligomer_mordred(
