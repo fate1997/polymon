@@ -165,7 +165,7 @@ class AtomFeaturizer(Featurizer):
 
 @register_cls('edge')
 class BondFeaturizer(Featurizer):
-    _avail_features: List[str] = ['fully_connected_edges', 'bond']
+    _avail_features: List[str] = ['fully_connected_edges', 'bond', 'periodic_bond']
     
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
         if self.feature_names is None:
@@ -218,6 +218,31 @@ class BondFeaturizer(Featurizer):
             
         edge_attr = torch.stack(edge_attr, dim=0)
         return {'edge_index': edge_index, 'edge_attr': edge_attr}
+    
+    def periodic_bond(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
+        bond_info = self.bond(rdmol)
+        bond_index = bond_info['edge_index']
+        bond_attr = bond_info['edge_attr']
+        
+        # Add bonds between attachment points
+        attachments = [
+            atom.GetIdx() for atom in rdmol.GetAtoms() \
+                if atom.GetAtomicNum() == 0
+        ]
+        bond_attr = torch.cat([bond_attr, torch.zeros(bond_attr.shape[0], 1)], dim=1)
+        for i in range(len(attachments)):
+            for j in range(i + 1, len(attachments)):
+                attach_bond_index = torch.tensor([
+                    [attachments[i], attachments[j]],
+                    [attachments[j], attachments[i]],
+                ]).T
+                attach_bond_attr = torch.tensor([0] * bond_attr.shape[1])
+                attach_bond_attr[-1] = 1
+                attach_bond_attr = attach_bond_attr.unsqueeze(0)
+                attach_bond_attr = torch.cat([attach_bond_attr, attach_bond_attr], dim=0)
+                bond_index = torch.cat([bond_index, attach_bond_index], dim=1)
+                bond_attr = torch.cat([bond_attr, attach_bond_attr], dim=0)
+        return {'edge_index': bond_index, 'edge_attr': bond_attr}
 
 
 @register_cls('pos')
@@ -416,7 +441,16 @@ for key, cls in FEATURIZER_REGISTRY.items():
 
 
 class ComposeFeaturizer:
-    def __init__(self, names: List[str], config: dict = None):
+    def __init__(
+        self, 
+        names: List[str], 
+        config: dict = None, 
+        add_hydrogens: bool = False
+    ):
+        self.names = names
+        self.config = config
+        self.add_hydrogens = add_hydrogens
+        
         invalid_names = set(names) - set(AVAIL_FEATURES)
         if invalid_names:
             raise ValueError(f'Invalid feature names: {invalid_names}')
@@ -437,6 +471,9 @@ class ComposeFeaturizer:
         self.featurizers = featurizers
     
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
+        if self.add_hydrogens:
+            rdmol = Chem.AddHs(rdmol)
+        
         mol_dict = {}
         for featurizer in self.featurizers:
             mol_dict.update(featurizer(rdmol))

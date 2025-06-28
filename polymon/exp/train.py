@@ -1,19 +1,18 @@
 import logging
 import os
-from copy import deepcopy
 from glob import glob
 from time import perf_counter
-from typing import Dict, List, Literal
+from typing import Dict
 
 import numpy as np
 import torch
 import torch.nn.functional as F
 from sklearn.metrics import mean_absolute_error, r2_score
-from torch import nn
 from torch.utils.data import DataLoader
 
 from polymon.exp.score import scaling_error
-from polymon.exp.utils import EMA, EarlyStopping, Normalizer, get_logger
+from polymon.exp.utils import EarlyStopping
+from polymon.model.base import ModelWrapper
 
 
 class Trainer:
@@ -35,12 +34,10 @@ class Trainer:
     def __init__(
         self,
         out_dir: str,
-        model: nn.Module,
+        model: ModelWrapper,
         lr: float,
         num_epochs: int,
-        normalizer: Normalizer,
-        logger: logging.Logger = None,
-        ema_decay: float = 0.0,
+        logger: logging.Logger,
         device: torch.device = 'cuda',
         early_stopping_patience: int = 10,
     ):
@@ -50,26 +47,15 @@ class Trainer:
         self.num_epochs = num_epochs
         self.device = device
         self.model = model
-        self.normalizer = normalizer
-        self.logger = logger if logger is not None else \
-            get_logger(out_dir, 'training')
-        
+        self.logger = logger
+    
         # Early stopping
         self.early_stopping = EarlyStopping(
             patience=early_stopping_patience,
             save_dir=os.path.join(self.out_dir, 'ckpt'),
-        )
-        
-        # EMA
-        self.ema = EMA(ema_decay) if ema_decay > 0 else None
-        self.model_ema = deepcopy(self.model) if self.ema is not None else None      
+        )  
 
     def build_optimizer(self) -> torch.optim.Optimizer:
-        """Build the optimizer.
-        
-        Returns:
-            `torch.optim.Optimizer`: The optimizer.
-        """
         return torch.optim.AdamW(
             self.model.parameters(), 
             lr=self.lr,
@@ -98,26 +84,10 @@ class Trainer:
         epoch_digits = len(str(self.num_epochs))
         
         for i, batch in enumerate(train_loader):
-            # Set model to training mode
-            self.model.train()
-            self.model.to(self.device)
-            if self.ema is not None:
-                self.model_ema.train()
-                self.model_ema.to(self.device)
-
-            # Forward and backward pass
             optimizer.zero_grad()
-            batch = batch.to(self.device)
-            y_pred = self.model(batch)
-            y_true_transformed = self.normalizer(batch.y)
-
-            loss = F.huber_loss(y_pred, y_true_transformed)
+            loss = self.model(batch, F.huber_loss, self.device)
             loss.backward()
             optimizer.step()
-
-            # Update EMA
-            if self.ema is not None:
-                self.ema.update_model_average(self.model_ema, self.model)
 
         # Report progress
         val_metrics = self.eval(val_loader, label)
@@ -158,8 +128,7 @@ class Trainer:
             )
 
             # Early stopping
-            model = self.model_ema if self.ema is not None else self.model
-            self.early_stopping(-val_mae, model, ith_epoch)
+            self.early_stopping(-val_mae, self.model, ith_epoch)
             if self.early_stopping.early_stop:
                 self.logger.info(f'Early stopping at epoch {ith_epoch}')
                 break
@@ -168,10 +137,7 @@ class Trainer:
         ckpts = glob(os.path.join(self.out_dir, 'ckpt', '*.pt'))
         ckpts.sort(key=os.path.getmtime)
         save_path = ckpts[-1]
-        if self.ema is not None:
-            self.model_ema.load_state_dict(torch.load(save_path))
-        else:
-            self.model.load_state_dict(torch.load(save_path))
+        self.model = ModelWrapper.from_file(save_path)
         self.logger.info(f'Load best model from {save_path}')
 
         # Evaluate the best model on the test set
@@ -185,16 +151,8 @@ class Trainer:
         self.logger.info(f'Time taken: {end_time - start_time:.2f} seconds')
         self.logger.info(f'--------------------------------')
         
-        # Save the model and normalizer
-        torch.save(
-            {
-                'model': self.model.state_dict(),
-                'normalizer': self.normalizer,
-            },
-            os.path.join(self.out_dir, 'final_model.pt'),
-        )
-        
-        return test_metrics['scaling_error'] if test_loader is not None else None
+        test_err = test_metrics['scaling_error'] if test_loader is not None else None
+        return test_err
 
     @torch.no_grad()
     def eval(
@@ -212,17 +170,16 @@ class Trainer:
         Returns:
             `Dict[str, float]`: The metrics and their values.
         """
-        model = self.model_ema if self.ema is not None else self.model
-        model.eval()
-        model.to(self.device)
+        self.model.eval()
+        self.model.to(self.device)
         
         # Evaluate the model
         y_trues = []
         y_preds = []
         for i, batch in enumerate(loader):
             batch = batch.to(self.device)
-            y_pred = model(batch)
-            y_pred = self.normalizer.inverse(y_pred)
+            y_pred = self.model.model(batch)
+            y_pred = self.model.normalizer.inverse(y_pred)
             y_trues.extend(batch.y.detach().cpu().numpy())
             y_preds.extend(y_pred.detach().cpu().numpy())
         y_trues = np.array(y_trues)

@@ -29,7 +29,7 @@ class PolymerDataset(Dataset):
         identifier_column: str = 'id',
         save_processed: bool = True,
         force_reload: bool = False,
-        remove_hydrogens: bool = True,
+        add_hydrogens: bool = True,
     ):
         super().__init__()
         
@@ -48,24 +48,25 @@ class PolymerDataset(Dataset):
             df = pd.read_csv(raw_csv_path)
             df_nonan = df.dropna(subset=[label_column])
             feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
+            
+            if 'pos' in feature_names:
+                add_hydrogens = True
+            if 'x' in feature_names:
+                config = {'x': {'unique_atom_nums': UNIQUE_ATOM_NUMS}}
+            else:
+                config = {}
+            featurizer = ComposeFeaturizer(feature_names, config, add_hydrogens)
+            self.featurizer = featurizer
         
             data_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
                 row = df_nonan.iloc[i]
                 rdmol = Chem.MolFromSmiles(row[smiles_column])
                 label = row[self.label_column]
-                if remove_hydrogens:
-                    rdmol = Chem.RemoveHs(rdmol, sanitize=False)
-
-                if 'pos' in feature_names:
-                    rdmol = Chem.AddHs(rdmol)
-                if 'x' in feature_names:
-                    config = {'x': {'unique_atom_nums': UNIQUE_ATOM_NUMS}}
-                else:
-                    config = {}
-                mol_dict = ComposeFeaturizer(feature_names, config)(rdmol)
+                mol_dict = self.featurizer(rdmol)
                 mol_dict['y'] = torch.tensor(label).unsqueeze(0).unsqueeze(0).float()
-                mol_dict['identifier'] = torch.tensor(row[identifier_column])
+                if identifier_column is not None and identifier_column in df_nonan.columns:
+                    mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
                 data_list.append(Polymer(**mol_dict))
 
@@ -122,19 +123,26 @@ class PolymerDataset(Dataset):
     ) -> Tuple[DataLoader, DataLoader, DataLoader]:
         
         if isinstance(n_train, float):
-            n_train = int(n_train * len(self))
+            train_ratio = n_train
+            n_train = int(train_ratio * len(self))
         if isinstance(n_val, float):
-            n_val = int(n_val * len(self))
+            val_ratio = n_val
+            n_val = int(val_ratio * len(self))
+            if abs(train_ratio + val_ratio - 1.0) < 1e-4:
+                n_train = len(self) - n_val
         
         dataset = self.shuffle(self)
-        assert n_train + n_val < len(dataset)
+        assert n_train + n_val <= len(dataset)
         train_loader = DataLoader(
             dataset[:n_train], batch_size, shuffle=True, num_workers=num_workers
         )
         val_loader = DataLoader(
             dataset[n_train:n_train+n_val], batch_size, num_workers=num_workers
         )
-        test_loader = DataLoader(
-            dataset[n_train+n_val:], batch_size, num_workers=num_workers
-        )
+        if n_train + n_val < len(dataset):
+            test_loader = DataLoader(
+                dataset[n_train+n_val:], batch_size, num_workers=num_workers
+            )
+        else:
+            test_loader = None
         return train_loader, val_loader, test_loader

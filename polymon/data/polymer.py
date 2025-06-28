@@ -61,7 +61,7 @@ class Polymer(Data):
         self.identifier = identifier
         
     def __repr__(self) -> str:
-        if self.identifier is None:
+        if getattr(self, 'identifier', None) is None:
             return f"Polymer({self.smiles})"
         return f"Polymer({self.identifier})"
     

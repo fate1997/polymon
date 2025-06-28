@@ -6,7 +6,7 @@ from typing import List, Tuple
 import numpy as np
 import optuna
 import pandas as pd
-import torch
+from loguru import logger
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -16,7 +16,7 @@ from xgboost import XGBRegressor
 
 from polymon.data.dataset import PolymerDataset
 from polymon.exp.score import normalize_property_weight, scaling_error
-from polymon.exp.utils import get_logger, loader2numpy, seed_everything
+from polymon.exp.utils import loader2numpy, seed_everything
 from polymon.hparams import get_hparams
 from polymon.setting import REPO_DIR, TARGETS
 
@@ -56,7 +56,7 @@ def train(
     out_dir = os.path.join(out_dir, model)
     os.makedirs(out_dir, exist_ok=True)
     name = f'{model}-{label}-{"-".join(feature_names)}-{tag}'
-    logger = get_logger(out_dir, name)
+    logger.add(os.path.join(out_dir, f'{name}.log'))
     model_type = model
 
     # 1. Load data

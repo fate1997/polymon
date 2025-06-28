@@ -5,7 +5,7 @@ import optuna
 
 def get_hparams(
     trial: optuna.Trial, 
-    model: Literal['xgb', 'rf', 'lgbm', 'catboost', 'tabpfn']
+    model: str,
 ) -> Dict[str, float]:
     """Get hyper-parameters for a model.
     """
@@ -20,6 +20,14 @@ def get_hparams(
         return get_catboost_hparams(trial)
     elif model == 'tabpfn':
         return get_tabpfn_hparams(trial)
+    elif model == 'gatv2':
+        return get_gatv2_hparams(trial)
+    elif model == 'attentivefp':
+        return get_attentivefp_hparams(trial)
+    elif model == 'dimenetpp':
+        return get_dimenetpp_hparams(trial)
+    elif model == 'gatport':
+        return get_gatv2_hparams(trial)
     else:
         raise ValueError(f'Invalid model: {model}')
 
@@ -110,5 +118,49 @@ def get_tabpfn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "softmax_temperature": trial.suggest_categorical('softmax_temperature', [0.75, 0.8, 0.85, 0.9, 0.95, 1.0]),
         "average_before_softmax": trial.suggest_categorical('average_before_softmax', [True, False]),
         "ignore_pretraining_limits": True,
+    }
+    return param
+
+
+def get_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GATv2 parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 6, step=1),
+        "num_heads": trial.suggest_int("num_heads", 2, 8, step=1),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+    }
+    return param
+
+def get_attentivefp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get AttentiveFP parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "in_channels": trial.suggest_int("in_channels", 16, 256, step=16),
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
+        "num_timesteps": trial.suggest_int("num_timesteps", 2, 4, step=1),
+    }
+    return param
+
+def get_dimenetpp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get DimeNet++ parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
+        "int_emb_size": trial.suggest_int("int_emb_size", 8, 64, step=8),
+        "basis_emb_size": trial.suggest_int("basis_emb_size", 4, 16, step=4),
+        "out_emb_channels": trial.suggest_int("out_emb_channels", 16, 256, step=16),
+        "num_spherical": trial.suggest_int("num_spherical", 5, 10, step=1),
+        "num_radial": trial.suggest_int("num_radial", 4, 12, step=2),
+        "cutoff": trial.suggest_float("cutoff", 2.0, 5.0, step=0.5),
+        "max_num_neighbors": trial.suggest_int("max_num_neighbors", 16, 64, step=1),
     }
     return param

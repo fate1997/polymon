@@ -4,6 +4,8 @@
 
 from setuptools import setup, find_packages
 
+from polymon import __version__
+
 setup(
     author="PolyMon Group",
     description="PolyMon",
@@ -11,5 +13,5 @@ setup(
     packages=find_packages(include=['polymon', 'polymon.*', 'polymon.*.*']),
     package_data={'': ['*.yml', '*.txt']},
     include_package_data=True,
-    version='0.1.0',
+    version=__version__,
 )
