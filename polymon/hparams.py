@@ -127,9 +127,9 @@ def get_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """
     
     param = {
-        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
-        "num_layers": trial.suggest_int("num_layers", 2, 6, step=1),
-        "num_heads": trial.suggest_int("num_heads", 2, 8, step=1),
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "num_heads": trial.suggest_int("num_heads", 2, 8, step=2),
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
         "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
         "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),

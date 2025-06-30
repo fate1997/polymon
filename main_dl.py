@@ -1,22 +1,11 @@
 import argparse
 import os
-from typing import Any, Dict, Optional, List
 
 import numpy as np
-import optuna
 import pandas as pd
-import yaml
-import loguru
-from torch import nn
-from torch_geometric.loader import DataLoader
 
-from polymon.data.dataset import PolymerDataset
-from polymon.exp.score import normalize_property_weight
-from polymon.exp.train import Trainer
-from polymon.model.base import ModelWrapper
 from polymon.exp.pipeline import Pipeline
-from polymon.hparams import get_hparams
-from polymon.model.gnn import AttentiveFPWrapper, DimeNetPP, GATv2
+from polymon.exp.score import normalize_property_weight
 from polymon.setting import REPO_DIR, TARGETS
 
 
@@ -33,7 +22,7 @@ def parse_args():
     # Model
     parser.add_argument(
         '--model', 
-        choices=['gatv2', 'attentivefp', 'dimenetpp'], 
+        choices=['gatv2', 'gatport', 'attentivefp', 'dimenetpp'], 
         default='gatv2'
     )
     parser.add_argument('--hidden-dim', type=int, default=32)
@@ -41,9 +30,9 @@ def parse_args():
     parser.add_argument('--descriptors', type=str, default=None, nargs='+')
 
     # Training
-    parser.add_argument('--num-epochs', type=int, default=2000)
+    parser.add_argument('--num-epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=1e-3)
-    parser.add_argument('--early-stopping-patience', type=int, default=500)
+    parser.add_argument('--early-stopping-patience', type=int, default=250)
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--n-trials', type=int, default=25)
     parser.add_argument('--optimize-hparams', action='store_true')
@@ -104,7 +93,7 @@ def main():
     property_weight = normalize_property_weight(n_tests)
     performance['score'] = np.average(list(performance.values()), weights=property_weight)
     performance['model'] = args.model
-    performance['extra_info'] = f'{args.tag}-{args.hidden_dim}-{args.num_layers}-{args.batch_size}-{args.lr}-{args.num_epochs}'
+    performance['extra_info'] = f'{args.tag}'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
     df = pd.concat([df, new_df], ignore_index=True)
     df.to_csv(results_path, index=False, float_format="%.4f")

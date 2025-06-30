@@ -157,7 +157,8 @@ class DimeNetPP(DimeNetPlusPlus, BaseModel):
         return super().forward(z, pos, batch)
 
 
-class GATPort(nn.Module):
+@register_init_params
+class GATPort(BaseModel):
     def __init__(
         self, 
         num_atom_features: int, 

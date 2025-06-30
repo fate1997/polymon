@@ -7,12 +7,12 @@ import optuna
 from torch_geometric.loader import DataLoader
 
 from polymon.data.dataset import PolymerDataset
+from polymon.data.utils import Normalizer
 from polymon.exp.train import Trainer
 from polymon.exp.utils import seed_everything
 from polymon.hparams import get_hparams
-from polymon.model import AttentiveFPWrapper, DimeNetPP, GATv2, GATPort
+from polymon.model import AttentiveFPWrapper, DimeNetPP, GATPort, GATv2
 from polymon.model.base import ModelWrapper
-from polymon.data.utils import Normalizer
 
 
 class Pipeline:
