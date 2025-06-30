@@ -10,15 +10,24 @@ pip install rdkit==2023.09.3
 
 ## TODO
 - [ ] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
-- [ ] Incorporate more atom features and bond features and tried more GNN models.
-- [ ] log file is only shown in the first one ('Rg'), this might be solved by using `loguru`
-- [ ] Allow fine-tuning the `TabPFN` model.
 - [ ] Calculate `Rg` based on MD files
-- [ ] Extract more data points from pdb files
-- [ ] Standardize the data point deduplication process
-- [ ] Monomer grow to dimer and then calculate the descriptors
+- [ ] Test `GATv2` with bond features
+- [ ] Test `GATv2` with different loss functions l1-loss and mse-loss
+- [ ] Implement cross-validation methods for DL models
+- [ ] Test performance of `GATPort`
+- [x] Incorporate more atom features and bond features and tried more GNN models.
+- [x] log file is only shown in the first one ('Rg'), this might be solved by using `loguru`
+- [x] Allow fine-tuning the `TabPFN` model. **[To be Considered]**
+- [x] Extract more data points from pdb files **[To be Considered]**
+- [x] Standardize the data point deduplication process
+- [x] Monomer grow to dimer and then calculate the descriptors
 
 ## Progress
+**2025-06-30**
+- `GATv2` is good!
+- Hyperparameter optimization works! Especially for `Tg`, but not for `Rg`
+- Train longer, the performance for `Tg` is better.
+
 **2025-06-25**
 - `Rg` + `Tc`: TabPFN - Mordred is great!
 
