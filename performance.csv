@@ -83,3 +83,4 @@ gatv2,,0.0082,,,,0.0082,hparams-opt-32-3-128-0.001-1000
 gatv2,,,0.0420,,,0.0420,hparams-opt
 gatv2,,,,,0.0458,0.0458,hparams-opt
 gatv2,,,,0.0173,,0.0173,hparams-opt
+gatv2,0.0308,,,,,0.0308,desc2node

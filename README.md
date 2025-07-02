@@ -14,7 +14,9 @@ pip install rdkit==2023.09.3
 - [ ] Test `GATv2` with bond features
 - [ ] Test `GATv2` with different loss functions l1-loss and mse-loss
 - [ ] Implement cross-validation methods for DL models
+- [ ] GIN, GCN2, PNA, ESA implementation and hyperparameter optimization
 - [ ] Test performance of `GATPort`
+- [x] Virtual node (use descriptors as the initial features) (atom + descriptors seems have potential)
 - [x] Incorporate more atom features and bond features and tried more GNN models.
 - [x] log file is only shown in the first one ('Rg'), this might be solved by using `loguru`
 - [x] Allow fine-tuning the `TabPFN` model. **[To be Considered]**
@@ -23,6 +25,11 @@ pip install rdkit==2023.09.3
 - [x] Monomer grow to dimer and then calculate the descriptors
 
 ## Progress
+
+**2025-07-01**
+- `GATv2VirtualNode` is not good. Tg val R2 is 0.855 even after 800 epochs.
+- 
+
 **2025-06-30**
 - `GATv2` is good!
 - Hyperparameter optimization works! Especially for `Tg`, but not for `Rg`
