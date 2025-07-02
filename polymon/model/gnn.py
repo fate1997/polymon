@@ -1,10 +1,13 @@
-from typing import Tuple
+from typing import Literal, Tuple
 
 import torch
+import torch.nn.functional as F
 import torch.nn as nn
+from torch_geometric.loader import DataLoader
+from torch_geometric.utils import degree
 from torch_geometric.nn import (AttentiveFP, DimeNetPlusPlus, GATv2Conv,
                                 global_add_pool, global_max_pool, GINConv,
-                                GCN2Conv)
+                                PNAConv, BatchNorm)
 
 from polymon.data.polymer import Polymer
 from polymon.model.base import BaseModel
@@ -403,51 +406,126 @@ class GATv2VirtualNode(BaseModel):
         return features
 
 
-# @register_init_params
-# class GIN(BaseModel):
-#     def __init__(
-#         self,
-#         num_atom_features: int,
-#         hidden_dim: int,
-#         num_layers: int,
-#         pred_hidden_dim: int=128,
-#         pred_dropout: float=0.2,
-#         pred_layers:int=2,
-#     ):
-#         super(GIN, self).__init__()
+@register_init_params
+class GIN(BaseModel):
+    def __init__(
+        self,
+        num_atom_features: int,
+        hidden_dim: int,
+        num_layers: int,
+        dropout: float=0.2,
+        n_mlp_layers: int=2,
+        pred_hidden_dim: int=128,
+        pred_dropout: float=0.2,
+        pred_layers:int=2,
+    ):
+        super(GIN, self).__init__()
 
-#         # GAT layers
-#         self.layers = nn.ModuleList()
-#         for i in range(num_layers):
-#             layer = GINConv(
-#                 nn=MLP(
-#                     self.input_dim if i==0 else self.hidden_dim, 
-#                     self.hidden_dim, 
-#                     self.hidden_dim, 
-#                     2, 
-#                     0.1, nn.ELU()
-#                 )
-#             )
-#             self.layers.append(layer)
-#         # Readout phase
-#         self.gin_readout = ReadoutPhase(self.hidden_dim)
-#         self.readout_func = self.get_readout(self.readout)
-
-#         # prediction phase
-#         self.predict = MLP(2*self.hidden_dim, 128, self.output_dim, 2, 0.2, nn.ELU())
-
-
-#     def forward(self, data: Data):
-#         x, edge_index, edge_attr, pos, batch = data.x, data.edge_index, data.edge_attr, data.pos, data.batch
+        # GAT layers
+        self.layers = nn.ModuleList()
+        for i in range(num_layers):
+            layer = GINConv(
+                nn=MLP(
+                    input_dim=num_atom_features if i==0 else hidden_dim, 
+                    hidden_dim=hidden_dim, 
+                    output_dim=hidden_dim,
+                    n_layers=n_mlp_layers,
+                    dropout=dropout,
+                    activation='prelu'
+                )
+            )
+            self.layers.append(layer)
         
-#         for i, layer in enumerate(self.layers):
-#             x = layer(x, edge_index)
+        # Readout phase
+        self.readout = ReadoutPhase(hidden_dim)
 
-#         mol_repr_all = self.gin_readout(x, batch)
+        # prediction phase
+        self.predict = MLP(
+            input_dim=2*hidden_dim,
+            hidden_dim=pred_hidden_dim,
+            output_dim=1,
+            n_layers=pred_layers,
+            dropout=pred_dropout,
+            activation='prelu'
+        )
+
+    def forward(self, batch: Polymer):
+        x = batch.x
+        for layer in self.layers:
+            x = layer(x, batch.edge_index)
+
+        mol_repr_all = self.readout(x, batch.batch)
         
-#         if self.readout.name == 'LineEvo':
-#             data.x = data
-#             mol_repr = self.readout_func(data)
-#             mol_repr_all += mol_repr
+        return self.predict(mol_repr_all)
 
-#         return self.predict(mol_repr_all) # mol_repr
+
+@register_init_params
+class PNA(BaseModel):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_dim: int,
+        num_layers: int,
+        deg: torch.Tensor,
+        towers: int = 1,
+        edge_dim: int = None,
+        pred_hidden_dim: int=128,
+        pred_dropout: float=0.2,
+        pred_layers:int=2,
+    ):
+        super().__init__()
+        
+        aggregators = ['mean', 'min', 'max', 'std']
+        scalers = ['identity', 'amplification', 'attenuation']
+
+        self.convs = nn.ModuleList()
+        self.batch_norms = nn.ModuleList()
+        for i in range(num_layers):
+            conv = PNAConv(
+                in_channels=in_channels if i == 0 else hidden_dim, 
+                out_channels=hidden_dim,
+                aggregators=aggregators, 
+                scalers=scalers,
+                deg=deg,
+                edge_dim=edge_dim, 
+                towers=towers, 
+                pre_layers=1, 
+                post_layers=1,
+                divide_input=False
+            )
+            self.convs.append(conv)
+            self.batch_norms.append(BatchNorm(hidden_dim))
+
+        self.readout = ReadoutPhase(hidden_dim)
+
+        self.predict = MLP(
+            input_dim=2*hidden_dim,
+            hidden_dim=pred_hidden_dim,
+            output_dim=1,
+            n_layers=pred_layers,
+            dropout=pred_dropout,
+            activation='prelu'
+        )
+
+    def forward(self, batch: Polymer):
+        x = batch.x
+        for conv, batch_norm in zip(self.convs, self.batch_norms):
+            x = F.relu(batch_norm(conv(x, batch.edge_index, batch.edge_attr.float())))
+        return self.predict(self.readout(x, batch.batch))
+    
+    @classmethod
+    def compute_deg(
+        cls,
+        train_loader: DataLoader,
+    ) -> torch.Tensor:
+        max_degree = -1
+        for data in train_loader:
+            d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
+            max_degree = max(max_degree, int(d.max()))
+
+        # Compute the in-degree histogram tensor
+        deg = torch.zeros(max_degree + 1, dtype=torch.long)
+        for data in train_loader:
+            d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
+            deg += torch.bincount(d, minlength=deg.numel())
+        return deg

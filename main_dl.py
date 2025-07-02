@@ -22,8 +22,8 @@ def parse_args():
     # Model
     parser.add_argument(
         '--model', 
-        choices=['gatv2', 'gatport', 'attentivefp', 'dimenetpp', 'gatv2vn'], 
-        default='gatv2vn'
+        type=str, 
+        default='gatv2'
     )
     parser.add_argument('--hidden-dim', type=int, default=32)
     parser.add_argument('--num-layers', type=int, default=3)

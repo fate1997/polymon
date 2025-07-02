@@ -3,37 +3,26 @@ from typing import Any, Dict, Literal
 import optuna
 
 
+HPARAMS_REGISTRY = {}
+
+def register_hparams(model: str):
+    def decorator(func):
+        HPARAMS_REGISTRY[model] = func
+        return func
+    return decorator
+
 def get_hparams(
     trial: optuna.Trial, 
     model: str,
 ) -> Dict[str, float]:
     """Get hyper-parameters for a model.
     """
-    
-    if model == 'xgb':
-        return get_xgb_hparams(trial)
-    elif model == 'rf':
-        return get_rf_hparams(trial)
-    elif model == 'lgbm':
-        return get_lgbm_hparams(trial)
-    elif model == 'catboost':
-        return get_catboost_hparams(trial)
-    elif model == 'tabpfn':
-        return get_tabpfn_hparams(trial)
-    elif model == 'gatv2':
-        return get_gatv2_hparams(trial)
-    elif model == 'attentivefp':
-        return get_attentivefp_hparams(trial)
-    elif model == 'dimenetpp':
-        return get_dimenetpp_hparams(trial)
-    elif model == 'gatport':
-        return get_gatv2_hparams(trial)
-    elif model == 'gatv2vn':
-        return get_gatv2_hparams(trial)
-    else:
+    if model not in HPARAMS_REGISTRY:
         raise ValueError(f'Invalid model: {model}')
+    return HPARAMS_REGISTRY[model](trial)
 
 
+@register_hparams('xgb')
 def get_xgb_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get XGBoost parameters for hyper-parameter tuning.
     https://www.kaggle.com/code/alisultanov/regression-xgboost-optuna
@@ -53,6 +42,7 @@ def get_xgb_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     return param
 
 
+@register_hparams('rf')
 def get_rf_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get Random Forest parameters for hyper-parameter tuning.
     https://www.kaggle.com/code/mustafagerme/optimization-of-random-forest-model-using-optuna
@@ -68,6 +58,7 @@ def get_rf_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     return param
 
 
+@register_hparams('lgbm')
 def get_lgbm_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get LightGBM parameters for hyper-parameter tuning.
     https://www.kaggle.com/code/hamzaghanmi/lgbm-hyperparameter-tuning-using-optuna
@@ -91,6 +82,7 @@ def get_lgbm_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     return param
 
 
+@register_hparams('catboost')
 def get_catboost_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get CatBoost parameters for hyper-parameter tuning.
     https://www.kaggle.com/code/tomokikmogura/catboost-hyperparameters-tuning-with-optuna
@@ -111,6 +103,7 @@ def get_catboost_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     return param
 
 
+@register_hparams('tabpfn')
 def get_tabpfn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get TabPFN parameters for hyper-parameter tuning.
     """
@@ -124,6 +117,7 @@ def get_tabpfn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     return param
 
 
+@register_hparams('gatv2')
 def get_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get GATv2 parameters for hyper-parameter tuning.
     """
@@ -138,6 +132,8 @@ def get_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     }
     return param
 
+
+@register_hparams('attentivefp')
 def get_attentivefp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get AttentiveFP parameters for hyper-parameter tuning.
     """
@@ -150,6 +146,8 @@ def get_attentivefp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     }
     return param
 
+
+@register_hparams('dimenetpp')
 def get_dimenetpp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """Get DimeNet++ parameters for hyper-parameter tuning.
     """
@@ -164,5 +162,38 @@ def get_dimenetpp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "num_radial": trial.suggest_int("num_radial", 4, 12, step=2),
         "cutoff": trial.suggest_float("cutoff", 2.0, 5.0, step=0.5),
         "max_num_neighbors": trial.suggest_int("max_num_neighbors", 16, 64, step=1),
+    }
+    return param
+
+
+@register_hparams('gin')
+def get_gin_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GIN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+        "n_mlp_layers": trial.suggest_int("n_mlp_layers", 1, 3, step=1),
+        "dropout": trial.suggest_float("dropout", 0.0, 0.5),
+    }
+    return param
+
+
+@register_hparams('pna')
+def get_pna_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get PNA parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
+        "towers": trial.suggest_int("towers", 1, 6, step=1),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
     }
     return param

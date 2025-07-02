@@ -1,5 +1,5 @@
 from polymon.model.gnn import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
-                               GATv2VirtualNode)
+                               GATv2VirtualNode, GIN, PNA)
 
 __all__ = [
     'GATv2',
@@ -7,4 +7,6 @@ __all__ = [
     'DimeNetPP',
     'GATPort',
     'GATv2VirtualNode',
+    'GIN',
+    'PNA',
 ]
