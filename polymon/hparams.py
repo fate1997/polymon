@@ -28,6 +28,8 @@ def get_hparams(
         return get_dimenetpp_hparams(trial)
     elif model == 'gatport':
         return get_gatv2_hparams(trial)
+    elif model == 'gatv2vn':
+        return get_gatv2_hparams(trial)
     else:
         raise ValueError(f'Invalid model: {model}')
 

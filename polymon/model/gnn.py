@@ -1,11 +1,14 @@
+from typing import Tuple
+
 import torch
 import torch.nn as nn
 from torch_geometric.nn import (AttentiveFP, DimeNetPlusPlus, GATv2Conv,
-                                global_add_pool, global_max_pool)
+                                global_add_pool, global_max_pool, GINConv,
+                                GCN2Conv)
 
 from polymon.data.polymer import Polymer
-from polymon.model.module import MLP, init_weight
 from polymon.model.base import BaseModel
+from polymon.model.module import MLP, ReadoutPhase, init_weight
 from polymon.model.register import register_init_params
 
 
@@ -30,7 +33,7 @@ class GATv2(BaseModel):
         super().__init__()
 
         # update phase
-        feature_per_layer = [num_atom_features] + [hidden_dim] * num_layers
+        feature_per_layer = [num_atom_features + num_descriptors] + [hidden_dim] * num_layers
         layers = []
         for i in range(num_layers):
             layer = GATv2Conv(
@@ -54,7 +57,7 @@ class GATv2(BaseModel):
 
         # prediction phase
         self.predict = MLP(
-            input_dim=feature_per_layer[-1] * 2 + num_descriptors,
+            input_dim=feature_per_layer[-1] * 2,
             hidden_dim=pred_hidden_dim,
             output_dim=num_tasks,
             n_layers=pred_layers,
@@ -65,6 +68,9 @@ class GATv2(BaseModel):
         
     def forward(self, batch: Polymer): 
         x = batch.x.float()
+        if self.num_descriptors > 0:
+            x = torch.cat([x, batch.descriptors[batch.batch]], dim=1)
+        
         for layer in self.layers:
             x = layer(x, batch.edge_index, batch.edge_attr)
         
@@ -74,8 +80,8 @@ class GATv2(BaseModel):
         output2 = global_add_pool(weighted * x, batch_index)
         output = torch.cat([output1, output2], dim=1)
         
-        if self.num_descriptors > 0:
-            output = torch.cat([output, batch.descriptors], dim=1)
+        # if self.num_descriptors > 0:
+        #     output = torch.cat([output, batch.descriptors], dim=1)
 
         return self.predict(output)
 
@@ -293,3 +299,155 @@ class GATPort(BaseModel):
         updated = output[special_batches, idx_in_batch]
         x[special_indices] = updated
         return x
+
+
+@register_init_params
+class GATv2VirtualNode(BaseModel):
+    def __init__(
+        self, 
+        num_atom_features: int, 
+        hidden_dim: int, 
+        num_layers: int, 
+        num_heads: int=8, 
+        pred_hidden_dim: int=128, 
+        pred_dropout: float=0.2, 
+        pred_layers:int=2,
+        activation: str='prelu', 
+        num_tasks: int = 1,
+        bias: bool = True, 
+        dropout: float = 0.1, 
+        edge_dim: int = None,
+        num_descriptors: int = 0,
+    ):
+        super().__init__()
+
+        # update phase
+        feature_per_layer = [num_atom_features] + [hidden_dim] * num_layers
+        layers = []
+        for i in range(num_layers):
+            layer = GATv2Conv(
+                in_channels=feature_per_layer[i] * (1 if i == 0 else num_heads),
+                out_channels=feature_per_layer[i + 1],
+                heads=num_heads,
+                concat=True if i < len(feature_per_layer) - 2 else False,
+                edge_dim=edge_dim,
+                dropout=dropout,
+                bias=bias
+            )
+            layers.append(layer)
+        self.layers = nn.ModuleList(layers)
+        self.project_vn = nn.Linear(num_descriptors, num_atom_features)
+
+        # prediction phase
+        self.predict = MLP(
+            input_dim=feature_per_layer[-1],
+            hidden_dim=pred_hidden_dim,
+            output_dim=num_tasks,
+            n_layers=pred_layers,
+            dropout=pred_dropout,
+            activation=activation
+        )
+        
+    def forward(self, batch: Polymer): 
+        virtual_features = self.project_vn(batch.descriptors)
+        x = self.add_virtual_features(batch.x, batch.batch, virtual_features)
+        
+        # Pass through GNN layers
+        for layer in self.layers:
+            x = layer(x, batch.edge_index, batch.edge_attr)
+
+        # Get features of last atom in each molecule
+        batch_idx = batch.batch
+        _, last_indices = torch.unique_consecutive(
+            batch_idx, return_inverse=False, return_counts=True
+        )
+        last_pos = torch.cumsum(last_indices, dim=0) - 1  # subtract 1 to get the index
+        mask = torch.zeros_like(batch_idx, dtype=torch.bool)
+        mask[last_pos] = True
+        
+        output = x[mask]
+
+        return self.predict(output)
+    
+    def add_virtual_features(
+        self,
+        features: torch.Tensor,
+        batch_indices: torch.Tensor,
+        virtual_features: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Add virtual features to the last element of each batch using vectorized operations.
+        
+        Args:
+            features: Input features tensor [num_elements, feature_dim]
+            batch_indices: Batch indices for each element [num_elements]
+            virtual_features: Virtual features to add [batch_size, feature_dim]
+            
+        Returns:
+            Updated features tensor
+        """
+        batch_size = batch_indices.max().item() + 1
+        device = features.device
+        
+        # Use scatter_reduce to find the maximum index for each batch
+        element_range = torch.arange(batch_indices.size(0), device=device)
+        last_indices = torch.zeros(batch_size, dtype=torch.long, device=device)
+        last_indices.scatter_reduce_(0, batch_indices, element_range, reduce='amax')
+        
+        # Create a mask for the last elements
+        last_element_mask = torch.zeros_like(batch_indices, dtype=torch.bool)
+        last_element_mask[last_indices] = True
+        
+        # Add virtual features to the last elements
+        features[last_element_mask] = features[last_element_mask] + virtual_features
+        return features
+
+
+# @register_init_params
+# class GIN(BaseModel):
+#     def __init__(
+#         self,
+#         num_atom_features: int,
+#         hidden_dim: int,
+#         num_layers: int,
+#         pred_hidden_dim: int=128,
+#         pred_dropout: float=0.2,
+#         pred_layers:int=2,
+#     ):
+#         super(GIN, self).__init__()
+
+#         # GAT layers
+#         self.layers = nn.ModuleList()
+#         for i in range(num_layers):
+#             layer = GINConv(
+#                 nn=MLP(
+#                     self.input_dim if i==0 else self.hidden_dim, 
+#                     self.hidden_dim, 
+#                     self.hidden_dim, 
+#                     2, 
+#                     0.1, nn.ELU()
+#                 )
+#             )
+#             self.layers.append(layer)
+#         # Readout phase
+#         self.gin_readout = ReadoutPhase(self.hidden_dim)
+#         self.readout_func = self.get_readout(self.readout)
+
+#         # prediction phase
+#         self.predict = MLP(2*self.hidden_dim, 128, self.output_dim, 2, 0.2, nn.ELU())
+
+
+#     def forward(self, data: Data):
+#         x, edge_index, edge_attr, pos, batch = data.x, data.edge_index, data.edge_attr, data.pos, data.batch
+        
+#         for i, layer in enumerate(self.layers):
+#             x = layer(x, edge_index)
+
+#         mol_repr_all = self.gin_readout(x, batch)
+        
+#         if self.readout.name == 'LineEvo':
+#             data.x = data
+#             mol_repr = self.readout_func(data)
+#             mol_repr_all += mol_repr
+
+#         return self.predict(mol_repr_all) # mol_repr

@@ -22,15 +22,15 @@ def parse_args():
     # Model
     parser.add_argument(
         '--model', 
-        choices=['gatv2', 'gatport', 'attentivefp', 'dimenetpp'], 
-        default='gatv2'
+        choices=['gatv2', 'gatport', 'attentivefp', 'dimenetpp', 'gatv2vn'], 
+        default='gatv2vn'
     )
     parser.add_argument('--hidden-dim', type=int, default=32)
     parser.add_argument('--num-layers', type=int, default=3)
     parser.add_argument('--descriptors', type=str, default=None, nargs='+')
 
     # Training
-    parser.add_argument('--num-epochs', type=int, default=1000)
+    parser.add_argument('--num-epochs', type=int, default=2500)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--early-stopping-patience', type=int, default=250)
     parser.add_argument('--device', type=str, default='cuda')
@@ -72,8 +72,13 @@ def main():
             test_err, hparams = pipeline.optimize_hparams()
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
         else:
-            test_err = pipeline.train()
-            hparams = {'hidden_dim': args.hidden_dim, 'num_layers': args.num_layers}
+            hparams = {'hidden_dim': 48,
+                'num_layers': 2,
+                'num_heads': 6,
+                'pred_hidden_dim': 224,
+                'pred_dropout': 0.07186093316810982,
+                'pred_layers': 3}
+            test_err = pipeline.train(model_hparams=hparams)
             model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
         if args.finetune_csv_path is not None:
             test_err = pipeline.finetune(

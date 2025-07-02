@@ -11,6 +11,7 @@ from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
 from rdkit.Chem import MACCSkeys
+from torch_geometric.utils import to_undirected
 from scipy.sparse import coo_matrix
 from polymon.data.polymer import OligomerBuilder
 
@@ -165,7 +166,12 @@ class AtomFeaturizer(Featurizer):
 
 @register_cls('edge')
 class BondFeaturizer(Featurizer):
-    _avail_features: List[str] = ['fully_connected_edges', 'bond', 'periodic_bond']
+    _avail_features: List[str] = [
+        'fully_connected_edges', 
+        'bond', 
+        'periodic_bond',
+        'virtual_bond',
+    ]
     
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
         if self.feature_names is None:
@@ -242,6 +248,36 @@ class BondFeaturizer(Featurizer):
                 attach_bond_attr = torch.cat([attach_bond_attr, attach_bond_attr], dim=0)
                 bond_index = torch.cat([bond_index, attach_bond_index], dim=1)
                 bond_attr = torch.cat([bond_attr, attach_bond_attr], dim=0)
+        return {'edge_index': bond_index, 'edge_attr': bond_attr}
+    
+    def virtual_bond(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
+        """Add virtual bonds between virtual node and each other node"""
+        n_nodes = rdmol.GetNumAtoms()
+        bonds = self.bond(rdmol)
+        bond_index = bonds['edge_index']
+        bond_attr = bonds['edge_attr']
+        n_bonds = bond_index.shape[1]
+        n_bond_features = bond_attr.shape[1]
+        
+        # Add bond index between virtual node and each other node
+        virtual_bond_index = torch.stack([
+            torch.arange(n_nodes),
+            n_nodes * torch.ones(n_nodes, dtype=torch.long),
+        ])
+        
+        # Add additional bond attributes for virtual bonds and bonds
+        virtual_bond_attr = torch.zeros(virtual_bond_index.shape[1], n_bond_features + 1)
+        virtual_bond_attr[:, -1] = 1
+        bond_attr = torch.cat([bond_attr, torch.zeros(n_bonds, 1)], dim=1)
+        
+        # Add another direction of virtual bond
+        virtual_bond_index, virtual_bond_attr = to_undirected(
+            virtual_bond_index, virtual_bond_attr
+        )
+        
+        bond_attr = torch.cat([bond_attr, virtual_bond_attr], dim=0)
+        bond_index = torch.cat([bond_index, virtual_bond_index], dim=1)
+        
         return {'edge_index': bond_index, 'edge_attr': bond_attr}
 
 
@@ -477,4 +513,15 @@ class ComposeFeaturizer:
         mol_dict = {}
         for featurizer in self.featurizers:
             mol_dict.update(featurizer(rdmol))
+        
+        if 'virtual_bond' in self.names:
+            if 'x' in mol_dict:
+                mol_dict['x'] = torch.cat([
+                    mol_dict['x'], torch.zeros(1, mol_dict['x'].shape[1])
+                ], dim=0)
+            if 'z' in mol_dict:
+                mol_dict['z'] = torch.cat([
+                    mol_dict['z'], torch.zeros(1)
+                ], dim=0)
+        
         return mol_dict

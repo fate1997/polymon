@@ -11,7 +11,8 @@ from polymon.data.utils import Normalizer
 from polymon.exp.train import Trainer
 from polymon.exp.utils import seed_everything
 from polymon.hparams import get_hparams
-from polymon.model import AttentiveFPWrapper, DimeNetPP, GATPort, GATv2
+from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
+                           GATv2VirtualNode)
 from polymon.model.base import ModelWrapper
 
 
@@ -181,8 +182,12 @@ class Pipeline:
         feature_names = ['x', 'bond', 'z']
         if self.model_type.lower() in ['dimenetpp']:
             feature_names.append('pos')
+        if self.model_type.lower() in ['gatv2vn']:
+            feature_names.append('virtual_bond')
+            feature_names.remove('bond')
         if self.descriptors is not None:
             feature_names.extend(self.descriptors)
+        self.logger.info(f'Feature names: {feature_names}')
         dataset = PolymerDataset(
             raw_csv_path=raw_csv_path,
             feature_names=feature_names,
@@ -213,6 +218,13 @@ class Pipeline:
             )
         elif self.model_type == 'gatport':
             model = GATPort(
+                num_atom_features=self.dataset.num_node_features,
+                edge_dim=self.dataset.num_edge_features,
+                num_descriptors=self.num_descriptors,
+                **hparams,
+            )
+        elif self.model_type == 'gatv2vn':
+            model = GATv2VirtualNode(
                 num_atom_features=self.dataset.num_node_features,
                 edge_dim=self.dataset.num_edge_features,
                 num_descriptors=self.num_descriptors,

@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch_geometric.nn import global_add_pool, global_max_pool
 
 ACTIVATION_REGISTER = {
     'relu': nn.ReLU(),
@@ -78,4 +79,24 @@ class MLP(nn.Module):
             x (Tensor): Input tensor.      
         """
         output = self.layers(x)
+        return output
+
+
+class ReadoutPhase(nn.Module):
+    def __init__(self, dim):
+        super().__init__()
+        # readout phase
+        self.weighting = nn.Linear(dim, 1) 
+        self.score = nn.Sigmoid() 
+        
+        nn.init.xavier_uniform_(self.weighting.weight)
+        nn.init.constant_(self.weighting.bias, 0)
+    
+    def forward(self, x, batch):
+        weighted = self.weighting(x)
+        score = self.score(weighted)
+        output1 = global_add_pool(score * x, batch)
+        output2 = global_max_pool(x, batch)
+        
+        output = torch.cat([output1, output2], dim=1)
         return output
