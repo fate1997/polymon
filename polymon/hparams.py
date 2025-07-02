@@ -191,7 +191,7 @@ def get_pna_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     param = {
         "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
         "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
-        "towers": trial.suggest_int("towers", 1, 6, step=1),
+        "towers": trial.suggest_categorical("towers", [1, 2, 4, 8]),
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
         "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
         "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
