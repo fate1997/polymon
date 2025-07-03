@@ -193,7 +193,7 @@ class Pipeline:
             feature_names=feature_names,
             label_column=self.label,
             force_reload=True,
-            add_hydrogens=False,
+            add_hydrogens=True,
         )
         return dataset
     
