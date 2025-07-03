@@ -89,3 +89,4 @@ gatv2,,,,,0.0457,0.0457,hps-opt-more-bond-feats
 gatv2,,,0.0425,,,0.0425,hps-opt-more-bond-feats
 gatv2,,0.0085,,,,0.0085,no-hpopt-more-bond-feats
 gatv2,0.0278,,,,,0.0278,no-hpopt-more-bond-feats
+gatv2,0.0253,,,,,0.0253,with_xenonpy

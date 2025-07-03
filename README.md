@@ -26,6 +26,9 @@ pip install rdkit==2023.09.3
 
 ## Progress
 
+**2025-07-03**
+- Finally know why `GATv2` is good after refactoring. Just because add hydrogens = =.
+
 **2025-07-01**
 - `GATv2VirtualNode` is not good. Tg val R2 is 0.855 even after 800 epochs.
 - 
