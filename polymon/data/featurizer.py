@@ -65,6 +65,7 @@ class AtomFeaturizer(Featurizer):
         'mass', 
         'formal_charge', 
         'is_attachment',
+        # 'xenonpy_atom',
     ]
     def __init__(
         self,
@@ -162,7 +163,12 @@ class AtomFeaturizer(Featurizer):
     
     def is_attachment(self, atom: Chem.Atom) -> torch.Tensor:
         return torch.tensor([int(atom.GetAtomicNum() == 0)])
-
+    
+    def xenonpy_atom(self, atom: Chem.Atom) -> torch.Tensor:
+        from polymon.setting import XENONPY_ELEMENTS_INFO
+        # preset.sync('elements_completed')
+        symbol = Chem.GetPeriodicTable().GetElementSymbol(atom.GetAtomicNum())
+        return torch.tensor(XENONPY_ELEMENTS_INFO.loc[symbol].values)
 
 @register_cls('edge')
 class BondFeaturizer(Featurizer):
@@ -357,6 +363,7 @@ class DescFeaturizer(Featurizer):
         'oligomer_rdkit2d', 
         'oligomer_mordred',
         'oligomer_ecfp4',
+        'xenonpy_desc',
     ]
 
     def __init__(
@@ -465,6 +472,22 @@ class DescFeaturizer(Featurizer):
         rdmol_smiles = Chem.MolToSmiles(rdmol)
         oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
         return self.mordred(oligomer)
+    
+    def xenonpy_desc(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        from xenonpy.descriptor import Compositions
+        from xenonpy.datatools import preset
+        from collections import Counter
+        
+        cal = Compositions(elemental_info=preset.elements_completed)
+        get_symbol = Chem.GetPeriodicTable().GetElementSymbol
+        symbols = [get_symbol(atom.GetAtomicNum()) for atom in rdmol.GetAtoms()]
+        counts = Counter(symbols)
+        comp = dict(counts)
+        descriptor = cal.transform([comp])
+        return torch.from_numpy(descriptor.to_numpy())
 
 
 ########################################################
