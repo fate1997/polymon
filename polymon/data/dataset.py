@@ -29,7 +29,7 @@ class PolymerDataset(Dataset):
         identifier_column: str = 'id',
         save_processed: bool = True,
         force_reload: bool = False,
-        add_hydrogens: bool = True,
+        add_hydrogens: bool = False,
     ):
         super().__init__()
         
