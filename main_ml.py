@@ -61,6 +61,7 @@ def train(
 
     # 1. Load data
     logger.info(f'Training {label}...')
+    logger.info(f'Feature names: {feature_names}')
     dataset = PolymerDataset(
         raw_csv_path=raw_csv_path,
         feature_names=feature_names,

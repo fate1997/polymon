@@ -195,6 +195,8 @@ class Pipeline:
             force_reload=True,
             add_hydrogens=True,
         )
+        self.logger.info(f'Atom features: {self.dataset.num_node_features}')
+        self.logger.info(f'Bond features: {self.dataset.num_edge_features}')
         return dataset
     
     def _build_model(self, hparams: Dict[str, Any]) -> ModelWrapper:
@@ -246,5 +248,7 @@ class Pipeline:
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         
+        num_params = sum(p.numel() for p in model.parameters())
+        self.logger.info(f'Model Parameters: {num_params / 1e6:.4f}M')
         model = ModelWrapper(model, self.normalizer, self.dataset.featurizer)
         return model
