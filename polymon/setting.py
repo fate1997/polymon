@@ -1,4 +1,5 @@
 import pathlib
+import pandas as pd
 
 
 REPO_DIR = pathlib.Path(__file__).parent.parent
@@ -23,3 +24,9 @@ UNIQUE_ATOM_NUMS = [
 with open(REPO_DIR / 'polymon' / 'data' / 'mordred_unstable.txt', 'r') as f:
     MORDRED_UNSTABLE_IDS = f.read().splitlines()
     MORDRED_UNSTABLE_IDS = list(map(int, MORDRED_UNSTABLE_IDS))
+
+
+XENONPY_ELEMENTS_INFO = pd.read_csv(
+    REPO_DIR / 'polymon' / 'data' / 'xenonpy_elements.csv',
+    index_col=0,
+)
