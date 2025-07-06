@@ -12,7 +12,7 @@ from polymon.exp.train import Trainer
 from polymon.exp.utils import seed_everything
 from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
-                           GATv2VirtualNode, GIN, PNA)
+                           GATv2VirtualNode, GIN, PNA, GVPModel)
 from polymon.model.base import ModelWrapper
 
 
@@ -110,6 +110,7 @@ class Pipeline:
         os.makedirs(out_dir, exist_ok=True)
         def objective(trial: optuna.Trial) -> float:
             model_hparams = get_hparams(trial, self.model_type)
+            self.logger.info(f'Number of trials: {trial.number}')
             return self.train(self.lr, model_hparams, out_dir)
 
         study = optuna.create_study(direction='minimize')
@@ -180,8 +181,9 @@ class Pipeline:
     
     def _build_dataset(self, raw_csv_path: str) -> PolymerDataset:
         feature_names = ['x', 'bond', 'z']
-        if self.model_type.lower() in ['dimenetpp']:
+        if self.model_type.lower() in ['dimenetpp', 'gvp']:
             feature_names.append('pos')
+            feature_names.remove('bond')
         if self.model_type.lower() in ['gatv2vn']:
             feature_names.append('virtual_bond')
             feature_names.remove('bond')
@@ -195,8 +197,8 @@ class Pipeline:
             force_reload=True,
             add_hydrogens=True,
         )
-        self.logger.info(f'Atom features: {self.dataset.num_node_features}')
-        self.logger.info(f'Bond features: {self.dataset.num_edge_features}')
+        self.logger.info(f'Atom features: {dataset.num_node_features}')
+        self.logger.info(f'Bond features: {dataset.num_edge_features}')
         return dataset
     
     def _build_model(self, hparams: Dict[str, Any]) -> ModelWrapper:
@@ -243,6 +245,11 @@ class Pipeline:
                 in_channels=self.dataset.num_node_features,
                 edge_dim=self.dataset.num_edge_features,
                 deg=PNA.compute_deg(self.train_loader),
+                **hparams,
+            )
+        elif self.model_type == 'gvp':
+            model = GVPModel(
+                in_node_nf=self.dataset.num_node_features,
                 **hparams,
             )
         else:

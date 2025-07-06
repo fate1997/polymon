@@ -1,3 +1,7 @@
+import math
+from typing import Callable, Union
+from torch.nn.init import kaiming_uniform_, zeros_
+
 import torch
 import torch.nn as nn
 from torch_geometric.nn import global_add_pool, global_max_pool
@@ -100,3 +104,44 @@ class ReadoutPhase(nn.Module):
         
         output = torch.cat([output1, output2], dim=1)
         return output
+
+
+class DenseLayer(nn.Linear):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        bias: bool = True,
+        activation: Union[Callable, nn.Module] = None,
+        weight_init: Callable = kaiming_uniform_,
+        bias_init: Callable = zeros_,
+    ):
+        self.weight_init = weight_init
+        self.bias_init = bias_init
+        super(DenseLayer, self).__init__(in_features, out_features, bias)
+
+        if isinstance(activation, str):
+            activation = activation.lower()
+        if activation in ["swish", "silu"]:
+            self._activation = ScaledSiLU()
+        elif activation is None:
+            self._activation = nn.Identity()
+        else:
+            raise NotImplementedError(
+                "Activation function not implemented.")
+
+    def reset_parameters(self):
+        # https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/linear.py#L106
+        self.weight_init(self.weight, a=math.sqrt(5))
+        if self.bias is not None:
+            self.bias_init(self.bias)
+
+
+class ScaledSiLU(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.scale_factor = 1 / 0.6
+        self._activation = nn.SiLU()
+
+    def forward(self, x):
+        return self._activation(x) * self.scale_factor
