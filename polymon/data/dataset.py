@@ -17,6 +17,7 @@ from polymon.data.pretrained import (get_polybert_embeddings,
                                      get_gaff2_features)
 from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS, PRETRAINED_MODELS
 
+from polymon.model.esa.esa_utils import get_max_node_edge_global
 
 class PolymerDataset(Dataset):
     
@@ -93,6 +94,12 @@ class PolymerDataset(Dataset):
                 assign_pretrained_embeddings(data_list, gaff2_mod_desc)
 
             self.data_list = data_list
+            # for ESA data attribute
+            self.max_edge_global, self.max_node_global = get_max_node_edge_global(self.data_list)
+            for g in self.data_list:
+                g.max_node_global = self.max_node_global
+                g.max_edge_global = self.max_edge_global
+
             
             if save_processed:
                 os.makedirs(osp.dirname(processed_path), exist_ok=True)
