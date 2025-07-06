@@ -2,6 +2,7 @@
 database/*/*.pt
 results/
 polymon/model/polycl/*.pth
+geometry_vocab/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

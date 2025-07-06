@@ -30,3 +30,5 @@ XENONPY_ELEMENTS_INFO = pd.read_csv(
     REPO_DIR / 'polymon' / 'data' / 'xenonpy_elements.csv',
     index_col=0,
 )
+
+GEOMETRY_VOCAB = REPO_DIR / 'database' / 'geometry_vocab'

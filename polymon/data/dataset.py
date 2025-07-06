@@ -68,6 +68,9 @@ class PolymerDataset(Dataset):
                 if identifier_column is not None and identifier_column in df_nonan.columns:
                     mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
+                if None in mol_dict.values():
+                    print(f'Skipping {row[smiles_column]} because of None in featurization')
+                    continue
                 data_list.append(Polymer(**mol_dict))
 
             # Add pretrained embeddings

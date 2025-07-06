@@ -1,24 +1,25 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
+import os
+from copy import deepcopy
+from typing import Dict, List, Tuple
+from glob import glob
+import hashlib
 
 import numpy as np
 import torch
-from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB
 from rdkit import Chem
-from rdkit.Chem import AllChem, rdChemReactions
+from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors as RDKitDescriptors
+from rdkit.Chem import Descriptors3D, MACCSkeys, rdChemReactions
 from rdkit.Chem.rdMolDescriptors import GetMorganFingerprintAsBitVect
 from rdkit.ML.Descriptors.MoleculeDescriptors import \
     MolecularDescriptorCalculator
-from rdkit.Chem import MACCSkeys
-from torch_geometric.utils import to_undirected
 from scipy.sparse import coo_matrix
+from torch_geometric.utils import to_undirected
+
 from polymon.data.polymer import OligomerBuilder
-
-from rdkit.Chem import AllChem, Descriptors3D
-
-from polymon.setting import MAX_SEQ_LEN, SMILES_VOCAB, MORDRED_UNSTABLE_IDS
-
+from polymon.setting import (GEOMETRY_VOCAB, MAX_SEQ_LEN, MORDRED_UNSTABLE_IDS,
+                             SMILES_VOCAB)
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
@@ -166,6 +167,7 @@ class AtomFeaturizer(Featurizer):
     
     def xenonpy_atom(self, atom: Chem.Atom) -> torch.Tensor:
         from polymon.setting import XENONPY_ELEMENTS_INFO
+
         # preset.sync('elements_completed')
         symbol = Chem.GetPeriodicTable().GetElementSymbol(atom.GetAtomicNum())
         return torch.tensor(XENONPY_ELEMENTS_INFO.loc[symbol].values)
@@ -291,16 +293,75 @@ class BondFeaturizer(Featurizer):
 class PosFeaturizer(Featurizer):
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
         if rdmol.GetNumConformers() == 0:
-            # If no conformer, use RDKit to generate one
-            AllChem.EmbedMolecule(rdmol)
-            AllChem.MMFFOptimizeMolecule(rdmol)
-            pos = torch.from_numpy(rdmol.GetConformer().GetPositions()).float()
-            pos -= pos.mean(dim=0)
-            return {'pos': pos}
+            rdmol = deepcopy(rdmol)
+            # If no conformer, load from geometry_vocab.sdf or generate one
+            smiles = Chem.MolToSmiles(rdmol)
+            os.makedirs(str(GEOMETRY_VOCAB), exist_ok=True)
+            hash_digest = hashlib.sha256(smiles.encode('utf-8')).hexdigest()
+            geometry_file = GEOMETRY_VOCAB / f'{hash_digest}.sdf'
+            if not geometry_file.exists():
+                rdmol.SetProp('smiles', smiles)
+                rdmol = self.polymer2monomer(rdmol)
+                if rdmol is None:
+                    return {'pos': None}
+                rdmol = self.init_geometry(rdmol)
+                if rdmol is None:
+                    return {'pos': None}
+                sdf_writer = Chem.SDWriter(str(geometry_file))
+                sdf_writer.write(rdmol)
+                sdf_writer.close()
+            else:
+                rdmol = Chem.MolFromMolFile(
+                    str(geometry_file), sanitize=False, removeHs=False
+                )
+            if rdmol is None:
+                return {'pos': None}
+        
+        if rdmol.GetNumConformers() == 0:
+            return {'pos': None}
 
         pos = torch.from_numpy(rdmol.GetConformer().GetPositions()).float()
         pos -= pos.mean(dim=0)
         return {'pos': pos}
+    
+    @staticmethod
+    def init_geometry(mol: Chem.Mol) -> Chem.Mol:
+        try:
+            ps = AllChem.ETKDGv3()
+            ps.randomSeed = 42
+            AllChem.EmbedMolecule(mol, ps)
+            if mol.GetNumConformers() > 0:
+                AllChem.MMFFOptimizeMolecule(mol, maxIters=1000)
+            
+            return mol
+        except Exception as e:
+            print(f"Error initializing geometry for {Chem.MolToSmiles(mol)}: {e}")
+            return None
+    
+    @staticmethod
+    def polymer2monomer(rdmol: Chem.Mol) -> Chem.Mol:
+        attachments = [atom for atom in rdmol.GetAtoms() if atom.GetSymbol() == '*']
+        if len(attachments) != 2:
+            print(f'Number of attachments is not 2.')
+            return None
+        rdmol.SetIntProp('attachment1', attachments[0].GetIdx())
+        rdmol.SetIntProp('attachment2', attachments[1].GetIdx())
+        
+        # Get the neighbors of the attachments
+        attachment1, attachment2 = attachments
+        attachment1_nbrs = attachment1.GetNeighbors()
+        attachment2_nbrs = attachment2.GetNeighbors()
+        if len(attachment1_nbrs) != 1 or len(attachment2_nbrs) != 1:
+            print(f'Attachment has more than one neighbor.')
+            return None
+        
+        # Set the atomic numbers of the attachments based on neighbors
+        attachment1.SetAtomicNum(attachment2_nbrs[0].GetAtomicNum())
+        attachment2.SetAtomicNum(attachment1_nbrs[0].GetAtomicNum())
+        if '*' in Chem.MolToSmiles(rdmol):
+            print(f'Attachment is not removed for {rdmol.GetProp("smiles")}')
+        
+        return rdmol
 
 
 @register_cls('z')
@@ -477,9 +538,10 @@ class DescFeaturizer(Featurizer):
         self,
         rdmol: Chem.Mol,
     ) -> torch.Tensor:
-        from xenonpy.descriptor import Compositions
-        from xenonpy.datatools import preset
         from collections import Counter
+
+        from xenonpy.datatools import preset
+        from xenonpy.descriptor import Compositions
         
         cal = Compositions(elemental_info=preset.elements_completed)
         get_symbol = Chem.GetPeriodicTable().GetElementSymbol
