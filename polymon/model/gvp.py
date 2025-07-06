@@ -376,8 +376,10 @@ class GVPModel(BaseModel):
         pred_hidden_dim: int = 128,
         pred_dropout: float = 0.2,
         pred_layers: int = 2,
+        cutoff: float = 5.0,
     ):
         super().__init__()
+        self.cutoff = cutoff
         self.h_embedding = DenseLayer(in_node_nf, hidden_dim, activation='silu')
         self.gvp = GVPNetwork(
             in_dims=(hidden_dim, 0),
@@ -422,7 +424,7 @@ class GVPModel(BaseModel):
         if batch is None:
             batch = torch.zeros(x.shape[0], dtype=torch.long, device=x.device)
         if edge_index is None:
-            edge_index = radius_graph(x, r=5, batch=batch, max_num_neighbors=100)
+            edge_index = radius_graph(x, r=self.cutoff, batch=batch, max_num_neighbors=100)
 
         # 2. Forward pass through GVP
         h = self.h_embedding(h)

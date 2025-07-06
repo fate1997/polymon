@@ -206,11 +206,12 @@ def get_gvp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     
     param = {
         "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
-        "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
         "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
         "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
         "normalization_factor": trial.suggest_float("normalization_factor", 10.0, 1000.0, step=10.0),
         "drop_rate": trial.suggest_float("drop_rate", 0.0, 0.5),
+        "cutoff": trial.suggest_categorical("cutoff", [5.0, 10.0])
     }
     return param
