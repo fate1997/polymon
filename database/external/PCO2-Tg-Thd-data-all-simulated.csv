@@ -1,0 +1,1170 @@
+Polymer_ID,Polymer_name,OPSIN SMILES,Tg (K),Td_1/2 (K),log10(P_CO2 (Barrer))
+746,poly(silanediylmethylene),[Si](C[*:2])[*:1],178.9693114,453.171845,4.696603931
+158,Poly(dimethylsilanediyl),[*:1][Si](C)(C)[Si](C)(C)[*:2],170.5332654,408.6581026,4.429004611
+735,poly(dimethylsilanediyl),[*:1][Si](C)(C)[Si](C)(C)[*:2],170.5332654,408.6581026,4.429004611
+747,poly[(methylsilanediyl)methylene],C[Si](C[*:2])[*:1],220.0979681,447.6687632,4.010413602
+731,poly[(dimethylsilanediyl)methylene],[*:1][Si](C)(C)C[*:2],175.0533273,444.4935383,3.831721718
+40,Poly(dimethyl siloxane),[*:1][Si](C)(C)O[*:2],155.5648608,444.4732863,3.68584341
+160,Poly[oxy(dimethylsilanediyl)] or poly(dimethylsiloxane),[*:1][Si](C)(C)O[*:2],155.5648608,444.4732863,3.68584341
+131,Poly[(dimethylsilanediyl)ethylene],[*:1][Si](C)(C)CC[*:2],178.6556702,474.8312816,3.402074413
+748,poly[(ethylsilanediyl)methylene],C(C)[Si](C[*:2])[*:1],205.8019171,494.7257563,3.339751596
+732,poly[(dimethylsilanediyl)propane-1!3-diyl],C[Si](CCC[*:2])(C)[*:1],181.2033888,496.5844941,3.109763273
+696,poly[(2!3!5!6-tetramethyl-1!4-phenylene)methylene],CC1=C(C(=C(C(=C1C)C[*:2])C)C)[*:1],588.8816664,678.9646138,2.99527101
+719,poly[(2!3!5!6-tetramethyl-1!4-phenylene)ethylene],CC1=C(C(=C(C(=C1C)CC[*:2])C)C)[*:1],556.1231393,674.5547397,2.874555719
+29,Polyacetylene,[*:1]C=CC=C[*:2],146.9881141,694.458456,2.862259324
+469,poly(ethene-1!2-diyl),C(=C[*:2])[*:1],146.9881141,694.4631266,2.862259324
+544,poly[(1!2!2!3!4!4!5!5!6!6!7!7-dodecafluorocycloheptane-1!3-diyl)(difluoromethylene)],FC1(C(C(C(C(C(C1(F)F)(F)F)(F)F)(F)F)(F)C(F)(F)[*:2])(F)F)[*:1],641.271603,605.1064786,2.596845095
+726,poly(2!5-dimethyl-1!4-phenyleneethene-1!2-diyl),CC1=C(C=C(C(=C1)C=C[*:2])C)[*:1],494.4556176,716.7905476,2.491998342
+541,poly[(1!2!2!3!4!4!5!5!6!6-decafluorocyclohexane-1!3-diyl)(difluoromethylene)],FC1(C(C(C(C(C1(F)F)(F)F)(F)F)(F)C(F)(F)[*:2])(F)F)[*:1],630.9376799,607.9312588,2.488868849
+224,poly(methylmethylene),[*:1]C(C)C(C)[*:2],317.0052333,588.6941252,2.463200609
+159,Poly[(phenylimino)(dimethylsilanediyl)],[*:1]N(c1ccccc1)[Si](C)(C)[*:2],409.4861521,615.5053494,2.361760002
+744,poly[(methylphenylsilanediyl)methylene],C[Si](C[*:2])(C1=CC=CC=C1)[*:1],351.5401487,628.3098035,2.356290315
+542,poly[(1!2!2!3!4!4!5!5-octafluorocyclopentane-1!3-diyl)(difluoromethylene)],FC1(C(C(C(C1(F)F)(F)F)(F)C(F)(F)[*:2])(F)F)[*:1],616.7330957,611.8341976,2.340027105
+42,Polyisoprene,[*:1]CC=C(C)C[*:2],199.0049524,632.3912232,2.294857797
+695,poly[(2!5-dimethyl-1!4-phenylene)methylene],CC1=C(C=C(C(=C1)C[*:2])C)[*:1],538.7506141,707.3281907,2.292730698
+462,poly(1-ethylbut-1-ene-1!4-diyl),C(C)C(=CCC[*:2])[*:1],214.5771576,640.9939196,2.291579306
+196,poly(1!1!2-trimethylpropane-1!3-diyl),[*:1]C(C)(C)C(C)C[*:2],231.045258,573.1758838,2.274846483
+536,poly[oxy(dimethylmethylene)],O(C(C)(C)[*:2])[*:1],187.4964109,559.1044387,2.26683836
+468,poly(3-methylbut-1-ene-1!4-diyl),CC(C=C[*:1])C[*:2],199.1890801,634.2374668,2.264752805
+48,Poly(1!2-butadiene),[*:1]CC(C=C)[*:2],289.610913,635.1396565,2.231880009
+83,Poly(1-vinylethylene),[*:1]C(C=C)C[*:2],289.610913,635.1396565,2.231880009
+701,poly[(2!5-dimethyl-1!4-phenylene)ethylene]! poly(2!5-dimethyl-1!4-phenyleneethylene),CC1=C(C=C(C(=C1)CC[*:2])C)[*:1],504.3671903,698.9730182,2.225878304
+716,poly[(4!5-dimethyl-1!2-phenylene)ethylene]! poly(4!6-dimethyl-m-xylylene),CC1=C(C=C(C(=C1)C)C[*:1])C[*:2],368.1431903,698.9730182,2.225878304
+721,poly[(4!6-dimethyl-1!3-phenylene)ethylene]! poly(4!6-dimethyl-1!3-phenyleneethylene),CC1=C(C=C(C(=C1)C)[*:1])CC[*:2],368.1431903,698.9730182,2.225878304
+59,Polyisobutylene,[*:1]C(C)(C)C[*:2],187.8745066,563.177124,2.195551883
+193,poly(1!1-dimethylethylene),[*:1]C(C)(C)C[*:2],187.8745066,563.177124,2.195551883
+418,poly[oxycarbonyloxy(2!2!4!4-tetramethylcyclobutane-1!3-diyl)]! poly(oxycarbonyloxy-2!2!4!4-tetramethylcyclobutane-1!3-diyl),O(C(=O)OC1C(C(C1(C)C)[*:2])(C)C)[*:1],456.2361797,627.6868858,2.187432625
+466,poly(1-propylbut-1-ene-1!4-diyl),C(CC)C(=CCC[*:2])[*:1],207.4488256,639.1837412,2.180143077
+243,poly(1!1!2!2-tetramethylbutane-1!4-diyl),[*:1]C(C)(C)C(C)(C)CC[*:2],188.2451886,567.9648764,2.166286979
+225,poly(1!2-dimethylbutane-1!4-diyl),[*:1]C(C)C(C)CC[*:2],276.5776843,599.4838011,2.166074441
+41,Poly(1!4-butadiene),[*:1]CC=CC[*:2],171.9977534,656.3941184,2.156280978
+82,Poly(but-1-ene-1!4-diyl),[*:1]C=CCC[*:2],171.9977534,656.3941184,2.156280978
+456,poly(but-1-ene-1!4-diyl),C(=CCC[*:2])[*:1],171.9977534,656.3941184,2.156280978
+540,poly[(1!2!2!3!4!4-hexafluorocyclobutane-1!3-diyl)(difluoromethylene)],FC1(C(C(C1(F)F)(F)C(F)(F)[*:2])(F)F)[*:1],595.982279,617.5781416,2.121678495
+461,poly(1-butylbut-1-ene-1!4-diyl),C(CCC)C(=CCC[*:2])[*:1],202.0991184,637.8343931,2.097077771
+464,poly[1-isopropylbut-1-ene-1!4-diyl],C(C)(C)C(=CCC[*:2])[*:1],214.280103,623.9027789,2.094668597
+514,poly(2!2!4!5-tetrafluoro-1!3-dioxolane-4!5-diyl),FC1(OC(C(O1)(F)[*:1])(F)[*:2])F,615.9245337,628.3846681,2.091739522
+728,poly[(2!5-diheptyl-1!4-phenylene)hexa-1!3!5-triene-1!6-diyl],C(CCCCCC)C1=C(C=C(C(=C1)C=CC=CC=C[*:2])CCCCCCC)[*:1],283.7138188,675.4578903,2.066078423
+195,poly(1!1-dimethylpropane-1!3-diyl),[*:1]C(C)(C)CC[*:2],189.5849523,576.2583736,2.060270401
+455,poly(pent-1-ene-1!5-diyl),C(=CCCC[*:2])[*:1],176.8557363,650.6671513,2.027028569
+523,poly[(2!3!4!4!5!5-hexafluorotetrahydrofuran-2!3-diyl)(1!1!2!2-tetrafluoroethylene)],FC1(OC(C(C1(F)C(C(F)(F)[*:2])(F)F)(F)F)(F)F)[*:1],517.3421723,609.5499672,2.024483416
+547,poly[(5-chloro-1!2!2!3!4!4!5!6!6-nonafluorocyclohexane-1!3-diyl)(difluoromethylene)],ClC1(C(C(C(C(C1(F)F)(F)[*:1])(F)F)(F)C(F)(F)[*:2])(F)F)F,647.6618544,592.7557564,2.005260819
+194,poly(1-ethyl-1-methylethylene),[*:1]C(C)(CC)C[*:2],304.4365451,587.095818,1.996498778
+197,poly(1!1-dimethylbutane-1!4-diyl),[*:1]C(C)(C)CCC[*:2],190.7148724,584.9791885,1.970563052
+459,poly(hex-1-ene-1!6-diyl),C(=CCCCC[*:2])[*:1],180.0922992,646.8960619,1.941889237
+463,poly(1-heptylbut-1-ene-1!4-diyl),C(CCCCCC)C(=CCC[*:2])[*:1],191.877993,635.2778684,1.939676522
+733,poly{[bis(4-methylphenyl)silanediyl]propane-1!3-diyl},[*:1][Si](c1ccc(C)cc1)(c2ccc(C)cc2)CCC[*:2],356.1112097,671.4578093,1.939351601
+729,poly[(2!5-diheptyl-1!4-phenylene)ethene-1!2-diyl],C(CCCCCC)C1=C(C=C(C(=C1)C=C[*:2])CCCCCCC)[*:1],308.5051485,672.1441298,1.932314136
+470,poly(3-methyloct-1-ene-1!8-diyl)! poly(1-methyl-2-octene-1!8-diyl),CC(C=CCCCCC[*:2])[*:1],197.9424347,631.683574,1.92898096
+515,poly(2!4!5-trifluoro-2-trifluoromethyl-1!3-dioxolane-4!5-diyl),FC1(OC(C(O1)(F)[*:1])(F)[*:2])C(F)(F)F,575.25461,617.8417643,1.919520837
+223,poly(1-methyl-1-propylethylene),[*:1]C(C)(CCC)C[*:2],281.1306426,594.0103847,1.918375911
+525,poly[2!2!4-trifluoro-5-(trifluoromethoxy)-1!3-dioxolane-4!5-diyl],FC1(OC(C(O1)(F)[*:1])(OC(F)(F)F)[*:2])F,528.8932057,614.3601197,1.90725627
+23,Polypropylene,[*:1]C(C)C[*:2],234.1598207,596.9795991,1.874601661
+182,poly(1-methylethylene),[*:1]C(C)C[*:2],234.1598207,596.9795991,1.874601661
+147,Poly(oxymethylmethylene) or polyacetaldehyde,[*:1]OC(C)[*:2],235.3938589,576.9428966,1.871627824
+535,poly[oxy(methylmethylene)],O(C(C)[*:2])[*:1],235.3938589,576.9428966,1.871627824
+743,poly[(diphenylsilanediyl)ethene-1!2-diyl],C1(=CC=CC=C1)[Si](C=C[*:2])(C1=CC=CC=C1)[*:1],350.2702556,701.8903445,1.869517621
+198,poly(1-ethyl-1-methylbutane-1!4-diyl),[*:1]C(C)(CC)CCC[*:2],273.533672,598.9493538,1.862554965
+234,poly[1-(3-methylcyclohexyl)ethylene],[*:1]C(C1CCCC(C)C1)C[*:2],396.8572788,661.9091173,1.860852506
+235,poly[1-(4-methylcyclohexyl)ethylene],[*:1]C(C1CCC(C)CC1)C[*:2],396.8572788,661.9091173,1.860852506
+253,poly[1-(2-methylcyclohexyl)ethylene],[*:1]C(C1CCCCC1(C))C[*:2],396.9678398,663.6073763,1.852226458
+458,poly(oct-1-ene-1!8-diyl),C(=CCCCCCC[*:2])[*:1],184.1357522,642.2339841,1.836548129
+734,poly(diphenylsilanediyl),[*:1][Si](c1ccccc1)(c1ccccc1)[Si](c1ccccc1)(c1ccccc1)[*:2],401.4506236,703.372014,1.823496635
+516,poly(2!4!5-trifluoro-2-pentafluoroethyl-1!3-dioxolane-4!5-diyl),FC1(OC(C(O1)(F)[*:1])(F)[*:2])C(C(F)(F)F)(F)F,536.0768387,611.6198592,1.814813742
+270,poly(1-cyclohexyl-1-methylethylene),[*:1]C(C)(C1CCCCC1)C[*:2],420.9056002,657.0781467,1.805970425
+266,poly(1-isopropyl-1-methylethylene),[*:1]C(C)(C(C)(C))C[*:2],289.3799772,576.5488562,1.796193842
+517,poly(4!5-difluoro-2-pentafluoroethyl-2-trifluoromethyl-1!3-dioxolane-4!5-diyl),FC1(OC(OC1(F)[*:2])(C(F)(F)F)C(C(F)(F)F)(F)F)[*:1],550.4415797,607.5143039,1.7953953
+65,Poly(vinyl butyral),[*:1]C(C1)OC(CCC)OC1C[*:2],334.078012,646.2626046,1.78907541
+231,poly(ethylmethylene),[*:1]C(CC)C(CC)[*:2],224.7385055,613.3069348,1.783635846
+725,poly(3!3'-dimethylbiphenyl-4!4'-diyl),CC=1C=C(C=CC1[*:1])C1=CC(=C(C=C1)[*:2])C,460.7738687,749.3903464,1.777987622
+457,poly(dec-1-ene-1!10-diyl),C(=CCCCCCCCC[*:2])[*:1],186.5606652,639.4639524,1.773891764
+213,poly[1-(1-ethylpropyl)ethylene],[*:1]C(C(CC)CC)C[*:2],238.6200104,613.3406572,1.759275014
+513,poly[2!2-bis(trifluoromethyl)-4!5-difluoro-1!3-dioxolane-4!5-diyl],FC(C1(OC(C(O1)(F)[*:1])(F)[*:2])C(F)(F)F)(F)F,495.9488387,611.6198592,1.753681003
+700,poly[(2-ethyl-1!4-phenylene)ethylene]! poly(2-ethyl-1!4-phenyleneethylene)! poly(2-ethyl-p-phenyleneethylene)! poly(ethyl-p-xylylene),C(C)C1=C(C=CC(=C1)C[*:2])C[*:1],401.4967343,712.6209115,1.74485937
+26,Poly(propylene oxide) or Polypropylene glycol,[*:1]CC(C)O[*:2],226.4200336,581.0478762,1.741509124
+136,Poly(oxy-1-methylethylene),[*:1]OC(C)C[*:2],226.4200336,581.0478762,1.741509124
+183,poly(1-ethylethylene),[*:1]C(CC)C[*:2],217.3530266,613.3678633,1.740840335
+214,poly[1-(2-ethylbutyl)ethylene],[*:1]C(CC(CC)CC)C[*:2],229.2330266,613.365949,1.740840335
+465,poly(cyclopentane-1!3-diylethene-1!2-diyl),C1(CC(CC1)C=C[*:2])[*:1],333.6499979,704.8953486,1.739914292
+250,poly(1-methylbutane-1!4-diyl),[*:1]C(C)CCC[*:2],219.0030947,609.6210407,1.735546518
+467,poly(dodec-1-ene-1!12-diyl),C(=CCCCCCCCCCC[*:2])[*:1],188.1768051,637.6284667,1.732339732
+460,poly[1-(cyclohex-3-enyl)ethylene],C1(CC=CCC1)C(C[*:2])[*:1],375.9358053,693.0503988,1.727394716
+722,poly[(2-butyl-1!4-phenylene)ethylene],C(CCC)C1=C(C=CC(=C1)CC[*:2])[*:1],361.8165064,697.9093246,1.724256569
+548,poly(1!1!2!2-tetrafluoro-3-methylbutane-1!4-diyl),FC(C(C(C[*:2])C)(F)F)(F)[*:1],266.2233475,588.879893,1.698427292
+184,poly(1-propylethylene),[*:1]C(CCC)C[*:2],206.7941918,616.4109149,1.698414219
+713,poly[(2-isopropyl-1!4-phenylene)ethylene]! poly(isopropyl-p-xylylene),C(C)(C)C1=C(C=CC(=C1)C[*:2])C[*:1],384.0776595,694.5094768,1.694714378
+741,poly[(diphenylsilanediyl)methylene],C1(=CC=CC=C1)[Si](C[*:2])(C1=CC=CC=C1)[*:1],368.4075986,695.2458246,1.693694444
+252,poly(butylmethylene),[*:1]C(CCCC)C(CCCC)[*:2],200.6608449,619.4173943,1.682150733
+740,poly[(diphenylsilanediyl)propane-1!3-diyl],C1(=CC=CC=C1)[Si](CCC[*:2])(C1=CC=CC=C1)[*:1],346.7317519,686.8697824,1.67991586
+5,Poly(N-methyl glutarimide),[*:1]CC(C)(C1)C(=O)N(C)C(=O)C1(C)[*:2],589.4913547,651.1620366,1.679796814
+453,poly(2-difluoromethylene-1!1-difluoroethylene),FC(=C(C(F)(F)[*:1])[*:2])F,289.3370261,616.503427,1.677757449
+537,poly[oxy(propylmethylene)],O(C(CCC)[*:2])[*:1],207.689094,603.6350463,1.677240564
+256,poly(1-methylhexane-1!6-diyl),[*:1]C(C)CCCCC[*:2],212.5046619,615.0387757,1.675972213
+212,poly[1-(1-methylpropyl)ethylene],[*:1]C(C(C)CC)C[*:2],229.4550266,605.1420248,1.675852687
+783,poly[1-(2!4!6-trimethylphenyl)ethylene],CC1=C(C(=CC(=C1)C)C)C(C[*:2])[*:1],362.7879983,683.486052,1.670882417
+784,poly[1-(2!4!5-trimethylphenyl)ethylene],CC1=C(C=C(C(=C1)C)C)C(C[*:2])[*:1],362.7879983,683.486052,1.670882417
+970,poly[1-(2!4!6-trimethylphenyl)ethylene],CC1=C(C(=CC(=C1)C)C)C(C[*:2])[*:1],362.7879983,683.486052,1.670882417
+971,poly[1-(2!4!5-trimethylphenyl)ethylene],CC1=C(C=C(C(=C1)C)C)C(C[*:2])[*:1],362.7879983,683.486052,1.670882417
+186,poly(1-butylethylene),[*:1]C(CCCC)C[*:2],199.7556876,618.4396118,1.670039549
+255,poly(1-ethylbutane-1!4-diyl),[*:1]C(CC)CCC[*:2],210.3156876,618.4396118,1.670039549
+215,poly[1-(2-methylbutyl)ethylene],[*:1]C(CC(C)CC)C[*:2],220.0352835,606.3421671,1.666835626
+699,poly[(2-methyl-1!4-phenylene)ethylene],CC1=C(C=CC(=C1)CC[*:2])[*:1],413.9138312,716.1641653,1.660886906
+251,poly(pentylmethylene),[*:1]C(CCCCC)C(CCCCC)[*:2],194.6437047,620.945006,1.656543763
+216,poly[1-(1-methylbutyl)ethylene],[*:1]C(C(C)CCC)C[*:2],220.184124,608.490754,1.654930603
+154,Poly[(2!5-dioctyl-1!4-phenylene)ethynediyl],[*:1]c(c(CCCCCCCC)c1)cc(CCCCCCCC)c1C#C[*:2],307.9657477,680.5996725,1.653525655
+61,Poly(ethyl-p-xylylene),[*:1]Cc(cc1(CC))ccc1C[*:2],315.9607343,712.6209115,1.653160262
+99,Poly(ethyl vinyl ether),[*:1]C(OCC)C[*:2],239.9261733,596.8971873,1.651663387
+188,poly(1-pentylethylene),[*:1]C(CCCCC)C[*:2],194.7285423,619.8886789,1.649727013
+190,poly[1-(3-methylpentyl)ethylene],[*:1]C(CCC(C)CC)C[*:2],213.1020421,609.1222856,1.649521094
+199,poly(1-methyloctane-1!8-diyl) or poly(1-methyloctamethylene),[*:1]C(C)CCCCCCC[*:2],208.8937635,618.0486217,1.642877903
+242,poly(1-cycloheptylethylene),[*:1]C(C1CCCCCC1)C[*:2],384.3299733,672.6163805,1.63476822
+207,poly(1-octene),[*:1]C(CCCCCC)C[*:2],190.9583811,620.9754781,1.634467839
+257,poly(1-ethylhexane-1!6-diyl),[*:1]C(CC)CCCCC[*:2],206.7983811,620.9754781,1.634467839
+191,poly(1-heptylethylene),[*:1]C(CCCCCCC)C[*:2],188.0261516,621.8207657,1.622584821
+258,poly(1-propylhexane-1!6-diyl),[*:1]C(CCC)CCCCC[*:2],202.1061516,621.8207657,1.622584821
+454,poly(1!2!3!4!4-pentafluoro-3-trifluoromethylbut-1-ene-1!4-diyl),FC(=C(C(C(F)(F)[*:2])(C(F)(F)F)F)F)[*:1],347.9533803,602.8130766,1.614721184
+192,poly(1-octylethylene),[*:1]C(CCCCCCCC)C[*:2],185.6804429,622.4969953,1.613069054
+259,poly(1-butylhexane-1!6-diyl),[*:1]C(CCCC)CCCCC[*:2],198.3524429,622.4969953,1.613069054
+94,Polyvinyl ether,[*:1]C(OC)C[*:2],260.4055465,570.3641292,1.6118153
+100,Poly(methyl vinyl ether),[*:1]C(OC)C[*:2],260.4055465,570.3641292,1.6118153
+222,poly[(4-methylcyclohexane-11-diyl)methylene],[*:1]C1(CCC(C)CC1)C[*:2],357.9124792,660.2256308,1.610923722
+229,poly(1-methyldodecane-112-diyl) or poly(1-methyldodecamethylene),[*:1]C(C)CCCCCCCCCCC[*:2],205.0045953,621.2899891,1.607238644
+233,poly(1-nonylethylene) or poly(nonylethylene),[*:1]C(CCCCCCCCC)C[*:2],183.7612764,623.0502739,1.60527722
+208,poly(1-dodecene),[*:1]C(CCCCCCCCCC)C[*:2],182.1620054,623.5113391,1.598779744
+260,poly(1-hexylhexane-1!6-diyl),[*:1]C(CCCCCC)CCCCC[*:2],192.7220054,623.5113391,1.598779744
+232,poly(1-undecylethylene),[*:1]C(CCCCCCCCCCC)C[*:2],180.8088005,623.9014711,1.593278833
+209,poly(1-tetradecene),[*:1]C(CCCCCCCCCCCC)C[*:2],179.6489285,624.2358699,1.588561537
+261,poly(1-octylhexane-1!6-diyl),[*:1]C(CCCCCCCC)CCCCC[*:2],188.7003571,624.2358699,1.588561537
+238,poly(cyclohexane-1!1-diylmethylene) or poly(1-cyclohexanylidenemethylene),[*:1]C1(CCCCC1)C[*:2],383.1165231,678.6714977,1.585601731
+230,poly(1-tridecylethylene),[*:1]C(CCCCCCCCCCCCC)C[*:2],178.6437195,624.5256821,1.584471548
+239,poly(cyclohexane-1!1-diylethylene),[*:1]C1(CCCCC1)CC[*:2],359.6844209,672.2958069,1.584244094
+240,poly(cyclohexane-1!1-diylpropane-1!3-diyl),[*:1]C1(CCCCC1)CCC[*:2],341.4754756,667.3599478,1.581894255
+262,poly(1-decylhexane-1!6-diyl),[*:1]C(CCCCCCCCCC)CCCCC[*:2],185.6841718,624.7792677,1.580891535
+210,poly(1-octadecene),[*:1]C(CCCCCCCCCCCCCCCC)C[*:2],176.2982803,625.2019102,1.574922205
+263,poly(1-dodecylhexane-1!6-diyl),[*:1]C(CCCCCCCCCCCC)CCCCC[*:2],183.3382803,625.2019102,1.574922205
+19,Poly(vinylidene fluoride),[*:1]C(F)(F)C[*:2],260.8656968,588.0933174,1.570816087
+264,poly(1-tetradecylhexane-1!6-diyl),[*:1]C(CCCCCCCCCCCCCC)CCCCC[*:2],181.4615863,625.5400241,1.570144359
+265,poly[1-octadecylethylene],[*:1]C(CCCCCCCCCCCCCCCCCC)C[*:2],175.1255863,625.5400241,1.570144359
+187,poly[1-(2-methylpropyl)ethylene] or poly(1-isobutylethylene) or poly(isobutylethylene),[*:1]C(CC(C)C)C[*:2],207.7598207,596.9771149,1.568937967
+227,poly(1-icosylethylene),[*:1]C(CCCCCCCCCCCCCCCCCCCC)C[*:2],174.1661221,625.8166628,1.566233633
+189,poly[1-(3-methylbutyl)ethylene] or poly(1-isopentylethylene)or poly(isopentylethylene),[*:1]C(CCC(C)C)C[*:2],201.5934666,601.4922639,1.5629312
+87,Poly(1-methylpyrrole-2!5-diyl),[*:1]c(n1(C))ccc1[*:2],580.7463967,723.6671168,1.560732488
+185,poly(1-isopropylethylene) or poly(isopropylethylene),[*:1]C(C(C)C)C[*:2],216.6076079,593.6639231,1.560103656
+332,poly{1-[(1!1-diethylpropoxy)carbonyl]-1-methylethylene},C(C)C(CC)(OC(=O)C(C[*:2])(C)[*:1])CC,318.5004625,612.330912,1.559828662
+211,poly(6-methyl-1-heptene),[*:1]C(CCCC(C)C)C[*:2],196.9679269,604.8786222,1.558434436
+268,poly[1-(1!5-dimethylhexyl)ethylene],[*:1]C(C(C)CCCC(C)C)C[*:2],208.3014467,601.6409798,1.556269715
+267,poly[1-(4-methylpentyl)butane-1!4-diyl],[*:1]C(CCCC(C)C)CCC[*:2],196.8270947,609.6195186,1.552148301
+781,poly[1-(3!5-dimethylphenyl)ethylene],CC=1C=C(C=C(C1)C)C(C[*:2])[*:1],368.3157292,696.6428389,1.550699199
+968,poly[1-(3!5-dimethylphenyl)ethylene],CC=1C=C(C=C(C1)C)C(C[*:2])[*:1],368.3157292,696.6428389,1.550699199
+221,poly[1-(3-cyclohexylpropyl)ethylene],[*:1]C(CCCC1CCCCC1)C[*:2],318.3023749,663.1188494,1.543791732
+220,poly[1-(2-cyclohexylethyl)ethylene] or poly(2-cyclohexylethylethylene),[*:1]C(CCC1CCCCC1)C[*:2],333.7066446,666.6228308,1.542974829
+205,poly(allylcyclohexane),[*:1]C(CC1CCCCC1)C[*:2],352.5425409,670.9181215,1.54129856
+776,poly[1-(2!4-dimethylphenyl)ethylene],CC1=C(C=CC(=C1)C)C(C[*:2])[*:1],368.508929,697.2099216,1.536872818
+778,poly[1-(2!5-dimethylphenyl)ethylene],CC1=C(C=C(C=C1)C)C(C[*:2])[*:1],368.508929,697.2099216,1.536872818
+782,poly[1-(3!4-dimethylphenyl)ethylene],CC=1C=C(C=CC1C)C(C[*:2])[*:1],368.508929,697.2099216,1.536872818
+963,poly[1-(2!4-dimethylphenyl)ethylene],CC1=C(C=CC(=C1)C)C(C[*:2])[*:1],368.508929,697.2099216,1.536872818
+965,poly[1-(2!5-dimethylphenyl)ethylene],CC1=C(C=C(C=C1)C)C(C[*:2])[*:1],368.508929,697.2099216,1.536872818
+969,poly[1-(3!4-dimethylphenyl)ethylene],CC=1C=C(C=CC1C)C(C[*:2])[*:1],368.508929,697.2099216,1.536872818
+204,poly(1-cyclohexylethylene) or poly(cyclohexylethylene) or poly(vinylcyclohexane),[*:1]C(C1CCCCC1)C[*:2],376.2213585,678.2213237,1.528713425
+16,Polyethylene,[*:1]CC[*:2],196.2521136,628.5908925,1.527047757
+84,Poly(1-methylidene-2-phenyl-ethylene),[*:1]C(=C)C(c1ccccc1)[*:2],390.7425449,734.4410863,1.522657933
+218,poly[1-(2!2-dimethylbutyl)ethylene],[*:1]C(CC(C)(C)CC)C[*:2],202.6589008,588.2706577,1.506976036
+773,poly[1-(4-nonadecylphenyl)ethylene],C(CCCCCCCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],234.5369309,657.9274079,1.500451077
+960,poly[1-(4-nonadecylphenyl)ethylene],C(CCCCCCCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],234.5369309,657.9274079,1.500451077
+772,poly[1-(4-octadecylphenyl)ethylene],C(CCCCCCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],237.2347189,659.0815746,1.498883033
+959,poly[1-(4-octadecylphenyl)ethylene],C(CCCCCCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],237.2347189,659.0815746,1.498883033
+247,poly(cyclohexane-1!2-diyl),[*:1]C1CCCCC1[*:2],536.947623,697.7420669,1.496431983
+771,poly[1-(4-hexadecylphenyl)ethylene],C(CCCCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],243.3067185,661.6855359,1.495195635
+958,poly[1-(4-hexadecylphenyl)ethylene],C(CCCCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],243.3067185,661.6855359,1.495195635
+770,poly[1-(4-tetradecylphenyl)ethylene],C(CCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],250.4862957,664.7756573,1.490548851
+957,poly[1-(4-tetradecylphenyl)ethylene],C(CCCCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],250.4862957,664.7756573,1.490548851
+90,Poly(34-dioctylthiophene-25-diyl),[*:1]c(s1)c(CCCCCCCC)c(CCCCCCCC)c1[*:2],292.9103194,658.1903175,1.485586434
+769,poly[1-(4-dodecylphenyl)ethylene],C(CCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],259.1070026,668.5021065,1.484550319
+956,poly[1-(4-dodecylphenyl)ethylene],C(CCCCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],259.1070026,668.5021065,1.484550319
+768,poly[1-(4-decylphenyl)ethylene],C(CCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],269.6513273,673.0839954,1.476576066
+955,poly[1-(4-decylphenyl)ethylene],C(CCCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],269.6513273,673.0839954,1.476576066
+115,Poly(1!4-phenylene-1!2-diyl) or poly(1!4-phenylenevinylene),[*:1]c(cc1)ccc1C=C[*:2],415.6394903,761.4685439,1.476186976
+712,poly(1!4-phenyleneethene-1!2-diyl),C1(=CC=C(C=C1)C=C[*:2])[*:1],415.6394903,761.4685439,1.476186976
+254,poly[1-(4-tert-butylcyclohexyl)ethylene],[*:1]C(C1CCC(C(C)(C)(C))CC1)C[*:2],314.7301572,631.7266655,1.476159694
+520,poly[oxy(difluoromethylene)],O(C(F)(F)[*:2])[*:1],262.033235,583.7639549,1.47559697
+767,poly[1-(4-nonylphenyl)ethylene],C(CCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],275.8580251,675.7933843,1.471546411
+954,poly[1-(4-nonylphenyl)ethylene],C(CCCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],275.8580251,675.7933843,1.471546411
+766,poly[1-(4-octylphenyl)ethylene],C(CCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],282.8443164,678.8540781,1.465580547
+953,poly[1-(4-octylphenyl)ethylene],C(CCCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],282.8443164,678.8540781,1.465580547
+532,poly{[2-(4-methylphenyl)-1!3-dioxane-4!6-diyl]methylene},CC1=CC=C(C=C1)C1OC(CC(O1)[*:1])C[*:2],407.2346413,699.4605593,1.460768762
+789,poly[1-(4-heptylphenyl)ethylene],C(CCCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],290.7670132,682.3391398,1.458416911
+786,poly[1-(4-isopropylphenyl)-1-methylethylene],C(C)(C)C1=CC=C(C=C1)C(C[*:2])(C)[*:1],356.364768,675.7074704,1.454439444
+973,poly[1-(4-isopropylphenyl)-1-methylethylene],C(C)(C)C1=CC=C(C=C1)C(C[*:2])(C)[*:1],356.364768,675.7074704,1.454439444
+531,poly{[2-(2-methylphenyl)-1!3-dioxane-4!6-diyl]methylene},CC1=C(C=CC=C1)C1OC(CC(O1)[*:1])C[*:2],407.3836006,699.8546064,1.449992285
+522,poly[oxy(difluoromethylene)oxy(tetrafluoroethylene)],O(C(OC(C(F)(F)[*:2])(F)F)(F)F)[*:1],268.1229341,584.7837239,1.449811413
+765,poly[1-(4-hexylphenyl)ethylene],C(CCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],299.8280383,686.3434023,1.449693184
+952,poly[1-(4-hexylphenyl)ethylene],C(CCCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],299.8280383,686.3434023,1.449693184
+763,poly{1-[4-(1-methylpropyl)phenyl]ethylene}! poly[1-(4-sec-butylphenyl)ethylene],C(C)(CC)C1=CC=C(C=C1)C(C[*:2])[*:1],337.150519,690.2560748,1.447805847
+950,poly{1-[4-(1-methylpropyl)phenyl]ethylene}! poly[1-(4-sec-butylphenyl)ethylene],C(C)(CC)C1=CC=C(C=C1)C(C[*:2])[*:1],337.150519,690.2560748,1.447805847
+673,poly(6-undecylnaphthalene-1!4-diylethene-1!2-diyl),C(CCCCCCCCCC)C=1C=C2C(=CC=C(C2=CC1)[*:1])C=C[*:2],290.6074472,705.5156642,1.443504154
+328,poly[1-(sec-butoxycarbonyl)-1-methylethylene]! poly{1-[(1-methylpropoxy)carbonyl]-1-methylethylene},CC(CC)OC(=O)C(C[*:2])(C)[*:1],334.6656906,611.2491325,1.442225308
+788,poly[1-(4-pentylphenyl)ethylene],C(CCCC)C1=CC=C(C=C1)C(C[*:2])[*:1],310.2919203,690.9922287,1.438895065
+511,poly[oxy(1!1!2!2-tetrafluoroethylene)],O(C(C(F)(F)[*:2])(F)F)[*:1],271.6045269,585.3656849,1.435570135
+331,poly{1-[(2-ethylbutoxy)carbonyl]-1-methylethylene},C(C)C(COC(=O)C(C[*:2])(C)[*:1])CC,306.6772186,614.0481703,1.430124793
+135,Poly(oxybutane-14-diyl),[*:1]COCCC[*:2],198.5289316,602.0001676,1.429425678
+761,poly[1-(4-butylphenyl)ethylene],C(CCC)C1=CC=C(C=C1)C(C[*:2])[*:1],322.5121265,696.454874,1.425271522
+948,poly[1-(4-butylphenyl)ethylene],C(CCC)C1=CC=C(C=C1)C(C[*:2])[*:1],322.5121265,696.454874,1.425271522
+88,Poly(3-octylpyrrole-2!5-diyl),[*:1]C(N1)=C(CCCCCCCC)C=C1[*:2],358.9358537,686.1758087,1.424026234
+203,poly(1-cyclopentylmethylethylene) or poly[(cyclopentylmethyl)ethylene],[*:1]C(CC1CCCC1)C[*:2],340.4608826,676.3068956,1.423497244
+518,poly{oxy[1!1!2-trifluoro-2-(trifluoromethyl)ethylene]},O(C(C(C(F)(F)F)(F)[*:2])(F)F)[*:1],351.4677825,586.0024917,1.420302046
+519,poly[oxy(1!1!2!2!3!3-hexafluoropropane-1!3-diyl)],O(C(C(C(F)(F)[*:2])(F)F)(F)F)[*:1],275.4357825,586.0024917,1.420302046
+521,poly{oxy[bis(trifluoromethyl)methylene]},O(C(C(F)(F)F)(C(F)(F)F)[*:2])[*:1],307.1157825,586.0024917,1.420302046
+241,poly(1-cyclopentylpropane-1!3-diyl),[*:1]C(C1CCCC1)CC[*:2],344.5413585,678.2213237,1.414089539
+316,poly{1-[(allyloxy)carbonyl]ethylene}! poly{1-[(prop-2-enyloxy)carbonyl]ethylene},C(C=C)OC(=O)C(C[*:2])[*:1],348.1169055,639.5666072,1.413945942
+512,poly[oxy(1!1!2!2!3!3!4!4-octafluorobutane-1!4-diyl)],O(C(C(C(C(F)(F)[*:2])(F)F)(F)F)(F)F)[*:1],277.4994251,586.3444744,1.412248142
+315,poly{1-[(octadecyloxy)carbonyl]ethylene},C(CCCCCCCCCCCCCCCCC)OC(=O)C(C[*:2])[*:1],209.6303054,629.3051095,1.411817102
+777,poly[1-(2!4-diisopropylphenyl)ethylene]! poly[1-(2!4-diisopropylphenyl)ethylene],C(C)(C)C1=C(C=CC(=C1)C(C)C)C(C[*:2])[*:1],307.7257974,669.2263863,1.401669692
+780,poly[1-(2!5-diisopropylphenyl)ethylene]! poly[1-(2!5-diisopropylphenyl)ethylene],C(C)(C)C1=C(C=C(C=C1)C(C)C)C(C[*:2])[*:1],307.7257974,669.2263863,1.401669692
+964,poly[1-(2!4-diisopropylphenyl)ethylene]! poly[1-(2!4-diisopropylphenyl)ethylene],C(C)(C)C1=C(C=CC(=C1)C(C)C)C(C[*:2])[*:1],307.7257974,669.2263863,1.401669692
+967,poly[1-(2!5-diisopropylphenyl)ethylene]! poly[1-(2!5-diisopropylphenyl)ethylene],C(C)(C)C1=C(C=C(C=C1)C(C)C)C(C[*:2])[*:1],307.7257974,669.2263863,1.401669692
+314,poly{1-[(hexadecyloxy)carbonyl]ethylene},C(CCCCCCCCCCCCCCC)OC(=O)C(C[*:2])[*:1],213.9368088,629.3734266,1.399651968
+274,poly{1-[(doccosyloxy)carbonyl]-1-methylethylene},[*:1]C(C(=O)OCCCCCCCCCCCCCCCCCCCCCC)C[*:2],198.2434527,629.1986834,1.396346139
+34,Poly(vinyl fluoride),[*:1]C(F)C[*:2],284.4139696,598.2987995,1.394526064
+95,Polyvinyl halide 1,[*:1]C(F)C[*:2],284.4139696,598.2987995,1.394526064
+764,poly{1-[4-(2-methylpropyl)phenyl]ethylene},CC(CC1=CC=C(C=C1)C(C[*:2])[*:1])C,326.3920459,685.1833096,1.390983675
+951,poly{1-[4-(2-methylpropyl)phenyl]ethylene},CC(CC1=CC=C(C=C1)C(C[*:2])[*:1])C,326.3920459,685.1833096,1.390983675
+202,poly(1-cyclopentylethylene) or poly(cyclopentylethylene,[*:1]C(C1CCCC1)C[*:2],365.8186411,685.4612761,1.390542388
+226,poly(cyclopentane-12-diylethylene),[*:1]C1CCCC1CC[*:2],347.7157839,685.4612761,1.390542388
+85,Poly[1-(phenylmethylidene)ethylene] or poly(1-benzylideneethylene),[*:1]C(=Cc1ccccc1)C[*:2],377.2158332,741.4397079,1.386555108
+25,Polytetrafluoroethylene,[*:1]C(F)(F)C(F)(F)[*:2],284.3816102,587.481883,1.386214341
+43,Polychloroprene,[*:1]CC=C(Cl)C[*:2],240.4927699,577.3379393,1.385714367
+58,Polychloroprene (Neoprene),[*:1]CC(Cl)=CC[*:2],240.4927699,577.3379393,1.385714367
+672,poly(6-hexylnaphthalene-1!4-diylethene-1!2-diyl),C(CCCCC)C=1C=C2C(=CC=C(C2=CC1)[*:1])C=C[*:2],326.0342973,728.3450646,1.385147437
+313,poly{1-[(tetradecyloxy)carbonyl]ethylene},C(CCCCCCCCCCCCC)OC(=O)C(C[*:2])[*:1],219.1537023,629.4560222,1.3846289
+756,poly[1-(3-ethylphenyl)ethylene],C(C)C=1C=C(C=CC1)C(C[*:2])[*:1],354.3501416,710.8578149,1.384364785
+759,poly[1-(4-ethylphenyl)ethylene],C(C)C1=CC=C(C=C1)C(C[*:2])[*:1],354.3501416,710.8578149,1.384364785
+943,poly[1-(3-ethylphenyl)ethylene],C(C)C=1C=C(C=CC1)C(C[*:2])[*:1],354.3501416,710.8578149,1.384364785
+946,poly[1-(4-ethylphenyl)ethylene],C(C)C1=CC=C(C=C1)C(C[*:2])[*:1],354.3501416,710.8578149,1.384364785
+779,poly{1-[3-(1!1-dimethylethyl)-6-methylphenyl]ethylene}! poly[1-(5-tert-butyl-2-methylphenyl)ethylene],C(C)(C)(C)C=1C=CC(=C(C1)C(C[*:2])[*:1])C,308.4563169,662.6656839,1.373156926
+966,poly{1-[3-(1!1-dimethylethyl)-6-methylphenyl]ethylene}! poly[1-(5-tert-butyl-2-methylphenyl)ethylene],C(C)(C)(C)C=1C=CC(=C(C1)C(C[*:2])[*:1])C,308.4563169,662.6656839,1.373156926
+754,poly[1-(2-ethylphenyl)ethylene],C(C)C1=C(C=CC=C1)C(C[*:2])[*:1],354.5411733,711.4248976,1.370585616
+941,poly[1-(2-ethylphenyl)ethylene],C(C)C1=C(C=CC=C1)C(C[*:2])[*:1],354.5411733,711.4248976,1.370585616
+684,poly[1!1-difluoro-2!2-bis(trifluoromethoxy)ethylene],FC(C(OC(F)(F)F)(OC(F)(F)F)[*:2])(F)[*:1],303.2845269,585.3648019,1.370070772
+760,poly[1-(4-isopropylphenyl)ethylene],C(C)(C)C1=CC=C(C=C1)C(C[*:2])[*:1],341.2013545,692.9155067,1.368496687
+947,poly[1-(4-isopropylphenyl)ethylene],C(C)(C)C1=CC=C(C=C1)C(C[*:2])[*:1],341.2013545,692.9155067,1.368496687
+206,poly(hexa-1!5-diene),[*:1]C(C1)CCC1C[*:2],372.9511988,692.6055773,1.368069693
+312,poly{1-[(dodecyloxy)carbonyl]ethylene},C(CCCCCCCCCCC)OC(=O)C(C[*:2])[*:1],225.603881,629.5578948,1.365612699
+755,poly[1-(3-methylphenyl)ethylene],CC=1C=C(C=CC1)C(C[*:2])[*:1],375.6272885,714.1917921,1.360534787
+758,poly[1-(4-methylphenyl)ethylene],CC1=CC=C(C=C1)C(C[*:2])[*:1],375.6272885,714.1917921,1.360534787
+942,poly[1-(3-methylphenyl)ethylene],CC=1C=C(C=CC1)C(C[*:2])[*:1],375.6272885,714.1917921,1.360534787
+945,poly[1-(4-methylphenyl)ethylene],CC1=CC=C(C=C1)C(C[*:2])[*:1],375.6272885,714.1917921,1.360534787
+682,poly[1!1!2-trifluoro-2-(nonafluorobutoxy)ethylene],FC(C(OC(C(C(C(F)(F)F)(F)F)(F)F)(F)F)(F)[*:2])(F)[*:1],364.7079725,586.7037683,1.355631029
+686,poly{1-[1!2!2!2-tetrafluoro-1-(trifluoromethyl)ethoxy]-1!2!2-trifluoroethylene},FC(C(F)(F)F)(OC(C(F)(F)[*:2])(F)[*:1])C(F)(F)F,361.9494377,586.5578901,1.349960662
+687,poly[1!1!2-trifluoro-2-(1!1!2!2!3!3!3-heptafluoropropoxy)ethylene],FC(C(OC(C(C(F)(F)F)(F)F)(F)F)(F)[*:2])(F)[*:1],361.9494377,586.5578901,1.349960662
+18,Polyoxyethylene,[*:1]COC[*:2],200.3648342,585.07483,1.349352716
+20,Polyethylene glycol,[*:1]OCC[*:2],200.3648342,585.07483,1.349352716
+330,poly{1-[(hexyloxy)carbonyl]-1-methylethylene},C(CCCCC)OC(=O)C(C[*:2])(C)[*:1],281.2530939,619.0632508,1.347398611
+753,poly[1-(2-methylphenyl)ethylene],CC1=C(C=CC=C1)C(C[*:2])[*:1],375.8444319,714.8261866,1.34471062
+940,poly[1-(2-methylphenyl)ethylene],CC1=C(C=CC=C1)C(C[*:2])[*:1],375.8444319,714.8261866,1.34471062
+539,poly[1!2!2-trifluoro-1-(undecafluoropentyl)ethylene],FC(C(F)(F)[*:2])(C(C(C(C(C(F)(F)F)(F)F)(F)F)(F)F)(F)F)[*:1],368.8616102,587.4804145,1.342548099
+683,poly[1!1!2-trifluoro-2-(pentafluoroethoxy)ethylene],FC(C(OC(C(F)(F)F)(F)F)(F)[*:2])(F)[*:1],357.9178866,586.3444744,1.341710366
+219,poly[1-(4!4-dimethylpentyl)ethylene] or poly(4!4-dimethylpentylethylene),[*:1]C(CCCC(C)(C)C)C[*:2],169.8352864,586.7290352,1.340113711
+290,poly{1-[(tetradecyloxy)carbonyl]ethylene},[*:1]C(COOCCCCCCCCCCCCCC)C[*:2],196.1201315,615.3874982,1.329116069
+694,poly[1!4-phenylene(methylmethylene)],C1(=CC=C(C=C1)C(C)[*:2])[*:1],441.6336406,731.680969,1.326880059
+543,poly[1!1!2!2!3!3!4-heptafluoro-4-(trifluoromethyl)butane-1!4-diyl],FC(C(C(C(C(F)(F)F)(F)[*:2])(F)F)(F)F)(F)[*:1],326.6216102,587.4806495,1.325081602
+762,poly[1-(4-tert-butylphenyl)ethylene]! poly{1-[4-(1!1-dimethylethyl)phenyl]ethylene},CC(C)(C)C1=CC=C(C=C1)C(C[*:2])[*:1],319.1733301,672.1646696,1.321614151
+949,poly[1-(4-tert-butylphenyl)ethylene]! poly{1-[4-(1!1-dimethylethyl)phenyl]ethylene},CC(C)(C)C1=CC=C(C=C1)C(C[*:2])[*:1],319.1733301,672.1646696,1.321614151
+236,poly[1-(3!3-dimethylbutyl)ethylene],[*:1]C(CCC(C)(C)C)C[*:2],170.4810451,581.4972676,1.317294389
+311,poly{1-[(octyloxy)carbonyl]ethylene},C(CCCCCCC)OC(=O)C(C[*:2])[*:1],244.4961312,629.8546843,1.307003224
+327,poly[1-(butoxycarbonyl)-1-methylethylene],C(CCC)OC(=O)C(C[*:2])(C)[*:1],304.7036527,617.1853195,1.304759433
+289,poly{1-[(dodecyloxy)carbonyl]ethylene},[*:1]C(COOCCCCCCCCCCCC)C[*:2],199.8557516,613.8604489,1.303940231
+329,poly[1-(tert-butoxycarbonyl)-1-methylethylene]! poly{1-[(1!1-dimethylethoxy)carbonyl]-1-methylethylene},CC(C)(OC(=O)C(C[*:2])(C)[*:1])C,312.9702432,591.4880625,1.303688261
+269,poly(cyclopentane-1!3-diyl),[*:1]C(C1)CCC1[*:2],554.4752511,708.8864605,1.300230435
+24,Polytrifluoroethylene,[*:1]C(F)(F)C(F)[*:2],302.8283953,588.1835296,1.297867306
+530,poly[(2-phenyl-1!3-dioxane-4!6-diyl)methylene],C1(=CC=CC=C1)C1OC(CC(O1)[*:1])C[*:2],415.6386824,711.4528083,1.291507591
+217,poly[1-(2!2-dimethylpropyl)ethylene],[*:1]C(CC(C)(C)C)C[*:2],171.3069997,574.7707039,1.288155138
+742,poly(diphenylsilanediyl-1!3-butadiyne-1!4-diyl),C1(=CC=CC=C1)[Si](C#CC#C[*:2])(C1=CC=CC=C1)[*:1],374.8507574,735.8468612,1.285218085
+310,poly{1-[(heptyloxy)carbonyl]ethylene},C(CCCCCC)OC(=O)C(C[*:2])[*:1],251.2011603,629.9594442,1.285118266
+538,poly[1!1!2-trifluoro-2-(trifluoromethyl)ethylene],FC(C(C(F)(F)F)(F)[*:2])(F)[*:1],354.7816102,587.4811977,1.284326443
+685,poly[1!1!2-trifluoro-2-(trifluoromethyl)ethylene],FC(C(C(F)(F)F)(F)[*:2])(F)[*:1],354.7816102,587.4811977,1.284326443
+785,poly(1-methyl-1-phenylethylene),CC(C[*:2])(C1=CC=CC=C1)[*:1],399.9867136,707.9625851,1.281647445
+972,poly(1-methyl-1-phenylethylene),CC(C[*:2])(C1=CC=CC=C1)[*:1],399.9867136,707.9625851,1.281647445
+936,poly(1-phenylmethylethylene)! poly(1-benzylethylene),C(C1=CC=CC=C1)C(C[*:2])[*:1],374.2491612,720.8127234,1.281601543
+724,poly(1!4-phenylenebutane-1!4-diyl),C1(=CC=C(C=C1)CCCC[*:2])[*:1],380.9790828,714.7699035,1.278306856
+91,Poly(vinyl formal),[*:1]C(C1)OCOC1C[*:2],387.8399252,652.5150166,1.276299684
+325,poly[1-methyl-1-(propoxycarbonyl)ethylene],CC(C[*:2])(C(=O)OCCC)[*:1],320.3612276,615.9381121,1.274909463
+709,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':4''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)tetradecane-1!14-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC=C(C=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCCCCCCCCCCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],429.8726022,755.6448299,1.268823112
+710,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':3''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)tetradecane-1!14-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC(=CC=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCCCCCCCCCCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],428.2886022,755.6448299,1.268823112
+938,poly[1-(1-phenylethyl)ethylene],C1(=CC=CC=C1)C(C)C(C[*:2])[*:1],357.964466,705.1083643,1.261143306
+309,poly{1-[(hexyloxy)carbonyl]ethylene},C(CCCCC)OC(=O)C(C[*:2])[*:1],259.1351026,630.0830145,1.258459018
+677,poly[(3!3!5!5-tetramethylspiro[cyclohexane-1!9'-fluorene]-2'!7'-diyl)(9!9-dioctylfluorene-2!7-diyl)],CC1(CC2(C3=CC(=CC=C3C=3C=CC(=CC23)[*:1])C2=CC=3C(C4=CC(=CC=C4C3C=C2)[*:2])(CCCCCCCC)CCCCCCCC)CC(C1)(C)C)C,558.6605587,714.247265,1.256439754
+116,Poly(furan-2!5-diylethene-12-diyl) or poly(furan-2!5-diylvinylene),[*:1]c(o1)ccc1C=C[*:2],393.6612826,748.3199005,1.251643378
+326,poly{1-[(1-methylethoxy)carbonyl]-1-methylethylene}! poly[1-(isopropoxycarbonyl)-1-methylethylene],C(C)(C)OC(=O)C(C[*:2])(C)[*:1],325.2256591,605.6374272,1.24966858
+75,Poly[(2-methyl-1!4-phenylene)-ethylene-12-diyl],[*:1]c(c(C)c1)ccc1C#C[*:2],449.3021979,772.3174902,1.240233401
+307,poly{1-[(1-methylpropoxy)carbonyl]ethylene}! poly[1-(sec-butoxycarbonyl)ethylene],C(C)(CC)OC(=O)C(C[*:2])[*:1],299.5295698,623.8255255,1.238268479
+50,Perfluoropolymer1,[*:1]C(F)(C(F)(F)(F))OC(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)OC(F)(C(F)(F)(F))c(n1)nc(C(F)(F)(F))nc1[*:2],355.3244153,609.5764118,1.236345614
+324,poly[1-(ethoxycarbonyl)-1-methylethylene],C(C)OC(=O)C(C[*:2])(C)[*:1],339.9613583,614.3844128,1.235906059
+708,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':4''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)decane-1!10-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC=C(C=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCCCCCCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],442.38927,762.9396694,1.235598518
+718,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':3''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)decane-1!10-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC(=CC=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCCCCCCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],440.7219016,762.9396694,1.235598518
+937,poly(1-phenethylethylene),C(CC1=CC=CC=C1)C(C[*:2])[*:1],340.3747687,711.0267884,1.234744558
+288,poly{1-[(octyloxy)carbonyl]ethylene},[*:1]C(COOCCCCCCCC)C[*:2],210.8070386,609.426737,1.227819088
+15,Polyoxymethylene,[*:1]CO[*:2],203.1452131,564.7552179,1.225824559
+534,poly(oxymethylene),O(C[*:2])[*:1],203.1452131,564.7552179,1.225824559
+228,poly(1-tetradecylethylene) or poly(tetradecylethylene),[*:1]C(C(C)(C)C)C[*:2],172.7082795,569.8029114,1.225345471
+66,Poly(cyclohexyl methacrylate),[*:1]C(C)(C(=O)O(C1CCCCC1))C[*:2],405.1707818,658.1684307,1.215902771
+299,poly(1-[(heptyloxy)carbonyl]-1-{[(heptyloxy)carbonyl]methyl}ethylene),C(CCCCCC)OC(=O)C(C[*:2])(CC(=O)OCCCCCCC)[*:1],256.1732886,628.2476183,1.21041405
+74,Poly(oct-1-yne-1!8-diyl),[*:1]C#CCCCCCC[*:2],234.6322006,674.6283807,1.203376108
+201,poly(1-cyclobutylethylene),[*:1]C(C1CCC1)C[*:2],351.9899567,695.1738221,1.202965185
+276,poly(1-[(heptyloxy)carbonyl]-1-{[(heptyloxy)carbonyl]methyl}ethylene),[*:1]C(COOCCCCCCC)(CCOOCCCCCCC)C[*:2],229.095683,605.650099,1.200646655
+676,poly[(4-tert-butylspiro[cyclohexane-1!9'-fluorene]-2'!7'-diyl)(9!9-dioctylfluorene-2!7-diyl)],C(C)(C)(C)C1CCC2(C3=CC(=CC=C3C=3C=CC(=CC23)[*:1])C2=CC=3C(C4=CC(=CC=C4C3C=C2)[*:2])(CCCCCCCC)CCCCCCCC)CC1,538.6161087,717.7813293,1.200576943
+287,poly{1-[(heptyloxy)carbonyl]ethylene},[*:1]C(COOCCCCCCC)C[*:2],214.6974035,607.8670833,1.199915556
+706,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':4''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)hexane-1!6-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC=C(C=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],456.3310698,771.1231461,1.195499393
+707,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':3''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)hexane-1!6-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC(=CC=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],454.5710698,771.1231461,1.195499393
+308,poly[1-(tert-butoxycarbonyl)ethylene]! poly{1-[(1!1-dimethylethoxy)carbonyl]ethylene},CC(C)(OC(=O)C(C[*:2])[*:1])C,289.5140863,601.902081,1.188753395
+321,poly{1-[(3-ethoxypropoxy)carbonyl]ethylene},C(C)OCCCOC(=O)C(C[*:2])[*:1],275.0408901,617.946714,1.184210065
+305,poly[1-(butoxycarbonyl)ethylene],C(CCC)OC(=O)C(C[*:2])[*:1],280.3464387,630.4112857,1.182943998
+704,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':4''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)butane-1!4-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC=C(C=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],463.9152898,775.6004601,1.172258264
+705,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':3''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)butane-1!4-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC(=CC=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],462.1050041,775.6004601,1.172258264
+286,poly{1-[(hexyloxy)carbonyl]ethylene},[*:1]C(COOCCCCCC)C[*:2],219.3033701,606.0309543,1.166272466
+60,Poly(p-xylylene) (Parylene),[*:1]Cc(cc1)ccc1C[*:2],336.6905763,737.9861004,1.163433466
+697,poly(1!4-phenyleneethylene)! poly(p-phenyleneethylene),C1(=CC=C(C=C1)CC[*:2])[*:1],427.7705763,737.9861004,1.163433466
+698,poly(1!3-phenyleneethylene)! poly(m-xylylene),C1(=CC(=CC=C1)C[*:2])C[*:1],352.5305763,737.9861004,1.163433466
+702,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':4''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)propane-1!3-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC=C(C=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],467.8768355,777.9462774,1.159705526
+703,poly[(2'!2'''!3'!3'''!5'''!6'-hexaphenyl[1!1':4'!1'':3''!1''':4'''!1''''-quinquephenyl]-4!4''''-diyl)propane-1!3-diyl],C1(=CC=CC=C1)C1=C(C(=CC(=C1C1=CC=CC=C1)C1=CC(=CC=C1)C1=C(C(=C(C(=C1)C1=CC=CC=C1)C1=CC=C(C=C1)CCC[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:1],466.0403138,777.9462774,1.159705526
+51,Perfluoropolymer2,[*:1]C(F)(F)C(F)(F)C(F)(F)C(F)(F)c(n1)nc(C(F)(F)C(F)(F)OC(F)(F)(F))nc1[*:2],361.7219272,620.4146564,1.158329171
+592,poly[(6-heptafluoropropyl-1!3!5-triazine-2!4-diyl)(1!1!2!2!3!3!4!4!5!5!6!6-dodecafluorohexane-1!6-diyl)],FC(C(C1=NC(=NC(=N1)[*:1])C(C(C(C(C(C(F)(F)[*:2])(F)F)(F)F)(F)F)(F)F)(F)F)(F)F)(C(F)(F)F)F,345.5743189,615.8055876,1.153297903
+691,poly[1!3-phenylene(1!1!2!2!3!3-hexafluoropropane-1!3-diyl)],C1(=CC(=CC=C1)C(C(C(F)(F)[*:2])(F)F)(F)F)[*:1],334.3715988,654.0525939,1.149512526
+791,poly[1-(4'-methylbiphenyl-4-yl)ethylene],CC1=CC=C(C=C1)C1=CC=C(C=C1)C(C[*:2])[*:1],395.9373541,742.0760289,1.145115431
+306,poly{1-[(2-methylpropoxy)carbonyl]ethylene}! poly[1-(isobutoxycarbonyl)ethylene],C(C(C)C)OC(=O)C(C[*:2])[*:1],285.5781069,616.3200151,1.13951809
+319,poly{1-[(2-ethoxyethoxy)carbonyl]ethylene},C(C)OCCOC(=O)C(C[*:2])[*:1],286.2464681,616.9120328,1.138484373
+533,poly{[2-(furan-2-yl)-1!3-dioxane-4!6-diyl]methylene},O1C(=CC=C1)C1OC(CC(O1)[*:1])C[*:2],413.5626981,700.1620548,1.129495777
+275,poly{1-[(cyclohexyloxy)carbonyl]-1-ethoxyethylene},[*:1]C(OCC)(C(=O)OC1CCCCC1)C[*:2],384.422562,651.7624708,1.127787918
+298,poly{1-[(cyclohexyloxy)carbonyl]-1-ethoxyethylene},C1(CCCCC1)OC(=O)C(C[*:2])(OCC)[*:1],384.422562,651.7624708,1.127787918
+303,poly[1-(propoxycarbonyl)ethylene],C(CC)OC(=O)C(C[*:2])[*:1],294.9772907,630.6359239,1.127061125
+720,poly(1!4-phenylene-1!2-diphenylethene-1!2-diyl),C1(=CC=C(C=C1)C(=C(C1=CC=CC=C1)[*:2])C1=CC=CC=C1)[*:1],435.3583235,776.6622949,1.125390823
+284,poly{1-[(1-methylpropoxy)carbonyl]ethylene} or poly[1-(sec-butoxycarbonyl)ethylene],[*:1]C(COOC(C)CC)C[*:2],250.789859,594.6881269,1.125195314
+68,Poly(methyl methacrylate),[*:1]C(C)(C(=O)OC)C[*:2],366.3400683,601.4419126,1.123503655
+323,poly[1-(methoxycarbonyl)-1-methylethylene],COC(=O)C(C[*:2])(C)[*:1],366.3400683,601.4419126,1.123503655
+714,poly(1!4-phenylenemethylene-1!4-phenyleneethylene),C1(=CC=C(C=C1)CC1=CC=C(C=C1)CC[*:2])[*:1],363.181185,745.8842148,1.118920841
+595,poly(iminohexane-1!6-diyliminodecane-1!10-diyl),N(CCCCCCNCCCCCCCCCC[*:2])[*:1],229.6623603,612.9894218,1.117657165
+304,poly{1-[(1-methylethoxy)carbonyl]ethylene}! poly[1-(isopropoxycarbonyl)ethylene],C(C)(C)OC(=O)C(C[*:2])[*:1],300.4251867,619.0695804,1.104137891
+689,poly[1!4-phenylene(1!1!2!2-tetrafluoroethylene)],C1(=CC=C(C=C1)C(C(F)(F)[*:2])(F)F)[*:1],396.6600404,672.9614648,1.104052485
+33,Polystyrene,[*:1]C(c1ccccc1)C[*:2],384.9894309,736.4679156,1.099934127
+752,poly(1-phenylethylene),C1(=CC=CC=C1)C(C[*:2])[*:1],384.9894309,736.4679156,1.099934127
+939,poly(1-phenylethylene),C1(=CC=CC=C1)C(C[*:2])[*:1],384.9894309,736.4679156,1.099934127
+320,poly{1-[(3-methoxypropoxy)carbonyl]ethylene},COCCCOC(=O)C(C[*:2])[*:1],287.0469882,609.3056061,1.094980786
+790,poly[1-(4-benzylphenyl)ethylene],C(C1=CC=CC=C1)C1=CC=C(C=C1)C(C[*:2])[*:1],395.2859365,745.0703136,1.084128935
+282,poly[1-(butoxycarbonyl)ethylene],[*:1]C(COOCCCC)C[*:2],231.6316146,601.1718525,1.072849127
+690,poly[biphenyl-3!3'-diyl(1!1!2!2!3!3-hexafluoropropane-1!3-diyl)],C1(=CC(=CC=C1)[*:1])C1=CC(=CC=C1)C(C(C(F)(F)[*:2])(F)F)(F)F,355.1468628,687.1099026,1.070500177
+715,poly(biphenyl-4!4'-diylethylene),C1(=CC=C(C=C1)[*:1])C1=CC=C(C=C1)CC[*:2],427.3101082,757.9950052,1.070072512
+296,Poly(1!4-phenylenemethylene),[*:1]c(cc1)ccc1C[*:2],461.3883727,755.0145604,1.063827299
+693,poly(1!4-phenylenemethylene)! poly(methylene-p-phenylene),C(C1=CC=C(C=C1)[*:2])[*:1],461.3883727,755.0145604,1.063827299
+39,Bisphenol-A-polycarbonate,[*:1]Oc(ccc1)cc1C(C)(C)c(ccc2)cc2OC(=O)[*:2],359.4526796,712.5522285,1.05420728
+302,poly[1-(ethoxycarbonyl)ethylene],C(C)OC(=O)C(C[*:2])[*:1],313.849734,630.9234984,1.050081856
+44,Poly(chloro-p-xylylene),[*:1]c(cc1(Cl))ccc1CC[*:2],437.9666547,668.9547962,1.040919927
+318,poly{1-[(2-methoxyethoxy)carbonyl]ethylene},COCCOC(=O)C(C[*:2])[*:1],300.9151434,607.2282545,1.028040996
+283,poly{1-[(2-methylpropoxy)carbonyl]ethylene} or poly[1-(isobutoxycarbonyl)ethylene],[*:1]C(COOCC(C)C)C[*:2],236.810085,587.2989008,1.026906464
+717,poly[1!4-phenylene(1-phenylethylene)]! poly(1!4-phenylene-1-phenylethylene),C1(=CC=C(C=C1)C(C[*:2])C1=CC=CC=C1)[*:1],436.9505749,756.0040778,1.024089598
+801,poly[sulfanediyl(1!2-dimethylethylene)],S(C(C(C)[*:2])C)[*:1],403.6910546,610.0590891,1.01752612
+808,poly[sulfanediyl(2-ethyl-2-methylpropane-1!3-diyl)],S(CC(C[*:2])(C)CC)[*:1],351.7574546,625.0577687,1.011971908
+619,poly[nitrilomethanylylidene-1!4-phenylenemethanylylidenenitrilo(3!3''!5!5''-tetraphenyl[1!1':4'!1''-terphenyl]-4!4''-diyl)],N(=CC1=CC=C(C=C1)C=NC1=C(C=C(C=C1C1=CC=CC=C1)C1=CC=C(C=C1)C1=CC(=C(C(=C1)C1=CC=CC=C1)[*:2])C1=CC=CC=C1)C1=CC=CC=C1)[*:1],478.6903214,777.7782063,1.009209218
+280,poly[1-(propoxycarbonyl)ethylene],[*:1]C(COOCCC)C[*:2],240.1479019,597.8622858,1.005292758
+471,poly(indane-1!2-diyl),C1(C(CC2=CC=CC=C12)[*:2])[*:1],438.9076796,779.1255255,1.005079228
+417,poly(oxycarbonyloxyhexane-1!6-diyl),O(C(=O)OCCCCCC[*:2])[*:1],231.9432057,625.8772614,0.996067005
+130,Poly[nitrilo(methanediylidene)nitrilo-(4-methyl-13-phenylene)] or poly[carbodiimide-(4-methyl-13-phenylene)],[*:1]N=C=Nc(c1)ccc(C)c1[*:2],441.7841226,746.3003574,0.98678614
+281,poly{1-[(1-methylethoxy)carbonyl]ethylene} or poly[1-(isopropoxycarbonyl)ethylene],[*:1]C(COOC(C)C)C[*:2],245.5385938,586.4967781,0.978464625
+805,poly[sulfanediyl(2!2-dimethylpropane-1!3-diyl)],S(CC(C[*:2])(C)C)[*:1],282.0759254,617.1315107,0.971439552
+774,poly[1-(biphenyl-4-yl)ethylene],C1(=CC=C(C=C1)C(C[*:2])[*:1])C1=CC=CC=C1,402.8850471,757.1177627,0.9661588
+961,poly[1-(biphenyl-4-yl)ethylene],C1(=CC=C(C=C1)C(C[*:2])[*:1])C1=CC=CC=C1,402.8850471,757.1177627,0.9661588
+103,Poly[imino(1-oxohexane-16-diyl)],[*:1]NCOCCCCC[*:2],265.541959,594.7157294,0.961703606
+237,poly(cyclobutane-1!2-diyl),[*:1]C1CCC1[*:2],581.4369378,733.611433,0.953468489
+112,Poly(oxydecanedioyl),[*:1]OOCCCCCCCCCCO[*:2],204.927548,609.9245939,0.947695896
+614,poly(pyrazole-1!3-diyl-1!3-phenylenepyrazole-3!1-diylhexane-1!6-diyl)! poly(1!3-pyrazolediyl-1!3-phenylene-3!1-pyrazolediylhexamethylene)! poly(1!3-pyrazolediyl-m-phenylene-3!1-pyrazolediylhexamethylene),N1(N=C(C=C1)C1=CC(=CC=C1)C1=NN(C=C1)CCCCCC[*:2])[*:1],399.7352375,732.2302651,0.941775141
+615,poly(pyrazole-1!3-diyl-1!4-phenylenepyrazole-3!1-diylhexane-1!6-diyl)! poly(1!3-pyrazolediyl-1!4-phenylene-3!1-pyrazolediylhexamethylene),N1(N=C(C=C1)C1=CC=C(C=C1)C1=NN(C=C1)CCCCCC[*:2])[*:1],427.0952375,732.2302651,0.941775141
+200,poly(1-cyclopropylethylene),[*:1]C(C1CC1)C[*:2],332.7152511,708.8864605,0.933434001
+152,Poly(1!4-phenylene) or poly(p-phenylene),[*:1]c(cc1)ccc1[*:2],627.5771998,785.384337,0.922957054
+692,poly(1!4-phenylene)! poly(p-phenylene),C1(=CC=C(C=C1)[*:2])[*:1],506.1371998,785.384337,0.922957054
+711,poly(1!3-phenylene)! poly(m-phenylene),C1(=CC(=CC=C1)[*:2])[*:1],405.8171998,785.384337,0.922957054
+279,poly[1-(ethoxycarbonyl)ethylene],[*:1]C(COOCC)C[*:2],251.1494221,593.6437986,0.914125645
+317,poly(1-{[(1!7!7-trimethylbicyclo[2.2.1]heptan-2-yl)oxy]carbonyl}ethylene),CC12C(CC(CC1)C2(C)C)OC(=O)C(C[*:2])[*:1],389.8802717,664.9550975,0.912594206
+248,poly[(octahydropentalene-1!3-diyl)ethylene],[*:1]C(C1)C2CCCC2C1CC[*:2],386.4361571,710.4331881,0.91137678
+527,poly{[4!5-bis(trifluoromethyl)-4!5-difluoro-1!3-dioxolane-2!2-diyl]difluoromethylene},FC(C1(OC(OC1(F)C(F)(F)F)(C(F)(F)[*:2])[*:1])F)(F)F,351.5615797,607.5143039,0.910823093
+757,poly[1-([1!1':4'!1''-terphenyl]-3-yl)ethylene]! poly[1-(p-terphenyl-3-yl)ethylene],C1(=CC(=CC=C1)C(C[*:2])[*:1])C1=CC=C(C=C1)C1=CC=CC=C1,410.076701,765.5076927,0.909578588
+775,poly[1-(1!1':4'!1''-terphenyl-4-yl)ethylene]! poly[1-(p-terphenyl-4-yl)ethylene],C1(=CC=C(C=C1)C(C[*:2])[*:1])C1=CC=C(C=C1)C1=CC=CC=C1,410.076701,765.5076927,0.909578588
+944,poly[1-([1!1':4'!1''-terphenyl]-3-yl)ethylene]! poly[1-(p-terphenyl-3-yl)ethylene],C1(=CC(=CC=C1)C(C[*:2])[*:1])C1=CC=C(C=C1)C1=CC=CC=C1,410.076701,765.5076927,0.909578588
+962,poly[1-(1!1':4'!1''-terphenyl-4-yl)ethylene]! poly[1-(p-terphenyl-4-yl)ethylene],C1(=CC=C(C=C1)C(C[*:2])[*:1])C1=CC=C(C=C1)C1=CC=CC=C1,410.076701,765.5076927,0.909578588
+272,poly(bicyclo[4.3.0]nonane-7!8-diyl) or poly(2!3!3a!4!5!6!7!7a-octahydro-1H-indene-1!2-diyl),[*:1]C1C2CCCCC2CC1[*:2],598.0944825,721.5542101,0.909463925
+688,poly(1!2!2-trifluoro-1-phenylethylene),FC(C(F)(F)[*:2])(C1=CC=CC=C1)[*:1],391.5653531,681.6883823,0.896288212
+153,Poly(1!2-phenylene) or poly(o-phenylene),[*:1]c1ccccc1[*:2],443.1246138,786.3695669,0.896168022
+723,poly(1!2-phenylene),C1(=C(C=CC=C1)[*:2])[*:1],321.6846138,786.3695669,0.896168022
+79,Poly(1-{[(carboxylatomethyl)dimethylammonio]methyl}ethylene,[*:1]C(C[N+](C)(C)CCO[O-])C[*:2],218.5880631,565.0530638,0.892966445
+524,poly{[4!4!5-trifluoro-5-(trifluoromethyl)-1!3-dioxolane-2!2-diyl](difluoromethylene)},FC1(OC(OC1(C(F)(F)F)F)(C(F)(F)[*:2])[*:1])F,377.6768387,611.6198592,0.875592571
+526,poly[(4!4!5-trifluoro-5-trifluoromethyl-1!3-dioxolane-2!2-diyl)difluoromethylene],FC1(OC(OC1(C(F)(F)F)F)(C(F)(F)[*:2])[*:1])F,377.6768387,611.6198592,0.875592571
+285,poly[1-(tert-butoxycarbonyl)ethylene] or poly{1-[(1!1-dimethylethoxy)carbonyl]ethylene},[*:1]C(COOC(C)(C)C)C[*:2],212.5151317,573.1043466,0.868148136
+301,poly[1-(methoxycarbonyl)ethylene],COC(=O)C(C[*:2])[*:1],340.5880335,618.5668952,0.853548225
+93,Polyvinyl acetate,[*:1]C(OC(=O)C)C[*:2],317.4647369,624.2099818,0.83730099
+102,Poly[NN'-(hexane-1!6-diyl)adipamide],[*:1]NCOCCCCCONCCCCCC[*:2],237.4094078,598.0811862,0.835134821
+669,poly(4-phenylnaphthalene-1!2-diyl),C1(=CC=CC=C1)C1=CC(=C(C2=CC=CC=C12)[*:1])[*:2],408.5547718,798.2001453,0.833444204
+675,poly(9!10-diphenylphenanthrene-2!7-diyl),C1(=CC=CC=C1)C=1C2=CC(=CC=C2C=2C=CC(=CC2C1C1=CC=CC=C1)[*:1])[*:2],583.285365,800.7131587,0.823579424
+663,poly(naphthalene-1!4-diylethylene),C1(=CC=C(C2=CC=CC=C12)CC[*:2])[*:1],405.0579995,769.6961127,0.818927824
+77,Poly[imino(2-methoxy-1!4-phenylene)] or poly(2-methoxyaniline),[*:1]Nc(c(OC)c1)ccc1[*:2],493.9999621,694.3032712,0.807645798
+793,poly[sulfanediyl(2!3!5!6-tetrafluoro-1!4-phenylene)],S(C1=C(C(=C(C(=C1F)F)[*:2])F)F)[*:1],656.2232878,680.397905,0.80727913
+273,poly[1-(methoxycarbonyl)-1-phenylethylene],[*:1]C(c1ccccc1)(C(=O)OC)C[*:2],413.0093795,692.2863241,0.799909294
+787,poly[1-(1-naphthyl)ethylene]! poly[1-(1-naphthyl)ethylene],C1(=CC=CC2=CC=CC=C12)C(C[*:2])[*:1],416.0183347,768.1845806,0.784516133
+806,poly[sulfanediyl(1!1-dimethylethylene)],S(C(C[*:2])(C)C)[*:1],300.6113661,600.0617556,0.783461424
+7,Poly(3!5-(4-phenyl-124-triazole)-1!4phenylene,[*:1]c(cc1)ccc1c(nn2)n(c3ccccc3)c2[*:2],569.7646554,778.6544129,0.770230219
+603,poly[(1!1'-dimethyl[5!5'-bibenzimidazole]-2!2'-diyl)-1!3-phenylene]! poly(1-methylbenzimidazole-2!5-diyl-1-methylbenzimidazole-5!2-diyl-1!3-phenylene),CN1C(=NC2=C1C=CC(=C2)C2=CC1=C(N(C(=N1)C1=CC(=CC=C1)[*:2])C)C=C2)[*:1],588.8460536,769.8303311,0.752712066
+528,poly[(4!4!5!5-tetrafluoro-1!3-dioxolane-2!2-diyl)(difluoromethylene)],FC1(OC(OC1(F)F)(C(F)(F)[*:2])[*:1])F,348.21461,617.8417643,0.745494374
+297,poly[1-(methoxycarbonyl)-1-phenylethylene],COC(=O)C(C[*:2])(C1=CC=CC=C1)[*:1],402.4493795,692.2863241,0.723493371
+72,Poly(furan-2!5-diylmethylene),[*:1]c(o1)ccc1C[*:2],443.5414487,739.0860985,0.711894836
+117,Poly(nitriloethylenenitrilomethanylylidene-14-phenylemethanylylidene),[*:1]CN=Cc(cc1)ccc1C=NC[*:2],442.8357734,718.7036731,0.703336234
+278,poly[1-(methoxycarbonyl)ethylene],[*:1]C(COOC)C[*:2],267.3292902,575.636078,0.703197818
+622,poly[(6-phenyl-1!3!5-triazine-2!4-diyl)iminohexane-1!6-diylimino],C1(=CC=CC=C1)C1=NC(=NC(=N1)[*:1])NCCCCCCN[*:2],367.4667053,705.0433669,0.69631709
+814,poly(sulfanediylhexane-1!6-diyl)! poly(thiohexamethylene),S(CCCCCC[*:2])[*:1],274.1382557,650.1087503,0.695989241
+680,poly[3-(but-3-en-1-yn-1-yl)pyrene-1!6-diyl],C(#CC=C)C=1C=C(C2=CC=C3C=CC(=C4C=CC1C2=C43)[*:2])[*:1],671.9777668,819.3014355,0.690900647
+141,Poly{NN'-[methylenedi(41-phenylene)]benzene-12:45-bis(dicarboximide)},[*:1]N(C(=O)c1cc2C3(=O))C(=O)c1cc2C(=O)N3c(cc4)ccc4Cc(cc5)ccc5[*:2],666.7623181,780.1133328,0.679790118
+244,poly(bicyclo[3.3.0]octane-2!6-diyl),[*:1]C(CCC12)C1CCC2[*:2],676.5624144,733.609058,0.675730252
+140,Poly[(4-phenylimidazole-25-diyl)-14-phenylene-(4-phenylimidazole-52-diyl)-14-phenylene],[*:1]C(N1)=NC(c2ccccc2)=C1c(cc3)ccc3C(N4)=C(c5ccccc5)N=C4c(cc6)ccc6[*:2],543.4850958,786.5929131,0.672484936
+915,poly(oxybutane-1!4-diyloxybutane-1!4-diyloxybutane-1!4-diyloxybutane-1!4-diyloxybutane-1!4-diyloxybutane-1!4-diyloxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyl),O(CCCCOCCCCOCCCCOCCCCOCCCCOCCCCOC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)[*:2])[*:1],293.9379234,646.9645849,0.671238828
+45,Poly(p-chloro styrene),[*:1]C(c1ccc(Cl)cc1)C[*:2],385.6573309,667.2674454,0.632523584
+616,poly(pyrazole-1!3-diyl-1!3-phenylenepyrazole-3!1-diyl-1!4-phenylene)! poly(1!3-pyrazolediyl-1!3-phenylene-3!1-pyrazolediyl-1!4-phenylene)! poly(1!3-pyrazolediyl-m-phenylene-3!1-pyrazolediyl-p-phenylene),N1(N=C(C=C1)C1=CC(=CC=C1)C1=NN(C=C1)C1=CC=C(C=C1)[*:2])[*:1],518.8981695,780.3426309,0.630854481
+617,poly(pyrazole-1!3-diyl-1!4-phenylenepyrazole-3!1-diyl-1!4-phenylene)! poly(1!3-pyrazolediyl-1!4-phenylene-3!1-pyrazolediyl-1!4-phenylene),N1(N=C(C=C1)C1=CC=C(C=C1)C1=NN(C=C1)C1=CC=C(C=C1)[*:2])[*:1],524.6581695,780.3426309,0.630854481
+668,poly(anthracene-9!10-diylethylene),C1=CC=CC2=C(C3=CC=CC=C3C(=C12)[*:1])CC[*:2],423.6481951,785.8642632,0.623788171
+653,poly(oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxydecanedioyl)! poly(oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxy-1!10-dioxodecamethylene),O(C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)OC(CCCCCCCCC(=O)[*:2])=O)[*:1],347.9003466,704.3035205,0.621845762
+601,poly[(3!6-diphenyl-1!4!5!8-tetraazaanthracene-2!7-diyl)-1!4-phenylene],C1(=CC=CC=C1)C=1C(=NC2=CC3=NC(=C(N=C3C=C2N1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:2])[*:1],609.3002479,796.3507981,0.61754076
+602,poly[(3!6-diphenyl-1!4!5!8-tetraazaanthracene-2!7-diyl)-1!3-phenylene],C1(=CC=CC=C1)C=1C(=NC2=CC3=NC(=C(N=C3C=C2N1)C1=CC=CC=C1)C1=CC(=CC=C1)[*:2])[*:1],590.4902479,796.3507981,0.61754076
+607,poly[(3!7-diphenyl-1!4!5!8-tetraazaanthracene-2!6-diyl)-1!3-phenylene]! poly(3!8-diphenylpyrazino[2!3-g]quinoxaline-2!7-diyl-1!3-phenylene),C1(=CC=CC=C1)C1=NC=2C(=CC=3N=C(C(=NC3C2)C2=CC(=CC=C2)[*:2])C2=CC=CC=C2)N=C1[*:1],567.7202479,796.3507981,0.61754076
+608,poly[(3!7-diphenyl-1!4!5!8-tetraazaanthracene-2!6-diyl)-1!4-phenylene]! poly(3!8-diphenylpyrazino-[2!3-g]quinoxaline-2!7-diyl-1!4-phenylene),C1(=CC=CC=C1)C1=NC=2C(=CC=3N=C(C(=NC3C2)C2=CC=C(C=C2)[*:2])C2=CC=CC=C2)N=C1[*:1],586.5302479,796.3507981,0.61754076
+504,poly[oxyethyleneoxycarbonyl(3-methoxy-1!4-phenylene)oxybutane-1!4-diyloxy(2-methoxy-1!4-phenylene)carbonyl],O(CCOC(=O)C1=CC(=C(C=C1)OCCCCOC1=C(C=C(C=C1)C(=O)[*:2])OC)OC)[*:1],350.6641389,671.8899487,0.61469166
+611,poly[(3!3'-diphenyl[6!6'-biquinoxaline]-2!2'-diyl)biphenyl-4!4'-diyl],C1(=CC=CC=C1)C=1C(=NC2=CC=C(C=C2N1)C=1C=C2N=C(C(=NC2=CC1)C1=CC=C(C=C1)C1=CC=C(C=C1)[*:2])C1=CC=CC=C1)[*:1],522.2551786,793.3730419,0.612869918
+552,poly(1!2-dichlorododecane-1!12-diyl)! poly(1!2-dichlorododecamethylene),ClC(C(CCCCCCCCCC[*:2])Cl)[*:1],241.4249158,578.9195051,0.610682205
+674,poly(6-{9-[3!4-bis(phenylethynyl)phenyl]fluoren-9-yl}-2!3-diphenylnaphthalene-1!4-diyl),C1(=CC=CC=C1)C#CC=1C=C(C=CC1C#CC1=CC=CC=C1)C1(C2=CC=CC=C2C=2C=CC=CC12)C=1C=C2C(=C(C(=C(C2=CC1)[*:1])C1=CC=CC=C1)C1=CC=CC=C1)[*:2],457.8107242,799.9605895,0.59682872
+596,poly(nitrilomethanediylidenenitrilobiphenyl-4!4'-diyl),N(=C=NC1=CC=C(C=C1)C1=CC=C(C=C1)[*:2])[*:1],485.791399,775.79271,0.59388036
+156,Poly[(3!3'-diphenyl[6!6'-biquinoxaline]2!2'-diyl)-14-phenyleneoxy-1!4-phenylene],[*:1]C(=Nc1cc2)C(c3ccccc3)=Nc1cc2c(ccc4N5)cc4N=C(c6ccccc6)C=5c(cc7)ccc7Oc(cc8)ccc8[*:2],564.2856002,787.231601,0.591778137
+664,poly(naphthalene-2!6-diyl),C1=C(C=CC2=CC(=CC=C12)[*:2])[*:1],542.6856914,804.1499568,0.58571937
+665,poly(naphthalene-2!7-diyl),C1=C(C=CC2=CC=C(C=C12)[*:2])[*:1],495.1656914,804.1499568,0.58571937
+484,poly[oxyethyleneoxycarbonyl-1!4-phenyleneoxy(11-oxoundecane-1!11-diyl)],O(CCOC(=O)C1=CC=C(C=C1)OCCCCCCCCCCC(=O)[*:2])[*:1],302.0576716,663.8576889,0.5794355
+69,Poly[NN'-(pp'-oxydiphenylene)pyromellitimide],[*:1]N(C(=O)c1cc2C3(=O))C(=O)c1cc2C(=O)N3c(cc3)ccc3Oc(cc4)ccc4[*:2],693.3381631,778.3707757,0.578281064
+431,poly[oxycarbonyloxy(2-cyclohexyl-1!4-phenylene)(diethylmethylene)(3-cyclohexyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC(=C(C=C1)[*:2])C1CCCCC1)(CC)CC)C1CCCCC1)[*:1],404.9611162,707.4028314,0.571286996
+249,poly(2-methyl-1!4:5!8-dimethano-1!2!3!4!4a!5!8!8a-octahydronaphthalene),[*:1]C(C1)C2C(C3)CC(C)C3C2C1CC[*:2],387.0864233,717.707407,0.569121068
+811,poly(sulfanediylpentane-1!5-diyl)! poly(thiopentamethylene),S(CCCCC[*:2])[*:1],286.9787251,653.0651132,0.567596359
+495,poly[oxyethyleneoxycarbonyl(3-methoxy-1!4-phenylene)oxypropane-1!3-diyloxy(2-methoxy-1!4-phenylene)carbonyl],O(CCOC(=O)C1=CC(=C(C=C1)OCCCOC1=C(C=C(C=C1)C(=O)[*:2])OC)OC)[*:1],356.1755737,673.399343,0.566921419
+56,Polyquinoline10,[*:1]c(c(c1ccccc1)c(c2ccccc2)c3c4)nc3ccc4Oc(cc5c(c6ccccc6)c7(c8ccccc8))ccc5nc7c(cc9)ccc9[*:2],570.6440854,787.7921861,0.564021592
+599,poly[(2!2'-diphenyl[6!6'-biquinoxaline]-3!3'-diyl)-1!4-phenylene],C1(=CC=CC=C1)C1=NC2=CC=C(C=C2N=C1[*:1])C=1C=C2N=C(C(=NC2=CC1)C1=CC=CC=C1)C1=CC=C(C=C1)[*:2],524.8552951,794.6281143,0.558622609
+604,poly[(3!3'-diphenyl[7!7'-biquinoxaline]-2!2'-diyl)-1!3-phenylene]! poly(3-phenylquinoxaline-2!7-diyl-3-phenylquinoxaline-7!2-diyl-1!3-phenylene)! poly(3-phenylquinoxaline-2!7-diyl-3-phenylquinoxaline-7!2-diyl-m-phenylene),C1(=CC=CC=C1)C=1C(=NC2=CC(=CC=C2N1)C1=CC=C2N=C(C(=NC2=C1)C1=CC(=CC=C1)[*:2])C1=CC=CC=C1)[*:1],509.0152951,794.6281143,0.558622609
+474,poly(oxyethyleneoxyethyleneoxyethyleneoxydecanedioyl),O(CCOCCOCCOC(CCCCCCCCC(=O)[*:2])=O)[*:1],233.0529305,621.2147265,0.557790918
+113,Poly(naphthalene-1!4-diyl),[*:1]c(cc1)c2ccccc2c1[*:2],593.8059259,805.3385325,0.552096848
+666,poly(naphthalene-1!4-diyl),C1(=CC=C(C2=CC=CC=C12)[*:2])[*:1],448.0779259,805.3385325,0.552096848
+667,poly(naphthalene-1!5-diyl),C1(=CC=CC2=C(C=CC=C12)[*:2])[*:1],495.5979259,805.3385325,0.552096848
+670,poly(azulene-1!2-diyl),C1(=C(C=C2C=CC=CC=C12)[*:2])[*:1],346.7019259,805.3385325,0.552096848
+360,poly(oxycyclohexane-1!4-diyloxypropane-1!3-diyliminoadipoyliminopropane-1!3-diyl)! poly(oxycyclohexane-1!4-diyloxypropane-1!3-diyliminohexanedioyliminopropane-1!3-diyl),O(C1CCC(CC1)OCCCNC(CCCCC(=O)NCCC[*:2])=O)[*:1],339.2311066,638.2416842,0.537276457
+618,poly[(6-phenyl-1!3!5-triazine-2!4-diyl)(phenylimino)-1!3!5-triazine-2!4-diyl(phenylimino)],C1(=CC=CC=C1)C1=NC(=NC(=N1)[*:1])N(C1=NC=NC(=N1)N(C1=CC=CC=C1)[*:2])C1=CC=CC=C1,437.9289005,765.6708322,0.536509667
+610,poly(iminopropane-1!3-diyl),N(CCC[*:2])[*:1],331.3925573,593.8391504,0.530557916
+356,poly[oxypentane-1!5-diylimino(1-oxononane-1!9-diyl)oxy(9-oxononane-1!9-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCCCCCOCCCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],242.7712821,622.4898177,0.529536028
+593,poly{[6-(3-cyano-1!1!2!2!3!3-hexafluoropropyl)-1!3!5-triazine-2!4-diyl](1!1!2!2!3!3!4!4!5!5!6!6-dodecafluorohexane-1!6-diyl)},C(#N)C(C(C(F)(F)C1=NC(=NC(=N1)[*:1])C(C(C(C(C(C(F)(F)[*:2])(F)F)(F)F)(F)F)(F)F)(F)F)(F)F)(F)F,361.8047028,627.3943579,0.526984024
+807,poly[sulfanediyl(1-methylpropane-1!3-diyl)],S(C(CC[*:2])C)[*:1],328.8969812,632.3137168,0.525093434
+175,Carboxymethyl Cellulose1,[*:1]OC(C(COCC(=O)O)O1)C(OCC(=O)O)C(OCC(=O)O)C1[*:2],371.6478469,628.6283523,0.51824531
+427,poly[oxycarbonyloxy(2-cyclohexyl-1!4-phenylene)(dimethylmethylene)(3-cyclohexyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC(=C(C=C1)[*:2])C1CCCCC1)(C)C)C1CCCCC1)[*:1],420.4250233,709.0537331,0.513381172
+1001,poly[(4-methyl-2!6-dioxo-1!2!3!4-tetrahydropyrimidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene]! poly(oxyethylene-2!4-dioxo-6-methyl-1!2!3!4-tetrahydropyrimidine-1!3-diylethyleneoxyterephthaloyl),O(CCN1C(N(C(C=C1C)=O)CCOC(C1=CC=C(C(=O)[*:2])C=C1)=O)=O)[*:1],445.6025545,694.6829637,0.511882158
+802,poly[sulfanediyl(1-ethylethylene)],S(C(C[*:2])CC)[*:1],322.8706871,637.7186557,0.499213854
+448,poly[oxycarbonyloxy(2-cyclohexyl-1!4-phenylene)cyclohexane-1!1-diyl(3-cyclohexyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C1(CCCCC1)C1=CC(=C(C=C1)[*:2])C1CCCCC1)C1CCCCC1)[*:1],433.0131473,720.5284081,0.496674542
+477,poly[oxy(1-methylethylene)oxy(2-methylethylene)oxyphthaloyl],O(C(COCC(C)OC(C=1C(C(=O)[*:2])=CC=CC1)=O)C)[*:1],302.1208172,668.08461,0.49542152
+488,poly[oxy-1!4-phenylenecarbonyloxyhexane-1!6-diyloxy(1-oxoundecane-1!11-diyl)],O(C1=CC=C(C=C1)C(=O)OCCCCCCOC(CCCCCCCCCC[*:2])=O)[*:1],276.5371797,658.9657674,0.493874771
+510,poly[oxyethyleneoxyethyleneoxy(2-heptylmalonyl)]! poly[oxyethyleneoxyethyleneoxy(2-heptylpropanedioyl)],O(CCOCCOC(C(C(=O)[*:2])CCCCCCC)=O)[*:1],234.0943115,626.3991439,0.490958227
+795,poly[sulfanediyl(dimethylmethylene)],S(C(C)(C)[*:2])[*:1],391.8402187,576.5275851,0.489881241
+353,poly[oxypentane-1!5-diylimino(1-oxopentane-1!5-diyl)oxy(11-oxoundecane-1!11-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCOCCCCCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],245.7384486,622.1139158,0.457657296
+551,poly(1!2-dichlorodecane-1!10-diyl)! poly(1!2-dichlorodecamethylene),ClC(C(CCCCCCCC[*:2])Cl)[*:1],248.9267138,572.2290706,0.455478603
+627,poly[oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxy-1!4-phenylene(1-methylcyclohexane-1!4-diyl)(dimethylmethylene)-1!4-phenylene]! poly(oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxy-1!4-phenylene-1-methylcyclohexane-1!4-diylisopropylidene-1!4-phenylene),O(C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1(CCC(CC1)C1C(C=C(C=C1)[*:2])=C(C)C)C)[*:1],413.8215951,726.6914189,0.4396306
+598,poly([7!7'-biquinoxaline]-2!2'-diyl[1!1':4'!1''-terphenyl]-4!4''-diyl),N1=C(C=NC2=CC=C(C=C12)C1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)[*:2])[*:1],536.4818015,793.7980907,0.437826103
+861,poly[(2-oxo-2!3!4!5!6!7-hexahydro-1!3-benzimidazole-1!3-diyl)ethyleneoxyterephthaloyloxyethylene]! poly(oxyethylene-2-oxo-2!3!4!5!6!7-hexahydrobenzimidazole-1!3-diyl-ethyleneoxyterephthaloyl),O(CCN1C(N(C2=C1CCCC2)CCOC(C2=CC=C(C(=O)[*:2])C=C2)=O)=O)[*:1],420.7781893,706.7217207,0.437723849
+553,poly(1-cyclohexyl-2!5-dioxopyrrolidine-3!4-diyl),C1(CCCCC1)N1C(C(C(C1=O)[*:2])[*:1])=O,451.9047597,714.4877159,0.435939114
+473,poly(oxyethyleneoxyethyleneoxydecanedioyl),O(CCOCCOC(CCCCCCCCC(=O)[*:2])=O)[*:1],238.0965493,627.0616391,0.435550091
+118,Poly([5!5'-bibenzimidazole]-2!2'-diyloctane-1!8-diyl),[*:1]C(=Nc1cc2)Nc1cc2c(cc3N4)ccc3N=C4CCCCCCCC[*:2],485.5163253,747.5885856,0.420302679
+348,poly[oxypentane-1!5-diylimino(1-oxobutane-1!4-diyl)oxy(11-oxoundecane-1!11-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCOCCCCCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],247.3691972,621.9080187,0.417691957
+818,poly(disulfanediylheptane-1!7-diyl),S(SCCCCCCC[*:2])[*:1],261.8853374,680.1172651,0.411806344
+155,Poly(quinoline-2!4-diyl-1!4-phenyleoxy-1!4-phenylene),[*:1]C(C=1)=Nc2ccccc2C1c(cc3)ccc3Oc(cc4)ccc4[*:2],531.3028323,781.7511538,0.394629514
+180,Hydroxyethyl methyl cellulose,[*:1]OC(C(CO)O1)C(OC)C(OCCO)C1[*:2],372.5654396,604.3062321,0.394013743
+809,poly(sulfanediylbutane-1!4-diyl),S(CCCC[*:2])[*:1],304.8968361,656.9628214,0.392055685
+820,poly(sulfanediylethylenesulfanediylhexane-1!6-diyl),S(CCSCCCCCC[*:2])[*:1],257.3768361,656.9615156,0.392055685
+1135,poly{[1!5-bis(4-methoxyphenyl)-3!7-dioxo-2!3!6!7-tetrahydro-1H!5H-[1!2!4]triazolo[1!2-a][1!2!4]triazole-2!6-diyl](3!5!5-trimethylcyclohexane-1!3-diyl)methylene(3!5!5-trimethylcyclohexane-1!3-diyl)methylene},COC1=CC=C(C=C1)C1N(C(N2N1C(N(C2C2=CC=C(C=C2)OC)C2CC(CC(C2)(C)C)(C)CC2CC(CC(C2)(C)C)(C)C[*:2])=O)=O)[*:1],517.4470178,675.0277227,0.389735054
+114,Poly(naphthalene-1!4-diylethynediyl),[*:1]c(cc1)c2ccccc2c1C#C[*:2],432.7629537,813.8150672,0.386964201
+489,poly[oxyethyleneoxy-1!4-phenylene(2-oxoethylene)],O(CCOC1=CC=C(C=C1)CC(=O)[*:2])[*:1],319.0690235,690.3290867,0.385855385
+498,poly(oxyethyleneoxycarbonyl-1!4-phenyleneoxypentane-1!5-diyloxy-1!4-phenylenecarbonyl),O(CCOC(=O)C1=CC=C(C=C1)OCCCCCOC1=CC=C(C=C1)C(=O)[*:2])[*:1],347.3898155,690.892098,0.385134835
+678,poly(phenanthrene-9!10-diyl),C1=CC=CC=2C3=CC=CC=C3C(=C(C12)[*:2])[*:1],457.2707579,813.9555781,0.381805481
+681,poly(anthracene-9!10-diyl),C1=CC=CC2=C(C3=CC=CC=C3C(=C12)[*:1])[*:2],457.2707579,813.9555781,0.381805481
+609,poly(4-phenylquinoline-2!6-diyl),C1(=CC=CC=C1)C1=CC(=NC2=CC=C(C=C12)[*:2])[*:1],567.7035765,796.9024112,0.378807966
+730,poly(1!3-phenylenebuta-1!3-diyne-1!4-diyl),C1(=CC(=CC=C1)C#CC#C[*:2])[*:1],386.0795256,813.6156117,0.377845611
+352,poly[oxypentane-1!5-diylimino(1-oxopentane-1!5-diyl)oxy(9-oxononane-1!9-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCOCCCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],249.1115302,621.6885843,0.37462656
+355,poly[oxypentane-1!5-diylimino(1-oxoheptane-1!7-diyl)oxy(7-oxoheptane-1!7-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCCCOCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],249.1115302,621.6885843,0.37462656
+337,poly[oxy(9-oxononane-1!9-diyl)iminohexane-1!6-diylimino(1-oxononane-1!9-diyl)],O(CCCCCCCCC(=O)NCCCCCCNC(CCCCCCCC[*:2])=O)[*:1],250.2187752,626.0883121,0.3734495
+472,poly(oxyethyleneoxyethyleneoxynonanedioyl),O(CCOCCOC(CCCCCCCC(=O)[*:2])=O)[*:1],240.5270196,626.9790368,0.36509763
+800,poly{sulfanediyl[1-(1!1-dimethylethyl)ethylene]}! poly[thio-1-(tert-butyl)ethylene],S(C(C[*:2])C(C)(C)C)[*:1],255.2539704,600.2733227,0.363037597
+277,poly(1-carboxyethylene),[*:1]C(COO)C[*:2],257.1241226,583.818636,0.35603579
+271,poly(bicyclo[2.2.1]heptane-2!3-diyl),[*:1]C1C(C2)CCC2C1[*:2],641.9116764,749.255749,0.35550462
+509,poly(oxyethyleneoxyethyleneoxy-2-pentylmalonyl)! poly(oxyethyleneoxyethyleneoxy-2-pentylpropanedioyl),O(CCOCCOC(C(C(=O)[*:2])CCCCC)=O)[*:1],242.4898624,626.1483865,0.349381599
+143,Polyoxadiazole,[*:1]c(cc1)ccc1C(O2)=NN=C2[*:2],637.6437123,776.9654678,0.346304724
+483,poly[oxyethyleneoxycarbonyl-1!4-phenyleneoxy(7-oxoheptane-1!7-diyl)],O(CCOC(=O)C1=CC=C(C=C1)OCCCCCCC(=O)[*:2])[*:1],322.8033535,670.6272208,0.344633684
+612,poly([6!6'-biquinoxaline]-2!2'-diylbiphenyl-4!4'-diyl),N1=C(C=NC2=CC(=CC=C12)C=1C=C2N=CC(=NC2=CC1)C1=CC=C(C=C1)C1=CC=C(C=C1)[*:2])[*:1],549.1948688,795.3661506,0.337893031
+416,poly(oxycarbonyloxyhexane-1!6-diyloxycarbonyloxyhexane-1!6-diyloxybiphenyl-4!4'-diyloxyhexane-1!6-diyl),O(C(=O)OCCCCCCOC(=O)OCCCCCCOC1=CC=C(C=C1)C1=CC=C(C=C1)OCCCCCC[*:2])[*:1],296.227284,664.9743158,0.329675399
+347,poly[oxypentane-1!5-diylimino(1-oxobutane-1!4-diyl)oxy(9-oxononane-1!9-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCOCCCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],250.9773575,621.4542322,0.328086195
+496,poly(oxyethyleneoxycarbonyl-1!4-phenyleneoxybutane-1!4-diyloxy-1!4-phenylenecarbonyl),O(CCOC(=O)C1=CC=C(C=C1)OCCCCOC1=CC=C(C=C1)C(=O)[*:2])[*:1],353.4125826,693.3443277,0.322009551
+497,poly(oxyethyleneoxycarbonyl-1!3-phenyleneoxybutane-1!4-diyloxy-1!3-phenylenecarbonyl),O(CCOC(=O)C1=CC(=CC=C1)OCCCCOC1=CC(=CC=C1)C(=O)[*:2])[*:1],325.3879672,693.3443277,0.322009551
+679,poly(3-ethynylpyrene-1!6-diyl),C(#C)C=1C=C(C2=CC=C3C=CC(=C4C=CC1C2=C43)[*:2])[*:1],697.7025433,834.2677711,0.313844634
+76,Poly(imino-1!4-phenylene) or polyaniline,[*:1]Nc(cc1)ccc1[*:2],540.291899,743.6527046,0.296826293
+903,poly(oxyethyleneoxyethyleneoxyethyleneoxyethyleneoxyethyleneoxyethyleneoxycarbonyliminohexane-1!6-diyliminocarbonyl),O(CCOCCOCCOCCOCCOCCOC(=O)NCCCCCCNC(=O)[*:2])[*:1],250.0129979,604.2234461,0.296784297
+799,poly[sulfanediyl(1-methylethylene)],S(C(C[*:2])C)[*:1],361.7391397,633.0201303,0.295850581
+815,poly(disulfanediylhexane-1!6-diyl),S(SCCCCCC[*:2])[*:1],269.8550083,684.9963306,0.292247546
+351,poly[oxypentane-1!5-diylimino(1-oxopentane-1!5-diyl)oxy(7-oxoheptane-1!7-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCOCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],252.9803551,621.2033876,0.277633006
+354,poly[oxypentane-1!5-diylimino(1-oxohexane-1!6-diyl)oxy(6-oxohexane-1!6-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCCOCCCCCC(=O)NCCCCC[*:2])=O)[*:1],252.9803551,621.2033876,0.277633006
+819,poly(sulfanediylpropane-1!3-diylsulfanediylbutane-1!4-diyl),S(CCCSCCCC[*:2])[*:1],264.0061888,659.4159094,0.27761977
+486,poly[oxy-1!4-phenylenecarbonyloxyhexane-1!6-diyloxy(1-oxohexane-1!6-diyl)],O(C1=CC=C(C=C1)C(=O)OCCCCCCOC(CCCCC[*:2])=O)[*:1],293.4040618,665.3371326,0.267543072
+359,poly(oxycyclohexane-1!4-diyloxypropane-1!3-diyliminooxalyliminopropane-1!3-diyl),O(C1CCC(CC1)OCCCNC(C(=O)NCCC[*:2])=O)[*:1],368.4581335,642.0369446,0.26729804
+481,poly[oxyethyleneoxycarbonyl-1!4-phenyleneoxy(6-oxohexane-1!6-diyl)],O(CCOC(=O)C1=CC=C(C=C1)OCCCCCC(=O)[*:2])[*:1],329.3356269,672.7460432,0.266539291
+475,poly(oxyethyleneoxyethyleneoxyethyleneoxybut-2-enedioyl),O(CCOCCOCCOC(C=CC(=O)[*:2])=O)[*:1],241.9012748,627.9137504,0.265947741
+32,Poly(p-vinyl pyridine),[*:1]CC(c1ccncc1)[*:2],397.8963822,733.5710695,0.251880449
+494,poly(oxyethyleneoxycarbonyl-1!4-phenyleneoxypropane-1!3-diyloxy-1!4-phenylenecarbonyl),O(CCOC(=O)C1=CC=C(C=C1)OCCCOC1=CC=C(C=C1)C(=O)[*:2])[*:1],359.9404487,695.9974846,0.251588607
+479,poly(oxyethyleneoxy-1!4-phenylenecarbonyl),O(CCOC1=CC=C(C=C1)C(=O)[*:2])[*:1],390.3745694,698.8780638,0.2463941
+149,Poly[oxy(2!6-dimethyl-1!4-phenylene)],[*:1]Oc(c(C)c1)c(C)cc1[*:2],460.8661524,702.9827781,0.224324158
+106,Polyamide - Nylon 12,[*:1]NCCCCCCCCCCCC(=O)[*:2],270.7301136,630.8455022,0.22388398
+346,poly[oxypentane-1!5-diylimino(1-oxobutane-1!4-diyl)oxy(7-oxoheptane-1!7-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCOCCCCCCC(=O)NCCCCC[*:2])=O)[*:1],255.1363063,620.934246,0.222752422
+350,poly[oxypentane-1!5-diylimino(1-oxopentane-1!5-diyl)oxy(6-oxohexane-1!6-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCOCCCCCC(=O)NCCCCC[*:2])=O)[*:1],255.1363063,620.934246,0.222752422
+1010,poly[oxyethylene(dimethylazaniumdiyl)propane-1!3-diylureylenepropane-1!3-diyl(dimethylazaniumdiyl)ethylene],O(CC[N+](CCCNC(=O)NCCC[N+](CC[*:2])(C)C)(C)C)[*:1],278.8552311,560.3956549,0.222618709
+55,Polyquinoline1,[*:1]c(c1)nc2ccccc2c1c(cc3)ccc3Oc(cc4)ccc4c(c5)c6ccccc6nc5c(c7)cccc7[*:2],528.6259179,787.9268013,0.215889587
+597,poly([7!7'-biquinoxaline]-2!2'-diyl-1!4-phenylene)! poly(quinoxaline-2!7-diyl-quinoxaline-7!2-diyl-1!4-phenylene),N1=C(C=NC2=CC=C(C=C12)C1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)[*:2])[*:1],559.3059822,797.6521841,0.186033894
+605,poly([6!7'-biquinoxaline]-2!2'-diyl-1!4-phenylene)! poly(quinoxaline-3!7-diyl-quinoxaline-7!2-diyl-1!4-phenylene),N1=CC(=NC2=CC=C(C=C12)C1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)[*:2])[*:1],577.5829053,797.6521841,0.186033894
+613,poly([6!6'-biquinoxaline]-2!2'-diyl-1!4-phenylene)! poly(quinoxaline-2!6-diyl-quinoxaline-6!2-diyl-1!4-phenylene),N1=C(C=NC2=CC(=CC=C12)C=1C=C2N=CC(=NC2=CC1)C1=CC=C(C=C1)[*:2])[*:1],577.5829053,797.6521841,0.186033894
+144,Poly(1!2!3-oxadiazole-4!5-diyl),[*:1]C1N=NOC1[*:2],668.013658,721.9760623,0.178469508
+482,poly[oxyethyleneoxycarbonyl-1!4-phenyleneoxy(5-oxopentane-1!5-diyl)],O(CCOC(=O)C1=CC=C(C=C1)OCCCCC(=O)[*:2])[*:1],336.58468,675.0897557,0.177392313
+440,poly[oxycarbonyloxy(2-cyclohexyl-1!4-phenylene)(methylphenylmethylene)(3-cyclohexyl-1!4-phenylene)]! poly[oxycarbonyloxy-(2-cyclohexyl-1!4-phenylene)(methyl)phenylmethylene-(3-cyclohexyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC(=C(C=C1)[*:2])C1CCCCC1)(C1=CC=CC=C1)C)C1CCCCC1)[*:1],438.1341679,725.8138804,0.176905924
+671,poly(anthracene-9!10-diylbuta-1!3-diyne-1!4-diyl),C1=CC=CC2=C(C3=CC=CC=C3C(=C12)[*:1])C#CC#C[*:2],435.067278,823.4624551,0.176607483
+600,poly(1!4!5!8-tetraazaanthracene-2!7-diyl-1!4-phenylene)! poly(pyrazino[2!3-g]quinoxaline-2!8-diyl-1!4-phenylene)! poly(pyrazino-[2!3-g]quinoxaline-3!7-diyl-1!4-phenylene)! poly[pyrazino(2!3-g)quinoxaline-2!8-diyl-1!4-phenylene],N1=C(C=NC=2C1=CC=1N=C(C=NC1C2)C2=CC=C(C=C2)[*:2])[*:1],631.9035074,801.2957137,0.166693731
+606,poly(1!4!5!8-tetraazaanthracene-2!6-diyl-1!4-phenylene)! poly(pyrazino-[2!3-g]quinoxaline-2!7-diyl-1!4-phenylene),N1=C(C=NC=2C1=CC=1N=CC(=NC1C2)C2=CC=C(C=C2)[*:2])[*:1],631.9035074,801.2957137,0.166693731
+345,poly[oxypentane-1!5-diylimino(1-oxobutane-1!4-diyl)oxy(6-oxohexane-1!6-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCOCCCCCC(=O)NCCCCC[*:2])=O)[*:1],257.4635266,620.6447297,0.162835595
+349,poly[oxypentane-1!5-diylimino(1-oxopentane-1!5-diyl)oxy(5-oxopentane-1!5-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCCOCCCCC(=O)NCCCCC[*:2])=O)[*:1],257.4635266,620.6447297,0.162835595
+508,poly(oxyethyleneoxyethyleneoxy-2-propylmalonyl)! poly(oxyethyleneoxyethyleneoxy-2-propylpropanedioyl),O(CCOCCOC(C(C(=O)[*:2])CCC)=O)[*:1],253.203495,625.8325751,0.162618649
+57,Polyphenolphthalein3,[*:1]c(cc1)ccc1C2(c3ccccc3C(=O)O2)c(cc4)ccc4C(=O)Oc(cc5)ccc5C6(c7ccccc7C(=O)O6)c(cc8)ccc8OC(=O)[*:2],539.3490387,765.0704943,0.161137782
+92,Polyvinyl acetal,[*:1]C(C1)OCOC1CC(C2)OCOC2CC(O)[*:2],389.8430175,641.839536,0.159075358
+336,poly[oxy(7-oxoheptane-1!7-diyl)iminohexane-1!6-diylimino(1-oxoheptane-1!7-diyl)],O(CCCCCCC(=O)NCCCCCCNC(CCCCCC[*:2])=O)[*:1],259.0150092,625.6935449,0.157379653
+812,poly(disulfanediylpentane-1!5-diyl),S(SCCCCC[*:2])[*:1],280.0394227,690.895874,0.143728921
+803,poly(sulfanediylpropane-1!3-diyl),S(CCC[*:2])[*:1],331.6543732,662.3366142,0.1373413
+816,poly(sulfanediylethylenesulfanediylbutane-1!4-diyl),S(CCSCCCC[*:2])[*:1],272.2543732,662.3350486,0.1373413
+111,poly(1-alkylaziridine),[*:1]NCC[*:2],376.9619208,582.5255502,0.129773523
+594,poly(iminoethylene),N(CC[*:2])[*:1],376.9619208,582.5255502,0.129773523
+436,poly[oxycarbonyloxy(3-cyclohexyl-1!4-phenylene)(dimethylmethylene)-1!4-phenylene],O(C(=O)OC1=CC(=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)C1CCCCC1)[*:1],411.8316033,710.3758925,0.12464799
+862,poly[(2-oxo-2!3-dihydro-1!3-diazaphenalene-1!3-diyl)ethyleneoxyterephthaloyloxyethylene]! poly(oxyethylene-2-oxo-2!3-dihydroperimidine-1!3-diyl-ethyleneoxyterephthaloyl),O(CCN1C(N(C2=CC=CC3=CC=CC1=C23)CCOC(C2=CC=C(C(=O)[*:2])C=C2)=O)=O)[*:1],412.0258203,733.0298778,0.112400776
+913,poly(oxyethyleneoxyethyleneoxyhexa-2!4-diyne-1!6-diyloxyethyleneoxyethyleneoxycarbonyliminohexane-1!6-diyliminocarbonyl),O(CCOCCOCC#CC#CCOCCOCCOC(=O)NCCCCCCNC(=O)[*:2])[*:1],267.9487986,631.7501732,0.10364536
+30,Poly(N-vinyl pyrrolidone),[*:1]C(N1C(=O)CCC1)C[*:2],397.0969505,686.8404477,0.103044682
+656,poly(1!1-dimethyl-2-oxoethylene)! poly(1-oxo-2!2-dimethylethylene),O=C(C(C)(C)[*:2])[*:1],274.9701554,618.5707773,0.099862131
+914,poly(oxyethyleneoxyethyleneoxyhexa-2!4-diyne-1!6-diyloxyethyleneoxyethyleneoxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyl),O(CCOCCOCC#CC#CCOCCOCCOC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)[*:2])[*:1],339.0502351,675.7313838,0.097891158
+344,poly[oxypentane-1!5-diylimino(1-oxobutane-1!4-diyl)oxy(5-oxopentane-1!5-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCOCCCCC(=O)NCCCCC[*:2])=O)[*:1],259.9833959,620.3324341,0.097156789
+246,poly(tricyclo[5.2.1.0^2!6^^]decane-3!4-diyl),[*:1]C1C2C(C3)CCC3C2CC1[*:2],593.6721886,755.5604775,0.079891481
+28,Polychlorotrifluoroethylene,[*:1]C(F)(F)C(F)(Cl)[*:2],399.0905067,547.3811099,0.074594343
+245,poly(tricyclo[5.2.1.0^2!6^^]decane-8!9-diyl),[*:1]C1C(C2)C3CCCC3C2C1[*:2],593.7494071,757.1323021,0.074244362
+863,poly(ureylenedodecane-1!12-diyliminodecanedioyliminododecane-1!12-diyl)! poly(iminocarbonyliminododecane-1!12-diyliminodecanedioyliminododecane-1!12-diyl),N(C(=O)NCCCCCCCCCCCCNC(CCCCCCCCC(=O)NCCCCCCCCCCCC[*:2])=O)[*:1],250.4084752,628.40125,0.067277345
+129,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}9,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCCOCCOCCOCCOCCOCCOCCOCC[*:2],289.9218425,619.5738883,0.063648419
+3,Polyepichlorohydrin,[*:1]C(CCl)CO[*:2],255.9904457,555.7028428,0.059525136
+120,Poly{[6!6'-bi-(13-benzoxazole)]-2!2'-diyl-14-phenylene},[*:1]C(=Nc1cc2)Oc1cc2c(cc3O4)ccc3N=C4c(cc5)ccc5[*:2],678.3488853,793.7290721,0.05438675
+902,poly(oxyethyleneoxyethyleneoxyethyleneoxyethyleneoxycarbonyliminohexane-1!6-diyliminocarbonyl),O(CCOCCOCCOCCOC(=O)NCCCCCCNC(=O)[*:2])[*:1],261.656838,608.8796267,0.036705944
+491,poly(oxyethyleneoxycarbonyl-1!4-phenyleneoxy-1!4-phenylenecarbonyl),O(CCOC(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)[*:2])[*:1],390.0921084,716.5156845,0.034584494
+176,Carboxymethyl Cellulose2,[*:1]OC(C(CO)O1)C(OCC(=O)O)C(OCC(=O)O)C1[*:2],385.9593664,626.3013843,0.027786552
+340,poly[oxyhexane-1!6-diyloxy(3-oxopropane-1!3-diyl)iminohexane-1!6-diylimino(1-oxopropane-1!3-diyl)],O(CCCCCCOCCC(=O)NCCCCCCNC(CC[*:2])=O)[*:1],262.7210319,619.9945607,0.024843952
+343,poly[oxypentane-1!5-diylimino(1-oxobutane-1!4-diyl)oxy(4-oxobutane-1!4-diyl)iminopentane-1!5-diyl],O(CCCCCNC(CCCOCCCC(=O)NCCCCC[*:2])=O)[*:1],262.7210319,619.9945607,0.024843952
+899,poly(oxybutane-1!4-diyloxybutane-1!4-diyloxycarbonyliminohexane-1!6-diyliminocarbonyl),O(CCCCOCCCCOC(=O)NCCCCCCNC(=O)[*:2])[*:1],265.2846593,618.5736241,0.017895059
+589,poly[(1!3-dioxoisoindoline-2!5-diyl)oxy(1!3-dioxoisoindoline-5!2-diyl)hexane-1!6-diyloxycarbonyloxyhexane-1!6-diyloxycarbonyloxyhexane-1!6-diyl],O=C1N(C(C2=CC(=CC=C12)OC=1C=C2C(N(C(C2=CC1)=O)CCCCCCOC(=O)OCCCCCCOC(=O)OCCCCCC[*:2])=O)=O)[*:1],379.1214487,690.7065388,0.017738405
+335,poly[oxy(6-oxohexane-1!6-diyl)iminohexane-1!6-diylimino(1-oxohexane-1!6-diyl)],O(CCCCCC(=O)NCCCCCCNC(CCCCC[*:2])=O)[*:1],264.5903272,625.4452849,0.015898424
+478,poly(oxyethyleneoxyethyleneoxyisophthaloyl),O(CCOCCOC(C1=CC(C(=O)[*:2])=CC=C1)=O)[*:1],317.463269,679.6042724,0.011603763
+901,poly(oxyethyleneoxy-1!4-phenyleneoxyethyleneoxycarbonyliminooctane-1!8-diyliminocarbonyl),O(CCOC1=CC=C(C=C1)OCCOC(=O)NCCCCCCCCNC(=O)[*:2])[*:1],321.6002458,648.1497857,0.011255905
+80,Poly[2-carboxylato-2-(trimethylammonio)ethyl methacrylate] or poly[2-(methacryloyloxymethyl)betaine],[*:1]C(C)(C(O)OCC([N+](C)(C)(C))(CO[O-]))C[*:2],278.0987724,556.5788436,0.010991579
+322,poly(1-carboxy-1-methylethylene),C(=O)(O)C(C[*:2])(C)[*:1],388.8027844,613.2073195,0.004681162
+480,poly[oxyethyleneoxy(1-oxobutane-1!4-diyl)oxy-1!4-phenylenecarbonyl],O(CCOC(CCCOC1=CC=C(C=C1)C(=O)[*:2])=O)[*:1],345.7775082,677.6961694,0.003615831
+503,poly(oxyethyleneoxyethyleneoxyphthaloyl),O(CCOCCOC(C=1C(C(=O)[*:2])=CC=CC1)=O)[*:1],287.7618365,679.9215874,0.002141304
+161,Poly(oxyethylenedisulfanediylethylene),[*:1]OCCSSCC[*:2],282.404205,675.9030744,-0.02291362
+727,poly[5-(1-adamantyl)-1!3-phenylene],C12(CC3CC(CC(C1)C3)C2)C=2C=C(C=C(C2)[*:1])[*:2],455.404587,763.1377975,-0.033929156
+365,poly(oxycyclohexane-1!4-diyloxypropane-1!3-diyliminocarbonyl-1!4-phenyleneoxyhexane-1!6-diyloxy-1!4-phenylenecarbonyliminopropane-1!3-diyl),O(C1CCC(CC1)OCCCNC(=O)C1=CC=C(C=C1)OCCCCCCOC1=CC=C(C=C1)C(=O)NCCC[*:2])[*:1],364.5926623,673.5710036,-0.037259471
+813,poly(sulfanediylmethylenesulfanediylbutane-1!4-diyl),S(CSCCCC[*:2])[*:1],282.7994695,665.8647386,-0.038727839
+621,poly([6!6'-bibenzimidazole]-2!2'-diylnaphthalene-2!6-diyl),N1=C(N=C2C1=CC(C=C2)=C2C=CC=1C(N=C(N1)C1=CC3=CC=C(C=C3C=C1)[*:2])=C2)[*:1],600.1111657,810.8184576,-0.041214368
+887,poly(ureylenedecane-1!10-diylureyleneoctadecane-1!18-diyl)! poly(iminocarbonyliminodecane-1!10-diyliminocarbonyliminooctadecane-1!18-diyl),N(C(=O)NCCCCCCCCCCNC(=O)NCCCCCCCCCCCCCCCCCC[*:2])[*:1],249.8488616,624.6512569,-0.043784161
+128,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}8,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCCOCCOCCOCCOCCOCCOCC[*:2],296.9943452,622.3649435,-0.044739435
+810,poly(disulfanediylbutane-1!4-diyl),S(SCCCC[*:2])[*:1],293.5170256,698.173443,-0.045843877
+821,poly(disulfanediylethylenedisulfanediylhexane-1!6-diyl),S(SCCSSCCCCCC[*:2])[*:1],253.9170256,698.1724251,-0.045843877
+86,Poly(pyrrole-2!5-diyl),[*:1]C(N1)=CC=C1[*:2],647.2494965,789.848916,-0.053109418
+918,poly[furan-2!5-diyl(dimethylmethylene)furan-2!5-diylmethyleneiminocarbonyloxymethylenefuran-2!5-diylmethyleneoxymethylenefuran-2!5-diylmethyleneoxycarbonyliminomethylene],O1C(=CC=C1C(C=1OC(=CC1)CNC(=O)OCC=1OC(=CC1)COCC=1OC(=CC1)COC(=O)NC[*:2])(C)C)[*:1],314.1369208,684.8105615,-0.05508706
+545,poly(1-chloro-1!2!2-trifluoroethylene),ClC(C(F)(F)[*:2])(F)[*:1],377.9705067,547.3811099,-0.078237504
+909,poly[oxyethyleneoxyethyleneoxypropane-1!3-diyloxycarbonylimino(6-methyl-1!3-phenylene)iminocarbonyl],O(CCOCCOCCCOC(=O)NC1=CC(=CC=C1C)NC(=O)[*:2])[*:1],321.4853432,646.9012442,-0.080356591
+507,poly[oxyethyleneoxyethyleneoxy(2-methylmalonyl)]! poly[oxyethyleneoxyethyleneoxy(2-methylpropanedioyl)],O(CCOCCOC(C(C(=O)[*:2])C)=O)[*:1],267.2399119,622.8925799,-0.081077673
+1152,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)(3!3-dimethylbiphenyl-4!4'-diyl)],O=C1N(C(C(N1C=1C(CC(=CC1)C1=CC=C(C=C1)[*:2])(C)C)=O)=O)[*:1],565.0329369,730.4740941,-0.09800514
+997,poly[(5!5-dimethyl-2!4-dioxoimidazolidine-1!3-diyl)methylene(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)methylene(5!5-dimethyl-2!4-dioxoimidazolidine-1!3-diyl)methylene(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene],CC1(C(N(C(N1[*:1])=O)CN1C(N(C(C1=O)(C)C)CN1C(N(C(C1(C)C)=O)CN1C(N(C(C1=O)(C)C)CCOC(C1=CC=C(C(=O)OCC[*:2])C=C1)=O)=O)=O)=O)=O)C,519.5629882,673.2106422,-0.114801738
+362,poly[oxy-1!4-phenyleneoxy(2-oxoethylene)iminopropane-1!3-diyloxycyclohexane-1!4-diyloxypropane-1!3-diylimino(1-oxoethylene)],O(C1=CC=C(C=C1)OCC(=O)NCCCOC1CCC(CC1)OCCCNC(C[*:2])=O)[*:1],375.2144261,658.0652416,-0.117992128
+847,poly[oxyethyleneoxyethyleneoxyethyleneoxy(1-oxopentane-1!5-diyl)sulfonyl(5-oxopentane-1!5-diyl)],O(CCOCCOCCOC(CCCCS(=O)(=O)CCCCC(=O)[*:2])=O)[*:1],261.8978589,601.7975659,-0.126577443
+364,poly(oxycyclohexane-1!4-diyloxypropane-1!3-diyliminocarbonyl-1!4-phenyleneoxybutane-1!4-diyloxy-1!4-phenylenecarbonyliminopropane-1!3-diyl),O(C1CCC(CC1)OCCCNC(=O)C1=CC=C(C=C1)OCCCCOC1=CC=C(C=C1)C(=O)NCCC[*:2])[*:1],373.6741996,675.9763042,-0.140787889
+339,poly[oxybutane-1!4-diyloxy(3-oxopropane-1!3-diyl)iminohexane-1!6-diylimino(1-oxopropane-1!3-diyl)],O(CCCCOCCC(=O)NCCCCCCNC(CC[*:2])=O)[*:1],268.9741788,619.2283898,-0.144149454
+900,poly(oxyethyleneoxyethyleneoxyethyleneoxycarbonyliminohexane-1!6-diyliminocarbonyl),O(CCOCCOCCOC(=O)NCCCCCCNC(=O)[*:2])[*:1],269.8101571,612.1741266,-0.148323007
+31,Poly[2!2'-(m-phenylene)-55'-bibenzimidazole],[*:1]C(Nc1cc2)=Nc1cc2c(ccc3N4)cc3N=C4c(c5)cccc5[*:2],656.427967,801.9657701,-0.151218918
+620,poly([6!6'-bibenzimidazole]-2!2'-diyl-1!3-phenylene)! poly(2!5-benzimidazolediyl-5!2-benzimidazolediyl-1!3-phenylene),N1=C(NC2=C1C=CC(=C2)C2=CC1=C(N=C(N1)C1=CC(=CC=C1)[*:2])C=C2)[*:1],575.907967,801.9657701,-0.151218918
+101,Poly(vinyl phenyl ketone),[*:1]C(C(=O)c1ccccc1)C[*:2],392.4390417,731.9871127,-0.153963647
+334,poly[oxy(5-oxopentane-1!5-diyl)iminohexane-1!6-diylimino(1-oxopentane-1!5-diyl)],O(CCCCC(=O)NCCCCCCNC(CCCC[*:2])=O)[*:1],271.2600116,625.1503552,-0.158130326
+127,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}7,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCCOCCOCCOCCOCCOCC[*:2],305.2813573,625.6472846,-0.173104403
+905,poly[oxyethyleneoxyethyleneiminocarbonyloxy(2!2-dimethylpropane-1!3-diyl)oxycarbonyliminoethylene],O(CCOCCNC(=O)OCC(COC(=O)NCC[*:2])(C)C)[*:1],273.0415443,599.3619054,-0.215135808
+132,Poly[oxy(1-methylethylene)oxyadipoyl],[*:1]C(C)COC(=O)CCCCC(=O)O[*:2],260.2963813,632.1195889,-0.218799696
+420,poly[oxycarbonyloxy(4!6-dimethyl-1!2-phenylene)methylene(3!5-dimethyl-1!2-phenylene)]! poly(oxycarbonyloxy-4!6-dimethyl-1!2-phenylenemethylene-3!5-dimethyl-1!2-phenylene),O(C(=O)OC1=C(C=C(C=C1C)C)CC1=C(C(=CC(=C1)C)C)[*:2])[*:1],341.4602344,698.6076351,-0.219642737
+554,poly[1-(2!4-dimethylphenyl)-2!5-dioxopyrrolidine-3!4-diyl],CC1=C(C=CC(=C1)C)N1C(C(C(C1=O)[*:2])[*:1])=O,437.3465312,723.6234751,-0.221823276
+924,poly{furan-2!5-diyl(dimethylmethylene)furan-2!5-diylmethyleneiminocarbonyloxy[1!2-bis(furan-2-yl)ethylene]oxycarbonyliminomethylene},O1C(=CC=C1C(C=1OC(=CC1)CNC(=O)OC(C(C=1OC=CC1)OC(=O)NC[*:2])C=1OC=CC1)(C)C)[*:1],380.4254112,695.0771094,-0.232648586
+361,poly(oxycyclohexane-1!4-diyloxypropane-1!3-diyliminoterephthaloyliminopropane-1!3-diyl),O(C1CCC(CC1)OCCCNC(C1=CC=C(C(=O)NCCC[*:2])C=C1)=O)[*:1],400.302161,672.2936794,-0.242809149
+410,poly[oxy(1-oxoethylene)oxy-1!4-phenyleneoxy(2-oxoethylene)oxycarbonyl-1!4-phenyleneoxypropane-1!3-diyloxy-1!4-phenylenecarbonyl],O(C(COC1=CC=C(C=C1)OCC(=O)OC(=O)C1=CC=C(C=C1)OCCCOC1=CC=C(C=C1)C(=O)[*:2])=O)[*:1],365.7557057,702.6739232,-0.242875615
+371,poly[oxy-1!4-phenyleneoxy(2-oxoethylene)iminodecane-1!10-diylimino(1-oxoethylene)],O(C1=CC=C(C=C1)OCC(=O)NCCCCCCCCCCNC(C[*:2])=O)[*:1],322.3663016,656.1766264,-0.243801754
+67,Poly(ethylene 2!6-naphthalenedicarboxylate),[*:1]OCCOC(=O)c(ccc1c2)cc1ccc2C(=O)[*:2],433.0141577,728.4272862,-0.253322069
+649,poly[oxy(2-methyl-1!4-phenylene)(dimethylmethylene)(3-methyl-1!4-phenylene)oxy-1!4-phenylene(3-oxoprop-1-ene-1!3-diyl)-1!4-phenylene],O(C1=C(C=C(C=C1)C(C1=CC(=C(C=C1)OC1=CC=C(C=C1)C=CC(=O)C1=CC=C(C=C1)[*:2])C)(C)C)C)[*:1],398.6115032,725.7818268,-0.258354839
+796,poly(sulfanediylethylene)! poly(thioethylene),S(CC[*:2])[*:1],375.9616044,670.2208541,-0.266449
+374,poly[tetrahydrofuran-2!5-diyl(3-oxopropane-1!3-diyl)oxy(1-oxopropane-1!3-diyl)],O1C(CCC1CCC(=O)OC(CC[*:2])=O)[*:1],322.7999217,667.5921794,-0.266947098
+885,poly(ureylenehexane-1!6-diylureyleneoctadecane-1!18-diyl)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonyliminooctadecane-1!18-diyl),N(C(=O)NCCCCCCNC(=O)NCCCCCCCCCCCCCCCCCC[*:2])[*:1],256.5637366,624.1640286,-0.267728897
+886,poly(ureylenedecane-1!10-diylureylenetetradecane-1!14-diyl)! poly(iminocarbonyliminodecane-1!10-diyliminocarbonyliminotetradecane-1!14-diyl),N(C(=O)NCCCCCCCCCCNC(=O)NCCCCCCCCCCCCCC[*:2])[*:1],256.5637366,624.1640286,-0.267728897
+490,poly[oxyethyleneoxy(1-oxoethylene)oxy-1!4-phenylenecarbonyl],O(CCOC(COC1=CC=C(C=C1)C(=O)[*:2])=O)[*:1],365.3249661,683.8960766,-0.270042443
+1003,poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)methylene(5!5-dimethyl-2!4-dioxoimidazolidine-1!3-diyl)methylene-1!4-phenylenecarbonyloxybutane-1!4-diyloxycarbonyl-1!4-phenylenemethylene],CC1(N(C(N(C1=O)[*:1])=O)CN1C(N(C(C1(C)C)=O)CC1=CC=C(C=C1)C(=O)OCCCCOC(=O)C1=CC=C(C=C1)C[*:2])=O)C,470.1877065,688.6664823,-0.272197722
+179,Hydroxypropyl Cellulose,[*:1]OC(C(CO)O1)C(OCC(O)C)C(OCC(O)C)C1[*:2],346.7679445,601.3343067,-0.276309989
+827,poly[oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy(2!6-dimethyl-1!4-phenylene)(dimethylmethylene)(3!5-dimethyl-1!4-phenylene)],O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=C(C=C(C=C1C)C(C1=CC(=C(C(=C1)C)[*:2])C)(C)C)C)[*:1],462.3417468,690.1640879,-0.277388216
+392,poly(oxy-1!3-phenylenecarbonyloxycarbonyl-1!3-phenyleneoxyhexane-1!6-diyl)! poly(oxy-1!3-phenylenecarbonyloxy-carbonyl-1!3-phenyleneoxy-hexamethylene),O(C1=CC(=CC=C1)C(=O)OC(=O)C1=CC(=CC=C1)OCCCCCC[*:2])[*:1],315.744699,702.0220441,-0.278431141
+393,poly(oxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenyleneoxyhexane-1!6-diyl),O(C1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)OCCCCCC[*:2])[*:1],344.890299,702.0220441,-0.278431141
+804,poly(disulfanediylpropane-1!3-diyl),S(SCCC[*:2])[*:1],312.2075597,707.3757058,-0.29648432
+817,poly(disulfanediylethylenedisulfanediylbutane-1!4-diyl),S(SCCSSCCCC[*:2])[*:1],264.6875597,707.3745381,-0.29648432
+916,poly[furan-2!5-diyl(dimethylmethylene)furan-2!5-diylmethyleneiminocarbonyloxymethylenefuran-2!5-diylmethyleneoxycarbonyliminomethylene],O1C(=CC=C1C(C=1OC(=CC1)CNC(=O)OCC=1OC(=CC1)COC(=O)NC[*:2])(C)C)[*:1],335.5776216,683.0235411,-0.296719251
+926,poly{furan-2!5-diyl(propylmethylene)furan-2!5-diylmethyleneiminocarbonyloxy[1-(furan-2-yl)ethylene]oxycarbonyliminomethylene},O1C(=CC=C1C(C=1OC(=CC1)CNC(=O)OC(COC(=O)NC[*:2])C=1OC=CC1)CCC)[*:1],357.2657966,687.2589275,-0.299071496
+996,poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)methylene(5!5-dimethyl-2!4-dioxoimidazolidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene],CC1(N(C(N(C1=O)[*:1])=O)CN1C(N(C(C1(C)C)=O)CCOC(C1=CC=C(C(=O)OCC[*:2])C=C1)=O)=O)C,493.6440197,678.1104635,-0.303569877
+71,Poly{oxycarbonyloxy-14-phenylene[bis-(trifluoromethyl)methylene]-14-phenylene},[*:1]OCOOc(cc1)ccc1C(C(F)(F)(F))(C(F)(F)(F))c(cc2)ccc2[*:2],386.1504941,667.2097157,-0.304159783
+177,Carboxymethyl Hydroxyethyl Cellulose,[*:1]OC(C(CO)O1)C(OCC(=O)O)C(OCCO)C1[*:2],376.0546024,616.4663552,-0.306741917
+920,poly[furan-2!5-diyl(dimethylmethylene)furan-2!5-diylmethyleneiminocarbonyloxymethylenefuran-3!4-diylmethyleneoxycarbonyliminomethylene],O1C(=CC=C1C(C=1OC(=CC1)CNC(=O)OCC1=COC=C1COC(=O)NC[*:2])(C)C)[*:1],318.8596387,682.413564,-0.310295913
+917,poly{furan-2!5-diyl(dimethylmethylene)furan-2!5-diylmethyleneiminocarbonyloxy[1-(furan-2-yl)ethylene]oxycarbonyliminomethylene},O1C(=CC=C1C(C=1OC(=CC1)CNC(=O)OC(COC(=O)NC[*:2])C=1OC=CC1)(C)C)[*:1],368.4496156,683.4189671,-0.311223785
+134,Poly[oxy(butenedioyl)oxybutane-14-diyl],[*:1]CCOC(=O)C=CC(=O)OCC[*:2],248.9601987,650.2076239,-0.313658397
+1050,poly[oxycarbonylimino(1!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylenepropane-1!3-diyl],O(C(=O)NC1(CC(CC(C1)(C)C)CNC(=O)NCCC[*:2])C)[*:1],420.1512375,623.1184519,-0.314210728
+911,poly[oxy(1-methyl-2-oxoethylene)oxyethyleneoxyethyleneoxyethyleneoxy(2-methyl-1-oxoethylene)oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl],O(C(C(=O)OCCOCCOCCOC(C(C)OC(=O)NC1=CC(=C(C=C1)C)NC(=O)[*:2])=O)C)[*:1],329.0214643,642.8545076,-0.315459979
+910,poly[oxyethyleneoxyethyleneoxyethyleneoxycarbonyl-1!4-phenyleneoxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyloxy-1!4-phenylenecarbonyl],O(CCOCCOCCOC(=O)C1=CC=C(C=C1)OC(=O)NC1=CC(=C(C=C1)C)NC(=O)OC1=CC=C(C=C1)C(=O)[*:2])[*:1],370.1169354,687.2326746,-0.320382376
+1049,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylenepropane-1!3-diyl],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NCCC[*:2])[*:1],420.2418559,622.4436062,-0.320738833
+126,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}6,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCCOCCOCCOCCOCC[*:2],315.1256212,629.5631449,-0.327537113
+848,poly[oxyethyleneoxyethyleneoxy(1-oxopentane-1!5-diyl)sulfonyl(5-oxopentane-1!5-diyl)],O(CCOCCOC(CCCCS(=O)(=O)CCCCC(=O)[*:2])=O)[*:1],270.0625391,603.9885539,-0.330336853
+931,poly(oxypentane-1!5-diyloxycarbonylimino-1!3-phenylenecarbonyl),O(CCCCCOC(=O)NC1=CC(=CC=C1)C(=O)[*:2])[*:1],348.443649,678.8223373,-0.331823981
+932,poly(oxypentane-1!5-diyloxycarbonylimino-1!4-phenylenecarbonyl),O(CCCCCOC(=O)NC1=CC=C(C=C1)C(=O)[*:2])[*:1],381.883649,678.8223373,-0.331823981
+98,Poly(vinyl methyl ketone),[*:1]C(C(=O)C)C[*:2],330.2768565,637.3703404,-0.334424573
+390,poly(oxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenyleneoxypentane-1!5-diyl),O(C1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)OCCCCC[*:2])[*:1],351.1986644,705.1782775,-0.362790477
+391,poly(oxy-1!3-phenylenecarbonyloxycarbonyl-1!3-phenyleneoxypentane-1!5-diyl),O(C1=CC(=CC=C1)C(=O)OC(=O)C1=CC(=CC=C1)OCCCCC[*:2])[*:1],320.8386644,705.1782775,-0.362790477
+1153,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)hexane-1!6-diyl],O=C1N(C(C(N1CCCCCC[*:2])=O)=O)[*:1],477.8568536,682.7337907,-0.366579036
+119,Poly{[6!6'-bi-(1!3-benzothiazole)]-2!2'-diyl-14-phenylene},[*:1]C(=Nc1cc2)Sc1cc2c(cc3S4)ccc3N=C4c(cc5)ccc5[*:2],682.7893029,779.3501619,-0.371888103
+506,poly(oxyethyleneoxyethyleneoxymalonyl)! poly(oxyethyleneoxyethyleneoxypropanedioyl),O(CCOCCOC(CC(=O)[*:2])=O)[*:1],264.3358982,626.2040559,-0.373935196
+333,poly[oxy(4-oxobutane-1!4-diyl)iminohexane-1!6-diylimino(1-oxobutane-1!4-diyl)],O(CCCC(=O)NCCCCCCNC(CCC[*:2])=O)[*:1],279.3842873,624.7942304,-0.377378456
+1179,polyester,[*:1]OCCOC(=O)c(cc1)ccc1C(=O)OCCOC(=O)c(cc1)ccc1C(=O)[*:2],365.7878291,701.2758731,-0.383580738
+1002,poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)methylene(5!5-dimethyl-2!4-dioxoimidazolidine-1!3-diyl)methylene-1!4-phenylenecarbonyloxyethyleneoxycarbonyl-1!4-phenylenemethylene],CC1(N(C(N(C1=O)[*:1])=O)CN1C(N(C(C1(C)C)=O)CC1=CC=C(C=C1)C(=O)OCCOC(=O)C1=CC=C(C=C1)C[*:2])=O)C,483.9775257,691.6622113,-0.403490257
+884,poly(ureylenedecane-1!10-diylureylenedodecane-1!12-diyl)! poly(iminocarbonyliminodecane-1!10-diyliminocarbonyliminododecane-1!12-diyl),N(C(=O)NCCCCCCCCCCNC(=O)NCCCCCCCCCCCC[*:2])[*:1],260.6000417,623.8721403,-0.405471151
+979,poly(ureylenecyclohexane-1!4-diylmethylenecyclohexane-1!4-diyl)! poly(iminocarbonyliminocyclohexane-1!4-diylmethylenecyclohexane-1!4-diyl),N(C(=O)NC1CCC(CC1)CC1CCC(CC1)[*:2])[*:1],423.7429576,671.6954322,-0.407474838
+1166,poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)-1!4-phenylenemethylene-1!4-phenylene-(5!5-dimethyl-2!4-dioxoimidazolidine-1!3-diyl)-1!4-phenylenemethylene-1!4-phenylene],CC1(N(C(N(C1=O)[*:1])=O)C1=CC=C(C=C1)CC1=CC=C(C=C1)N1C(N(C(C1(C)C)=O)C1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])=O)C,511.2314676,728.4605384,-0.412264523
+487,poly[oxycarbonyl-1!4-phenyleneoxy(5-oxopentane-1!5-diyl)oxyhexane-1!6-diyl],O(C(=O)C1=CC=C(C=C1)OCCCCC(=O)OCCCCCC[*:2])[*:1],308.6569024,666.9461068,-0.413492947
+295,Poly-(2-acrylamido-2-methylpropane carboxyl) 2,[*:1]C(C(=O)NCC(C)(C)CCOO)C[*:2],266.7733238,595.4553077,-0.416714143
+925,poly[furan-2!5-diyl(dimethylmethylene)furan-2!5-diylmethyleneiminocarbonyloxyethyleneoxycarbonyliminomethylene],O1C(=CC=C1C(C=1OC(=CC1)CNC(=O)OCCOC(=O)NC[*:2])(C)C)[*:1],351.651689,667.9452438,-0.421341691
+52,Poly[1!1-cyclohexane bis(4-phenyl)carbonate],[*:1]c(cc1)ccc1C2(CCCCC2)c(cc3)ccc3OC(=O)O[*:2],420.6098243,729.9549672,-0.426419756
+651,poly[oxy-1!4-phenylenefluorene-9!9-diyl-1!4-phenyleneoxy-1!4-phenylene(3-oxoprop-1-ene-1!3-diyl)-1!4-phenylene]! poly(oxy-p-phenylenefluorene-9-ylidene-p-phenyleneoxy-p-phenylene-1-oxo-2-propene-1!3-diyl-p-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C=CC1C(C=C(C=C1)[*:2])=C1C2=CC=CC=C2C=2C=CC=CC12)=O)[*:1],423.6464275,773.6365481,-0.435885745
+133,Poly(oxyethyleneoxyterephthaloyl) or poly(ethylene terephthalate),[*:1]COC(=O)c(cc1)ccc1C(=O)OC[*:2],379.5610196,701.276512,-0.439221609
+70,Poly(ethyl cyanoacrylate),[*:1]C(CN)(C(O)OCC)C[*:2],314.6384177,573.2956415,-0.440230972
+1048,poly[oxycarbonylimino(1!5!5-trimethylcyclohexane-1!3-diyl)methyleneureyleneethylene],O(C(=O)NC1(CC(CC(C1)(C)C)CNC(=O)NCC[*:2])C)[*:1],431.5598244,622.8479973,-0.443920458
+447,poly(oxycarbonyloxy-2-methyl-1!4-phenylene-cyclohexane-1!1-diyl-3-methyl-1!4-phenylene),O(C(=O)OC1=C(C=C(C=C1)C1(CCCCC1)C1=CC(=C(C=C1)[*:2])C)C)[*:1],431.1570235,714.6572695,-0.444665174
+1047,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureyleneethylene],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NCC[*:2])[*:1],431.6578504,622.139752,-0.451105547
+998,poly[(4-cyclohexyl-2!5-dioxoimidazolidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene],C1(CCCCC1)C1N(C(N(C1=O)[*:1])=O)CCOC(C1=CC=C(C(=O)OCC[*:2])C=C1)=O,457.3122631,697.8042349,-0.454325524
+387,poly(oxy-1!3-phenylenecarbonyloxycarbonyl-1!3-phenyleneoxybutane-1!4-diyl),O(C1=CC(=CC=C1)C(=O)OC(=O)C1=CC(=CC=C1)OCCCC[*:2])[*:1],326.3899553,708.617989,-0.455652758
+449,poly[oxycarbonyloxy(2-phenyl-1!4-phenylene)cyclohexane-1!1-diyl(3-phenyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C1(CCCCC1)C1=CC(=C(C=C1)[*:2])C1=CC=CC=C1)C1=CC=CC=C1)[*:1],430.4139945,749.1800547,-0.490331285
+933,poly(oxybutane-1!4-diyloxycarbonylimino-1!3-phenylenecarbonyl),O(CCCCOC(=O)NC1=CC(=CC=C1)C(=O)[*:2])[*:1],357.835992,681.8175901,-0.49424484
+934,poly(oxybutane-1!4-diyloxycarbonylimino-1!4-phenylenecarbonyl),O(CCCCOC(=O)NC1=CC=C(C=C1)C(=O)[*:2])[*:1],393.2430508,681.8175901,-0.49424484
+658,poly(phenylterephthaloyl),C1(=CC=CC=C1)C1=C(C(=O)[*:1])C=CC(=C1)C(=O)[*:2],464.5486487,766.890731,-0.494441345
+1086,poly[ureylenepropane-1!3-diyl(butylimino)propane-1!3-diyl]! poly[iminocarbonyliminopropane-1!3-diyl(butylimino)propane-1!3-diyl],N(C(=O)NCCCN(CCC[*:2])CCCC)[*:1],280.0470452,611.5808329,-0.499747053
+375,poly[furan-2!5-diyl(3-oxopropane-1!3-diyl)oxy(1-oxopropane-1!3-diyl)],O1C(=CC=C1CCC(=O)OC(CC[*:2])=O)[*:1],352.3518813,691.7613469,-0.502619993
+995,poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene],CC1(N(C(N(C1=O)[*:1])=O)CCOC(C1=CC=C(C(=O)OCC[*:2])C=C1)=O)C,465.1271824,683.5345001,-0.515466694
+125,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}5,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCCOCCOCCOCC[*:2],327.0124816,634.3155269,-0.51688781
+846,poly[oxy-1!4-phenylenesulfinyl-1!4-phenyleneoxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(C1=CC=C(C=C1)S(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)[*:1],406.6804895,716.5060443,-0.522698147
+437,poly[oxycarbonyloxy(2-methyl-1!4-phenylene)(dimethylmethylene)(3-methyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC(=C(C=C1)[*:2])C)(C)C)C)[*:1],412.2252815,696.8130058,-0.525428186
+919,poly(furan-2!5-diylmethyleneoxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyloxymethylene),O1C(=CC=C1COC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)OC[*:2])[*:1],408.2802641,711.3511832,-0.541136965
+428,poly[oxycarbonyloxy(2-phenyl-1!4-phenylene)(dimethylmethylene)(3-phenyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC(=C(C=C1)[*:2])C1=CC=CC=C1)(C)C)C1=CC=CC=C1)[*:1],417.4746904,740.1876469,-0.54996319
+146,Poly(1!3!4-oxadiazole-2!5-diyl),[*:1]C(O1)=NN=C1[*:2],651.7702261,767.5564086,-0.550793675
+89,Poly(thiophene-2!5-diyl),[*:1]c(s1)ccc1[*:2],649.8627969,745.1826257,-0.555254369
+557,poly[1-(4-methylphenyl)-2!5-dioxopyrrolidine-3!4-diyl],CC1=CC=C(C=C1)N1C(C(C(C1=O)[*:2])[*:1])=O,447.7407225,736.3218014,-0.565636612
+870,poly(ureylenedecane-1!10-diyl)! poly(iminocarbonyliminodecane-1!10-diyl),N(C(=O)NCCCCCCCCCC[*:2])[*:1],282.1923136,623.5395154,-0.566100364
+883,poly(ureylenehexane-1!6-diylureylenetetradecane-1!14-diyl)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonyliminotetradecane-1!14-diyl),N(C(=O)NCCCCCCNC(=O)NCCCCCCCCCCCCCC[*:2])[*:1],265.220885,623.5389649,-0.566100364
+444,poly[oxycarbonyloxy-1!4-phenylene(diisobutylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(CC(C)C)CC(C)C)[*:1],354.4855751,685.490107,-0.569666805
+145,Poly(1!2!5-oxadiazole-4!5-diyl),[*:1]C1=NON=C1[*:2],550.8481926,768.826822,-0.589908986
+357,poly(oxyethyleneoxyethyleneiminoadipoyliminoethylene)! poly(oxyethyleneoxyethyleneiminohexanedioyliminoethylene),O(CCOCCNC(CCCCC(=O)NCC[*:2])=O)[*:1],285.8800842,617.1968932,-0.628919251
+928,poly(oxycarbonylimino-1!4-phenylenecarbonyloxydecane-1!10-diyl),O(C(=O)NC1=CC=C(C=C1)C(=O)OCCCCCCCCCC[*:2])[*:1],337.0452651,667.7918729,-0.637743726
+929,poly(oxycarbonylimino-1!3-phenylenecarbonyloxydecane-1!10-diyl),O(C(=O)NC1=CC(=CC=C1)C(=O)OCCCCCCCCCC[*:2])[*:1],310.8748303,667.7918729,-0.637743726
+923,poly(furan-2!5-diylmethyleneoxycarbonyliminohexane-1!6-diyliminocarbonyloxymethylene),O1C(=CC=C1COC(=O)NCCCCCCNC(=O)OC[*:2])[*:1],321.8617513,653.7515659,-0.641729158
+22,Polyvinyl chloride,[*:1]C(Cl)C[*:2],301.1830861,532.3076033,-0.642030365
+96,Polyvinyl halide 2,[*:1]C(Cl)C[*:2],301.1830861,532.3076033,-0.642030365
+549,poly(1-chloroethylene),ClC(C[*:2])[*:1],301.1830861,532.3076033,-0.642030365
+797,poly(disulfanediylethylene),S(SCC[*:2])[*:1],339.898839,719.3825473,-0.643989324
+369,poly[oxy-1!4-phenyleneoxy(2-oxoethylene)iminohexane-1!6-diylimino(1-oxoethylene)],O(C1=CC=C(C=C1)OCC(=O)NCCCCCCNC(C[*:2])=O)[*:1],346.132687,661.2294746,-0.652926536
+907,poly(oxyethyleneoxycarbonyliminoethyleneoxyethyleneoxyethyleneiminocarbonyl),O(CCOC(=O)NCCOCCOCCNC(=O)[*:2])[*:1],287.2511817,608.6645119,-0.660660512
+341,poly(oxypropane-1!3-diyliminoadipoyliminopropane-1!3-diyl)! poly(oxypropane-1!3-diyliminohexanedioyliminopropane-1!3-diyl),O(CCCNC(CCCCC(=O)NCCC[*:2])=O)[*:1],289.502836,624.3556599,-0.66206528
+178,Hydroxyethyl Cellulose 1,[*:1]OC(C(CO)O1)C(OCCO)C(OCCO)C1[*:2],364.619955,605.5318956,-0.66337709
+895,poly(ureylenemethylene-1!4-phenylenemethyleneureyleneoctadecane-1!18-diyl),N(C(=O)NCC1=CC=C(C=C1)CNC(=O)NCCCCCCCCCCCCCCCCCC[*:2])[*:1],286.9065153,648.4512843,-0.667610236
+38,Polyacrylate,[*:1]C(C(=O)[O-])C[*:2],362.7583768,677.5041262,-0.672034581
+300,poly(1-carboxyethylene),C(=O)(O)C(C[*:2])[*:1],362.7583768,635.9545349,-0.672034581
+435,poly[oxycarbonyloxy(3-isopropyl-1!4-phenylene)(dimethylmethylene)-1!4-phenylene],O(C(=O)OC1=CC(=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)C(C)C)[*:1],384.9018406,694.713024,-0.689989866
+912,poly[oxy(2-oxoethylene)oxyethyleneoxyethyleneoxyethyleneoxy(1-oxoethylene)oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl],O(CC(=O)OCCOCCOCCOC(COC(=O)NC1=CC(=C(C=C1)C)NC(=O)[*:2])=O)[*:1],318.9715704,646.0675316,-0.69635103
+648,poly[oxy-1!4-phenylene(dimethylmethylene)-1!4-phenyleneoxy-1!4-phenylene(3-oxoprop-1-ene-1!3-diyl)-1!4-phenylene],O(C1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)C=CC(=O)C1=CC=C(C=C1)[*:2])(C)C)[*:1],396.9557617,736.9145996,-0.697170207
+904,poly(oxyethyleneoxyethyleneoxycarbonyliminobutane-1!4-diyliminocarbonyl),O(CCOCCOC(=O)NCCCCNC(=O)[*:2])[*:1],290.9366912,615.1536376,-0.697402075
+906,poly(oxyethyleneoxycarbonyliminopropane-1!3-diyloxypropane-1!3-diyliminocarbonyl),O(CCOC(=O)NCCCOCCCNC(=O)[*:2])[*:1],290.9366912,615.1536376,-0.697402075
+358,poly[oxyethyleneoxyethyleneimino(6-hydroxyundecanedioyl)iminoethylene],O(CCOCCNC(CCCCC(CCCCC(=O)NCC[*:2])O)=O)[*:1],278.3528851,614.3822038,-0.705953457
+908,poly(oxyethyleneoxycarbonylimino-1!4-phenyleneoxy-1!4-phenyleneiminocarbonyl),O(CCOC(=O)NC1=CC=C(C=C1)OC1=CC=C(C=C1)NC(=O)[*:2])[*:1],473.5976089,698.9057938,-0.711248455
+292,Hydroxyethyl Cellulose 2,[*:1]OC(C(COCCOCCO)O1)C(O)C(O)C1OC(C(O)C2(COCCOCCO))C(CCCO)OC2[*:2],402.8463695,606.0733439,-0.717019096
+338,poly[oxyethyleneoxy(2-oxoethylene)iminohexane-1!6-diylimino(1-oxoethylene)]! poly(oxyethyleneoxy-2-oxoethyleneiminohexamethyleneimino-1-oxoethylene),O(CCOCC(NC(C(N1CCCCCC1)[*:2])=O)=O)[*:1],381.0246651,643.3018443,-0.719736284
+376,poly[oxy(1-oxoethylene)oxy-1!3-phenylenecarbonyl],O(C(COC1=CC(=CC=C1)C(=O)[*:2])=O)[*:1],357.5101655,708.335899,-0.721806545
+585,poly[oxyhexane-1!6-diyloxy-1!4-phenylenecarbonyl(phenylimino)carbonyl-1!4-phenylene],O(CCCCCCOC1=CC=C(C=C1)C(=O)N(C(=O)C1=CC=C(C=C1)[*:2])C1=CC=CC=C1)[*:1],376.7249989,716.4599796,-0.738627472
+583,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy(1!3-dioxoisoindoline-5!2-diyl)(2!6-dimethyl-1!4-phenylene)methylene(3!5-dimethyl-1!4-phenylene)],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC(=CC=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=C(C=C(C=C1C)CC1=CC(=C(C(=C1)C)[*:2])C)C)=O)=O)[*:1],521.2107142,754.0469465,-0.740775345
+582,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy(1!3-dioxoisoindoline-5!2-diyl)(2!6-dimethyl-1!4-phenylene)methylene(3!5-dimethyl-1!4-phenylene)],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=CC=C2C=C1OC=1C=C2C(N(C(C2=CC1)=O)C1=C(C=C(C=C1C)CC1=CC(=C(C(=C1)C)[*:2])C)C)=O)=O)[*:1],501.373823,754.1587144,-0.744100706
+581,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-1!5-diyloxy(1!3-dioxoisoindoline-5!2-diyl)(2!6-dimethyl-1!4-phenylene)methylene(3!5-dimethyl-1!4-phenylene)],O=C1N(C(C2=CC(=CC=C12)OC1=CC=CC2=C(C=CC=C12)OC=1C=C2C(N(C(C2=CC1)=O)C1=C(C=C(C=C1C)CC1=CC(=C(C(=C1)C)[*:2])C)C)=O)=O)[*:1],521.2922151,754.2704823,-0.747425944
+485,poly[oxy(1-oxoethylene)oxy-1!4-phenylenecarbonyloxyhexane-1!6-diyl],O(C(COC1=CC=C(C=C1)C(=O)OCCCCCC[*:2])=O)[*:1],326.0447632,672.7460432,-0.750000835
+124,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}4,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCCOCCOCC[*:2],341.6528285,640.2045372,-0.754531719
+869,poly(ureylenenonane-1!9-diyl)! poly(iminocarbonyliminononane-1!9-diyl),N(C(=O)NCCCCCCCCC[*:2])[*:1],288.8414128,623.1556675,-0.755834167
+882,poly(ureylenehexane-1!6-diylureylenedodecane-1!12-diyl)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonyliminododecane-1!12-diyl),N(C(=O)NCCCCCCNC(=O)NCCCCCCCCCCCC[*:2])[*:1],270.5644897,623.1550755,-0.755834167
+981,poly(ureyleneoctane-1!8-diylureylenedecane-1!10-diyl)! poly(iminocarbonyliminooctane-1!8-diyliminocarbonyliminodecane-1!10-diyl),N(C(=O)NCCCCCCCCNC(=O)NCCCCCCCCCC[*:2])[*:1],270.5644897,623.1550755,-0.755834167
+441,poly[oxycarbonyloxy(2-phenyl-1!4-phenylene)(methylphenylmethylene)(3-phenyl-1!4-phenylene)]! poly[oxycarbonyloxy-(2-phenyl-1!4-phenylene)(methyl)phenylmethylene-(3-phenyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC(=C(C=C1)[*:2])C1=CC=CC=C1)(C1=CC=CC=C1)C)C1=CC=CC=C1)[*:1],435.788221,753.2566431,-0.757847693
+54,Polycarbonate3,[*:1]c(cc1)ccc1C2(CC(C3)C4CCCC4C32)c(cc5)ccc5OC(=O)O[*:2],533.9778467,747.8762266,-0.760847182
+443,poly[oxycarbonyloxy-1!4-phenylene(dipropylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(CCC)CCC)[*:1],367.2441877,702.2716134,-0.762317337
+53,Polycarbonate2,[*:1]c(cc1)ccc1C2(CC(C3)CCC32)c(cc4)ccc4OC(=O)O[*:2],507.7627162,744.2452216,-0.765074542
+629,poly[oxy(2!6-diisopropyl-1!4-phenylene)isophthaloyl-1!4-phenylene],O(C1=C(C=C(C=C1C(C)C)C(C1=CC(C(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)C(C)C)[*:1],415.0609226,722.8491636,-0.766951856
+452,poly[oxycarbonyloxy-1!4-phenylene(dimethylmethylene)-1!3-phenylene(dimethylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC(=CC=C1)C(C1=CC=C(C=C1)[*:2])(C)C)(C)C)[*:1],393.9536712,709.5337252,-0.767961126
+397,poly[oxy(1-oxoethylene)oxy-1!4-phenyleneoxy(2-oxoethylene)oxyisophthaloyl],O(C(COC1=CC=C(C=C1)OCC(=O)OC(C1=CC(C(=O)[*:2])=CC=C1)=O)=O)[*:1],377.4597704,708.3352029,-0.783565813
+398,poly[oxy(1-oxoethylene)oxy-1!4-phenyleneoxy(2-oxoethylene)oxyterephthaloyl],O(C(COC1=CC=C(C=C1)OCC(=O)OC(C1=CC=C(C(=O)[*:2])C=C1)=O)=O)[*:1],382.3336165,708.3352029,-0.783565813
+976,poly(ureylene-1!4-phenylenemethylene-1!4-phenyleneureyleneoctadecane-1!18-diyl)! poly(iminocarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyliminooctadecane-1!18-diyl),N(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCCCCCCCCCCCCCCCCCC[*:2])[*:1],329.7035561,669.459067,-0.786991378
+994,poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)-1!4-phenyleneoxy-1!4-phenylene]! poly(oxy-1!4-phenylene-5!5-dimethyl-2!4-dioxoimidazolidine-1!3-diyl-1!4-phenylene),O(C1=CC=C(C=C1)N1C(N(C(C1(C)C)=O)C1=CC=C(C=C1)[*:2])=O)[*:1],512.9939891,726.5448743,-0.794131554
+584,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy(1!3-dioxoisoindoline-5!2-diyl)(3!3'!5!5'-tetramethylbiphenyl-4!4'-diyl)],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=CC=C2C=C1OC=1C=C2C(N(C(C2=CC1)=O)C1=C(C=C(C=C1C)C1=CC(=C(C(=C1)C)[*:2])C)C)=O)=O)[*:1],507.6387278,757.6592742,-0.807745011
+586,poly[oxyhexane-1!6-diyloxy-1!4-phenylenecarbonyl(4-phenoxyphenylimino)carbonyl-1!4-phenylene],O(CCCCCCOC1=CC=C(C=C1)C(=O)N(C(=O)C1=CC=C(C=C1)[*:2])C1=CC=C(C=C1)OC1=CC=CC=C1)[*:1],380.7160538,722.2400696,-0.81120402
+499,poly[oxyethyleneoxyethyleneoxy(2-methoxy-1!4-phenylene)carbonyloxyethyleneoxycarbonyl(3-methoxy-1!4-phenylene)],O(CCOCCOC1=C(C=C(C=C1)C(=O)OCCOC(=O)C1=CC(=C(C=C1)[*:2])OC)OC)[*:1],350.7990104,665.8539723,-0.830649209
+108,Polyamide - Nylon 6-6,[*:1]NCCCCCCNC(=O)CCCCC(=O)[*:2],295.5496,632.5269835,-0.839406151
+501,poly(oxycarbonyl-1!4-phenyleneoxy-1!4-phenylenecarbonyloxyhexane-1!6-diyl),O(C(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)OCCCCCC[*:2])[*:1],354.5133011,702.0220441,-0.842722375
+860,poly[(2-oxoimidazolidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene]! poly(oxyethylene-2-oxoimidazolidine-1!3-diyl-ethyleneoxyterephthaloyl),O(CCN1C(N(CC1)CCOC(C1=CC=C(C(=O)[*:2])C=C1)=O)=O)[*:1],387.7686654,690.7664133,-0.850273143
+476,poly(furan-2!5-diylcarbonyloxyethyleneoxycarbonyl),O1C(=CC=C1C(=O)OCCOC(=O)[*:2])[*:1],366.9701628,691.3151231,-0.851872865
+37,Poly(acrylic acid),[*:1]C(C(=O)O)C[*:2],337.4143768,635.9545349,-0.855432797
+630,poly[oxy(2-ethyl-1!4-phenylene)isophthaloyl(3-isopropyl-1!4-phenylene)],O(C1=C(C=C(C=C1)C(C1=CC(C(=O)C2=CC(=C(C=C2)[*:2])C(C)C)=CC=C1)=O)CC)[*:1],395.4133418,730.3854422,-0.861437457
+644,poly{oxy[2-(1!1-dimethylethyl)1!4-phenylene]oxy-1!4-phenylenecarbonyl-1!4-phenylene}! poly[oxy-(tert-butyl-1!4-phenylene)oxy-1!4-phenylenecarbonyl-1!4-phenylene],O(C1=C(C=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])C(C)(C)C)[*:1],387.2002319,722.190807,-0.863314137
+366,poly(oxyethyleneoxyethyleneoxy-1!4-phenylenecarbonyliminopropane-1!3-diyloxycyclohexane-1!4-diyloxypropane-1!3-diyliminocarbonyl-1!4-phenylene),O(CCOCCOC1=CC=C(C=C1)C(=O)NCCCOC1CCC(CC1)OCCCNC(=O)C1=CC=C(C=C1)[*:2])[*:1],381.0091929,671.0274961,-0.869827945
+650,poly[oxy-1!4-phenylene(methylphenylmethylene)-1!4-phenyleneoxy-1!4-phenylene(3-oxoprop-1-ene-1!3-diyl)-1!4-phenylene],O(C1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)C=CC(=O)C1=CC=C(C=C1)[*:2])(C1=CC=CC=C1)C)[*:1],417.0039015,749.7063363,-0.876031612
+505,poly(oxyoxalyloxyethyleneoxyethylene)! poly(oxyethanedioyloxyethyleneoxyethylene),O(C(C(=O)OCCOCC[*:2])=O)[*:1],265.0354995,629.3513317,-0.877755495
+1091,poly[ureylenepropane-1!3-diyl(ethylimino)propane-1!3-diyl],N(C(=O)NCCCN(CCC[*:2])CC)[*:1],298.0268851,609.0067699,-0.880347632
+838,poly[oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenecyclohexane-1!3-diyl(methylmethylene)-1!4-phenylene],O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1CC(CCC1)C(C1=CC=C(C=C1)[*:2])C)[*:1],421.9043391,711.4046158,-0.885520762
+433,poly[oxycarbonyloxy-1!4-phenylene(isobutylmethylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)CC(C)C)[*:1],394.5199068,697.0999882,-0.88594743
+829,poly[oxybutane-1!4-diyloxy-1!4-phenylene(dimethylmethylene)-1!4-phenyleneoxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(CCCCOC1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)(C)C)[*:1],392.0729389,701.408811,-0.891474897
+1154,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)(4-methyl-1!3-phenylene)(2!4!5-trioxoimidazolidine-1!3-diyl)(hexane-1!6-diyl)],O=C1N(C(C(N1C1=CC(=C(C=C1)C)N1C(N(C(C1=O)=O)CCCCCC[*:2])=O)=O)=O)[*:1],500.8660671,711.283732,-0.89494869
+8,Phenoxy resin,[*:1]Oc(cc1)ccc1C(C)(C)c(cc2)ccc2OCC(O)C[*:2],388.3967384,684.702272,-0.899742979
+137,Poly[(pyridine-26-diyl)oxy-14-phenylene-(dimethylmethylene)-14-phenyleneoxy],[*:1]C(=CC=C1)N=C1Oc(cc2)ccc2C(C)(C)c(cc3)ccc3O[*:2],396.674594,730.4688014,-0.904176825
+434,poly[oxycarbonyloxy(2-methyl-1!4-phenylene)(dimethylmethylene)-1!4-phenylene],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)C)[*:1],411.5287785,704.2712267,-0.907325916
+1157,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)hexane-1!6-diyl(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenyleneethylene-1!4-phenylene],O=C1N(C(C(N1CCCCCCN1C(N(C(C1=O)=O)C1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],493.5790023,721.4869494,-0.907349122
+1158,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)hexane-1!6-diyl(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene],O=C1N(C(C(N1CCCCCCN1C(N(C(C1=O)=O)C1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],476.0330748,721.6403961,-0.912070858
+852,poly(oxybiphenyl-4!4'-diyloxy-1!4-phenylenesulfinyl-1!4-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)C1=CC=C(C=C1)[*:2])[*:1],422.1549627,734.2806339,-0.916599304
+587,poly[oxyhexane-1!6-diyloxy-1!4-phenylenecarbonyl(3!5-dimethylphenylimino)carbonyl-1!4-phenylene],O(CCCCCCOC1=CC=C(C=C1)C(=O)N(C(=O)C1=CC=C(C=C1)[*:2])C1=CC(=CC(=C1)C)C)[*:1],379.0954915,705.8559891,-0.917925573
+573,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!6-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenylene(dimethylmethylene)-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=C(C=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)C(C1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)(C)C)=O)=O)[*:1],470.6429286,752.8292609,-0.929706973
+574,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenylene(dimethylmethylene)-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC(=CC=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)C(C1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)(C)C)=O)=O)[*:1],470.6429286,752.8292609,-0.929706973
+49,Poly[1!1-dichloroethylene bis(4-phenyl)carbonate],[*:1]c(cc1)ccc1C(=C(Cl)(Cl))c(cc2)ccc2OC(=O)O[*:2],422.956329,676.1499912,-0.931526274
+78,Poly[imino(3-carboxy-1!4-phenylene)] or poly(3-aminobenzoic acid),[*:1]Nc(cc1(COO))ccc1[*:2],468.6763034,684.9948483,-0.933856356
+798,poly(tetrasulfanediylethylene),S(SSSCC[*:2])[*:1],303.0932294,757.2207286,-0.935390263
+572,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-1!5-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenylene(dimethylmethylene)-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC=CC2=C(C=CC=C12)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)C(C1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)(C)C)=O)=O)[*:1],470.714566,753.0263205,-0.935491576
+1,Poly(thiocarbonyl fluoride),[*:1]C(F)(F)S[*:2],475.0123054,594.6906999,-0.9355972
+792,poly[sulfanediyl(difluoromethylene)]! poly(thiodifluoromethylene),S(C(F)(F)[*:2])[*:1],475.0123054,594.6906999,-0.9355972
+631,poly[oxy(2-isopropyl-1!4-phenylene)isophthaloyl(3-methyl-1!4-phenylene)],O(C1=C(C=C(C=C1)C(C1=CC(C(=O)C2=CC(=C(C=C2)[*:2])C)=CC=C1)=O)C(C)C)[*:1],408.9275396,732.2593113,-0.939259899
+632,poly(oxy-2-isopropyl-1!4-phenyleneterephthaloyl-3-methyl-1!4-phenylene)! poly(oxy-2-isopropyl-1!4-phenyleneterephthaloyl-3-methyl-1!4-phenylene),O(C1=C(C=C(C=C1)C(C1=CC=C(C(=O)C2=CC(=C(C=C2)[*:2])C)C=C1)=O)C(C)C)[*:1],413.6208729,732.2593113,-0.939259899
+591,poly[(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)(2!3!5!6-tetraphenylbiphenyl-4!4'-diyl)oxy(2'!3'!5'!6'-tetraphenylbiphenyl-4!4'-diyl)],O=C1N(C(C2=CC(=CC=C12)[*:1])=O)C1=CC=C(C=C1)N1C(C2=CC=C(C=C2C1=O)C1=C(C(=C(C(=C1C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1=C(C(=C(C(=C1C1=CC=CC=C1)C1=CC=CC=C1)[*:2])C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)C1=CC=CC=C1)=O,504.4367339,782.786889,-0.940078234
+927,poly[oxyhexane-1!6-diyloxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyloxyhexane-1!6-diyloxybiphenyl-4!4'-diyl],O(CCCCCCOC(=O)NC1=CC(=C(C=C1)C)NC(=O)OCCCCCCOC1=CC=C(C=C1)C1=CC=C(C=C1)[*:2])[*:1],354.518034,684.0012263,-0.943491532
+625,poly[oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)[*:1],413.2716962,739.8187844,-0.948853338
+500,poly(oxy-1!4-phenylenecarbonyloxypentane-1!5-diyloxycarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)C(=O)OCCCCCOC(=O)C1=CC=C(C=C1)[*:2])[*:1],361.3203264,705.1782775,-0.96003331
+628,poly[oxy(2-ethyl-1!4-phenylene)isophthaloyl(3-ethyl-1!4-phenylene)],O(C1=C(C=C(C=C1)C(C1=CC(C(=O)C2=CC(=C(C=C2)[*:2])CC)=CC=C1)=O)CC)[*:1],402.5009925,738.5148897,-0.966840279
+438,poly[oxycarbonyloxy(2-methoxy-1!4-phenylene)(dimethylmethylene)-1!4-phenylene],O(C(=O)OC1=C(C=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)OC)[*:1],403.4162975,694.8104292,-0.967203432
+1000,poly(2!6-dioxo-1!2!3!4-tetrahydropyrimidine-1!3-diylethyleneoxyterephthaloyloxyethylene)! poly[(2!6-dioxo-1!2!3!4-tetrahydropyrimidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene]! ,O=C1N(C(CCN1CCOC(C1=CC=C(C(=O)OCC[*:2])C=C1)=O)=O)[*:1],446.8998026,693.2492807,-0.97131526
+588,poly[oxyhexane-1!6-diyloxy-1!4-phenylenecarbonyl(1-naphthylimino)carbonyl-1!4-phenylene],O(CCCCCCOC1=CC=C(C=C1)C(=O)N(C(=O)C1=CC=C(C=C1)[*:2])C1=CC=CC2=CC=CC=C12)[*:1],388.4034529,729.1161003,-0.973180653
+999,poly[(5!5-diphenylhydantoin-1!3-diyl)ethyleneoxyterephthaloyloxyethylene]! poly[(2!5-dioxo-4!4-diphenylimidazolidine-1!3-diyl)ethyleneoxyterephthaloyloxyethylene],O=C1N(C(C(N1CCOC(C1=CC=C(C(=O)OCC[*:2])C=C1)=O)(C1=CC=CC=C1)C1=CC=CC=C1)=O)[*:1],469.5199087,724.5085504,-0.98026312
+105,Polyamide - Nylon 6,[*:1]NCCCCCC(=O)[*:2],327.2178116,632.5279622,-0.98185403
+868,poly(ureyleneoctane-1!8-diyl)! poly(iminocarbonyliminooctane-1!8-diyl),N(C(=O)NCCCCCCCC[*:2])[*:1],296.6168695,622.7085797,-0.983365246
+881,poly(ureylenehexane-1!6-diylureylenedecane-1!10-diyl)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonyliminodecane-1!10-diyl),N(C(=O)NCCCCCCNC(=O)NCCCCCCCCCC[*:2])[*:1],276.8168695,622.7079393,-0.983365246
+1093,poly(ureyleneheptane-1!7-diylureylenenonane-1!9-diyl)! poly(iminocarbonyliminoheptane-1!7-diyliminocarbonyliminononane-1!9-diyl),N(C(=O)NCCCCCCCNC(=O)NCCCCCCCCC[*:2])[*:1],276.8168695,622.7079393,-0.983365246
+659,poly{[1-(hydroxymethyl)-2-oxocyclohexane-1!3-diyl]methylene},OCC1(C(C(CCC1)C[*:2])=O)[*:1],406.6814137,665.7536488,-0.98413204
+421,poly[oxycarbonyloxy(2-methyl-1!4-phenylene)methylene(3-methyl-1!4-phenylene)],O(C(=O)OC1=C(C=C(C=C1)CC1=CC(=C(C=C1)[*:2])C)C)[*:1],347.6193949,714.5448389,-1.000655602
+64,Poly(oxy(2!6-diphenyl-1!4-phenylene)) or poly(2!6-diphenylphenylene oxide),[*:1]c(cc1(c2ccccc2))cc(c3ccccc3)c1O[*:2],456.6303451,772.0218843,-1.004198994
+150,Poly[oxy(2!6-diphenyl-1!4-phenylene)],[*:1]Oc(c(c1ccccc1)c2)c(c3ccccc3)cc2[*:2],456.6303451,772.0218843,-1.004198994
+794,poly(sulfanediylmethylene)! poly(thiomethylene),S(C[*:2])[*:1],463.6568326,682.9108805,-1.007966984
+432,poly[oxycarbonyloxy-1!4-phenylene(methylpropylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(CCC)C)[*:1],403.4879911,706.9011921,-1.015986376
+6,Poly(N-phenyl maleimide),[*:1]C1C(=O)N(c2ccccc2)C(=O)C1[*:2],516.291151,751.5099584,-1.016914595
+556,poly(2!5-dioxo-1-phenylpyrrolidine-3!4-diyl),O=C1N(C(C(C1[*:1])[*:2])=O)C1=CC=CC=C1,460.2419203,751.5099584,-1.016914595
+1156,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)hexane-1!6-diyl(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenylenemethylene-1!4-phenylene],O=C1N(C(C(N1CCCCCCN1C(N(C(C1=O)=O)C1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],502.4579176,724.2331242,-1.020296914
+894,poly(ureylenemethylene-1!4-phenylenemethyleneureylenetetradecane-1!14-diyl),N(C(=O)NCC1=CC=C(C=C1)CNC(=O)NCCCCCCCCCCCCCC[*:2])[*:1],299.2865499,651.1268203,-1.024433829
+442,poly[oxycarbonyloxy-1!4-phenylene(diethylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(CC)CC)[*:1],386.9981242,709.5931361,-1.028394802
+429,poly[oxycarbonyloxy(3-methyl-1!4-phenylene)(phenylmethylene)(2-methyl-1!4-phenylene)],O(C(=O)OC1=CC(=C(C=C1)C(C1=C(C=C(C=C1)[*:2])C)C1=CC=CC=C1)C)[*:1],430.4867112,730.7921476,-1.028981561
+451,poly(oxycarbonyloxy-1!4-phenylene(diphenylmethylene)-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C1=CC=CC=C1)C1=CC=CC=C1)[*:1],426.1589983,753.9796082,-1.046649675
+921,poly(furan-2!5-diylmethyleneoxycarbonyliminomethylenefuran-2!5-diylmethyleneiminocarbonyloxymethylene),O1C(=CC=C1COC(=O)NCC=1OC(=CC1)CNC(=O)OC[*:2])[*:1],331.6036641,681.8238709,-1.049481276
+425,poly[oxycarbonyloxy-1!4-phenylene(phenylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])C1=CC=CC=C1)[*:1],420.3253306,747.1834748,-1.055345283
+123,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}3,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCCOCC[*:2],360.1317163,647.6933339,-1.061691324
+363,poly(oxyethyleneoxy-1!4-phenylenecarbonyliminopropane-1!3-diyloxycyclohexane-1!4-diyloxypropane-1!3-diyliminocarbonyl-1!4-phenylene),O(CCOC1=CC=C(C=C1)C(=O)NCCCOC1CCC(CC1)OCCCNC(=O)C1=CC=C(C=C1)[*:2])[*:1],396.0204245,678.6533339,-1.069391848
+922,poly{furan-2!5-diylmethyleneiminocarbonyloxy[1-(furan-2-yl)ethylene]oxycarbonyliminomethylene},O1C(=CC=C1CNC(=O)OC(COC(=O)NC[*:2])C=1OC=CC1)[*:1],376.4412487,682.3588946,-1.07122821
+986,poly{ureylene[1-(methoxycarbonyl)pentane-1!5-diyl]ureylenenonane-1!9-diyl}! poly{iminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]iminocarbonyliminononane-1!9-diyl},N(C(=O)NC(CCCCNC(=O)NCCCCCCCCC[*:2])C(=O)OC)[*:1],299.938671,621.7642272,-1.086547917
+104,Poly(imino-14-phenylenecarbonyl) or poly(4-aminobenzoic acid),[*:1]Nc(cc1)ccc1CO[*:2],469.4156667,701.2652627,-1.086586678
+851,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenecyclohexane-1!1-diyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1(CCCCC1)C1=CC=C(C=C1)[*:2])[*:1],431.8482227,718.4548713,-1.089821435
+1095,poly(piperidine-1!4-diylpropane-1!3-diylpiperidine-4!1-diylcarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyl),N1(CCC(CC1)CCCC1CCN(CC1)C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)[*:2])[*:1],424.5892681,700.382936,-1.097894545
+13,Ultem,[*:1]Oc(cc1)ccc1C(C)(C)c(cc2)ccc2Oc(ccc3C4(=O))cc3C(=O)N4c(ccc5)cc5N(C(=O)c6cc7)C(=O)c6cc7[*:2],524.2857931,756.013584,-1.107875582
+975,poly(ureylene-1!4-phenylenemethylene-1!4-phenyleneureylenetetradecane-1!14-diyl)! poly(iminocarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyliminotetradecane-1!14-diyl),N(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCCCCCCCCCCCCCC[*:2])[*:1],345.3344646,674.2499311,-1.113761476
+880,poly(ureylenehexane-1!6-diylureylenenonane-1!9-diyl)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonyliminononane-1!9-diyl),N(C(=O)NCCCCCCNC(=O)NCCCCCCCCC[*:2])[*:1],280.360413,622.4555594,-1.115016792
+1155,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)hexane-1!6-diyl(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C(N1CCCCCCN1C(N(C(C1=O)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],503.7345134,723.0671529,-1.118339086
+1088,poly{ureylenepropane-1!3-diyl[(4-methylphenyl)imino]propane-1!3-diyl}! poly{iminocarbonyliminopropane-1!3-diyl[(4-methylphenyl)imino]propane-1!3-diyl},N(C(=O)NCCCN(CCC[*:2])C1=CC=C(C=C1)C)[*:1],356.7403009,659.6321322,-1.125786322
+1134,poly[ureyleneethyleneureylene(3!5!5-trimethylcyclohexane-1!3-diyl)methylene],N(C(=O)NCCNC(=O)NC1CC(CC(C1)(C)C)(C)C[*:2])[*:1],440.372484,621.0371384,-1.13046248
+389,poly[oxybutane-1!4-diyloxy(2-methoxy-1!4-phenylene)carbonyloxycarbonyl(3-methoxy-1!4-phenylene)],O(CCCCOC1=C(C=C(C=C1)C(=O)OC(=O)C1=CC(=C(C=C1)[*:2])OC)OC)[*:1],372.4659469,682.1617431,-1.134719766
+502,poly(oxyethyleneoxy-1!4-phenylenecarbonyloxyhexane-1!6-diyloxycarbonyl-1!4-phenylene),O(CCOC1=CC=C(C=C1)C(=O)OCCCCCCOC(=O)C1=CC=C(C=C1)[*:2])[*:1],346.59409,688.6188034,-1.141282752
+639,poly[oxy-1!4-phenylene(dimethylmethylene)-1!4-phenyleneoxy-1!4-phenylenecarbonylbiphenyl-2!2'-diylcarbonyl-1!4-phenylene],O(C1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=C(C=CC=C1)C1=C(C=CC=C1)C(=O)C1=CC=C(C=C1)[*:2])(C)C)[*:1],389.4232919,750.7235949,-1.142086396
+446,poly(oxycarbonyloxy-1!4-phenylenecyclohexane-1!1-diyl-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)C1(CCCCC1)C1=CC=C(C=C1)[*:2])[*:1],431.7371766,729.9549672,-1.144543073
+626,poly[oxy-1!4-phenylene(dimethylmethylene)-1!4-phenyleneoxy-1!4-phenyleneterephthaloyl-1!4-phenylene],O(C1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C(=O)C2=CC=C(C=C2)[*:2])C=C1)=O)(C)C)[*:1],416.0189187,745.2650758,-1.158815897
+1177,poly[(4!4-diethyl-2!5-dioxoimidazolidine-1!3-diyl)carbonyl-1!4-phenylenediazene-1!2-diyl-1!4-phenylenecarbonyl],C(C)C1(N(C(N(C1=O)[*:1])=O)C(=O)C1=CC=C(C=C1)N=NC1=CC=C(C=C1)C(=O)[*:2])CC,493.8726477,725.468891,-1.161933508
+646,poly[oxy-1!4-phenylene(dimethylmethylene)-1!4-phenyleneoxy-1!4-phenylenephthaloyl-1!4-phenylene],O(C1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C=1C(C(=O)C2=CC=C(C=C2)[*:2])=CC=CC1)=O)(C)C)[*:1],399.8236622,745.4119015,-1.162966709
+430,poly[oxycarbonyloxy-1!4-phenylene(ethylmethylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)CC)[*:1],415.7224868,710.9953378,-1.173712814
+842,poly[oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylene(isopropylmethylene)-1!4-phenylene],O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])C(C)C)[*:1],408.8934608,706.7845366,-1.177914791
+546,poly(1-chloro-1-fluoromethylene)! poly(chlorofluoromethylene)! poly(1!2-dichloro-1!2-difluoroethylene),ClC(C(F)(Cl)[*:2])(F)[*:1],487.8323398,516.9886241,-1.186524729
+850,poly(oxy-1!4-phenylenesulfinyl-1!4-phenyleneoxy-1!4-phenylenecarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],422.5201435,732.9932776,-1.188871018
+645,poly[oxy(2-methyl-1!4-phenylene)oxy-1!4-phenylenecarbonyl-1!4-phenylene]! poly[oxy-(3-methyl-1!4-phenylene)oxy-1!4-phenylenecarbonyl-1!4-phenylene],O(C1=CC(=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])C)[*:1],424.5494526,745.5806201,-1.192522022
+930,poly(oxycarbonylimino-1!3-phenylenecarbonyloxyhexane-1!6-diyl),O(C(=O)NC1=CC(=CC=C1)C(=O)OCCCCCC[*:2])[*:1],336.0189226,676.1461872,-1.201630211
+10,Udel Poly(4!4'-isopropylidene diphenoxy di(4-phenylene)sulfonate),[*:1]c(cc1)ccc1C(C)(C)c(cc2)ccc2Oc(cc3)ccc3S(=O)(=O)c(cc4)ccc4O[*:2],419.458852,707.4120428,-1.202987895
+163,Poly[oxy-14-phenylenesulfonyl-14-phenyleneoxy-14-phenylene(dimethylmethylene)-14-phenylene],[*:1]Oc(cc1)ccc1S(=O)(=O)c(cc2)ccc2Oc(cc3)ccc3C(C)(C)c(cc4)ccc4[*:2],419.458852,707.4120428,-1.202987895
+823,poly[oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)[*:1],419.458852,707.4120428,-1.202987895
+36,Polymethacrylonitrile,[*:1]C(C#N)(C)C[*:2],432.1103282,676.3317918,-1.207251439
+570,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!6-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=C(C=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)=O)=O)[*:1],489.1983122,761.9844138,-1.226691337
+571,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC(=CC=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)=O)=O)[*:1],489.1983122,761.9844138,-1.226691337
+660,poly[oxy(2-hydroxypropane-1!3-diyl)oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxy(2-hydroxypropane-1!3-diyl)oxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(CC(COC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)OCC(COC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)O)O)[*:1],387.1537548,696.1539332,-1.231491222
+569,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-1!5-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC=CC2=C(C=CC=C12)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)=O)=O)[*:1],489.2842726,762.2177069,-1.233794042
+1011,poly{oxy[2-(4-phenoxyphenyl)-1!4-phenylene]ureylene(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylene[3-(4-phenoxyphenyl)-1!4-phenylene]},O(C1=C(C=C(C=C1)NC(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NC1=CC(=C(C=C1)[*:2])C1=CC=C(C=C1)OC1=CC=CC=C1)C1=CC=C(C=C1)OC1=CC=CC=C1)[*:1],456.5931715,717.4315388,-1.244145496
+893,poly(ureylenemethylene-1!4-phenylenemethyleneureylenedodecane-1!12-diyl),N(C(=O)NCC1=CC=C(C=C1)CNC(=O)NCCCCCCCCCCCC[*:2])[*:1],306.852043,652.7543202,-1.250343032
+1163,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenyleneethylene-1!4-phenylene],O=C1N(C(C(N1C1=C(C=CC=C1)CCC1=CC=C(C=C1)N1C(N(C(C1=O)=O)C1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],489.1824841,747.6316736,-1.252718585
+1164,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenyleneethylene-1!2-phenylene],O=C1N(C(C(N1C1=C(C=CC=C1)CCC1=CC=C(C=C1)N1C(N(C(C1=O)=O)C1=CC=C(C=C1)CCC1=C(C=CC=C1)[*:2])=O)=O)=O)[*:1],474.8282624,747.7599035,-1.256695798
+1165,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene],O=C1N(C(C(N1C1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])=O)=O)[*:1],496.4282624,747.7603514,-1.256695798
+162,Poly(sulfonyl-13-phenylenesulfonyliminohexane-16-diylimino),[*:1]S(=O)(=O)c(c1)cccc1S(=O)(=O)NCCCCCCN[*:2],373.0138908,605.6214924,-1.257793693
+867,poly(ureyleneheptane-1!7-diyl)! poly(iminocarbonyliminoheptane-1!7-diyl),N(C(=O)NCCCCCCC[*:2])[*:1],305.834686,622.1812203,-1.261228246
+879,poly(ureylenehexane-1!6-diylureyleneoctane-1!8-diyl)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonyliminooctane-1!8-diyl),N(C(=O)NCCCCCCNC(=O)NCCCCCCCC[*:2])[*:1],284.234686,622.1805231,-1.261228246
+386,poly[oxypropane-1!3-diyloxy(2-methoxy-1!4-phenylene)carbonyloxycarbonyl(3-methoxy-1!4-phenylene)],O(CCCOC1=C(C=C(C=C1)C(=O)OC(=O)C1=CC(=C(C=C1)[*:2])OC)OC)[*:1],379.5199857,684.2587271,-1.264654917
+423,poly[oxycarbonyloxy-1!4-phenylene(propylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])CCC)[*:1],391.4811606,717.1614935,-1.27860452
+424,poly[oxycarbonyloxy-1!4-phenylene(isopropylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])C(C)C)[*:1],393.836145,711.2159345,-1.290548971
+342,poly[oxy(2-oxoethylene)iminopentane-1!5-diylimino(1-oxoethylene)],O(CC(=O)NCCCCCNC(C[*:2])=O)[*:1],310.4202529,623.4674306,-1.294145931
+837,poly(dibenzofurane-2!7-diylsulfonyl),C1=C(C=CC=2OC3=C(C21)C=CC(=C3)S(=O)(=O)[*:2])[*:1],704.938367,724.1133335,-1.296104642
+655,poly(1-oxopropane-1!3-diyl),O=C(CC[*:2])[*:1],304.48331,662.3478517,-1.29960043
+1061,poly[oxycarbonylimino(1!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylene(2-methyl-1!4-phenylene)],O(C(=O)NC1(CC(CC(C1)(C)C)CNC(=O)NC1=C(C=C(C=C1)[*:2])C)C)[*:1],476.9366809,657.6354354,-1.300641051
+1174,poly{[4!4-bis(4-methylphenyl)-2!5-dioxo-imidazolidine-1!3-diyl]carbonyl-1!4-phenylenediazene-1!2-diyl-1!4-phenylenecarbonyl}! poly{[2!5-dioxo-4!4-bis(p-tolyl)imidazolidine-1!3-diyl]carbonyl-1!4-phenylenediazene-1!2-diyl-1!4-phenylenecarbonyl},O=C1N(C(C(N1C(=O)C1=CC=C(C=C1)N=NC1=CC=C(C=C1)C(=O)[*:2])(C1=CC=C(C=C1)C)C1=CC=C(C=C1)C)=O)[*:1],497.5515129,745.5155284,-1.30249054
+1176,poly[(4-ethyl-4-methyl-2!5-dioxoimidazolidine-1!3-diyl)carbonyl-1!4-phenylenediazene-1!2-diyl-1!4-phenylenecarbonyl],C(C)C1(N(C(N(C1=O)[*:1])=O)C(=O)C1=CC=C(C=C1)N=NC1=CC=C(C=C1)C(=O)[*:2])C,518.5049111,727.0600264,-1.305756118
+647,poly{oxy[4-(adamantan-1-yl)-1!3-phenylene]oxy-1!4-phenylenecarbonyl-1!4-phenylene}! poly(oxy-4-adamantyl-1!3-phenyleneoxy-1!4-phenylenecarbonyl-1!4-phenylene),O(C1=CC(=C(C=C1)C12CC3CC(CC(C1)C3)C2)OC2=CC=C(C=C2)C(=O)C2=CC=C(C=C2)[*:2])[*:1],443.7965643,753.6841173,-1.306600619
+1055,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylene(3-methyl-1!4-phenylene)],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NC1=CC(=C(C=C1)[*:2])C)[*:1],477.0198195,657.0544255,-1.30694024
+1056,poly[oxycarbonyliminomethylene(1!5!5-trimethylcyclohexane-1!3-diyl)ureylene-3-methyl-1!4-phenylene],O(C(=O)NCC1(CC(CC(C1)(C)C)NC(=O)NC1=CC(=C(C=C1)[*:2])C)C)[*:1],477.0198195,657.0544255,-1.30694024
+1060,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylene(2-methyl-1!4-phenylene)],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NC1=C(C=C(C=C1)[*:2])C)[*:1],477.0198195,657.0544255,-1.30694024
+840,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenebicyclo[2.2.1]heptane-2!2-diyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1(C2CCC(C1)C2)C2=CC=C(C=C2)[*:2])[*:1],487.3794939,727.5868447,-1.307978584
+974,poly(ureylene-1!4-phenylenemethylene-1!4-phenyleneureylenedodecane-1!12-diyl)! poly(iminocarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyliminododecane-1!12-diyl),N(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCCCCCCCCCCCC[*:2])[*:1],354.6207029,677.0927129,-1.314625839
+1043,poly(oxycarbonyliminohexane-1!6-diylureylenebutane-1!4-diyl),O(C(=O)NCCCCCCNC(=O)NCCCC[*:2])[*:1],294.9772124,621.9945831,-1.315040525
+1159,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)(6-methyl-1!3-phenylene)(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene],O=C1N(C(C(N1C1=CC(=CC=C1C)N1C(N(C(C1=O)=O)C1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],507.042939,744.1752912,-1.317032295
+1160,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)(4-methyl-1!3-phenylene)(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene],O=C1N(C(C(N1C1=CC(=C(C=C1)C)N1C(N(C(C1=O)=O)C1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],507.042939,744.1752912,-1.317032295
+828,poly[oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylene(methylphenylmethylene)-1!4-phenylene],O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C1=CC=CC=C1)C)[*:1],437.0856915,723.5804767,-1.326009661
+81,Poly[NN'-(1!4-phenylene)dimaleimide-alt-benze-1!4-diamide],[*:1]C(C1(=O))CC(=O)N1c(cc2)ccc2N(C(=O)C3)C(=O)C3Nc(cc4)ccc4N[*:2],577.2751726,734.3976014,-1.331131083
+654,poly(oxycarbonyloxy-1!4-phenylenedecanedioyl-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)C(CCCCCCCCC(=O)C1=CC=C(C=C1)[*:2])=O)[*:1],365.0281021,704.3035205,-1.331410525
+372,poly[oxy(4-oxobutane-1!4-diyl)iminomethylene-1!4-phenylenemethyleneimino(1-oxobutane-1!4-diyl)],O(CCCC(=O)NCC1=CC=C(C=C1)CNC(CCC[*:2])=O)[*:1],326.8632488,664.2898862,-1.33500775
+426,poly[oxycarbonyloxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)[*:1],410.8412951,712.5522285,-1.339386334
+138,Poly[(25-dioxoimidazolidine-13-diyl)-13-phenylene-(24-dioxoimidazolidine-13-diyl)-14-phenylenemethylene-14-phenylene],[*:1]N(C(=O)C1)C(=O)N1c(c2)cccc2N(CC3(=O))C(=O)N3c(cc4)ccc4Cc(cc5)ccc5[*:2],579.7455641,746.9954662,-1.341242735
+109,Polyamide acid,[*:1]NCOC(C(=O)O)[*:2],382.0091104,603.876226,-1.35190371
+1162,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenylenemethylene-1!4-phenylene],O=C1N(C(C(N1C1=C(C=CC=C1)CCC1=CC=C(C=C1)N1C(N(C(C1=O)=O)C1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],496.3405903,750.5581551,-1.355059032
+445,poly(oxycarbonyloxy-1!4-phenylenecyclopentane-1!1-diyl-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)C1(CCCC1)C1=CC=C(C=C1)[*:2])[*:1],431.2612438,735.027244,-1.356609728
+623,poly(oxy-1!4-phenyleneoxy-1!4-phenyleneoxy-1!4-phenylenecarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],422.7451563,753.3020601,-1.3839244
+73,Poly(furan-2!5-diylcarbonyl),[*:1]c(o1)ccc1C(=O)[*:2],476.071264,754.1999258,-1.387166255
+579,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!6-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxybiphenyl-4!4'-diyloxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=C(C=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],479.7044828,769.9208271,-1.400858568
+580,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxybiphenyl-4!4'-diyloxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC(=CC=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],479.7044828,769.9208271,-1.400858568
+578,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxybiphenyl-4!4'-diyloxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=CC=C2C=C1OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],462.8440697,770.0163506,-1.403809803
+383,poly[oxyethyleneoxy(2-methoxy-1!4-phenylene)carbonyloxycarbonyl(3-methoxy-1!4-phenylene)],O(CCOC1=C(C=C(C=C1)C(=O)OC(=O)C1=CC(=C(C=C1)[*:2])OC)OC)[*:1],387.1698708,686.5265424,-1.408302997
+1097,poly[(2!5-dimethylpiperazine-1!4-diyl)carbonylimino(4-methyl-1!3-phenylene)iminocarbonyl],CC1N(CC(N(C1)C(=O)NC1=CC(=C(C=C1)C)NC(=O)[*:2])C)[*:1],478.5430639,675.6134199,-1.419111274
+839,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylene(diphenylmethylene)-1!4-phenylene)! poly(oxy-1!4-phenylene(diphenylmethylene)-1!4-phenyleneoxy-1!4-phenylenesulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])(C1=CC=CC=C1)C1=CC=CC=C1)[*:1],433.9345857,736.2067844,-1.420998987
+878,poly(ureylenehexane-1!6-diylureyleneheptane-1!7-diyl)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonyliminoheptane-1!7-diyl),N(C(=O)NCCCCCCNC(=O)NCCCCCCC[*:2])[*:1],288.4889251,621.879636,-1.424554404
+1161,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)-1!2-phenyleneethylene-1!4-phenylene(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C(N1C1=C(C=CC=C1)CCC1=CC=C(C=C1)N1C(N(C(C1=O)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)=O)[*:1],497.4011936,749.4967557,-1.436083023
+1087,poly[ureylenepropane-1!3-diyl(phenylimino)propane-1!3-diyl]! poly[iminocarbonyliminopropane-1!3-diyl(phenylimino)propane-1!3-diyl],N(C(=O)NCCCN(CCC[*:2])C1=CC=CC=C1)[*:1],360.1803215,666.2947873,-1.442158183
+1171,poly[(5!5-diethylhydantoin-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl]! poly[(4!4-diethyl-2!5-dioxoimidazolidine-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl],C(C)C1(N(C(N(C1=O)[*:1])=O)C(=O)C=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)N1C(C2=CC=C(C=C2C1=O)C(=O)[*:2])=O)=O)CC,534.2633828,748.042185,-1.446169941
+576,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC(=CC=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],485.6694138,768.2609654,-1.460645527
+1151,poly[(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenylenemethylene-1!4-phenylene],O=C1N(C(C(N1C1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])=O)=O)[*:1],541.5310209,753.4979225,-1.460973923
+555,poly[1-(1-naphthyl)-2!5-dioxopyrrolidine-3!4-diyl],C1(=CC=CC2=CC=CC=C12)N1C(C(C(C1=O)[*:2])[*:1])=O,465.0419682,770.0450808,-1.462377968
+575,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=CC=C2C=C1OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],466.9357504,768.3667448,-1.46396291
+577,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!3-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=CC=C2C=C1OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC(=CC=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],464.5890838,768.3667448,-1.46396291
+1175,poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)carbonyl-1!4-phenylenediazene-1!2-diyl-1!4-phenylenecarbonyl],CC1(N(C(N(C1=O)[*:1])=O)C(=O)C1=CC=C(C=C1)N=NC1=CC=C(C=C1)C(=O)[*:2])C,519.2133797,728.7743362,-1.467594203
+991,poly{ureylene[1-(methoxycarbonyl)pentane-1!5-diyl]}! poly{iminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]},N(C(=O)NC(CCCC[*:2])C(=O)OC)[*:1],348.0748363,620.3884825,-1.468015463
+983,poly[ureylenehexane-1!6-diylureylene(2-methyl-1!4-phenylene)methylene(3-methyl-1!4-phenylene)]! poly[iminocarbonyliminohexane-1!6-diyliminocarbonylimino(2-methyl-1!4-phenylene)methylene(3-methyl-1!4-phenylene)],N(C(=O)NCCCCCCNC(=O)NC1=C(C=C(C=C1)CC1=CC(=C(C=C1)[*:2])C)C)[*:1],393.4307305,678.6981234,-1.468975989
+637,poly(oxy[1!1':4'!1''-terphenyl]-4!4''-diyloxy-1!4-phenyleneisophthaloyl-1!4-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC(C(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],443.1442962,765.6378034,-1.472568567
+122,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}2,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCCOCC[*:2],384.1927826,657.5362671,-1.474197874
+640,poly(oxybiphenyl-4!4'-diyloxy-1!4-phenylenecarbonylbiphenyl-2!2'-diylcarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=C(C=CC=C1)C1=C(C=CC=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],398.7377075,765.9131157,-1.480513357
+830,poly[oxy-1!4-phenylene(dimethylmethylene)-1!4-phenyleneoxy-1!4-phenylenesulfonylbiphenyl-4!4'-diylsulfonyl-1!4-phenylene],O(C1=CC=C(C=C1)C(C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])(C)C)[*:1],425.6918842,705.764396,-1.480795555
+406,poly[oxypropane-1!3-diyloxy(2-methoxy-1!4-phenylene)carbonyloxyterephthaloyloxycarbonyl(3-methoxy-1!4-phenylene)],O(CCCOC1=C(C=C(C=C1)C(=O)OC(C1=CC=C(C(=O)OC(=O)C2=CC(=C(C=C2)[*:2])OC)C=C1)=O)OC)[*:1],381.4407367,699.3436289,-1.497865677
+407,poly[oxypropane-1!3-diyloxy(2-methoxy-1!4-phenylene)carbonyloxyisophthaloyloxycarbonyl(3-methoxy-1!4-phenylene)],O(CCCOC1=C(C=C(C=C1)C(=O)OC(C1=CC(C(=O)OC(=O)C2=CC(=C(C=C2)[*:2])OC)=CC=C1)=O)OC)[*:1],378.0158718,699.3436289,-1.497865677
+1013,poly[oxy-1!4-phenyleneureylene(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylene-1!4-phenylene],O(C1=CC=C(C=C1)NC(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NC1=CC=C(C=C1)[*:2])[*:1],484.7140378,679.142349,-1.504443314
+439,poly[oxycarbonyloxy-1!4-phenylene(methylphenylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C1=CC=CC=C1)C)[*:1],439.8807997,737.3296132,-1.506479605
+892,poly(ureylenemethylene-1!4-phenylenemethyleneureylenedecane-1!10-diyl),N(C(=O)NCC1=CC=C(C=C1)CNC(=O)NCCCCCCCCCC[*:2])[*:1],315.6315748,654.6350923,-1.520286233
+984,poly{ureylene[1-(methoxycarbonyl)pentane-1!5-diyl]ureylenehexane-1!6-diyl}! poly{iminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]iminocarbonyliminohexane-1!6-diyl},N(C(=O)NC(CCCCNC(=O)NCCCCCC[*:2])C(=O)OC)[*:1],313.893671,620.8906709,-1.53074628
+1167,poly[pyridine-2!6-diyl(2!4!5-trioxoimidazolidine-1!3-diyl)hexane-1!6-diyl(2!4!5-trioxoimidazolidine-1!3-diyl)],N1=C(C=CC=C1N1C(N(C(C1=O)=O)CCCCCCN1C(N(C(C1=O)=O)[*:2])=O)=O)[*:1],512.5130148,716.9321636,-1.53092352
+1073,poly[oxycarbonylimino(1!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylenemethylene-1!2-phenylene],O(C(=O)NC1(CC(CC(C1)(C)C)CNC(=O)NCC1=C(C=CC=C1)[*:2])C)[*:1],394.3146298,659.3191259,-1.531549574
+1098,poly[(2!5-dimethylpiperazine-1!4-diyl)carbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyl],CC1N(CC(N(C1)C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)[*:2])C)[*:1],481.4425844,699.9196096,-1.532477193
+1042,poly(oxycarbonyliminohexane-1!6-diylureylenepropane-1!3-diyl),O(C(=O)NCCCCCCNC(=O)NCCC[*:2])[*:1],301.0079715,621.6148234,-1.533124717
+1072,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylenemethylene-1!2-phenylene],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NCC1=C(C=CC=C1)[*:2])[*:1],394.3990876,658.738116,-1.53801929
+1170,poly[(5-ethyl-5-methylhydantoin-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl]! poly[(4-ethyl-4-methyl-2!5-dioxoimidazolidine-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl],C(C)C1(N(C(N(C1=O)[*:1])=O)C(=O)C=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)N1C(C2=CC=C(C=C2C1=O)C(=O)[*:2])=O)=O)C,549.2402437,749.4407151,-1.542443871
+898,poly(ureylene-1!4-phenylenemethylene-1!4-phenyleneureylenedecane-1!10-diyl)! poly(iminocarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyliminodecane-1!10-diyl),N(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCCCCCCCCCC[*:2])[*:1],365.1527199,680.3129181,-1.548802348
+9,Poly(oxy-1!4-phenylene-oxy-1!4phenylene-carbonyl-1!4-phenylene),[*:1]c(cc1)ccc1C(=O)c(cc2)ccc2Oc(cc3)ccc3O[*:2],430.481156,754.8945131,-1.549526472
+142,Poly(oxy-14-phenyleneoxy-14-phenylene-carbonyl-14-phenylene),[*:1]Oc(cc1)ccc1Oc(cc2)ccc2C(=O)c(cc3)ccc3[*:2],430.481156,754.8945131,-1.549526472
+624,poly(oxy-1!4-phenyleneoxy-1!4-phenylenecarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],430.481156,754.8945131,-1.549526472
+635,poly(oxybiphenyl-4!4'-diyloxy-1!4-phenyleneisophthaloyl-1!4-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC(C(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],425.6041552,762.4312984,-1.558835562
+642,poly(oxy-1!4-phenyleneoxy-1!4-phenylenecarbonylbiphenyl-3!3'-diylcarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C=1C=C(C=CC1)C1=CC(=CC=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],422.0841552,762.4312984,-1.558835562
+643,poly(oxy-1!4-phenyleneoxy-1!4-phenylenecarbonylbiphenyl-4!4'-diylcarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],429.1241552,762.4312984,-1.558835562
+564,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC(=CC=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],498.7825029,771.2398374,-1.563105412
+567,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!6-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=C(C=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC(=CC=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],496.0863327,771.2398374,-1.563105412
+568,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC(=CC=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC(=CC=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],496.0863327,771.2398374,-1.563105412
+590,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!6-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=C(C=C2C=C1)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],498.7825029,771.2398374,-1.563105412
+563,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=CC=C2C=C1OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],477.2588197,771.3614162,-1.566961548
+566,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC2=CC=CC=C2C=C1OC=1C=C2C(N(C(C2=CC1)=O)C1=CC(=CC=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],474.5626494,771.3614162,-1.566961548
+641,poly(oxy-1!4-phenyleneoxy-1!4-phenylenecarbonylbiphenyl-2!2'-diylcarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=C(C=CC=C1)C1=C(C=CC=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],394.0359443,762.751325,-1.568163225
+824,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenemethylene-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],379.2606541,719.0100779,-1.569397771
+562,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-1!5-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC=CC2=C(C=CC=C12)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],498.8738471,771.4829951,-1.570817568
+565,poly[(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-1!5-diyloxy(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenyleneoxy-1!4-phenylene],O=C1N(C(C2=CC(=CC=C12)OC1=CC=CC2=C(C=CC=C12)OC=1C=C2C(N(C(C2=CC1)=O)C1=CC(=CC=C1)OC1=CC=C(C=C1)[*:2])=O)=O)[*:1],496.1776768,771.4829951,-1.570817568
+1149,poly(2!4-dioxo-1!3-diazetidine-1!3-diyl-1!4-phenylenemethylene-1!4-phenylene),O=C1N(C(N1C1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])=O)[*:1],525.4868233,757.7705627,-1.571585403
+396,poly[oxy(2-oxoethylene)oxy(1-oxoethylene)oxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(CC(=O)OC(COC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])(C)C)=O)[*:1],382.1632351,693.9337096,-1.573137834
+858,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy[1!1':4'!1''-terphenyl]-4!4''-diyl),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)[*:2])[*:1],455.3293546,733.3989662,-1.576002202
+935,poly(1!2!3!3!4!4-hexachlorobut-1-ene-1!4-diyl),ClC(=C(C(C(Cl)(Cl)[*:2])(Cl)Cl)Cl)[*:1],324.4548321,491.8648472,-1.577632551
+172,Partial anionic Hydrolyzed Polyacrylamide 50% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)[O-])C[*:2],360.0200288,650.6028643,-1.595270321
+866,poly(ureylenehexane-1!6-diyl)! poly(iminocarbonyliminohexane-1!6-diyl),N(C(=O)NCCCCCC[*:2])[*:1],316.942791,621.5498392,-1.608184486
+877,poly(ureylenebutane-1!4-diylureyleneoctane-1!8-diyl)! poly(iminocarbonyliminobutane-1!4-diyliminocarbonyliminooctane-1!8-diyl),N(C(=O)NCCCCNC(=O)NCCCCCCCC[*:2])[*:1],293.182791,621.5490739,-1.608184486
+1169,poly[(5!5-dimethylhydantoin-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl]! poly[(4!4-dimethyl-2!5-dioxoimidazolidine-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl],CC1(N(C(N(C1=O)[*:1])=O)C(=O)C=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)N1C(C2=CC=C(C=C2C1=O)C(=O)[*:2])=O)=O)C,550.3477193,750.9004876,-1.645761465
+110,Poly[iminocarbonyl(4!6-dicarboxy-1!3-phenylene)carbonyliminohexa-1!6-diyl],[*:1]NC(=O)c(c1)c(C(=O)O)cc(C(=O)O)c1C(=O)NCCCCCC[*:2],374.3143702,676.3261467,-1.655436263
+834,poly(oxy-1!4-phenyleneoxy-1!4-phenyleneoxy-1!4-phenylenesulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],429.1357148,717.7006407,-1.659866785
+1173,poly[(2!5-dioxo-4!4-diphenylimidazolidine-1!3-diyl)carbonyl-1!4-phenylenediazene-1!2-diyl-1!4-phenylenecarbonyl],O=C1N(C(C(N1C(=O)C1=CC=C(C=C1)N=NC1=CC=C(C=C1)C(=O)[*:2])(C1=CC=CC=C1)C1=CC=CC=C1)=O)[*:1],509.0031921,756.8586347,-1.661296228
+12,Torlon,[*:1]NC(=O)c(ccc1C2(=O))cc1C(=O)N2c(cc3)ccc3Cc(cc4)ccc4[*:2],535.8993456,760.1968364,-1.665241807
+422,poly[oxycarbonyloxy-1!4-phenylene(methylmethylene)-1!4-phenylene],O(C(=O)OC1=CC=C(C=C1)C(C1=CC=C(C=C1)[*:2])C)[*:1],417.4579791,725.5218867,-1.672459231
+1092,poly(ureylene-1!4-phenylenemethylene-1!4-phenyleneureylenenonane-1!9-diyl)! poly(iminocarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyliminononane-1!9-diyl),N(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCCCCCCCCC[*:2])[*:1],370.9678924,682.0888494,-1.681101431
+634,poly(oxy-1!4-phenyleneoxy-1!4-phenyleneisophthaloyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC(C(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],425.3366615,757.9812743,-1.681517877
+662,poly(oxy-1!4-phenyleneoxy-1!4-phenyleneterephthaloyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC=C(C(=O)C2=CC=C(C=C2)[*:2])C=C1)=O)[*:1],429.5606615,757.9812743,-1.681517877
+62,Poly(oxy(m-phenylene)),[*:1]c(ccc1)cc1O[*:2],276.1446652,748.3199005,-1.682305492
+63,Poly(oxy(p-phenylene)),[*:1]c(cc1)ccc1O[*:2],362.1332366,748.3199005,-1.682305492
+173,Partial neutral Hydrolyzed Polyacrylamide 50% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)O)C[*:2],347.3480288,629.8746341,-1.686969433
+1033,poly[oxycarbonyliminomethylene(1!5!5-trimethylcyclohexane-1!3-diyl)ureylene-1!3-phenylene],O(C(=O)NCC1(CC(CC(C1)(C)C)NC(=O)NC1=CC(=CC=C1)[*:2])C)[*:1],454.1021,661.4095737,-1.688157255
+1034,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylene-1!3-phenylene],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NC1=CC(=CC=C1)[*:2])[*:1],454.1021,661.4095737,-1.688157255
+27,Poly(vinylidene chloride),[*:1]CC(Cl)(Cl)[*:2],289.1809939,490.9624484,-1.690529316
+1084,poly[(2!5-dimethylpiperazine-1!4-diyl)carbonyliminobiphenyl-4!4'-diyliminocarbonyl],CC1N(CC(N(C1)C(=O)NC1=CC=C(C=C1)C1=CC=C(C=C1)NC(=O)[*:2])C)[*:1],492.6577656,704.3084328,-1.692730047
+395,poly(oxyethyleneoxyethyleneoxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenylene),O(CCOCCOC1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)[*:2])[*:1],372.794285,698.8773184,-1.701912917
+492,poly(oxyethyleneoxy-1!4-phenylenecarbonyloxyethyleneoxycarbonyl-1!4-phenylene),O(CCOC1=CC=C(C=C1)C(=O)OCCOC(=O)C1=CC=C(C=C1)[*:2])[*:1],372.794285,698.8773184,-1.701912917
+493,poly(oxyethyleneoxy-1!3-phenylenecarbonyloxyethyleneoxycarbonyl-1!3-phenylene),O(CCOC1=CC(=CC=C1)C(=O)OCCOC(=O)C1=CC(=CC=C1)[*:2])[*:1],342.434285,698.8773184,-1.701912917
+832,poly(oxybiphenyl-4!4'-diyloxy-1!4-phenylenesulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],436.0583711,723.5202562,-1.70472304
+370,poly(oxypropane-1!3-diyliminoterephthaloyliminopropane-1!3-diyl),O(CCCNC(C1=CC=C(C(=O)NCCC[*:2])C=C1)=O)[*:1],379.3655153,672.2055935,-1.712827468
+987,poly{ureylene[1-(methoxycarbonyl)pentane-1!5-diyl]ureylenepentane-1!5-diyl}! poly{iminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]iminocarbonyliminopentane-1!5-diyl},N(C(=O)NC(CCCCNC(=O)NCCCCC[*:2])C(=O)OC)[*:1],319.4341815,620.5475286,-1.714300995
+977,poly(piperazine-1!4-diylcarbonyliminohexane-1!6-diyliminocarbonyl),N1(CCN(CC1)C(=O)NCCCCCCNC(=O)[*:2])[*:1],371.9550346,644.1260471,-1.714951203
+399,poly[oxymethyleneoxy(2-methoxy-1!4-phenylene)carbonyloxyterephthaloyloxycarbonyl(3-methoxy-1!4-phenylene)],O(COC1=C(C=C(C=C1)C(=O)OC(C1=CC=C(C(=O)OC(=O)C2=CC(=C(C=C2)[*:2])OC)C=C1)=O)OC)[*:1],392.5525695,703.4924557,-1.722823783
+403,poly[oxymethyleneoxy(2-methoxy-1!4-phenylene)carbonyloxyisophthaloyloxycarbonyl(3-methoxy-1!4-phenylene)],O(COC1=C(C=C(C=C1)C(=O)OC(C1=CC(C(=O)OC(=O)C2=CC(=C(C=C2)[*:2])OC)=CC=C1)=O)OC)[*:1],388.931998,703.4924557,-1.722823783
+855,poly(oxybiphenyl-4!4'-diyloxy-1!4-phenylenesulfonyl[1!1':4'!1''-terphenyl]-4!4''-diylsulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],450.50552,723.7213268,-1.734711412
+859,poly(oxy[1!1':4'!1''-terphenyl]-4!4''-diyloxy-1!4-phenylenesulfonylbiphenyl-4!4'-diylsulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],450.50552,723.7213268,-1.734711412
+1150,poly(2!4-dioxo-1!3-diazetidine-1!3-diyl-1!4-phenyleneoxy-1!4-phenylene),O=C1N(C(N1C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])=O)[*:1],527.9195024,755.3046671,-1.758308837
+636,poly(oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxy-1!4-phenyleneisophthaloyl-1!4-phenylene),O(C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC(C(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],425.6722212,759.7736021,-1.759089589
+411,poly[oxy(2-oxoethylene)oxyterephthaloyloxy(1-oxoethylene)oxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(CC(=O)OC(C1=CC=C(C(=O)OC(COC2=CC=C(C=C2)C(C2=CC=C(C=C2)[*:2])(C)C)=O)C=C1)=O)[*:1],383.9430332,707.0160235,-1.761152698
+412,poly[oxy(2-oxoethylene)oxyisophthaloyloxy(1-oxoethylene)oxy-1!4-phenylene(dimethylmethylene)-1!4-phenylene],O(CC(=O)OC(C1=CC(C(=O)OC(COC2=CC=C(C=C2)C(C2=CC=C(C=C2)[*:2])(C)C)=O)=CC=C1)=O)[*:1],380.3224617,707.0160235,-1.761152698
+1172,poly[(5!5-diphenylhydantoin-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl]! poly[(4!4-diphenyl-2!5-dioxoimidazolidine-1!3-diyl)carbonyl(1!3-dioxoisoindoline-5!2-diyl)-1!4-phenyleneoxy-1!4-phenylene(1!3-dioxoisoindoline-2!5-diyl)carbonyl],C1(=CC=CC=C1)C1(N(C(N(C1=O)[*:1])=O)C(=O)C=1C=C2C(N(C(C2=CC1)=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)N1C(C2=CC=C(C=C2C1=O)C(=O)[*:2])=O)=O)C1=CC=CC=C1,534.0564283,765.1755604,-1.765118174
+388,poly(oxybutane-1!4-diyloxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenylene),O(CCCCOC1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)[*:2])[*:1],379.3870192,708.617989,-1.781877691
+1041,poly(oxycarbonyliminohexane-1!6-diylureyleneethylene),O(C(=O)NCCCCCCNC(=O)NCC[*:2])[*:1],307.8386396,621.1886072,-1.78738649
+415,poly(oxycarbonyloxy-1!4-phenyleneoxy-1!4-phenyleneoxy-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)OC1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])[*:1],388.4651526,736.6283724,-1.802569381
+293,Poly-(2-acrylamido-2-methylpropane sulfonic acid) 1,[*:1]C(C(=O)NCC(C)(C)CS(O)([O-])(O))C[*:2],273.0339221,560.3804243,-1.807991691
+47,Poly(Ethylene Oxalate),[*:1]CCOC(=O)C(=O)O[*:2],289.9455678,646.1561009,-1.809878635
+876,poly(ureylenepentane-1!5-diylureylenehexane-1!6-diyl)! poly(iminocarbonyliminopentane-1!5-diyliminocarbonyliminohexane-1!6-diyl),N(C(=O)NCCCCCNC(=O)NCCCCCC[*:2])[*:1],298.389321,621.1842191,-1.816151947
+368,poly[oxy(2-oxoethylene)iminohexane-1!6-diylimino(1-oxopropane-1!3-diyl)-1!4-phenylene],O(CC(=O)NCCCCCCNC(CCC1=CC=C(C=C1)[*:2])=O)[*:1],329.6507757,665.1922469,-1.817220659
+849,poly[oxy(5-pentyloxy-1!3-phenylene)oxy-1!4-phenylenesulfonyl-1!4-phenylene]! poly(oxy-5-pentyloxyisophthaloyloxy-1!4-phenylenesulfonyl-1!4-phenylene),O(C(C1=CC(C(=O)OC2=CC=C(C=C2)S(=O)(=O)C2=CC=C(C=C2)[*:2])=CC(=C1)OCCCCC)=O)[*:1],391.4466973,691.6973188,-1.822459662
+897,poly(ureyleneoctane-1!8-diylureylene-1!4-phenylenemethylene-1!4-phenylene)! poly(iminocarbonyliminooctane-1!8-diyliminocarbonylimino-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NCCCCCCCCNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],377.202584,683.9910542,-1.825389136
+2,Poly(glycolic acid),[*:1]CC(=O)O[*:2],290.3039829,641.5289499,-1.828913674
+854,poly(oxy-1!4-phenyleneoxy-1!4-phenylenesulfonyl[1!1':4'!1''-terphenyl]-4!4''-diylsulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],453.6862699,716.1121143,-1.842628709
+891,poly(ureylenemethylene-1!4-phenylenemethyleneureyleneoctane-1!8-diyl),N(C(=O)NCC1=CC=C(C=C1)CNC(=O)NCCCCCCCC[*:2])[*:1],325.9475668,656.8332466,-1.848573759
+560,poly[(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenylene(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!6-diyloxy],O=C1N(C(C2=CC(=CC=C12)[*:1])=O)C1=CC(=CC=C1)N1C(C2=CC=C(C=C2C1=O)OC1=CC2=CC=C(C=C2C=C1)O[*:2])=O,507.8228769,775.264823,-1.850610376
+561,poly[(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenylene(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!7-diyloxy],O=C1N(C(C2=CC(=CC=C12)[*:1])=O)C1=CC(=CC=C1)N1C(C2=CC=C(C=C2C1=O)OC1=CC2=CC(=CC=C2C=C1)O[*:2])=O,507.8228769,775.264823,-1.850610376
+559,poly[(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenylene(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-2!3-diyloxy],O=C1N(C(C2=CC(=CC=C12)[*:1])=O)C1=CC(=CC=C1)N1C(C2=CC=C(C=C2C1=O)OC1=CC2=CC=CC=C2C=C1O[*:2])=O,482.5327292,775.4077497,-1.855215483
+558,poly[(1!3-dioxoisoindoline-5!2-diyl)-1!3-phenylene(1!3-dioxoisoindoline-2!5-diyl)oxynaphthalene-1!5-diyloxy],O=C1N(C(C2=CC(=CC=C12)[*:1])=O)C1=CC(=CC=C1)N1C(C2=CC=C(C=C2C1=O)OC1=CC=CC2=C(C=CC=C12)O[*:2])=O,507.9305643,775.5506764,-1.85982041
+1027,poly[oxycarbonylimino(1!5!5-trimethylcyclohexane-1!3-diyl)ureylene-1!4-phenylene],O(C(=O)NC1(CC(CC(C1)(C)C)NC(=O)NC1=CC=C(C=C1)[*:2])C)[*:1],491.5404931,664.553304,-1.862137599
+408,poly(oxybutane-1!4-diyloxy-1!4-phenylenecarbonyloxyisophthaloyloxycarbonyl-1!4-phenylene),O(CCCCOC1=CC=C(C=C1)C(=O)OC(C1=CC(C(=O)OC(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],377.8311887,717.3749717,-1.8710309
+409,poly(oxybutane-1!4-diyloxy-1!4-phenylenecarbonyloxyterephthaloyloxycarbonyl-1!4-phenylene)! poly(oxybutane-1!4-diyloxy-1!4-phenylenecarbonyloxyterephthaloyloxycarbonyl-1!4-phenylene),O(CCCCOC1=CC=C(C=C1)C(=O)OC(C1=CC=C(C(=O)OC(=O)C2=CC=C(C=C2)[*:2])C=C1)=O)[*:1],381.5582475,717.3749717,-1.8710309
+657,poly(oxy-1!4-phenylenecarbonyl-1!4-phenylene),O(C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])[*:1],445.4006615,757.9819507,-1.871585124
+450,poly(oxycarbonyloxy-1!4-phenylenefluorene-9!9-diyl-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)C1(C2=CC=CC=C2C=2C=CC=CC12)C1=CC=C(C=C1)[*:2])[*:1],551.5352579,773.0780106,-1.877389274
+174,Cellulose Gum,[*:1]OC(C(CO)O1)C(O)C(O)C1[*:2],465.4341954,615.8686802,-1.87886251
+1078,poly[oxycarbonyliminomethylene(1!5!5-trimethylcyclohexane-1!3-diyl)ureylenenaphthalene-1!7-diyl],O(C(=O)NCC1(CC(CC(C1)(C)C)NC(=O)NC1=CC=CC2=CC=C(C=C12)[*:2])C)[*:1],479.8824911,684.0769872,-1.890705474
+1079,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylenenaphthalene-1!7-diyl],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NC1=CC=CC2=CC=C(C=C12)[*:2])[*:1],479.8824911,684.0769872,-1.890705474
+1066,poly[oxycarbonyliminomethylene(1!5!5-trimethylcyclohexane-1!3-diyl)ureylenenaphthalene-1!8-diyl],O(C(=O)NCC1(CC(CC(C1)(C)C)NC(=O)NC1=CC=CC2=CC=CC(=C12)[*:2])C)[*:1],479.9426436,684.2734904,-1.896355185
+1067,poly[oxycarbonylimino(3!5!5-trimethylcyclohexane-1!3-diyl)methyleneureylenenaphthalene-1!8-diyl],O(C(=O)NC1CC(CC(C1)(C)C)(C)CNC(=O)NC1=CC=CC2=CC=CC(=C12)[*:2])[*:1],479.9426436,684.2734904,-1.896355185
+835,poly(1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenesulfanediyl-1!4-phenyleneoxy)! poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenethio-1!4-phenylene)! poly(oxy-1!4-phenylenethio-1!4-phenyleneoxy-1!4-phenylenesulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)SC1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],447.1646174,714.8206915,-1.896792424
+1178,Poly(N-{2-hydroxypropyl}methacrylamide),[*:1]C(C)(C(=O)NCC(O)C)C[*:2],340.2890143,598.1891413,-1.898451118
+379,poly(oxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenylene)! poly(oxy-1!4-phenylenecarbonyloxy-carbonyl-1!4-phenylene),O(C1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)[*:2])[*:1],417.1489731,740.6241747,-1.902942734
+833,poly(oxy-1!4-phenyleneoxy-1!4-phenylenesulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],438.4035694,709.0058289,-1.904002895
+1015,poly(3-pyrazoline-1!5-diylcarbonyliminohexane-1!6-diyliminocarbonyl),N1(NC=CC1C(=O)NCCCCCCNC(=O)[*:2])[*:1],367.2353161,656.0820486,-1.905914002
+170,Partial anionic Hydrolyzed Polyacrylamide 33% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)(N))CC(C(=O)[O-])C[*:2],359.0436016,641.6377642,-1.909026005
+992,poly(ureyleneoctane-1!8-diylureylenedecanedioyl)! poly(iminocarbonyliminooctane-1!8-diyliminocarbonyliminodecanedioyl),N(C(=O)NCCCCCCCCNC(=O)NC(CCCCCCCCC(=O)[*:2])=O)[*:1],301.4552428,635.7947593,-1.912115414
+550,poly(1!1-dichloroethylene),ClC(C[*:2])(Cl)[*:1],257.5009939,490.9624484,-1.919777082
+988,poly{ureylenebutane-1!4-diylureylene[1-(methoxycarbonyl)pentane-1!5-diyl]}! poly{iminocarbonyliminobutane-1!4-diyliminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]},N(C(=O)NCCCCNC(=O)NC(CCCC[*:2])C(=O)OC)[*:1],325.5326105,620.172343,-1.921244571
+1090,poly(piperazine-1!4-diylcarbonyl),N1(CCN(CC1)C(=O)[*:2])[*:1],500.8165422,672.757507,-1.922051836
+1008,poly[oxyiminoethyleneiminoethyleneureylene(4-methyl-1!3-phenylene)nitrilomethanylylidene],O(NCCNCCNC(=O)NC1=CC(=C(C=C1)C)N=C[*:2])[*:1],352.9996527,653.9357781,-1.9330009
+633,poly(oxy-1!4-phenyleneterephthaloyl-1!4-phenylene)! poly(oxy-p-phenyleneterephthaloyl-p-phenylene),O(C1=CC=C(C=C1)C(C1=CC=C(C(=O)C2=CC=C(C=C2)[*:2])C=C1)=O)[*:1],438.9685391,760.9450392,-1.934098586
+638,poly(oxy-1!4-phenyleneisophthaloyl-1!4-phenylene),O(C1=CC=C(C=C1)C(C1=CC(C(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],433.4589738,760.9450392,-1.934098586
+1012,poly{oxy[2-(4-phenoxyphenyl)-1!4-phenylene]ureylene(4-methyl-1!3-phenylene)ureylene[3-(4-phenoxyphenyl)-1!4-phenylene]},O(C1=C(C=C(C=C1)NC(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC(=C(C=C1)[*:2])C1=CC=C(C=C1)OC1=CC=CC=C1)C1=CC=C(C=C1)OC1=CC=CC=C1)[*:1],445.8316717,739.7033124,-1.935596638
+845,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenecarbonyl-1!4-phenylene)! poly(oxy-1!4-phenylenecarbonyl-1!4-phenyleneoxy-1!4-phenylenesulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],435.418691,722.9847067,-1.942139838
+661,poly[oxy(2-hydroxypropane-1!3-diyl)oxy-1!4-phenylenecarbonyl-1!4-phenylene],O(CC(COC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[*:2])O)[*:1],403.5609172,708.2022971,-1.956532521
+853,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenyleneisophthaloyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)C(C1=CC(C(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],430.4066439,731.4977848,-1.96512379
+171,Partial neutral Hydrolyzed Polyacrylamide 33% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)(N))CC(C(=O)O)C[*:2],350.5956016,627.8293777,-1.970158749
+384,poly(oxypropane-1!3-diyloxy-1!3-phenylenecarbonyloxycarbonyl-1!3-phenylene),O(CCCOC1=CC(=CC=C1)C(=O)OC(=O)C1=CC(=CC=C1)[*:2])[*:1],354.9697909,712.3811652,-1.972326647
+385,poly(oxypropane-1!3-diyloxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenylene),O(CCCOC1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)[*:2])[*:1],388.0897909,712.3811652,-1.972326647
+1109,poly(ureylenehexane-1!6-diylureylene-1!4-phenyleneethylene-1!4-phenylene),N(C(=O)NCCCCCCNC(=O)NC1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])[*:1],383.9045496,686.0334967,-1.983384243
+1110,poly(ureylenehexane-1!6-diylureylene-1!2-phenyleneethylene-1!4-phenylene),N(C(=O)NCCCCCCNC(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])[*:1],361.3348946,686.2305084,-1.988923758
+1168,poly[pyridine-2!6-diyl(2!4!5-trioxoimidazolidine-1!3-diyl)-1!4-phenylenemethylene-1!4-phenylene(2!4!5-trioxoimidazolidine-1!3-diyl)],N1=C(C=CC=C1N1C(N(C(C1=O)=O)C1=CC=C(C=C1)CC1=CC=C(C=C1)N1C(N(C(C1=O)=O)[*:2])=O)=O)[*:1],544.2280221,753.0573244,-1.990673844
+1111,poly(ureylene-1!2-phenyleneethylene-1!2-phenyleneureylenehexane-1!6-diyl),N(C(=O)NC1=C(C=CC=C1)CCC1=C(C=CC=C1)NC(=O)NCCCCCC[*:2])[*:1],321.7937919,686.4275201,-1.9944628
+404,poly(oxypropane-1!3-diyloxy-1!4-phenylenecarbonyloxyterephthaloyloxycarbonyl-1!4-phenylene),O(CCCOC1=CC=C(C=C1)C(=O)OC(C1=CC=C(C(=O)OC(=O)C2=CC=C(C=C2)[*:2])C=C1)=O)[*:1],387.4548149,720.1646535,-2.00251436
+405,poly(oxypropane-1!3-diyloxy-1!4-phenylenecarbonyloxyisophthaloyloxycarbonyl-1!4-phenylene),O(CCCOC1=CC=C(C=C1)C(=O)OC(C1=CC(C(=O)OC(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],383.6148149,720.1646535,-2.00251436
+294,Poly-(2-acrylamido-2-methylpropane sulfonic acid) 2,[*:1]C(C(=O)NCC(C)(C)CS(O)(O)(O))C[*:2],245.8796364,547.4955326,-2.004489804
+836,poly(oxysulfonyl-1!4-phenyleneoxy-1!4-phenylenesulfonyloxy-1!4-phenylenecyclohexane-1!1-diyl-1!4-phenylene),O(S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)OC1=CC=C(C=C1)C1(CCCCC1)C1=CC=C(C=C1)[*:2])[*:1],437.5831879,689.5542725,-2.008595368
+990,poly{ureylene(1-methylethylene)ureylene[1-(methoxycarbonyl)pentane-1!5-diyl]}! poly{iminocarbonylimino(1-methylethylene)iminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]},N(C(=O)NC(CNC(=O)NC(CCCC[*:2])C(=O)OC)C)[*:1],344.0527683,616.2918262,-2.014944114
+856,poly(oxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylenesulfonyl[1!1':4'!1''-terphenyl]-4!4''-diylsulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],452.5437041,705.2266909,-2.021884792
+419,poly(oxycarbonyloxy-1!4-phenylenemethylene-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],338.9188865,734.4344032,-2.022229265
+367,poly[oxy(2-oxoethylene)iminohexane-1!6-diylimino(1-oxoethylene)-1!4-phenylene],O(CC(=O)NCCCCCCNC(CC1=CC=C(C=C1)[*:2])=O)[*:1],336.2665464,666.9605713,-2.022258886
+857,poly(oxy-1!4-phenylenesulfonyl[1!1':4'!1''-terphenyl]-4!4''-diylsulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],464.0379526,710.4570086,-2.028185237
+875,poly(ureylenebutane-1!4-diylureylenehexane-1!6-diyl)! poly(iminocarbonyliminobutane-1!4-diyliminocarbonyliminohexane-1!6-diyl),N(C(=O)NCCCCNC(=O)NCCCCCC[*:2])[*:1],304.1989621,620.7794432,-2.053633472
+1119,poly(ureylenepentane-1!5-diyl),N(C(=O)NCCCCC[*:2])[*:1],330.5989621,620.7802912,-2.053633472
+121,Poly{oxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl[poly(oxyethylene)]}1,[*:1]OC(=O)Nc(c1)ccc(C)c1NC(=O)OCC[*:2],416.8300328,671.0503989,-2.05772748
+168,Partial anionic Hydrolyzed Polyacrylamide 20% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)[O-])C[*:2],358.5450374,637.1555867,-2.067067627
+652,poly(oxysuccinyloxy-1!4-phenyleneadipoyl-1!4-phenylene)! poly(oxybutanedioyloxy-1!4-phenyleneadipoyl-1!4-phenylene)! poly(oxybutanedioyloxy-1!4-phenylenehexanedioyl-1!4-phenylene),O(C(CCC(=O)OC1=CC=C(C=C1)C(CCCCC(=O)C1=CC=C(C=C1)[*:2])=O)=O)[*:1],378.2330303,709.2867088,-2.073978968
+394,poly(oxymethyleneoxymethyleneoxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenylene),O(COCOC1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)[*:2])[*:1],389.7083088,705.4440715,-2.084635258
+4,Poly(maleic anhydride),[*:1]C1C(=O)OC(=O)C1[*:2],559.3994615,728.2407877,-2.08501957
+373,poly(2!5-dioxotetrahydrofuran-3!4-diyl),O=C1OC(C(C1[*:1])[*:2])=O,455.308033,728.2407877,-2.08501957
+844,poly(oxycarbonyloxy-1!4-phenyleneoxy-1!4-phenylenesulfonyl-1!4-phenyleneoxy-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])[*:1],404.4748648,712.4956265,-2.109651537
+169,Partial neutral Hydrolyzed Polyacrylamide 20% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)O)C[*:2],352.2090374,626.8032216,-2.112917177
+148,Poly(oxynaphthalene-1!4-diyl),[*:1]Oc(cc1)c2ccccc2c1[*:2],361.7962191,779.0782347,-2.12059357
+400,poly(oxyethyleneoxy-1!4-phenylenecarbonyloxyisophthaloyloxycarbonyl-1!4-phenylene),O(CCOC1=CC=C(C=C1)C(=O)OC(C1=CC(C(=O)OC(=O)C2=CC=C(C=C2)[*:2])=CC=C1)=O)[*:1],389.785655,723.1353149,-2.144983208
+402,poly(oxyethyleneoxy-1!4-phenylenecarbonyloxyterephthaloyloxycarbonyl-1!4-phenylene),O(CCOC1=CC=C(C=C1)C(=O)OC(C1=CC=C(C(=O)OC(=O)C2=CC=C(C=C2)[*:2])C=C1)=O)[*:1],393.745655,723.1353149,-2.144983208
+401,poly(oxyethyleneoxy-1!4-phenylenecarbonyloxyphthaloyloxycarbonyl-1!4-phenylene),O(CCOC1=CC=C(C=C1)C(=O)OC(C=1C(C(=O)OC(=O)C2=CC=C(C=C2)[*:2])=CC=CC1)=O)[*:1],374.0076461,723.3086792,-2.150311002
+989,poly{ureylenepropane-1!3-diylureylene[1-(methoxycarbonyl)pentane-1!5-diyl]}! poly{iminocarbonyliminopropane-1!3-diyliminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]},N(C(=O)NCCCNC(=O)NC(CCCC[*:2])C(=O)OC)[*:1],332.2794854,619.7604059,-2.156342295
+896,poly(ureylenehexane-1!6-diylureylene-1!4-phenylenemethylene-1!4-phenylene)! poly(iminocarbonyliminohexane-1!6-diyliminocarbonylimino-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NCCCCCCNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],391.1292062,688.2322786,-2.157152525
+35,Resin F,[*:1]Oc(ccc1)cc1NC(=O)CCCC(=O)Nc(ccc2)cc2OCC(O)C[*:2],420.1854722,683.9779459,-2.165436823
+1080,poly(oxymethyleneureylenemethyleneoxycarbonyliminohexane-1!6-diyliminocarbonyl),O(CNC(=O)NCOC(=O)NCCCCCCNC(=O)[*:2])[*:1],313.6627254,620.2910998,-2.173251268
+1100,poly(ureylene-1!4-phenyleneethylene-1!4-phenylene),N(C(=O)NC1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])[*:1],447.211858,724.5199923,-2.176390678
+1101,poly(ureylene-1!2-phenyleneethylene-1!4-phenyleneureylene-1!4-phenyleneethylene-1!4-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])[*:1],403.2610983,724.6767566,-2.180933656
+1102,poly(ureylene-1!2-phenyleneethylene-1!2-phenyleneureylene-1!4-phenyleneethylene-1!4-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=C(C=CC=C1)NC(=O)NC1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])[*:1],385.7103249,724.8340533,-2.185476329
+1114,poly(ureylene-1!2-phenyleneethylene-1!4-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])[*:1],412.1103249,724.8345859,-2.185476329
+1115,poly(ureylene-1!2-phenyleneethylene-1!4-phenyleneureylene-1!4-phenyleneethylene-1!2-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)CCC1=C(C=CC=C1)[*:2])[*:1],385.7103249,724.8340533,-2.185476329
+381,poly(oxyethyleneoxy-1!3-phenylenecarbonyloxycarbonyl-1!3-phenylene),O(CCOC1=CC(=CC=C1)C(=O)OC(=O)C1=CC(=CC=C1)[*:2])[*:1],362.9772075,716.5156845,-2.186827814
+382,poly(oxyethyleneoxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenylene),O(CCOC1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)[*:2])[*:1],397.6743504,716.5156845,-2.186827814
+11,Victrex Poly(4!4'-sulfonate diphenoxy di(4-phenylene)sulfonate),[*:1]c(cc1)ccc1S(=O)(=O)c(cc2)ccc2Oc(cc3)ccc3S(=O)(=O)c(cc4)ccc4O[*:2],440.8176665,693.4132109,-2.187519483
+1118,poly(ureylene-1!2-phenyleneethylene-1!2-phenyleneureylene-1!2-phenyleneethylene-1!4-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=C(C=CC=C1)NC(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])[*:1],368.159538,724.99135,-2.190018787
+1046,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylenebutane-1!4-diyl),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCCCC[*:2])[*:1],399.8846766,693.8879704,-2.19305783
+1103,poly(ureylene-1!2-phenyleneethylene-1!2-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=C(C=CC=C1)[*:2])[*:1],350.6087375,725.1491795,-2.194560926
+1144,poly{ureylene[4-({4-[(4-nitrophenyl)diazenyl]phenyl}diazenyl)-1!3-phenylene]ureylene-1!4-phenylenemethylene-1!4-phenylene},N(C(=O)NC1=CC(=C(C=C1)N=NC1=CC=C(C=C1)N=NC1=CC=C(C=C1)[N+](=O)[O-])NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],443.1275513,731.6442325,-2.196990589
+413,poly(oxycarbonyloxy-1!4-phenyleneoxy-1!4-phenylene),O(C(=O)OC1=CC=C(C=C1)OC1=CC=C(C=C1)[*:2])[*:1],384.2405178,731.9114095,-2.201008474
+414,poly(oxycarbonyloxy-1!3-phenyleneoxy-1!3-phenylene),O(C(=O)OC1=CC(=CC=C1)OC1=CC(=CC=C1)[*:2])[*:1],341.3793413,731.9114095,-2.201008474
+985,poly[ureylene(1-methylethylene)ureylenehexane-1!6-diyl]! poly[iminocarbonylimino(1-methylethylene)iminocarbonyliminohexane-1!6-diyl],N(C(=O)NC(CNC(=O)NCCCCCC[*:2])C)[*:1],317.1678939,616.2291831,-2.219391743
+1020,poly(diazenediyl-1!4-phenylenecarbonyliminoureylenecyclohexane-1!4-diylmethylenecyclohexane-1!4-diylureyleneiminocarbonyl-1!4-phenylene),N(=NC1=CC=C(C=C1)C(=O)NNC(=O)NC1CCC(CC1)CC1CCC(CC1)NC(=O)NNC(=O)C1=CC=C(C=C1)[*:2])[*:1],425.8226217,695.0451634,-2.229334775
+1007,poly(oxyethyleneoxyethyleneureylene-1!4-phenylenemethylene-1!4-phenyleneureyleneethylene),O(CCOCCNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCC[*:2])[*:1],379.9376574,673.8182816,-2.23072801
+831,poly(oxy-1!4-phenylenesulfonylbiphenyl-4!4'-diylsulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],447.619883,697.7427375,-2.242631609
+1112,poly[ureylene(4-methyl-1!3-phenylene)ureylenehexane-1!6-diyl],N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NCCCCCC[*:2])[*:1],355.9469993,661.0326166,-2.244502001
+1113,poly[ureylene(2-methyl-1!3-phenylene)ureylenehexane-1!6-diyl],N(C(=O)NC1=C(C(=CC=C1)NC(=O)NCCCCCC[*:2])C)[*:1],390.7186376,661.2907651,-2.251888447
+1138,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-2-yl)carbamoyl]-1!3-phenylene}ureylenecyclohexane-1!4-diylmethylenecyclohexane-1!4-diyl),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=2C(C3=CC=CC=C3C(C2C=C1)=O)=O)=O)NC(=O)NC1CCC(CC1)CC1CCC(CC1)[*:2])[*:1],438.9596328,722.6517969,-2.255336421
+890,poly(ureylenemethylene-1!4-phenylenemethyleneureylenehexane-1!6-diyl),N(C(=O)NCC1=CC=C(C=C1)CNC(=O)NCCCCCC[*:2])[*:1],338.2499877,659.4365241,-2.256491568
+1143,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-1-yl)carbamoyl]-1!3-phenylene}ureylenecyclohexane-1!4-diylmethylenecyclohexane-1!4-diyl),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=CC=2C(C3=CC=CC=C3C(C12)=O)=O)=O)NC(=O)NC1CCC(CC1)CC1CCC(CC1)[*:2])[*:1],438.99767,722.7727568,-2.25894197
+843,poly[oxy(2-acetylpropane-1!3-diyl)oxy-1!4-phenylenesulfonyl-1!4-phenylene],O(CC(COC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])C(C)=O)[*:1],416.0279839,669.9642078,-2.285988532
+1131,poly[(2-{4-[4!5-bis(4-nitrophenyl)imidazol-2-yl]phenyl}imidazole-4!5-diyl)-1!4-phenyleneureylene-1!4-phenyleneureylene-1!4-phenylene],[N+](=O)([O-])C1=CC=C(C=C1)C=1N=C(NC1C1=CC=C(C=C1)[N+](=O)[O-])C1=CC=C(C=C1)C=1NC(=C(N1)[*:1])C1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)[*:2],457.6534392,747.6192399,-2.310858941
+825,poly[oxy(2-hydroxypropane-1!3-diyl)oxy-1!4-phenylenesulfonyl-1!4-phenylene],O(CC(COC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])O)[*:1],413.0203153,665.103518,-2.318024612
+107,Polyamide - Nylon 1-6,[*:1]NCNC(=O)CCCCC(=O)[*:2],342.405922,634.2976615,-2.321027806
+1104,poly(ureylene-1!4-phenylenemethylene-1!4-phenyleneureylene-1!4-phenyleneethylene-1!4-phenylene),N(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])[*:1],427.5298631,727.4285815,-2.321894078
+1039,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylenebutane-1!4-diyl],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NCCCC[*:2])[*:1],364.2154095,665.5266344,-2.323559909
+1040,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylenebutane-1!4-diyl],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NCCCC[*:2])[*:1],364.2154095,665.5266344,-2.323559909
+1105,poly(ureylene-1!2-phenyleneethylene-1!4-phenyleneureylene-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],409.4778287,727.590648,-2.326626176
+873,poly(ureylenepropane-1!3-diylureylenehexane-1!6-diyl)! poly(iminocarbonyliminopropane-1!3-diyliminocarbonyliminohexane-1!6-diyl),N(C(=O)NCCCNC(=O)NCCCCCC[*:2])[*:1],310.7251816,620.3278151,-2.327384624
+1106,poly(ureylene-1!2-phenyleneethylene-1!2-phenyleneureylene-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NC1=C(C=CC=C1)CCC1=C(C=CC=C1)NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],391.42578,727.7527144,-2.331357869
+166,Partial anionic Hydrolyzed Polyacrylamide 10% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)[O-])C[*:2],357.6314938,629.0882928,-2.353531772
+822,poly(oxy-1!4-phenylenesulfonyl-1!4-phenylene)! poly(oxy-p-phenylenesulfonyl-p-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],455.6676665,693.4137338,-2.365707571
+826,poly(oxy-1!3-phenylenesulfonyl-1!4-phenylene)! poly(oxy-1!4-phenylenesulfonyl-1!3-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC(=CC=C1)[*:2])[*:1],447.7476665,693.4137338,-2.365707571
+167,Partial neutral Hydrolyzed Polyacrylamide 10% hydrolysis,[*:1]C(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)(N))CC(C(=O)O)C[*:2],355.0970938,624.9501808,-2.371871623
+1045,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylenepropane-1!3-diyl),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCCC[*:2])[*:1],408.7877495,696.7030179,-2.405161339
+46,Xanthan Gum,[*:1]CC(OC1CO)C(O)C(OC(OC3COC(=O)C)C(C(O)C3(O))OC(OC4C(=O)O)C(O)C(O)C4OC(C(O)C(O)C5OC6(C)(C(=O)O))OC5CO6)C1OC(OC2CO)C(O)C(O)C2O[*:2],471.3753189,628.6653789,-2.408180488
+164,Xanthan Gum,[*:1]CC(OC1CO)C(O)C(OC(OC3COC(=O)C)C(C(O)C3(O))OC(OC4C(=O)O)C(O)C(O)C4OC(C(O)C(O)C5OC6(C)(C(=O)O))OC5CO6)C1OC(OC2CO)C(O)C(O)C2O[*:2],471.3753189,628.6653789,-2.408180488
+982,poly{ureyleneethyleneureylene[1-(methoxycarbonyl)pentane-1!5-diyl]}! poly{iminocarbonyliminoethyleneiminocarbonylimino[1-(methoxycarbonyl)pentane-1!5-diyl]},N(C(=O)NCCNC(=O)NC(CCCC[*:2])C(=O)OC)[*:1],339.7865003,619.3060392,-2.425746083
+380,poly(oxymethyleneoxy-1!4-phenylenecarbonyloxycarbonyl-1!4-phenylene)! poly(oxymethyleneoxy-p-phenylenecarbonyloxycarbonyl-p-phenylene),O(COC1=CC=C(C=C1)C(=O)OC(=O)C1=CC=C(C=C1)[*:2])[*:1],408.2849367,721.0793645,-2.430402328
+1107,poly[ureylene(4-methyl-1!3-phenylene)ureylene-1!4-phenyleneethylene-1!4-phenylene],N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=C(C=C1)CCC1=CC=C(C=C1)[*:2])[*:1],426.3968222,714.7076636,-2.444124886
+1116,poly[ureylene(6-methyl-1!3-phenylene)ureylene-1!2-phenyleneethylene-1!4-phenylene],N(C(=O)NC1=CC(=CC=C1C)NC(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])[*:1],404.608158,714.9016382,-2.449839794
+1117,poly[ureylene(4-methyl-1!3-phenylene)ureylene-1!2-phenyleneethylene-1!4-phenylene],N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)[*:2])[*:1],404.608158,714.9016382,-2.449839794
+1108,poly[ureylene(4-methyl-1!3-phenylene)ureylene-1!2-phenyleneethylene-1!2-phenylene],N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=C(C=CC=C1)CCC1=C(C=CC=C1)[*:2])[*:1],366.4332681,715.0956129,-2.45555416
+1148,poly(2!4-dioxo-1!3-diazetidine-1!3-diyl-1!4-phenylene),O=C1N(C(N1C1=CC=C(C=C1)[*:2])=O)[*:1],604.4090053,759.3230127,-2.456322003
+980,poly(ureylene-1!4-phenylenemethylene-1!4-phenylene)! poly(iminocarbonylimino-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],462.622435,730.5202199,-2.479531796
+1009,poly(oxy-1!4-phenyleneureylenehexane-1!6-diylureylene-1!4-phenylene),O(C1=CC=C(C=C1)NC(=O)NCCCCCCNC(=O)NC1=CC=C(C=C1)[*:2])[*:1],419.6507865,686.9179862,-2.48791731
+14,Polyacrylamide,[*:1]C(C(=O)(N))C[*:2],357.0116516,623.7136162,-2.545949482
+165,Polyacrylamide,[*:1]C(C(=O)(N))C[*:2],357.0116516,623.7136162,-2.545949482
+139,Poly(hydrazine-12-diylhexanedioyl),[*:1]NNC(=O)CCCCC(=O)[*:2],354.017449,638.6412972,-2.55257279
+1053,poly[oxycarbonyliminohexane-1!6-diylureylene(3-methyl-1!4-phenylene)],O(C(=O)NCCCCCCNC(=O)NC1=CC(=C(C=C1)[*:2])C)[*:1],385.350767,662.7869984,-2.554334782
+1058,poly[oxycarbonyliminohexane-1!6-diylureylene(2-methyl-1!4-phenylene)],O(C(=O)NCCCCCCNC(=O)NC1=C(C=C(C=C1)[*:2])C)[*:1],385.350767,662.7869984,-2.554334782
+1094,poly(ureylenebutane-1!4-diylureylene-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NCCCCNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],407.4168195,693.1766147,-2.56259495
+529,poly[oxy(2-cyano-1!3-phenylene)],O(C1=C(C(=CC=C1)[*:2])C#N)[*:1],343.4443865,773.1589182,-2.57138305
+1004,poly(oxy-1!4-phenyleneureylene-1!4-phenyleneethylene-1!4-phenyleneureylene-1!4-phenylene),O(C1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)CCC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],449.582505,726.2189722,-2.580155564
+1005,poly(oxy-1!4-phenyleneureylene-1!2-phenyleneethylene-1!4-phenyleneureylene-1!4-phenylene),O(C1=CC=C(C=C1)NC(=O)NC1=C(C=CC=C1)CCC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],431.5309538,726.3803476,-2.584971534
+1006,poly(oxy-1!4-phenyleneureylene-1!2-phenyleneethylene-1!2-phenyleneureylene-1!4-phenylene),O(C1=CC=C(C=C1)NC(=O)NC1=C(C=CC=C1)CCC1=C(C=CC=C1)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],413.4793882,726.541723,-2.589787295
+841,poly(oxy-1!4-phenylenesulfonylnaphthalene-2!7-diylsulfonyl-1!4-phenylene),O(C1=CC=C(C=C1)S(=O)(=O)C1=CC2=CC(=CC=C2C=C1)S(=O)(=O)C1=CC=C(C=C1)[*:2])[*:1],472.8217454,697.9454829,-2.618835263
+1037,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylenepropane-1!3-diyl],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NCCC[*:2])[*:1],374.0822983,667.6051794,-2.621664068
+1038,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylenepropane-1!3-diyl],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NCCC[*:2])[*:1],374.0822983,667.6051794,-2.621664068
+1082,poly(oxymethyleneureylenemethyleneoxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyl),O(CNC(=O)NCOC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)[*:2])[*:1],406.8662719,686.546325,-2.622737836
+1099,poly(ureylenemethylene-1!3-phenylenemethyleneureylene-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NCC1=CC(=CC=C1)CNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],398.0277687,714.6281324,-2.633497663
+1044,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureyleneethylene),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCC[*:2])[*:1],418.5202834,699.7716901,-2.643407061
+1120,poly[ureylene(4-methyl-1!3-phenylene)ureylene-1!4-phenylenemethylene-1!4-phenylene],N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],435.0322509,717.9511559,-2.644971869
+865,poly(ureylenebutane-1!4-diyl)! poly(iminocarbonyliminobutane-1!4-diyl),N(C(=O)NCCCC[*:2])[*:1],347.8124389,619.821651,-2.646390902
+871,poly(ureyleneethyleneureylenehexane-1!6-diyl)! poly(iminocarbonyliminoethyleneiminocarbonyliminohexane-1!6-diyl),N(C(=O)NCCNC(=O)NCCCCCC[*:2])[*:1],318.1124389,619.8207004,-2.646390902
+1016,poly(pyrazole-1!4-diylcarbonyliminohexane-1!6-diyliminocarbonyl),N1(N=CC(=C1)C(=O)NCCCCCCNC(=O)[*:2])[*:1],360.4177218,678.227364,-2.648981599
+1023,poly(diazene-1!2-diyl-1!4-phenyleneiminocarbonylhydrazine-1!2-diyldecane-1!10-dioylhydrazine-1!2-diylcarbonylimino-1!4-phenylene),N(=NC1=CC=C(C=C1)NC(=O)NNC(CCCCCCCCC(=O)NNC(=O)NC1=CC=C(C=C1)[*:2])=O)[*:1],403.7103515,681.30176,-2.662335321
+993,poly{[2-(4-nitrophenyl)imidazole-4!5-diyl]-1!4-phenyleneureylene-1!4-phenyleneureylene-1!4-phenylene}! poly{[2-(4-nitrophenyl)imidazole-4!5-diyl]-1!4-phenyleneiminocarbonylimino-1!4-phenyleneiminocarbonylimino-1!4-phenylene},[N+](=O)([O-])C1=CC=C(C=C1)C=1NC(=C(N1)[*:1])C1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)[*:2],472.8569372,739.151834,-2.67402217
+1132,poly[ureylene(1-methylethylene)ureylene-1!4-phenylenemethylene-1!4-phenylene],N(C(=O)NC(CNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])C)[*:1],421.1167743,692.9074223,-2.716769802
+21,Polyacrylonitrile,[*:1]C(C#N)C[*:2],379.2391911,723.9120962,-2.745854744
+888,poly(ureylenecyclopropane-1!2-diylureylenehexane-1!6-diyl)! poly(iminocarbonyliminocyclopropane-1!2-diyliminocarbonyliminohexane-1!6-diyl),N(C(=O)NC1C(C1)NC(=O)NCCCCCC[*:2])[*:1],388.4696994,645.8180164,-2.791641157
+1070,poly(oxycarbonyliminohexane-1!6-diylureylenemethylene-1!2-phenylene),O(C(=O)NCCCCCCNC(=O)NCC1=C(C=CC=C1)[*:2])[*:1],293.0658664,664.7832283,-2.794624281
+1123,poly[azanediylcarbonylazanediyl(4-methyl-1!3-phenylene)azanediylcarbonylazanediyl[1!1'-biphenyl]-4!4'-diyl]! poly[ureylene(4-methyl-1!3-phenylene)ureylenebiphenyl-4!4'-diyl],N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=C(C=C1)C1=CC=C(C=C1)[*:2])[*:1],444.206365,722.9479788,-2.856556116
+1054,poly[oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylene(3-methyl-1!4-phenylene)],O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NC1=CC(=C(C=C1)[*:2])C)[*:1],440.1757314,719.1699764,-2.881191836
+1059,poly[oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylene(2-methyl-1!4-phenylene)],O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NC1=C(C=C(C=C1)[*:2])C)[*:1],440.1757314,719.1699764,-2.881191836
+377,poly[oxy(2-oxoethylene)oxy(1-oxoethylene)oxy-1!3-phenylene],O(CC(=O)OC(COC1=CC(=CC=C1)[*:2])=O)[*:1],299.7948581,688.766167,-2.882364183
+378,poly[oxy(2-oxoethylene)oxy(1-oxoethylene)oxy-1!4-phenylene],O(CC(=O)OC(COC1=CC=C(C=C1)[*:2])=O)[*:1],339.9228581,688.766167,-2.882364183
+1081,poly[oxymethyleneureylenemethyleneoxycarbonylimino(4-methyl-1!3-phenylene)iminocarbonyl],O(CNC(=O)NCOC(=O)NC1=CC(=C(C=C1)C)NC(=O)[*:2])[*:1],376.5031063,659.2735431,-2.893920326
+889,poly[ureylene(4-methyl-1!3-phenylene)]! poly[iminocarbonylimino(4-methyl-1!3-phenylene)],N(C(=O)NC1=CC(=C(C=C1)C)[*:2])[*:1],435.3191702,698.9295074,-2.898704635
+1035,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureyleneethylene],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NCC[*:2])[*:1],385.2104598,669.9315572,-2.970404403
+1036,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureyleneethylene],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NCC[*:2])[*:1],385.2104598,669.9315572,-2.970404403
+1133,poly[ureylene(5-carboxy-1!3-phenylene)ureylene-1!4-phenylenemethylene-1!4-phenylene],N(C(=O)NC1=CC(=CC(=C1)C(=O)O)NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],439.9280473,716.9323047,-2.975458099
+1014,poly[oxy-1!4-phenyleneureylene(4-methyl-1!3-phenylene)ureylene-1!4-phenylene],O(C1=CC=C(C=C1)NC(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],462.6905961,716.5005568,-2.980230059
+1146,poly(2-oxo-1!2!3!4!5!6-hexahydropyrimidine-1!3-diylcarbonyl),O=C1N(CCCN1C(=O)[*:2])[*:1],516.5838432,693.5580185,-3.01186886
+1147,poly[(2-oxo-1!2!3!4!5!6-hexahydropyrimidine-1!3-diyl)carbonyl],O=C1N(CCCN1C(=O)[*:2])[*:1],516.5838432,693.5580185,-3.01186886
+1018,poly(diazenediyl-1!4-phenylenecarbonyliminoureylenehexane-1!6-diylureyleneiminocarbonyl-1!4-phenylene),N(=NC1=CC=C(C=C1)C(=O)NNC(=O)NCCCCCCNC(=O)NNC(=O)C1=CC=C(C=C1)[*:2])[*:1],395.3632679,684.4715386,-3.039150272
+1025,poly(oxycarbonyliminohexane-1!6-diylureylene-1!4-phenylene),O(C(=O)NCCCCCCNC(=O)NC1=CC=C(C=C1)[*:2])[*:1],389.7664109,668.2813744,-3.05196574
+1031,poly(oxycarbonyliminohexane-1!6-diylureylene-1!3-phenylene),O(C(=O)NCCCCCCNC(=O)NC1=CC(=CC=C1)[*:2])[*:1],359.6704109,668.2813744,-3.05196574
+1071,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylenemethylene-1!2-phenylene),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NCC1=C(C=CC=C1)[*:2])[*:1],388.0214155,720.7276079,-3.068800036
+1085,poly(ureyleneethyleneureylene-1!4-phenylenemethylene-1!4-phenylene)! poly(iminocarbonyliminoethyleneiminocarbonylimino-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NCCNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],426.7365645,699.0147085,-3.069607813
+1076,poly(oxycarbonyliminohexane-1!6-diylureylenenaphthalene-1!7-diyl),O(C(=O)NCCCCCCNC(=O)NC1=CC=CC2=CC=C(C=C12)[*:2])[*:1],405.8419938,693.6429209,-3.078478952
+1064,poly(oxycarbonyliminohexane-1!6-diylureylenenaphthalene-1!8-diyl),O(C(=O)NCCCCCCNC(=O)NC1=CC=CC2=CC=CC(=C12)[*:2])[*:1],405.9105436,693.8718866,-3.085240205
+1051,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylene(3-methyl-1!4-phenylene)],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NC1=CC(=C(C=C1)[*:2])C)[*:1],453.3489197,700.5224019,-3.115385299
+1052,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylene(3-methyl-1!4-phenylene)],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC(=C(C=C1)[*:2])C)[*:1],453.3489197,700.5224019,-3.115385299
+1057,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylene-2-methyl-1!4-phenylene],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NC1=C(C=C(C=C1)[*:2])C)[*:1],453.3489197,700.5224019,-3.115385299
+1083,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylene-2-methyl-1!4-phenylene],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=C(C=C(C=C1)[*:2])C)[*:1],453.3489197,700.5224019,-3.115385299
+1096,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylene(2-methyl-1!4-phenylene)],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=C(C=C(C=C1)[*:2])C)[*:1],453.3489197,700.5224019,-3.115385299
+291,Guar Gum 2,[*:1]OC(C(CO)O1)C(O)C(O)C1OC(C(O)C2(O))C(COC3C(O)C(O)C(O)C(CO)O3)OC2[*:2],520.6413671,615.7375866,-3.116595243
+1129,poly(pyridine-2!6-diylureylenehexane-1!6-diylureylene),N1=C(C=CC=C1NC(=O)NCCCCCCNC(=O)N[*:2])[*:1],363.4673666,666.5203043,-3.118816843
+1137,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-2-yl)carbamoyl]-1!3-phenylene}ureylene-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=2C(C3=CC=CC=C3C(C2C=C1)=O)=O)=O)NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],454.2166282,745.377283,-3.121616098
+1142,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-1-yl)carbamoyl]-1!3-phenylene}ureylene-1!4-phenylenemethylene-1!4-phenylene),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=CC=2C(C3=CC=CC=C3C(C12)=O)=O)=O)NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)[*:2])[*:1],454.2560685,745.5006522,-3.125488032
+874,poly(ureyleneethyleneureylenedecanedioyl)! poly(iminocarbonyliminoethyleneiminocarbonyliminodecanedioyl),N(C(=O)NCCNC(=O)NC(CCCCCCCCC(=O)[*:2])=O)[*:1],331.1149396,637.7374279,-3.192160667
+1019,poly(diazenediyl-1!4-phenylenecarbonyliminoureylene-1!4-phenylenemethylene-1!4-phenyleneureyleneiminocarbonyl-1!4-phenylene),N(=NC1=CC=C(C=C1)C(=O)NNC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NNC(=O)C1=CC=C(C=C1)[*:2])[*:1],431.3364633,719.6072049,-3.199888057
+1077,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylenenaphthalene-1!7-diyl),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NC1=CC=CC2=CC=C(C=C12)[*:2])[*:1],466.0364601,738.8818787,-3.258021586
+1065,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylenenaphthalene-1!8-diyl),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NC1=CC=CC2=CC=CC(=C12)[*:2])[*:1],466.0942703,739.064964,-3.263620232
+1026,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylene-1!4-phenylene),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],445.7657285,725.6105124,-3.284345903
+1032,poly(oxycarbonylimino-1!4-phenylenemethylene-1!4-phenyleneureylene-1!3-phenylene),O(C(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)NC1=CC(=CC=C1)[*:2])[*:1],441.0723952,725.6105124,-3.284345903
+1128,poly(ureylenemethylene{2!4-dihydroxy-5-[1-(hydroxyimino)propyl]-1!3-phenylene}methylene),N(C(=O)NCC1=C(C(=C(C(=C1)C(CC)=NO)O)C[*:2])O)[*:1],485.0658286,660.7251901,-3.312504036
+978,poly(piperazine-1!4-diylcarbonyliminocyclopropane-1!2-diyliminocarbonyl),N1(CCN(CC1)C(=O)NC1C(C1)NC(=O)[*:2])[*:1],497.8382848,676.600201,-3.319098188
+157,Dextran,[*:1]CC(O1)C(O)C(O)C(O)C1O[*:2],393.6225812,615.4780589,-3.344152093
+1122,poly(5!6-dicyanopyrazine-2!3-diyl-1!4-phenyleneureylene-1!4-phenyleneureylene-1!4-phenylene),C(#N)C=1N=C(C(=NC1C#N)[*:1])C1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)NC(=O)NC1=CC=C(C=C1)[*:2],468.2020294,752.5304178,-3.351027529
+1130,poly(pyridine-2!6-diylureylene-1!4-phenylenemethylene-1!4-phenyleneureylene),N1=C(C=CC=C1NC(=O)NC1=CC=C(C=C1)CC1=CC=C(C=C1)NC(=O)N[*:2])[*:1],444.1693229,724.2496678,-3.354730055
+1125,poly(ureylene-4-methyl-1!3-phenyleneureylenenaphthalene-1!4-diyl),N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=C(C2=CC=CC=C12)[*:2])[*:1],435.346629,725.6310215,-3.392844261
+1124,poly[ureylene(4-methyl-1!3-phenylene)ureylene-1!4-phenylene],N(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],448.3439958,706.1218459,-3.435867961
+1068,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylenemethylene-1!2-phenylene],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NCC1=C(C=CC=C1)[*:2])[*:1],353.8675024,702.4786345,-3.443924357
+1069,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylenemethylene-1!2-phenylene],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NCC1=C(C=CC=C1)[*:2])[*:1],353.8675024,702.4786345,-3.443924357
+1021,poly(diazene-1!2-diyl-1!4-phenyleneiminocarbonylhydrazine-1!2-diyladipoylhydrazine-1!2-diylcarbonylimino-1!4-phenylene),N(=NC1=CC=C(C=C1)NC(=O)NNC(CCCCC(=O)NNC(=O)NC1=CC=C(C=C1)[*:2])=O)[*:1],431.3339535,688.0468758,-3.455373936
+872,poly(ureylenepentane-1!5-diylureyleneadipoyl)! poly(ureylenepentane-1!5-diylureylenehexanedioyl)! poly(iminocarbonyliminopentane-1!5-diyliminocarbonyliminoadipoyl)! poly(iminocarbonyliminopentane-1!5-diyliminocarbonyliminohexanedioyl),N(C(=O)NCCCCCNC(=O)NC(CCCCC(=O)[*:2])=O)[*:1],337.8203694,638.1677439,-3.504007724
+1121,poly[ureyleneethyleneureylene(4-methyl-1!3-phenylene)],N(C(=O)NCCNC(=O)NC1=CC(=C(C=C1)C)[*:2])[*:1],395.6513126,668.80331,-3.543456337
+1074,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylenenaphthalene-1!7-diyl],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=CC2=CC=C(C=C12)[*:2])[*:1],454.9766302,726.7487523,-3.653265718
+1075,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylenenaphthalene-1!7-diyl],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NC1=CC=CC2=CC=C(C=C12)[*:2])[*:1],454.9766302,726.7487523,-3.653265718
+1062,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylenenaphthalene-1!8-diyl],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=CC2=CC=CC(=C12)[*:2])[*:1],455.0462775,726.9736262,-3.660294218
+1063,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylenenaphthalene-1!8-diyl],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NC1=CC=CC2=CC=CC(=C12)[*:2])[*:1],455.0462775,726.9736262,-3.660294218
+1139,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-2-yl)carbamoyl]-1!3-phenylene}ureylene-1!4-phenylene),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=2C(C3=CC=CC=C3C(C2C=C1)=O)=O)=O)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],465.2907461,743.6996983,-3.684501971
+1140,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-1-yl)carbamoyl]-1!3-phenylene}ureylene-1!4-phenylene),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=CC=2C(C3=CC=CC=C3C(C12)=O)=O)=O)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],465.3368115,743.8445492,-3.689206886
+1017,poly(hydrazine-1!2-diylisophthaloylhydrazine-1!2-diylcarbonylimino-1!4-phenylenemethylene-1!4-phenyleneiminocarbonyl),N(NC(C1=CC(C(=O)NNC(=O)NC2=CC=C(C=C2)CC2=CC=C(C=C2)NC(=O)[*:2])=CC=C1)=O)[*:1],431.3260167,710.2398864,-3.727937819
+1024,poly[oxycarbonylimino(4-methyl-1!3-phenylene)ureylene-1!4-phenylene],O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],449.131315,707.7694664,-3.752235343
+1028,poly[oxycarbonylimino(6-methyl-1!3-phenylene)ureylene-1!4-phenylene],O(C(=O)NC1=CC(=CC=C1C)NC(=O)NC1=CC=C(C=C1)[*:2])[*:1],449.131315,707.7694664,-3.752235343
+1029,poly(oxycarbonylimino(6-methyl-1!3-phenylene)ureylene-1!3-phenylene),O(C(=O)NC1=CC(=CC=C1C)NC(=O)NC1=CC(=CC=C1)[*:2])[*:1],420.4684578,707.7694664,-3.752235343
+1030,poly(oxycarbonylimino(4-methyl-1!3-phenylene)ureylene-1!3-phenylene),O(C(=O)NC1=CC(=C(C=C1)C)NC(=O)NC1=CC(=CC=C1)[*:2])[*:1],420.4684578,707.7694664,-3.752235343
+181,Guar Gum 1,[*:1]OC(C(O)C1(O))C(OC2OC(O)C(O)C(O)C2(O))OC1OC(C(O)C3(O))C(O)OC3[*:2],565.6057293,617.5160116,-3.772468071
+1136,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-2-yl)carbamoyl]-1!3-phenylene}ureylenenaphthalene-1!5-diyl),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=2C(C3=CC=CC=C3C(C2C=C1)=O)=O)=O)NC(=O)NC1=CC=CC2=C(C=CC=C12)[*:2])[*:1],468.4137018,751.8104468,-3.772928684
+1141,poly(ureylene{5-[(9!10-dioxo-9!10-dihydroanthracen-1-yl)carbamoyl]-1!3-phenylene}ureylenenaphthalene-1!5-diyl),N(C(=O)NC1=CC(=CC(=C1)C(NC1=CC=CC=2C(C3=CC=CC=C3C(C12)=O)=O)=O)NC(=O)NC1=CC=CC2=C(C=CC=C12)[*:2])[*:1],468.456639,751.9425237,-3.777244522
+17,Polyvinyl alcohol,[*:1]C(O)C[*:2],314.4067741,584.3198629,-4.123782159
+1022,poly(diazene-1!2-diyl-1!4-phenyleneiminocarbonylhydrazine-1!2-diyloxalylhydrazine-1!2-diylcarbonylimino-1!4-phenylene),N(=NC1=CC=C(C=C1)NC(=O)NNC(C(=O)NNC(=O)NC1=CC=C(C=C1)[*:2])=O)[*:1],467.5769581,698.1766424,-4.605548319
+864,poly(ureyleneethylene)! poly(iminocarbonyliminoethylene),N(C(=O)NCC[*:2])[*:1],400.6904046,616.9674971,-4.709965389
+1126,poly{[(2-hydroxyethyl)imino]ureylene(4-methyl-1!3-phenylene)iminocarbonyl},OCCN(NC(=O)NC1=CC(=C(C=C1)C)NC(=O)[*:2])[*:1],410.7584903,660.8348112,-4.899629455
+1127,poly{[(2-hydroxyethyl)imino]ureylene(2-methyl-1!3-phenylene)iminocarbonyl},OCCN(NC(=O)NC1=C(C(=CC=C1)NC(=O)[*:2])C)[*:1],451.3232688,661.1343158,-4.910094889
+1145,poly[(2-oxo-1!3-diazetidine-1!3-diyl)carbonyl],O=C1N(CN1C(=O)[*:2])[*:1],545.6521132,712.1409103,-6.140261434
+1089,poly(ureylenemethylene),N(C(=O)NC[*:2])[*:1],444.799999,614.7073984,-6.754487332
