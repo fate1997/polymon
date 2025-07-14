@@ -18,6 +18,7 @@
 - Bicerano_bigsmiles.csv, JCIM_sup_bigsmiles.csv: https://springernature.figshare.com/articles/dataset/dataset_with_glass_transition_temperature/24219958?file=42507037
 
 - PCO2-Tg-Thd-data-all-simulated.csv
+- ap0c00524_si_001.csv: https://pubs.acs.org/doi/10.1021/acsapm.0c00524
 
 # FFV
 - FFV_homopolymer.xlsx: Source not found. May be removed from github
@@ -25,6 +26,7 @@
 
 # Density
 - raw_data.xlsx: https://github.com/Duke-MatSci/ChemProps
+- ap0c00524_si_001.csv
 
 # Mixed
 - PI1070.csv: https://github.com/RadonPy/RadonPy/blob/develop/data/PI1070.csv
