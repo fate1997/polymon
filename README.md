@@ -9,13 +9,15 @@ pip install rdkit==2023.09.3
 ```
 
 ## TODO
-- [ ] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
+- [ ] Try this model: https://github.com/wjxts/MIPS
+
+- [x] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
 - [ ] Calculate `Rg` based on MD files
-- [ ] Test `GATv2` with bond features
-- [ ] Test `GATv2` with different loss functions l1-loss and mse-loss
+- [x] Test `GATv2` with bond features
+- [x] Test `GATv2` with different loss functions l1-loss and mse-loss
 - [ ] Implement cross-validation methods for DL models
-- [ ] GIN, GCN2, PNA, ESA implementation and hyperparameter optimization
-- [ ] Test performance of `GATPort`
+- [x] GIN, GCN2, PNA, ESA implementation and hyperparameter optimization
+- [x] Test performance of `GATPort`
 - [x] Virtual node (use descriptors as the initial features) (atom + descriptors seems have potential)
 - [x] Incorporate more atom features and bond features and tried more GNN models.
 - [x] log file is only shown in the first one ('Rg'), this might be solved by using `loguru`
