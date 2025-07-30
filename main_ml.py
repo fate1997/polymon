@@ -6,6 +6,7 @@ from typing import List, Tuple
 import numpy as np
 import optuna
 import pandas as pd
+from tqdm import tqdm
 from loguru import logger
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
@@ -67,6 +68,7 @@ def train(
         feature_names=feature_names,
         label_column=label,
         force_reload=True,
+        add_hydrogens=False,
     )
     train_loader, val_loader, test_loader = dataset.get_loaders(
         batch_size=128,
@@ -94,8 +96,15 @@ def train(
     if not optimize_hparams:
         logger.info(f'Training {model}...')
         model = MODELS[model]()
+        if model_type == 'tabpfn':
+            model = TabPFNRegressor(ignore_pretraining_limits=True)
         model.fit(x_train, y_train)
-        y_pred = model.predict(x_test)
+        # Batchify the test data
+        batch_size = 64
+        y_pred = []
+        for i in tqdm(range(0, x_test.shape[0], batch_size), desc='Predicting'):
+            y_pred.append(model.predict(x_test[i:i+batch_size]))
+        y_pred = np.concatenate(y_pred, axis=0)
         logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
         logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
         logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
