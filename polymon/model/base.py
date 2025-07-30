@@ -56,24 +56,40 @@ class ModelWrapper(nn.Module):
         smiles_list: List[str],
         batch_size: int = 128,
         device: str = 'cpu',
+        backup_model: 'ModelWrapper' = None,
     ) -> torch.Tensor:
         self.model.eval()
-        self.model.to(device)        
+        self.model.to(device)
+        if backup_model is not None:
+            backup_model.model.eval()
+            backup_model.model.to(device)
+            batch_size = 1
         
         polymers = []
-        for smiles in smiles_list:
+        backup_ids = []
+        for i, smiles in enumerate(smiles_list):
             rdmol = Chem.MolFromSmiles(smiles)
             mol_dict = self.featurizer(rdmol)
+            if None in mol_dict.values():
+                mol_dict = backup_model.featurizer(rdmol)
+                backup_ids.append(i)
             polymers.append(Polymer(**mol_dict))
         loader = DataLoader(polymers, batch_size=batch_size)
         
         y_pred_list = []
-        for batch in loader:
+        for i, batch in enumerate(loader):
             batch.to(device)
-            output = self.model(batch)
-            output = self.normalizer.inverse(output)
-            output = output.squeeze(0).squeeze(0)
-            y_pred_list.append(output)
+            if i not in backup_ids:
+                output = self.model(batch)
+                output = self.normalizer.inverse(output)
+                output = output.squeeze(0).squeeze(0)
+                y_pred_list.append(output)
+            else:
+                y_pred_list.append(backup_model.predict([smiles_list[i]]))
+        if len(y_pred_list) == 1:
+            return y_pred_list[0].detach().cpu()
+        if batch_size == 1:
+            return torch.stack(y_pred_list, dim=0).detach().cpu().unsqueeze(-1)
         return torch.cat(y_pred_list, dim=0).detach().cpu()
     
     def write(self, path: str) -> str:
