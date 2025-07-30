@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import os
 from copy import deepcopy
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from glob import glob
 import hashlib
 
@@ -293,36 +293,39 @@ class BondFeaturizer(Featurizer):
 class PosFeaturizer(Featurizer):
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
         if rdmol.GetNumConformers() == 0:
-            rdmol = deepcopy(rdmol)
-            # If no conformer, load from geometry_vocab.sdf or generate one
-            smiles = Chem.MolToSmiles(rdmol)
-            os.makedirs(str(GEOMETRY_VOCAB), exist_ok=True)
-            hash_digest = hashlib.sha256(smiles.encode('utf-8')).hexdigest()
-            geometry_file = GEOMETRY_VOCAB / f'{hash_digest}.sdf'
-            if not geometry_file.exists():
-                rdmol.SetProp('smiles', smiles)
-                rdmol = self.polymer2monomer(rdmol)
-                if rdmol is None:
-                    return {'pos': None}
-                rdmol = self.init_geometry(rdmol)
-                if rdmol is None:
-                    return {'pos': None}
-                sdf_writer = Chem.SDWriter(str(geometry_file))
-                sdf_writer.write(rdmol)
-                sdf_writer.close()
-            else:
-                rdmol = Chem.MolFromMolFile(
-                    str(geometry_file), sanitize=False, removeHs=False
-                )
+            rdmol = self.get_embeded_rdmol(rdmol)
             if rdmol is None:
                 return {'pos': None}
-        
-        if rdmol.GetNumConformers() == 0:
-            return {'pos': None}
 
         pos = torch.from_numpy(rdmol.GetConformer().GetPositions()).float()
         pos -= pos.mean(dim=0)
         return {'pos': pos}
+    
+    def get_embeded_rdmol(self, rdmol: Chem.Mol, sanitize: bool = False) -> Optional[Chem.Mol]:
+        rdmol = deepcopy(rdmol)
+        # If no conformer, load from geometry_vocab.sdf or generate one
+        smiles = Chem.MolToSmiles(rdmol)
+        os.makedirs(str(GEOMETRY_VOCAB), exist_ok=True)
+        hash_digest = hashlib.sha256(smiles.encode('utf-8')).hexdigest()
+        geometry_file = GEOMETRY_VOCAB / f'{hash_digest}.sdf'
+        if not geometry_file.exists():
+            rdmol.SetProp('smiles', smiles)
+            rdmol = self.polymer2monomer(rdmol)
+            if rdmol is None:
+                return None
+            rdmol = self.init_geometry(rdmol)
+            if rdmol is None:
+                return None
+            sdf_writer = Chem.SDWriter(str(geometry_file))
+            sdf_writer.write(rdmol)
+            sdf_writer.close()
+        else:
+            rdmol = Chem.MolFromMolFile(
+                str(geometry_file), sanitize=sanitize, removeHs=False
+            )
+        if rdmol.GetNumConformers() == 0:
+            return None
+        return rdmol
     
     @staticmethod
     def init_geometry(mol: Chem.Mol) -> Chem.Mol:
@@ -425,6 +428,7 @@ class DescFeaturizer(Featurizer):
         'oligomer_mordred',
         'oligomer_ecfp4',
         'xenonpy_desc',
+        'mordred3d',
     ]
 
     def __init__(
@@ -490,32 +494,31 @@ class DescFeaturizer(Featurizer):
         self,
         rdmol: Chem.Mol,
     ) -> torch.Tensor:
-        smiles = Chem.MolToSmiles(rdmol)
         if rdmol.GetNumConformers() == 0:
-            rdmol = Chem.AddHs(rdmol)
-            for atom in rdmol.GetAtoms():
-                nbrs = atom.GetNeighbors()
-                if len(nbrs) == 0 or atom.GetAtomicNum() != 0:
-                    continue
-                bond = rdmol.GetBondBetweenAtoms(atom.GetIdx(), nbrs[0].GetIdx())
-                if bond.GetBondType() == Chem.rdchem.BondType.SINGLE:
-                    atom.SetAtomicNum(1)
-                elif bond.GetBondType() == Chem.rdchem.BondType.DOUBLE:
-                    atom.SetAtomicNum(8)
-            try:
-                ps = AllChem.ETKDGv3()
-                ps.randomSeed = 42
-                AllChem.EmbedMolecule(rdmol, ps)
-            except Exception as e:
-                return torch.full((1, len(Descriptors3D.descList)), float('inf'))
+            rdmol = PosFeaturizer().get_embeded_rdmol(rdmol)
 
-        if rdmol.GetNumConformers() == 0:
+        if rdmol is None:
             return torch.full((1, len(Descriptors3D.descList)), float('inf'))
     
         desc_dict = Descriptors3D.CalcMolDescriptors3D(rdmol)
         descs = list(desc_dict.values())
         descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
+        return descs
+    
+    def mordred3d(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        if rdmol.GetNumConformers() == 0:
+            rdmol = PosFeaturizer().get_embeded_rdmol(rdmol, sanitize=True)
 
+        from mordred import Calculator, descriptors
+        calc = Calculator(descriptors, ignore_3D=False)
+        
+        if rdmol is None:
+            return torch.full((1, len(calc.descriptors)), float('inf'))
+        descs = calc(rdmol)
+        descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
         return descs
     
     def oligomer_rdkit2d(
