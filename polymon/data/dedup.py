@@ -9,12 +9,20 @@ from polymon.setting import REPO_DIR
 
 
 class Dedup:
-    def __init__(self, label: str, rtol: float = 0.05):
+    def __init__(
+        self, 
+        label: str, 
+        must_keep: List[str] = ['internal'],
+        rtol: float = 0.05,
+        database_path: str = str(REPO_DIR / 'database' / 'database.csv'),
+    ):
         self.label = label
         self.rtol = rtol
-        self.df = pd.DataFrame(
-            {'SMILES': [], self.label: [], 'Source': [], 'Confidence': []}
-        )
+        df = pd.read_csv(database_path).dropna(subset=[label])
+        # Remove other columns
+        df = df[['SMILES', 'Source', 'Uncertainty', label, 'id']]
+        self.df = df
+        self.must_keep = must_keep
     
     def add_df(
         self,
@@ -22,7 +30,7 @@ class Dedup:
         smiles_col: str,
         label_col: str,
         source: str,
-        confidence: float,
+        uncertainty: int,
     ):
         if file_path.endswith('.csv'):
             df = pd.read_csv(file_path)
@@ -35,7 +43,7 @@ class Dedup:
         df = df[df[label_col].notna()]
         df = df[[smiles_col, label_col]].assign(
             Source=source,
-            Confidence=confidence,
+            Uncertainty=uncertainty,
         )
         df.rename(columns={
             label_col: self.label, 
@@ -46,12 +54,13 @@ class Dedup:
     
     def show_distribution(
         self, 
+        sources: List[str],
         bins: int = 50, 
         alpha: float = 0.5,
         density: bool = False,
     ):
         # Plot the distribution of the label for each source
-        for source in self.df['Source'].unique():
+        for source in sources:
             df = self.df[self.df['Source'] == source]
             plt.hist(
                 df[self.label], 
@@ -68,6 +77,11 @@ class Dedup:
     def run(self, sources: Optional[List[str]] = None, save: bool = False):
         if sources is None:
             sources = self.df['Source'].unique()
+        source_info = [
+            f'{source}: {len(self.df[self.df["Source"] == source])}' \
+            for source in sources
+        ]
+        print(f'Sources: {", ".join(source_info)}')
         df = self.df[self.df['Source'].isin(sources)]
         
         print(f'Number of rows before deduplication: {len(df)}')
@@ -78,10 +92,10 @@ class Dedup:
         for smiles, indices in smiles_groups.items():
             rows = df.loc[indices]
             # 1. Remove rows with lower confidence.
-            max_confidence = rows['Confidence'].max()
-            ids_low_confidence = rows[rows['Confidence'] < max_confidence].index
-            drop_indices.extend(ids_low_confidence)
-            rows = rows[rows['Confidence'] == max_confidence]
+            min_uncertainty = rows['Uncertainty'].min()
+            ids_low_uncertainty = rows[rows['Uncertainty'] > min_uncertainty].index
+            drop_indices.extend(ids_low_uncertainty)
+            rows = rows[rows['Uncertainty'] == min_uncertainty]
             
             # 2. Remove rows with higher relative difference.
             if len(rows) > 1:
@@ -91,6 +105,11 @@ class Dedup:
                 else:
                     df.loc[rows.index[0], self.label] = v.mean()
                     drop_indices.extend(rows.index[1:])
+        
+        # 3. Remove indices if the source is in must_keep
+        for source in self.must_keep:
+            drop_indices = list(set(drop_indices) - set(df[df['Source'] == source].index))
+        
         df = df.drop(drop_indices)
         print(f'Number of rows after deduplication: {len(df)}')
         
@@ -114,7 +133,7 @@ class Dedup:
         x = df[self.label + '_x'].values
         y = df[self.label + '_y'].values
         # Swap x and y if x is the label with higher confidence
-        if df1['Confidence'].max() > df2['Confidence'].max():
+        if df1['Uncertainty'].min() < df2['Uncertainty'].min():
             x, y = y, x
             source1, source2 = source2, source1
         
@@ -154,4 +173,4 @@ class Dedup:
                 'Confidence': 0.5,
             })
             self.df = pd.concat([self.df, df_fitted], ignore_index=True)
-        return df
+        return None

@@ -16,6 +16,8 @@ from polymon.data.pretrained import (get_polybert_embeddings,
                                      assign_pretrained_embeddings,
                                      get_gaff2_features)
 from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS, PRETRAINED_MODELS
+from polymon.data.dedup import Dedup
+from polymon.setting import REPO_DIR
 
 
 class PolymerDataset(Dataset):
@@ -25,6 +27,7 @@ class PolymerDataset(Dataset):
         raw_csv_path: str,
         feature_names: List[str],
         label_column: str,
+        sources: List[str],
         smiles_column: str = 'SMILES',
         identifier_column: str = 'id',
         save_processed: bool = True,
@@ -36,17 +39,20 @@ class PolymerDataset(Dataset):
         self.raw_csv_path = raw_csv_path
         self.label_column = label_column
         self.feature_names = feature_names
+        self.sources = sources
         assert self.label_column in TARGETS
         
-        processed_path = raw_csv_path.replace('.csv', f'_{label_column}.pt')
+        processed_name = f'{label_column}_{"_".join(sources)}.pt'
+        os.makedirs(str(REPO_DIR / 'database' / 'processed'), exist_ok=True)
+        processed_path = str(REPO_DIR / 'database' / 'processed' / processed_name)
         
         if osp.exists(processed_path) and not force_reload:
             data = torch.load(processed_path)
             self.data_list = data['data_list']
             self.label_column = data['label_column']
         else:
-            df = pd.read_csv(raw_csv_path)
-            df_nonan = df.dropna(subset=[label_column])
+            dedup = Dedup(label_column, database_path=raw_csv_path)
+            df_nonan = dedup.run(sources=sources)
             feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
             
             if 'pos' in feature_names:
