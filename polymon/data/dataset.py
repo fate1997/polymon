@@ -139,18 +139,33 @@ class PolymerDataset(Dataset):
             n_val = int(val_ratio * len(self))
             if abs(train_ratio + val_ratio - 1.0) < 1e-4:
                 n_train = len(self) - n_val
+        n_test = len(self) - n_train - n_val
+        assert n_test >= 0
+        logger.info(f'Split: {n_train} train, {n_val} val, {n_test} test')
         
-        dataset = self.shuffle(self)
-        assert n_train + n_val <= len(dataset)
+        internal = [data for data in self.data_list if data.source == 'internal']
+        external = [data for data in self.data_list if data.source != 'internal']
+        
+        random.shuffle(internal)
+        random.shuffle(external)
+        if production_run:
+            test_set = external[:n_test]
+            val_set = external[n_test:n_test+n_val]
+            train_set = internal + external[n_test+n_val:]
+        else:
+            test_set = internal[:n_test]
+            val_set = external[:n_val]
+            train_set = internal[n_test:] + external[n_val:]
+        
         train_loader = DataLoader(
-            dataset[:n_train], batch_size, shuffle=True, num_workers=num_workers
+            train_set, batch_size, shuffle=True, num_workers=num_workers
         )
         val_loader = DataLoader(
-            dataset[n_train:n_train+n_val], batch_size, num_workers=num_workers
+            val_set, batch_size, num_workers=num_workers
         )
-        if n_train + n_val < len(dataset):
+        if len(test_set) > 0:
             test_loader = DataLoader(
-                dataset[n_train+n_val:], batch_size, num_workers=num_workers
+                test_set, batch_size, num_workers=num_workers
             )
         else:
             test_loader = None
