@@ -16,7 +16,8 @@ def parse_args():
     
     # Dataset
     parser.add_argument('--batch-size', type=int, default=128)
-    parser.add_argument('--raw-csv-path', type=str, default='database/internal/train.csv')
+    ## Internal data is `must_keep`
+    parser.add_argument('--sources', type=str, nargs='+', default=['official_external'])
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
 
     # Model
@@ -56,7 +57,7 @@ def main():
             tag=args.tag,
             out_dir=out_dir,
             batch_size=args.batch_size,
-            raw_csv_path=args.raw_csv_path,
+            sources=args.sources,
             label=label,
             model_type=args.model,
             hidden_dim=args.hidden_dim,

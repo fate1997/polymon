@@ -14,6 +14,7 @@ from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
                            GATv2VirtualNode, GIN, PNA, GVPModel)
 from polymon.model.base import ModelWrapper
+from polymon.setting import REPO_DIR
 
 
 class Pipeline:
@@ -22,7 +23,7 @@ class Pipeline:
         tag: str,
         out_dir: str,
         batch_size: int,
-        raw_csv_path: str,
+        sources: List[str],
         label: str,
         model_type: str,
         hidden_dim: int,
@@ -39,7 +40,7 @@ class Pipeline:
         self.tag = tag
         self.out_dir = out_dir
         self.batch_size = batch_size
-        self.raw_csv_path = raw_csv_path
+        self.sources = sources
         self.label = label
         self.model_type = model_type.lower()
         self.hidden_dim = hidden_dim
@@ -57,7 +58,7 @@ class Pipeline:
         self.logger = logger    
 
         self.logger.info(f'Building dataset for {label}...')
-        self.dataset = self._build_dataset(raw_csv_path)
+        self.dataset = self._build_dataset(sources)
         if self.descriptors is not None:
             self.num_descriptors = self.dataset[0].descriptors.shape[1]
         else:
@@ -175,11 +176,11 @@ class Pipeline:
         out_dir = os.path.join(self.out_dir, 'production')
         os.makedirs(out_dir, exist_ok=True)
 
-        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05)
+        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True)
         self.train(None, model_hparams, out_dir, loaders)
         self.logger.info(f'Production run complete.')
     
-    def _build_dataset(self, raw_csv_path: str) -> PolymerDataset:
+    def _build_dataset(self, sources: List[str]) -> PolymerDataset:
         feature_names = ['x', 'bond', 'z']
         if self.model_type.lower() in ['dimenetpp', 'gvp']:
             feature_names.append('pos')
@@ -191,7 +192,8 @@ class Pipeline:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
         dataset = PolymerDataset(
-            raw_csv_path=raw_csv_path,
+            raw_csv_path=str(REPO_DIR / 'database' / 'database.csv'),
+            sources=sources,
             feature_names=feature_names,
             label_column=self.label,
             force_reload=True,
