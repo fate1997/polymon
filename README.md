@@ -10,6 +10,7 @@ pip install rdkit==2023.09.3
 
 ## TODO
 - [ ] Try this model: https://github.com/wjxts/MIPS
+- [ ] Review: https://www.sciencedirect.com/science/article/pii/S0079642525001227#b1005
 
 - [x] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
 - [ ] Calculate `Rg` based on MD files
