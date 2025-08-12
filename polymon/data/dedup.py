@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 from rdkit import Chem
 from sklearn.linear_model import LinearRegression
 from polymon.setting import REPO_DIR
+from loguru import logger
 
 
 class Dedup:
@@ -77,14 +78,15 @@ class Dedup:
     def run(self, sources: Optional[List[str]] = None, save: bool = False):
         if sources is None:
             sources = self.df['Source'].unique()
+        sources = list(set(sources + self.must_keep))
         source_info = [
             f'{source}: {len(self.df[self.df["Source"] == source])}' \
             for source in sources
         ]
-        print(f'Sources: {", ".join(source_info)}')
+        logger.info(f'Sources: {", ".join(source_info)}')
         df = self.df[self.df['Source'].isin(sources)]
         
-        print(f'Number of rows before deduplication: {len(df)}')
+        logger.info(f'Number of rows before deduplication: {len(df)}')
         mask = df['SMILES'].duplicated(keep=False)
         duplicates = df[mask]
         smiles_groups = duplicates.groupby('SMILES').groups
@@ -111,7 +113,7 @@ class Dedup:
             drop_indices = list(set(drop_indices) - set(df[df['Source'] == source].index))
         
         df = df.drop(drop_indices)
-        print(f'Number of rows after deduplication: {len(df)}')
+        logger.info(f'Number of rows after deduplication: {len(df)}')
         
         if save:
             path = str(REPO_DIR / 'database' / 'merged' / f'{self.label}_{"_".join(sources)}.csv')
@@ -150,7 +152,7 @@ class Dedup:
             # Learn linear relationship y = ax + b to fit the data
             model = LinearRegression().fit(x.reshape(-1, 1), y.reshape(-1, 1))
             y_pred = model.predict(x.reshape(-1, 1))
-            print(f'Coefficient: {model.coef_[0][0]:.4f}, Intercept: {model.intercept_[0]:.4f}')
+            logger.info(f'Coefficient: {model.coef_[0][0]:.4f}, Intercept: {model.intercept_[0]:.4f}')
             plt.scatter(y_pred, y, color='red', alpha=0.5, marker='x', label='Fitted')
             # Write the equation of the fitted line
             plt.text(

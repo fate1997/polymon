@@ -1,6 +1,7 @@
 import os
 import os.path as osp
 from typing import List, Tuple, Union
+import random
 
 import pandas as pd
 import torch
@@ -8,6 +9,7 @@ from rdkit import Chem
 from torch_geometric.data import Batch, Dataset
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
+from loguru import logger
 
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import Polymer
@@ -74,14 +76,15 @@ class PolymerDataset(Dataset):
                 if identifier_column is not None and identifier_column in df_nonan.columns:
                     mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
+                mol_dict['source'] = row['Source']
                 if None in mol_dict.values():
-                    print(f'Skipping {row[smiles_column]} because of None in featurization')
+                    logger.warning(f'Skipping {row[smiles_column]} because of None in featurization')
                     continue
                 data_list.append(Polymer(**mol_dict))
 
             # Add pretrained embeddings
             if len(self.feature_names) != len(feature_names):
-                print(f'Building pretrained embeddings...')
+                logger.info(f'Building pretrained embeddings...')
             if 'polycl' in self.feature_names:
                 pretrained_embeddings = get_polycl_embeddings(
                     df_nonan[smiles_column].tolist(),
@@ -128,7 +131,8 @@ class PolymerDataset(Dataset):
         batch_size: int,
         n_train: Union[int, float],
         n_val: Union[int, float],
-        num_workers: int = 0
+        production_run: bool = False,
+        num_workers: int = 0,
     ) -> Tuple[DataLoader, DataLoader, DataLoader]:
         
         if isinstance(n_train, float):
