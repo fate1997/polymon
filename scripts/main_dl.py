@@ -1,8 +1,10 @@
 import argparse
+import yaml
 import os
 
 import numpy as np
 import pandas as pd
+import torch
 
 from polymon.exp.pipeline import Pipeline
 from polymon.exp.score import normalize_property_weight
@@ -30,6 +32,7 @@ def parse_args():
     parser.add_argument('--hidden-dim', type=int, default=32)
     parser.add_argument('--num-layers', type=int, default=3)
     parser.add_argument('--descriptors', type=str, default=None, nargs='+')
+    parser.add_argument('--hparams-from', type=str, default=None)
 
     # Training
     parser.add_argument('--num-epochs', type=int, default=2500)
@@ -71,6 +74,8 @@ def main():
             device=args.device,
             n_trials=args.n_trials,
         )
+        with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
+            yaml.dump(args.__dict__, f)
         if args.optimize_hparams:
             test_err, hparams = pipeline.optimize_hparams()
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
@@ -78,6 +83,10 @@ def main():
             hparams = {
                 'hidden_dim': args.hidden_dim,
                 'num_layers': args.num_layers}
+            if args.hparams_from is not None:
+                hparams_loaded = torch.load(args.hparams_from)['model_init_params']
+                pipeline.logger.info(f'Loading hparams from {args.hparams_from}')
+                hparams.update(hparams_loaded)
             test_err = pipeline.train(model_hparams=hparams)
             model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
         if args.finetune_csv_path is not None:

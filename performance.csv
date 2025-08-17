@@ -104,3 +104,4 @@ gatv2,,,0.0578,,,0.0578,retry
 gatv2,0.0297,,,,,0.0297,retry
 gatchain,0.0517,,,,,0.0517,direction-aug
 gatv2chainreadout,0.0348,,,,,0.0348,first-try
+gatv2,,,0.0643,,,0.0643,re-run

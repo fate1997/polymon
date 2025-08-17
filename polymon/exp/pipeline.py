@@ -210,67 +210,77 @@ class Pipeline:
     
     def _build_model(self, hparams: Dict[str, Any]) -> ModelWrapper:
         if self.model_type == 'gatv2':
-            model = GATv2(
-                num_atom_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                num_descriptors=self.num_descriptors,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATv2(**input_args)
         elif self.model_type == 'attentivefp':
-            model = AttentiveFPWrapper(
-                in_channels=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                out_channels=1,
-                **hparams,
-            )
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'out_channels': 1,
+            }
+            input_args.update(hparams)
+            model = AttentiveFPWrapper(**input_args)
         elif self.model_type == 'dimenetpp':
-            model = DimeNetPP(
-                out_channels=1,
-                **hparams,
-            )
+            input_args = {
+                'out_channels': 1,
+            }
+            input_args.update(hparams)
+            model = DimeNetPP(**input_args)
         elif self.model_type == 'gatport':
-            model = GATPort(
-                num_atom_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                num_descriptors=self.num_descriptors,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATPort(**input_args)
         elif self.model_type == 'gatv2vn':
-            model = GATv2VirtualNode(
-                num_atom_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                num_descriptors=self.num_descriptors,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATv2VirtualNode(**input_args)
         elif self.model_type == 'gin':
-            model = GIN(
-                num_atom_features=self.dataset.num_node_features,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GIN(**input_args)
         elif self.model_type == 'pna':
-            model = PNA(
-                in_channels=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                deg=PNA.compute_deg(self.train_loader),
-                **hparams,
-            )
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'deg': PNA.compute_deg(self.train_loader),
+            }
+            input_args.update(hparams)
+            model = PNA(**input_args)
         elif self.model_type == 'gvp':
-            model = GVPModel(
-                in_node_nf=self.dataset.num_node_features,
-                **hparams,
-            )
+            input_args = {
+                'in_node_nf': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GVPModel(**input_args)
         elif self.model_type == 'gatchain':
-            model = GATChain(
-                num_atom_features=self.dataset.num_node_features,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GATChain(**input_args)
         elif self.model_type == 'gatv2chainreadout':
-            model = GATv2ChainReadout(
-                num_atom_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                num_descriptors=self.num_descriptors,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATv2ChainReadout(**input_args)
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         
