@@ -23,6 +23,7 @@ class Pipeline:
         tag: str,
         out_dir: str,
         batch_size: int,
+        raw_csv: str,
         sources: List[str],
         label: str,
         model_type: str,
@@ -40,6 +41,7 @@ class Pipeline:
         self.tag = tag
         self.out_dir = out_dir
         self.batch_size = batch_size
+        self.raw_csv = raw_csv
         self.sources = sources
         self.label = label
         self.model_type = model_type.lower()
@@ -192,7 +194,7 @@ class Pipeline:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
         dataset = PolymerDataset(
-            raw_csv_path=str(REPO_DIR / 'database' / 'database.csv'),
+            raw_csv_path=self.raw_csv,
             sources=sources,
             feature_names=feature_names,
             label_column=self.label,

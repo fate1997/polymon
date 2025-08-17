@@ -12,14 +12,13 @@ from loguru import logger
 class Dedup:
     def __init__(
         self, 
+        df: pd.DataFrame,
         label: str, 
         must_keep: List[str] = ['internal'],
         rtol: float = 0.05,
-        database_path: str = str(REPO_DIR / 'database' / 'database.csv'),
     ):
         self.label = label
         self.rtol = rtol
-        df = pd.read_csv(database_path).dropna(subset=[label])
         # Remove other columns
         df = df[['SMILES', 'Source', 'Uncertainty', label, 'id']]
         self.df = df

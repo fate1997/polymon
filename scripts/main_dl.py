@@ -16,6 +16,7 @@ def parse_args():
     
     # Dataset
     parser.add_argument('--batch-size', type=int, default=128)
+    parser.add_argument('--raw-csv', type=str, default=str(REPO_DIR / 'database' / 'database.csv'))
     ## Internal data is `must_keep`
     parser.add_argument('--sources', type=str, nargs='+', default=['official_external'])
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
@@ -57,6 +58,7 @@ def main():
             tag=args.tag,
             out_dir=out_dir,
             batch_size=args.batch_size,
+            raw_csv=args.raw_csv,
             sources=args.sources,
             label=label,
             model_type=args.model,

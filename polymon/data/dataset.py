@@ -53,8 +53,10 @@ class PolymerDataset(Dataset):
             self.data_list = data['data_list']
             self.label_column = data['label_column']
         else:
-            dedup = Dedup(label_column, database_path=raw_csv_path)
-            df_nonan = dedup.run(sources=sources)
+            df_nonan = pd.read_csv(raw_csv_path).dropna(subset=[label_column])
+            if 'Source' in df_nonan.columns:
+                dedup = Dedup(df_nonan, label_column)
+                df_nonan = dedup.run(sources=sources)
             feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
             
             if 'pos' in feature_names:
@@ -76,7 +78,8 @@ class PolymerDataset(Dataset):
                 if identifier_column is not None and identifier_column in df_nonan.columns:
                     mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
-                mol_dict['source'] = row['Source']
+                if 'Source' in df_nonan.columns:
+                    mol_dict['source'] = row['Source']
                 if None in mol_dict.values():
                     logger.warning(f'Skipping {row[smiles_column]} because of None in featurization')
                     continue
@@ -147,19 +150,24 @@ class PolymerDataset(Dataset):
         assert n_test >= 0
         logger.info(f'Split: {n_train} train, {n_val} val, {n_test} test')
         
-        internal = [data for data in self.data_list if data.source == 'internal']
-        external = [data for data in self.data_list if data.source != 'internal']
-        
-        random.shuffle(internal)
-        random.shuffle(external)
-        if production_run:
-            test_set = external[:n_test]
-            val_set = external[n_test:n_test+n_val]
-            train_set = internal + external[n_test+n_val:]
+        if getattr(self.data_list[0], 'source', None) is not None:
+            internal = [data for data in self.data_list if data.source == 'internal']
+            external = [data for data in self.data_list if data.source != 'internal']
+            random.shuffle(internal)
+            random.shuffle(external)
+            if production_run:
+                test_set = external[:n_test]
+                val_set = external[n_test:n_test+n_val]
+                train_set = internal + external[n_test+n_val:]
+            else:
+                test_set = internal[:n_test]
+                val_set = external[:n_val]
+                train_set = internal[n_test:] + external[n_val:]
         else:
-            test_set = internal[:n_test]
-            val_set = external[:n_val]
-            train_set = internal[n_test:] + external[n_val:]
+            self.shuffle()
+            train_set = self[:n_train]
+            val_set = self[n_train:n_train+n_val]
+            test_set = self[n_train+n_val:]
         
         train_loader = DataLoader(
             train_set, batch_size, shuffle=True, num_workers=num_workers
