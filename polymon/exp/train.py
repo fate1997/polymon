@@ -184,6 +184,8 @@ class Trainer:
             y_preds.extend(y_pred.detach().cpu().numpy())
         y_trues = np.array(y_trues)
         y_preds = np.array(y_preds)
+        if np.isnan(y_trues).any() or np.isnan(y_preds).any():
+            return {'mae': np.nan, 'r2': np.nan, 'scaling_error': np.nan}
         metrics = {}
         metrics['mae'] = mean_absolute_error(y_trues, y_preds)
         metrics['r2'] = r2_score(y_trues, y_preds)

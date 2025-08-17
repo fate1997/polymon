@@ -12,7 +12,8 @@ from polymon.exp.train import Trainer
 from polymon.exp.utils import seed_everything
 from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
-                           GATv2VirtualNode, GIN, PNA, GVPModel)
+                           GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
+                           GATv2ChainReadout)
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -190,6 +191,8 @@ class Pipeline:
         if self.model_type.lower() in ['gatv2vn']:
             feature_names.append('virtual_bond')
             feature_names.remove('bond')
+        if self.model_type.lower() in ['gatchain']:
+            feature_names.append('bridge')
         if self.descriptors is not None:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
@@ -254,6 +257,18 @@ class Pipeline:
         elif self.model_type == 'gvp':
             model = GVPModel(
                 in_node_nf=self.dataset.num_node_features,
+                **hparams,
+            )
+        elif self.model_type == 'gatchain':
+            model = GATChain(
+                num_atom_features=self.dataset.num_node_features,
+                **hparams,
+            )
+        elif self.model_type == 'gatv2chainreadout':
+            model = GATv2ChainReadout(
+                num_atom_features=self.dataset.num_node_features,
+                edge_dim=self.dataset.num_edge_features,
+                num_descriptors=self.num_descriptors,
                 **hparams,
             )
         else:

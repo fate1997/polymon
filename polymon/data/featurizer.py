@@ -289,6 +289,17 @@ class BondFeaturizer(Featurizer):
         return {'edge_index': bond_index, 'edge_attr': bond_attr}
 
 
+@register_cls('bridge')
+class BridgeFeaturizer(Featurizer):
+    def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
+        attachments = [
+            atom.GetIdx() for atom in rdmol.GetAtoms() \
+                if atom.GetAtomicNum() == 0
+        ]
+        if len(attachments) != 2:
+            return {'bridge_index': None}
+        return {'bridge_index': torch.tensor([[attachments[0]], [attachments[1]]])}
+
 @register_cls('pos')
 class PosFeaturizer(Featurizer):
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:

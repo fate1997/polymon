@@ -98,3 +98,9 @@ gin,,,,0.0198,,0.0198,initial_test
 pna,0.0213,,,,,0.0213,initial_test
 gatv2,0.0253,,,,,0.0253,l1_loss
 rf,0.0357,,,,,0.0357,mordred3d-debug
+gatv2,,,0.0626,,,0.0626,with-official-external
+gatv2,,0.0078,,,,0.0078,with-official-external
+gatv2,,,0.0578,,,0.0578,retry
+gatv2,0.0297,,,,,0.0297,retry
+gatchain,0.0517,,,,,0.0517,direction-aug
+gatv2chainreadout,0.0348,,,,,0.0348,first-try

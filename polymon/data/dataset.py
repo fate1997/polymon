@@ -71,6 +71,9 @@ class PolymerDataset(Dataset):
             data_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
                 row = df_nonan.iloc[i]
+                if row[smiles_column].count('*') != 2:
+                    logger.warning(f'Skipping {row[smiles_column]} because of not 2 attachments')
+                    continue
                 rdmol = Chem.MolFromSmiles(row[smiles_column])
                 label = row[self.label_column]
                 mol_dict = self.featurizer(rdmol)
@@ -117,7 +120,13 @@ class PolymerDataset(Dataset):
                 }, processed_path)
     
     def get(self, idx: int) -> Polymer:
-        return self.data_list[idx]
+        data = self.data_list[idx]
+        if getattr(data, 'bridge_index', None) is not None:
+            import random
+            direction = random.randint(0, 1)
+            if direction == 0:
+                data.bridge_index = data.bridge_index[[1, 0], :]
+        return data
     
     def len(self) -> int:
         return len(self.data_list)
