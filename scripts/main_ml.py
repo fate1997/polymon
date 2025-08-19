@@ -60,7 +60,9 @@ def train(
     seed_everything(42)
     out_dir = os.path.join(out_dir, model)
     os.makedirs(out_dir, exist_ok=True)
-    name = f'{model}-{label}-{"-".join(feature_names)}-{tag}'
+    os.makedirs(os.path.join(out_dir, tag), exist_ok=True)
+    out_dir = os.path.join(out_dir, tag)
+    name = f'{model}-{label}-{"-".join(feature_names)}'
     logger.add(os.path.join(out_dir, f'{name}.log'))
     model_type = model
 
