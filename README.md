@@ -9,7 +9,11 @@ pip install rdkit==2023.09.3
 ```
 
 ## TODO
-- [ ] Try this model: https://github.com/wjxts/MIPS
+- [ ] Dataset ablation study. Find the best sources for each property.
+- [ ] Try this model: https://github.com/wjxts/MIPS (no open source weights)
+- [ ] https://github.com/pnnl/FragNet
+- [ ] https://github.com/syr-cn/SimSGT
+- [ ] Pretrained on our own dataset following MIPS, FragNet or SimSGT
 - [ ] Review: https://www.sciencedirect.com/science/article/pii/S0079642525001227#b1005
 
 - [x] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
