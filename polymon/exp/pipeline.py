@@ -13,7 +13,7 @@ from polymon.exp.utils import seed_everything
 from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
                            GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
-                           GATv2ChainReadout)
+                           GATv2ChainReadout, GraphTransformer, KAN_GATv2)
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -114,7 +114,7 @@ class Pipeline:
         os.makedirs(out_dir, exist_ok=True)
         def objective(trial: optuna.Trial) -> float:
             model_hparams = get_hparams(trial, self.model_type)
-            self.logger.info(f'Number of trials: {trial.number}')
+            self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
             return self.train(self.lr, model_hparams, out_dir)
 
         study = optuna.create_study(direction='minimize')
@@ -281,6 +281,18 @@ class Pipeline:
             }
             input_args.update(hparams)
             model = GATv2ChainReadout(**input_args)
+        elif self.model_type == 'gt':
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GraphTransformer(**input_args)
+        elif self.model_type == 'kan_gatv2':
+            input_args = {
+                'num_node_features': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = KAN_GATv2(**input_args)
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         

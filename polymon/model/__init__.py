@@ -1,8 +1,9 @@
 from polymon.model.gnn import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
-                               GATv2VirtualNode, GIN, PNA)
+                               GATv2VirtualNode, GIN, PNA, GraphTransformer)
 from polymon.model.gvp import GVPModel
 from polymon.model.gat_chain import GATChain
 from polymon.model.gat_chain_readout import GATv2ChainReadout
+from polymon.model.kan_gatv2 import KAN_GATv2
 
 __all__ = [
     'GATv2',
@@ -15,4 +16,6 @@ __all__ = [
     'GVPModel',
     'GATChain',
     'GATv2ChainReadout',
+    'GraphTransformer',
+    'KAN_GATv2',
 ]

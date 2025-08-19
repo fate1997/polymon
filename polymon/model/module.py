@@ -1,9 +1,11 @@
 import math
+from functools import partial
 from typing import Callable, Union
-from torch.nn.init import kaiming_uniform_, zeros_
 
+import numpy as np
 import torch
 import torch.nn as nn
+from torch.nn.init import kaiming_uniform_, zeros_
 from torch_geometric.nn import global_add_pool, global_max_pool
 
 ACTIVATION_REGISTER = {
@@ -56,22 +58,28 @@ class MLP(nn.Module):
                  output_dim: int, 
                  n_layers: int, 
                  dropout: float, 
-                 activation: str):
+                 activation: str,
+                 kan_mode: bool = False,
+                 grid_size: int = 10):
         super().__init__()
+        if kan_mode:
+            linear_layer = partial(KANLinear, grid_size=grid_size) # First layer might should not have bias
+        else:
+            linear_layer = nn.Linear
         
         activation = get_activation(activation)
         
         if n_layers == 1:
-            self.layers = nn.Linear(input_dim, output_dim)
+            self.layers = linear_layer(input_dim, output_dim)
         else:
             self.layers = []
             for i in range(n_layers - 1):
-                self.layers.append(nn.Linear(input_dim if i == 0 else hidden_dim, hidden_dim))
+                self.layers.append(linear_layer(input_dim if i == 0 else hidden_dim, hidden_dim))
                 self.layers.append(activation)
                 self.layers.append(nn.LayerNorm(hidden_dim))
                 self.layers.append(nn.Dropout(dropout))
 
-            self.layers.append(nn.Linear(hidden_dim, output_dim))
+            self.layers.append(linear_layer(hidden_dim, output_dim))
             self.layers = nn.Sequential(*self.layers)
         
         self.layers.apply(init_weight)
@@ -145,3 +153,43 @@ class ScaledSiLU(torch.nn.Module):
 
     def forward(self, x):
         return self._activation(x) * self.scale_factor
+
+
+class KANLinear(nn.Module):
+    def __init__(
+        self, 
+        input_dim: int, 
+        out_dim: int, 
+        grid_size: int, 
+        add_bias: bool = True
+    ):
+        super(KANLinear,self).__init__()
+        self.grid_size= grid_size
+        self.add_bias = add_bias
+        self.input_dim = input_dim
+        self.out_dim = out_dim
+
+        self.fouriercoeffs = nn.Parameter(torch.randn(2, out_dim, input_dim, grid_size) / 
+                                             (np.sqrt(input_dim) * np.sqrt(grid_size)))
+        if add_bias:
+            self.bias = nn.Parameter(torch.zeros(1, out_dim))
+
+    def forward(self,x):
+
+        xshp = x.shape
+        outshape = xshp[0:-1] + (self.out_dim,)
+        x = x.view(-1, self.input_dim)
+        k = torch.reshape(torch.arange(1, self.grid_size+1, device=x.device), (1, 1, 1, self.grid_size))
+        xrshp = x.view(x.shape[0], 1, x.shape[1], 1)
+        
+        c = torch.cos(k * xrshp)
+        s = torch.sin(k * xrshp)
+
+        c = torch.reshape(c, (1, x.shape[0], x.shape[1], self.grid_size))
+        s = torch.reshape(s, (1, x.shape[0], x.shape[1], self.grid_size))
+        y = torch.einsum("dbik,djik->bj", torch.concat([c, s], axis=0), self.fouriercoeffs)
+        if self.add_bias:
+            y += self.bias
+        
+        y = y.view(outshape)
+        return y

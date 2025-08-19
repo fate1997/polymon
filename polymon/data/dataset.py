@@ -160,6 +160,7 @@ class PolymerDataset(Dataset):
         logger.info(f'Split: {n_train} train, {n_val} val, {n_test} test')
         
         if getattr(self.data_list[0], 'source', None) is not None:
+            logger.info('Splitting dataset by source...')
             internal = [data for data in self.data_list if data.source == 'internal']
             external = [data for data in self.data_list if data.source != 'internal']
             random.shuffle(internal)
@@ -173,10 +174,11 @@ class PolymerDataset(Dataset):
                 val_set = external[:n_val]
                 train_set = internal[n_test:] + external[n_val:]
         else:
-            self.shuffle()
-            train_set = self[:n_train]
-            val_set = self[n_train:n_train+n_val]
-            test_set = self[n_train+n_val:]
+            logger.info('Splitting dataset randomly...')
+            dataset = self.shuffle()
+            train_set = dataset[:n_train]
+            val_set = dataset[n_train:n_train+n_val]
+            test_set = dataset[n_train+n_val:]
         
         train_loader = DataLoader(
             train_set, batch_size, shuffle=True, num_workers=num_workers
