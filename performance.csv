@@ -98,6 +98,16 @@ gin,,,,0.0198,,0.0198,initial_test
 pna,0.0213,,,,,0.0213,initial_test
 gatv2,0.0253,,,,,0.0253,l1_loss
 rf,0.0357,,,,,0.0357,mordred3d-debug
+gatv2,,0.0079,,,,0.0079,l1_loss
+gatv2,,,0.0411,,,0.0411,l1_loss
+gatv2,,,,,0.0503,0.0503,l1_loss
+gatv2,,,,0.0193,,0.0193,l1_loss
+pna,,0.0077,,,,0.0077,initial_test
+gvp,,,0.0412,,,0.0412,initial_test
+pna,,,0.0407,,,0.0407,initial_test
+pna,,,,,0.0455,0.0455,initial_test
+pna,,,,0.0175,,0.0175,initial_test
+gvp,,,,,0.0543,0.0543,initial_test
 gatv2,,,0.0626,,,0.0626,with-official-external
 gatv2,,0.0078,,,,0.0078,with-official-external
 gatv2,,,0.0578,,,0.0578,retry
