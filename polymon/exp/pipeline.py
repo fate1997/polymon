@@ -5,15 +5,17 @@ from typing import Any, Dict, List, Optional, Tuple
 import loguru
 import optuna
 from torch_geometric.loader import DataLoader
+from pytorch_lightning import seed_everything
+import torch_geometric.transforms as T
 
 from polymon.data.dataset import PolymerDataset
 from polymon.data.utils import Normalizer
 from polymon.exp.train import Trainer
-from polymon.exp.utils import seed_everything
 from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
                            GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
-                           GATv2ChainReadout, GraphTransformer, KAN_GATv2)
+                           GATv2ChainReadout, GraphTransformer, KAN_GATv2,
+                           GraphGPS, KAN_GPS)
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -36,8 +38,9 @@ class Pipeline:
         early_stopping_patience: int,
         device: str,
         n_trials: int,
+        seed: int = 42,
     ):
-        seed_everything(42)
+        seed_everything(seed)
         
         self.tag = tag
         self.out_dir = out_dir
@@ -196,6 +199,10 @@ class Pipeline:
         if self.descriptors is not None:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
+        if self.model_type.lower() in ['gps', 'kan_gps']:
+            pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
+        else:
+            pre_transform = None
         dataset = PolymerDataset(
             raw_csv_path=self.raw_csv,
             sources=sources,
@@ -203,6 +210,7 @@ class Pipeline:
             label_column=self.label,
             force_reload=True,
             add_hydrogens=True,
+            pre_transform=pre_transform
         )
         self.logger.info(f'Atom features: {dataset.num_node_features}')
         self.logger.info(f'Bond features: {dataset.num_edge_features}')
@@ -293,6 +301,20 @@ class Pipeline:
             }
             input_args.update(hparams)
             model = KAN_GATv2(**input_args)
+        elif self.model_type == 'gps':
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+            }
+            input_args.update(hparams)
+            model = GraphGPS(**input_args)
+        elif self.model_type == 'kan_gps':
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+            }
+            input_args.update(hparams)
+            model = KAN_GPS(**input_args)
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         

@@ -1,7 +1,7 @@
-from typing import Literal, Tuple
+from typing import Dict, Any, Literal
 
 import torch
-import torch.nn as nn
+from torch import nn
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import (AttentiveFP, BatchNorm, DimeNetPlusPlus,

@@ -22,6 +22,7 @@ def parse_args():
     ## Internal data is `must_keep`
     parser.add_argument('--sources', type=str, nargs='+', default=['official_external'])
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
+    parser.add_argument('--seed', type=int, default=42)
 
     # Model
     parser.add_argument(
@@ -73,6 +74,7 @@ def main():
             early_stopping_patience=args.early_stopping_patience,
             device=args.device,
             n_trials=args.n_trials,
+            seed=args.seed,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)

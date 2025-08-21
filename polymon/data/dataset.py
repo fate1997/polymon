@@ -1,6 +1,6 @@
 import os
 import os.path as osp
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional, Callable
 import random
 
 import pandas as pd
@@ -35,6 +35,8 @@ class PolymerDataset(Dataset):
         save_processed: bool = True,
         force_reload: bool = False,
         add_hydrogens: bool = False,
+        fitting_source: List[str] = None,
+        pre_transform: Optional[Callable] = None,
     ):
         super().__init__()
         
@@ -43,6 +45,7 @@ class PolymerDataset(Dataset):
         self.feature_names = feature_names
         self.sources = sources
         assert self.label_column in TARGETS
+        self.pre_transform = pre_transform
         
         processed_name = f'{label_column}_{"_".join(sources)}.pt'
         os.makedirs(str(REPO_DIR / 'database' / 'processed'), exist_ok=True)
@@ -56,6 +59,11 @@ class PolymerDataset(Dataset):
             df_nonan = pd.read_csv(raw_csv_path).dropna(subset=[label_column])
             if 'Source' in df_nonan.columns:
                 dedup = Dedup(df_nonan, label_column)
+                if fitting_source is not None:
+                    for source in fitting_source:
+                        dedup.compare('internal', source, fitting=True)
+                        sources.remove(source)
+                        sources.append(f'{source}_fitted')
                 df_nonan = dedup.run(sources=sources)
             feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
             
@@ -86,7 +94,10 @@ class PolymerDataset(Dataset):
                 if None in mol_dict.values():
                     logger.warning(f'Skipping {row[smiles_column]} because of None in featurization')
                     continue
-                data_list.append(Polymer(**mol_dict))
+                data = Polymer(**mol_dict)
+                if self.pre_transform is not None:
+                    data = self.pre_transform(data)
+                data_list.append(data)
 
             # Add pretrained embeddings
             if len(self.feature_names) != len(feature_names):
@@ -167,13 +178,17 @@ class PolymerDataset(Dataset):
             random.shuffle(external)
             if production_run:
                 test_set = external[:n_test]
-                val_set = external[n_test:n_test+n_val]
-                train_set = internal + external[n_test+n_val:]
+                val_set = internal[:n_val]
+                train_set = internal[n_val:] + external[n_test:]
             else:
                 test_set = internal[:n_test]
-                val_set = external[:n_val]
-                train_set = internal[n_test:] + external[n_val:]
-        else:
+                val_set = internal[n_test:n_test+n_val]
+                train_set = internal[n_test+n_val:] + external[n_val:]
+                if len(val_set) == 0:
+                    val_set = external[:n_val]
+                    train_set = internal[n_test:] + external[n_val:]
+                    logger.warning('No val set, using external as val')
+        if getattr(self.data_list[0], 'source', None) is None or len(external) == 0:
             logger.info('Splitting dataset randomly...')
             dataset = self.shuffle()
             train_set = dataset[:n_train]

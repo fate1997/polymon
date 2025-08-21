@@ -4,6 +4,7 @@ from polymon.model.gvp import GVPModel
 from polymon.model.gat_chain import GATChain
 from polymon.model.gat_chain_readout import GATv2ChainReadout
 from polymon.model.kan_gatv2 import KAN_GATv2
+from polymon.model.gps import GraphGPS, KAN_GPS
 
 __all__ = [
     'GATv2',
@@ -18,4 +19,6 @@ __all__ = [
     'GATv2ChainReadout',
     'GraphTransformer',
     'KAN_GATv2',
+    'GraphGPS',
+    'KAN_GPS',
 ]
