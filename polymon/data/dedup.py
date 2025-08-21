@@ -134,7 +134,7 @@ class Dedup:
         x = df[self.label + '_x'].values
         y = df[self.label + '_y'].values
         # Swap x and y if x is the label with higher confidence
-        if df1['Uncertainty'].min() < df2['Uncertainty'].min():
+        if df1['Uncertainty'].min() > df2['Uncertainty'].min():
             x, y = y, x
             source1, source2 = source2, source1
         
@@ -148,15 +148,22 @@ class Dedup:
         plt.plot([min_val, max_val], [min_val, max_val], 'k--')
         
         if fitting:
+            # Remove outliers
+            mask = np.abs((y - x) / (x + 1e-6)) < 0.05
+            x = x[mask]
+            y = y[mask]
+            bias = np.mean(y - x)
+            y_pred = x + bias
             # Learn linear relationship y = ax + b to fit the data
-            model = LinearRegression().fit(x.reshape(-1, 1), y.reshape(-1, 1))
-            y_pred = model.predict(x.reshape(-1, 1))
-            logger.info(f'Coefficient: {model.coef_[0][0]:.4f}, Intercept: {model.intercept_[0]:.4f}')
+            # model = LinearRegression().fit(x.reshape(-1, 1), y.reshape(-1, 1))
+            # y_pred = model.predict(x.reshape(-1, 1))
+            # logger.info(f'Coefficient: {model.coef_[0][0]:.4f}, Intercept: {model.intercept_[0]:.4f}')
             plt.scatter(y_pred, y, color='red', alpha=0.5, marker='x', label='Fitted')
             # Write the equation of the fitted line
             plt.text(
                 min_val, max_val, 
-                f'y = {model.coef_[0][0]:.4f}x + {model.intercept_[0]:.4f}',
+                # f'y = {model.coef_[0][0]:.4f}x + {model.intercept_[0]:.4f}',
+                f'y = x + {bias:.4f}',
                 fontsize=12,
                 ha='left',
             )
@@ -165,13 +172,14 @@ class Dedup:
         plt.show()
         if fitting:
             # Add the fitted points as a new source
-            df = self.df[self.df['Source'] == source1]
-            y_fitted = model.predict(df[self.label].values.reshape(-1, 1))
+            df = self.df[self.df['Source'] == source2]
+            # y_fitted = model.predict(df[self.label].values.reshape(-1, 1))
+            y_fitted = df[self.label].values.reshape(-1, 1) + bias
             df_fitted = pd.DataFrame({
                 'SMILES': df['SMILES'],
                 self.label: y_fitted.squeeze(-1),
-                'Source': f'{source1}_fitted',
-                'Confidence': 0.5,
+                'Source': f'{source2}_fitted',
+                'Uncertainty': 4,
             })
             self.df = pd.concat([self.df, df_fitted], ignore_index=True)
         return None
