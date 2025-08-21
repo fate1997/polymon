@@ -3,26 +3,28 @@ import os
 import pickle
 import sys
 from typing import List, Tuple
-from loguru import logger
 
 import numpy as np
 import pandas as pd
 import torch
+from hyperopt import hp
+from loguru import logger
 from sklearn.metrics import mean_absolute_error, r2_score
-from tabpfn import TabPFNRegressor
 from tabpfn_extensions.hpo import TunedTabPFNRegressor
+from tabpfn_extensions.post_hoc_ensembles import AutoTabPFNRegressor
 
 from polymon.data.dataset import PolymerDataset
 from polymon.exp.score import normalize_property_weight, scaling_error
-from polymon.exp.utils import get_logger, loader2numpy, seed_everything
+from polymon.exp.utils import loader2numpy, seed_everything, predict_batch
 from polymon.setting import REPO_DIR, TARGETS
-from hyperopt import hp
-from tabpfn_extensions.post_hoc_ensembles import AutoTabPFNRegressor
+from tabpfn.model_loading import save_fitted_tabpfn_model
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--raw-csv-path', type=str, default='database/internal/train.csv')
+    parser.add_argument('--model', type=str, default='tabpfn')
+    parser.add_argument('--sources', type=str, nargs='+', default=['official_external'])
     parser.add_argument('--tag', type=str, default='debug')
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
     parser.add_argument('--feature-names', type=str, nargs='+', default=['rdkit2d'])
@@ -35,6 +37,7 @@ def parse_args():
 def train(
     out_dir: str,
     model: str,
+    sources: List[str],
     label: str,
     feature_names: List[str],
     optimize_hparams: bool,
@@ -45,14 +48,16 @@ def train(
     seed_everything(42)
     out_dir = os.path.join(out_dir, model)
     os.makedirs(out_dir, exist_ok=True)
-    name = f'{model}-{label}-{"-".join(feature_names)}-{tag}'
+    os.makedirs(os.path.join(out_dir, tag), exist_ok=True)
+    out_dir = os.path.join(out_dir, tag)
+    name = f'{model}-{label}-{"-".join(feature_names)}'
     logger.add(os.path.join(out_dir, f'{name}.log'), level='INFO')
-    model_type = model
 
     # 1. Load data
     logger.info(f'Training {label}...')
     dataset = PolymerDataset(
         raw_csv_path=raw_csv_path,
+        sources=sources,
         feature_names=feature_names,
         label_column=label,
         force_reload=True,
@@ -88,7 +93,7 @@ def train(
             random_state=2025,
         )
         model.fit(x_train, y_train)
-        y_pred = model.predict(x_test)
+        y_pred = predict_batch(model, x_test)
     else:
         logger.info(f'Optimizing hyper-parameters for {model}...')
         
@@ -106,7 +111,7 @@ def train(
                 }
             )
             model.fit(X_train_val, y_train_val)
-            y_pred = model.predict(x_test)
+            y_pred = predict_batch(model, x_test)
     logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
     logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
     logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
@@ -136,9 +141,8 @@ def train(
     model.fit(X_total, y_total)
     
     # 4. Save model and results
-    model_path = os.path.join(out_dir, f'{name}.pkl')
-    with open(model_path, 'wb') as f:
-        pickle.dump(model, f)
+    model.model_path = '/kaggle/input/tabpfn-models/tabpfn-v2-regressor.ckpt'
+    save_fitted_tabpfn_model(model, os.path.join(out_dir, f'{name}.tabpfn_fit'))
     results_path = os.path.join(out_dir, f'{name}.csv')
     pd.DataFrame({
         'y_true': y_test,

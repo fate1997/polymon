@@ -43,8 +43,10 @@ def parse_args():
     parser.add_argument('--optimize-hparams', action='store_true')
     parser.add_argument('--n-trials', type=int, default=10)
     parser.add_argument('--out-dir', type=str, default='./results')
+    parser.add_argument('--hparams-from', type=str, default=None)
     return parser.parse_args()
 
+PREDICT_BATCH_SIZE = 128
 
 def train(
     out_dir: str,
@@ -52,6 +54,7 @@ def train(
     label: str,
     feature_names: List[str],
     optimize_hparams: bool,
+    hparams_from: str,
     raw_csv_path: str,
     sources: List[str],
     n_trials: int,
@@ -62,7 +65,7 @@ def train(
     os.makedirs(out_dir, exist_ok=True)
     os.makedirs(os.path.join(out_dir, tag), exist_ok=True)
     out_dir = os.path.join(out_dir, tag)
-    name = f'{model}-{label}-{"-".join(feature_names)}'
+    name = f'{model}-{label}-{"-".join(feature_names)}-{tag}'
     logger.add(os.path.join(out_dir, f'{name}.log'))
     model_type = model
 
@@ -102,7 +105,12 @@ def train(
     # 2. Train model
     if not optimize_hparams:
         logger.info(f'Training {model}...')
-        model = MODELS[model]()
+        if hparams_from is not None:
+            with open(hparams_from, 'rb') as f:
+                hparams = pickle.load(f)
+            model = MODELS[model](**hparams)
+        else:
+            model = MODELS[model]()
         if model_type == 'tabpfn':
             model = TabPFNRegressor(
                 n_estimators=32,
@@ -113,7 +121,7 @@ def train(
             )
         model.fit(x_train, y_train)
         # Batchify the test data
-        y_pred = predict_batch(model, x_test)
+        y_pred = predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE)
         logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
         logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
         logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
@@ -131,7 +139,7 @@ def train(
                 })
             model = MODELS[model](**hparams)
             model.fit(x_train, y_train)
-            y_pred = predict_batch(model, x_val)
+            y_pred = predict_batch(model, x_val, batch_size=PREDICT_BATCH_SIZE)
             return mean_absolute_error(y_val, y_pred)
         
         study = optuna.create_study(direction='minimize')
@@ -143,7 +151,7 @@ def train(
         hparams.update(study.best_params)
         model = MODELS[model](**hparams)
         model.fit(x_train, y_train)
-        y_pred = predict_batch(model, x_test)
+        y_pred = predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE)
         
         logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
         logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
@@ -189,6 +197,7 @@ def main():
             label=label,
             feature_names=args.feature_names,
             optimize_hparams=args.optimize_hparams,
+            hparams_from=args.hparams_from,
             raw_csv_path=args.raw_csv_path,
             sources=args.sources,
             n_trials=args.n_trials,
