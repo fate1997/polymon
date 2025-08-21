@@ -205,3 +205,4 @@ kan_gatv2,,,0.0478,,,0.0478,hparams-opt
 kan_gatv2,,,,,0.0459,0.0459,hparams-opt
 kan_gatv2,,,,0.0199,,0.0199,hparams-opt
 gps,0.0315,,,,,0.0315,initial_test
+gps,0.0303,,,,,0.0303,initial_test
