@@ -118,6 +118,7 @@ class Pipeline:
         def objective(trial: optuna.Trial) -> float:
             model_hparams = get_hparams(trial, self.model_type)
             self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
+            self.logger.info(f'Hyper-parameters: {model_hparams}')
             return self.train(self.lr, model_hparams, out_dir)
 
         study = optuna.create_study(direction='minimize')
