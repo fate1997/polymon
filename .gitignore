@@ -4,6 +4,7 @@ results/
 polymon/model/polycl/*.pth
 geometry_vocab/
 .history/
+*.pbs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
