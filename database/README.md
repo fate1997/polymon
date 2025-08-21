@@ -16,6 +16,11 @@ The database is a pandas dataframe with the following columns:
   - `3`: The data is from the collected experimental database.
   - `4`: Unknown source.
 
+## Ablation study (WHICH SOURCE IS GOOD?) Better just use previous datasets
+- `Tc`: internal + PI1070
+- `Density`: internal
+- `Tg`: SC-JCIM + PolyMetriX + HT-exp (not good)
+
 ## Sources
 | Source | Datasets | Description | Reference | Location | 
 |--------|-------------|-----------|-----------|-----------|
