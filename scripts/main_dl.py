@@ -1,6 +1,7 @@
 import argparse
 import yaml
 import os
+import json
 
 import numpy as np
 import pandas as pd
@@ -86,7 +87,11 @@ def main():
                 'hidden_dim': args.hidden_dim,
                 'num_layers': args.num_layers}
             if args.hparams_from is not None:
-                hparams_loaded = torch.load(args.hparams_from)['model_init_params']
+                if args.hparams_from.endswith('.pt'):
+                    hparams_loaded = torch.load(args.hparams_from)['model_init_params']
+                else:
+                    with open(args.hparams_from, 'r') as f:
+                        hparams_loaded = json.load(f)
                 pipeline.logger.info(f'Loading hparams from {args.hparams_from}')
                 hparams.update(hparams_loaded)
             test_err = pipeline.train(model_hparams=hparams)
