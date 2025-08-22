@@ -1,7 +1,7 @@
 import os
 from abc import ABC, abstractmethod
 from importlib import import_module
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Callable, Dict, List
 
 import torch
 from rdkit import Chem
@@ -30,11 +30,20 @@ class ModelWrapper(nn.Module):
         model: BaseModel,
         normalizer: 'Normalizer',
         featurizer: ComposeFeaturizer,
+        transform_cls: str = None,
+        transform_kwargs: Dict[str, Any] = None,
     ):
         super().__init__()
         self.model = model
         self.normalizer = normalizer
         self.featurizer = featurizer
+        self.transform_cls = transform_cls
+        self.transform_kwargs = transform_kwargs
+        if transform_cls is not None:
+            transform_cls = getattr(import_module('torch_geometric.transforms'), transform_cls)
+            self.transform = transform_cls(**transform_kwargs)
+        else:
+            self.transform = None
 
     def forward(
         self, 
@@ -73,7 +82,10 @@ class ModelWrapper(nn.Module):
             if None in mol_dict.values():
                 mol_dict = backup_model.featurizer(rdmol)
                 backup_ids.append(i)
-            polymers.append(Polymer(**mol_dict))
+            polymer = Polymer(**mol_dict)
+            if self.transform is not None:
+                polymer = self.transform(polymer)
+            polymers.append(polymer)
         loader = DataLoader(polymers, batch_size=batch_size)
         
         y_pred_list = []
@@ -92,7 +104,7 @@ class ModelWrapper(nn.Module):
             return torch.stack(y_pred_list, dim=0).detach().cpu().unsqueeze(-1)
         return torch.cat(y_pred_list, dim=0).detach().cpu()
     
-    def write(self, path: str) -> str:
+    def write(self, path: str, other_info: Dict[str, Any] = None) -> str:
         output = {
             'model_cls': self.model.__class__.__name__,
             'model': self.model.state_dict(),
@@ -104,8 +116,9 @@ class ModelWrapper(nn.Module):
             'featurizer_names': self.featurizer.names,
             'featurizer_config': self.featurizer.config,
             'featurizer_add_hydrogens': self.featurizer.add_hydrogens,
+            'transform_cls': self.transform_cls,
+            'transform_kwargs': self.transform_kwargs,
         }
-        torch.save(output, path)
         return os.path.abspath(path)
     
     @classmethod
@@ -129,4 +142,6 @@ class ModelWrapper(nn.Module):
             config=output['featurizer_config'],
             add_hydrogens=output['featurizer_add_hydrogens'],
         )
-        return cls(model, normalizer, featurizer)
+        transform_cls = output.get('transform_cls', None)
+        transform_kwargs = output.get('transform_kwargs', None)
+        return cls(model, normalizer, featurizer, transform_cls, transform_kwargs)
