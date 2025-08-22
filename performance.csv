@@ -222,3 +222,5 @@ kan_gps,0.0301,,,,,0.0301,kan-in-emb
 kan_gps,0.0307,,,,,0.0307,KAN-NOT-MLP
 kan_gps,0.0546,,,,,0.0546,KAN-NOT-EMB
 kan_gps,0.0323,,,,,0.0323,KAN-in-EMB
+kan_gps,0.0304,,,,,0.0304,fastkan-transformer
+kan_gps,0.0276,,,,,0.0276,fastkan-transformer-mlps
