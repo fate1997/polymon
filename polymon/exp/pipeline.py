@@ -15,7 +15,8 @@ from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
                            GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
                            GATv2ChainReadout, GraphTransformer, KAN_GATv2,
-                           GraphGPS, KAN_GPS)
+                           GraphGPS, KAN_GPS, FastKANWrapper, EfficientKANWrapper,
+                           KANWrapper, FourierKANWrapper)
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -197,6 +198,8 @@ class Pipeline:
             feature_names.remove('bond')
         if self.model_type.lower() in ['gatchain']:
             feature_names.append('bridge')
+        if self.model_type.lower() in ['fastkan', 'efficientkan', 'kan', 'fourierkan']:
+            assert self.descriptors is not None, 'Descriptors are required for KAN'
         if self.descriptors is not None:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
@@ -316,6 +319,31 @@ class Pipeline:
             }
             input_args.update(hparams)
             model = KAN_GPS(**input_args)
+        elif self.model_type == 'fastkan':
+            input_args = {
+                'in_channels': self.dataset[0].descriptors.shape[1],
+            }
+            input_args.update(hparams)
+            model = FastKANWrapper(**input_args)
+        elif self.model_type == 'efficientkan':
+            input_args = {
+                'in_channels': self.dataset[0].descriptors.shape[1],
+            }
+            input_args.update(hparams)
+            model = EfficientKANWrapper(**input_args)
+        elif self.model_type == 'kan':
+            input_args = {
+                'in_channels': self.dataset[0].descriptors.shape[1],
+                'device': self.device,
+            }
+            input_args.update(hparams)
+            model = KANWrapper(**input_args)
+        elif self.model_type == 'fourierkan':
+            input_args = {
+                'in_channels': self.dataset[0].descriptors.shape[1],
+            }
+            input_args.update(hparams)
+            model = FourierKANWrapper(**input_args)
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         
