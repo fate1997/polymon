@@ -19,7 +19,7 @@ from torch_geometric.utils import to_undirected
 
 from polymon.data.polymer import OligomerBuilder
 from polymon.setting import (GEOMETRY_VOCAB, MAX_SEQ_LEN, MORDRED_UNSTABLE_IDS,
-                             SMILES_VOCAB)
+                             SMILES_VOCAB, CGCNN_ELEMENT_INFO)
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
@@ -67,6 +67,7 @@ class AtomFeaturizer(Featurizer):
         'formal_charge', 
         'is_attachment',
         # 'xenonpy_atom',
+        # 'cgcnn',
     ]
     def __init__(
         self,
@@ -171,6 +172,12 @@ class AtomFeaturizer(Featurizer):
         # preset.sync('elements_completed')
         symbol = Chem.GetPeriodicTable().GetElementSymbol(atom.GetAtomicNum())
         return torch.tensor(XENONPY_ELEMENTS_INFO.loc[symbol].values)
+    
+    def cgcnn(self, atom: Chem.Atom) -> torch.Tensor:
+        atom_num = atom.GetAtomicNum()
+        CGCNN_ELEMENT_INFO['0'] = [0] * len(CGCNN_ELEMENT_INFO['1'])
+        return torch.tensor(CGCNN_ELEMENT_INFO[str(atom_num)])
+
 
 @register_cls('edge')
 class BondFeaturizer(Featurizer):
