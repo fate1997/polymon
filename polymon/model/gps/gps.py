@@ -9,6 +9,7 @@ from polymon.model.utils import MLP, KANLinear, ReadoutPhase, RedrawProjection
 from polymon.model.register import register_init_params
 from polymon.model.base import BaseModel
 from polymon.model.gps.conv import GPSConv
+from polymon.model.kan.fast_kan import FastKAN
 
 
 @register_init_params
@@ -73,6 +74,7 @@ class KAN_GPS(BaseModel):
         self, 
         in_channels: int,
         edge_dim: int,
+        heads: int = 4,
         hidden_dim: int = 64, 
         num_layers: int = 6,
         walk_length: int = 20,
@@ -90,21 +92,13 @@ class KAN_GPS(BaseModel):
 
         self.convs = nn.ModuleList()
         for _ in range(num_layers):
-            network = nn.Sequential(
-                nn.Linear(hidden_dim, hidden_dim),
-                nn.PReLU(),
-                nn.Linear(hidden_dim, hidden_dim),
-            )
-            conv = GPSConv(hidden_dim, GINEConv(network), heads=4,
+            network = FastKAN(layers_hidden=[hidden_dim] * 2)
+            conv = GPSConv(hidden_dim, GINEConv(network), heads=heads,
                            attn_type=attn_type, attn_kwargs=attn_kwargs)
             self.convs.append(conv)
         self.readout = ReadoutPhase(hidden_dim)
 
-        self.mlp = nn.Sequential(
-            nn.Linear(2 * hidden_dim, hidden_dim),
-            nn.PReLU(),
-            nn.Linear(hidden_dim, 1),
-        )
+        self.mlp = FastKAN(layers_hidden=[2 * hidden_dim, hidden_dim, 1])
         self.redraw_projection = RedrawProjection(
             self.convs,
             redraw_interval=1000 if attn_type == 'performer' else None)
