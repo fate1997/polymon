@@ -104,7 +104,7 @@ class ModelWrapper(nn.Module):
             return torch.stack(y_pred_list, dim=0).detach().cpu().unsqueeze(-1)
         return torch.cat(y_pred_list, dim=0).detach().cpu()
     
-    def write(self, path: str, other_info: Dict[str, Any] = None) -> str:
+    def write(self, path: str) -> str:
         output = {
             'model_cls': self.model.__class__.__name__,
             'model': self.model.state_dict(),
@@ -119,6 +119,7 @@ class ModelWrapper(nn.Module):
             'transform_cls': self.transform_cls,
             'transform_kwargs': self.transform_kwargs,
         }
+        torch.save(output, path)
         return os.path.abspath(path)
     
     @classmethod
