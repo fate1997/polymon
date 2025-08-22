@@ -2,12 +2,13 @@ from typing import Dict, Any, Literal
 
 import torch
 import torch.nn as nn
-from torch_geometric.nn import GPSConv, GINEConv
+from torch_geometric.nn import GINEConv
 
 from polymon.data.polymer import Polymer
-from polymon.model.module import MLP, KANLinear, ReadoutPhase, RedrawProjection
+from polymon.model.utils import MLP, KANLinear, ReadoutPhase, RedrawProjection
 from polymon.model.register import register_init_params
 from polymon.model.base import BaseModel
+from polymon.model.gps.conv import GPSConv
 
 
 @register_init_params
@@ -76,7 +77,7 @@ class KAN_GPS(BaseModel):
         num_layers: int = 6,
         walk_length: int = 20,
         pe_dim: int = 8, 
-        attn_type: Literal['performer', 'multihead'] = 'multihead', 
+        attn_type: Literal['performer', 'multihead', 'fastkan'] = 'fastkan', 
         attn_kwargs: Dict[str, Any]=None,
         grid_size: int = 3,
     ):
@@ -90,9 +91,9 @@ class KAN_GPS(BaseModel):
         self.convs = nn.ModuleList()
         for _ in range(num_layers):
             network = nn.Sequential(
-                KANLinear(hidden_dim, hidden_dim, grid_size),
-                nn.ReLU(),
-                KANLinear(hidden_dim, hidden_dim, grid_size),
+                nn.Linear(hidden_dim, hidden_dim),
+                nn.PReLU(),
+                nn.Linear(hidden_dim, hidden_dim),
             )
             conv = GPSConv(hidden_dim, GINEConv(network), heads=4,
                            attn_type=attn_type, attn_kwargs=attn_kwargs)
@@ -100,11 +101,9 @@ class KAN_GPS(BaseModel):
         self.readout = ReadoutPhase(hidden_dim)
 
         self.mlp = nn.Sequential(
-            KANLinear(2 * hidden_dim, hidden_dim, grid_size),
-            nn.ReLU(),
-            KANLinear(hidden_dim, hidden_dim // 2, grid_size),
-            nn.ReLU(),
-            KANLinear(hidden_dim // 2, 1, grid_size),
+            nn.Linear(2 * hidden_dim, hidden_dim),
+            nn.PReLU(),
+            nn.Linear(hidden_dim, 1),
         )
         self.redraw_projection = RedrawProjection(
             self.convs,
