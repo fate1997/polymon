@@ -12,7 +12,7 @@ from torch_scatter import scatter_mean
 
 from polymon.model.register import register_init_params
 from polymon.model.base import BaseModel
-from polymon.model.module import DenseLayer, ReadoutPhase, MLP
+from polymon.model.utils import DenseLayer, ReadoutPhase, MLP
 from polymon.data.polymer import Polymer
 
 s_V = Tuple[torch.Tensor, torch.Tensor]

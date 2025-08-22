@@ -5,7 +5,7 @@ from torch_geometric.nn import GATv2Conv
 
 from polymon.data.polymer import Polymer
 from polymon.model.base import BaseModel
-from polymon.model.module import MLP, ReadoutPhase, init_weight
+from polymon.model.utils import MLP, ReadoutPhase, init_weight
 from polymon.model.register import register_init_params
 
 

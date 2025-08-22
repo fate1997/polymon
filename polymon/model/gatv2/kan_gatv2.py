@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 from polymon.data.polymer import Polymer
-from polymon.model.module import MLP, KANLinear, ReadoutPhase
+from polymon.model.utils import MLP, KANLinear, ReadoutPhase
 from polymon.model.register import register_init_params
 from polymon.model.base import BaseModel
 
