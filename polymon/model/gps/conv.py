@@ -78,7 +78,6 @@ class GPSConv(torch.nn.Module):
         attn_kwargs: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
-        print(f'attn_type: {attn_type}')
 
         self.channels = channels
         self.conv = conv

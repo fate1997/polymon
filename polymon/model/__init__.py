@@ -7,7 +7,7 @@ from polymon.model.gatv2.kan_gatv2 import KAN_GATv2
 from polymon.model.gps.gps import GraphGPS, KAN_GPS
 from polymon.model.kan.fast_kan import FastKANWrapper
 from polymon.model.kan.efficient_kan import EfficientKANWrapper
-from polymon.model.kan.vanilla import KANWrapper
+# from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
 
 __all__ = [
@@ -27,6 +27,6 @@ __all__ = [
     'KAN_GPS',
     'FastKANWrapper',
     'EfficientKANWrapper',
-    'KANWrapper',
+    # 'KANWrapper',
     'FourierKANWrapper',
 ]

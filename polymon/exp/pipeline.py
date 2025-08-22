@@ -16,7 +16,7 @@ from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
                            GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
                            GATv2ChainReadout, GraphTransformer, KAN_GATv2,
                            GraphGPS, KAN_GPS, FastKANWrapper, EfficientKANWrapper,
-                           KANWrapper, FourierKANWrapper)
+                           FourierKANWrapper)
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -331,13 +331,13 @@ class Pipeline:
             }
             input_args.update(hparams)
             model = EfficientKANWrapper(**input_args)
-        elif self.model_type == 'kan':
-            input_args = {
-                'in_channels': self.dataset[0].descriptors.shape[1],
-                'device': self.device,
-            }
-            input_args.update(hparams)
-            model = KANWrapper(**input_args)
+        # elif self.model_type == 'kan':
+        #     input_args = {
+        #         'in_channels': self.dataset[0].descriptors.shape[1],
+        #         'device': self.device,
+        #     }
+        #     input_args.update(hparams)
+        #     model = KANWrapper(**input_args)
         elif self.model_type == 'fourierkan':
             input_args = {
                 'in_channels': self.dataset[0].descriptors.shape[1],
@@ -349,5 +349,21 @@ class Pipeline:
         
         num_params = sum(p.numel() for p in model.parameters())
         self.logger.info(f'Model Parameters: {num_params / 1e6:.4f}M')
-        model = ModelWrapper(model, self.normalizer, self.dataset.featurizer)
+        if self.model_type.lower() in ['gps', 'kan_gps']:
+            transform_cls = 'AddRandomWalkPE'
+            transform_kwargs = {
+                'walk_length': 20,
+                'attr_name': 'pe',
+            }
+        else:
+            transform_cls = None
+            transform_kwargs = None
+        
+        model = ModelWrapper(
+            model,
+            self.normalizer,
+            self.dataset.featurizer,
+            transform_cls,
+            transform_kwargs,
+        )
         return model
