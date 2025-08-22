@@ -11,6 +11,7 @@ pip install rdkit==2023.09.3
 ## TODO
 - [ ] Dataset ablation study. Find the best sources for each property.
 - [ ] Non-bonded (based on conformer or Transformer)
+- [ ] Use linear first in the KAN-GNN models (https://github.com/WillHua127/GraphKAN-Graph-Kolmogorov-Arnold-Networks)
 - [ ] Try this model: https://github.com/wjxts/MIPS (no open source weights)
 - [ ] https://github.com/pnnl/FragNet
 - [ ] https://github.com/syr-cn/SimSGT
