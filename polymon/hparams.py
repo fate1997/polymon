@@ -266,3 +266,21 @@ def get_gps_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         },
     }
     return param
+
+
+@register_hparams('kan_gps')
+def get_kan_gps_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get KAN-GPS parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 10, step=1),
+        "pe_dim": trial.suggest_int("pe_dim", 4, 8, step=1),
+        "heads": trial.suggest_int("heads", 4, 8, step=4),
+        "attn_kwargs": {
+            "dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        },
+        "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
+    }
+    return param
