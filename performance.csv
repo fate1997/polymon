@@ -231,3 +231,6 @@ gatv2,,,0.0452,,,0.0452,cgcnn-feature
 fastkan_gatv2,0.0255,,,,,0.0255,initial-test
 fastkan_gatv2,,,0.0534,,,0.0534,initial-test
 fastkan_gatv2,,,0.0565,,,0.0565,initial-test
+gatv2,,,0.0468,,,0.0468,initial-test
+gatv2,,,0.0396,,,0.0396,scaffold (Optuna) (scaffold)
+gatv2,,,0.0433,,,0.0433,cgcnn-feature (Optuna)
