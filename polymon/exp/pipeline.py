@@ -130,6 +130,8 @@ class Pipeline:
             val_loader = DataLoader(
                 self.dataset[val_idx], batch_size=self.batch_size, shuffle=False
             )
+            out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
+            os.makedirs(out_dir, exist_ok=True)
             val_error = self.train(
                 model_hparams=model_hparams,
                 out_dir=out_dir,
