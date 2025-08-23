@@ -7,10 +7,17 @@ This is for the Kaggle competition about polymer property prediction.
 pip install tabpfn==2.0.9
 pip install rdkit==2023.09.3
 ```
+## Overall TODO
+1. `Dataset`: Merge datasets more wisely (e.g., using uncertainty to merge datasets)
+2. `Feature`: Explore new node features, bond features, and graph features.
+3. `Graph`: How to construct a good polymer graph?
+4. `Model`: Explore more GNNs, Transformers, or other models. Check the existing hyperparameters.
+5. `Training`: Add learning rate scheduler, cross-validation, multi-task training, scaffold-based splitting, ensemble, etc.
 
 ## TODO
 - [ ] Dataset ablation study. Find the best sources for each property.
 - [ ] Non-bonded (based on conformer or Transformer)
+- [ ] RF -> IMPORTANT FEATURES -> GNN
 - [ ] Use linear first in the KAN-GNN models (https://github.com/WillHua127/GraphKAN-Graph-Kolmogorov-Arnold-Networks)
 - [ ] Try this model: https://github.com/wjxts/MIPS (no open source weights)
 - [ ] https://github.com/pnnl/FragNet

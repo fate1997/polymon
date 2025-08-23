@@ -224,3 +224,10 @@ kan_gps,0.0546,,,,,0.0546,KAN-NOT-EMB
 kan_gps,0.0323,,,,,0.0323,KAN-in-EMB
 kan_gps,0.0304,,,,,0.0304,fastkan-transformer
 kan_gps,0.0276,,,,,0.0276,fastkan-transformer-mlps
+gatv2,,,0.0447,,,0.0447,cgcnn-feature
+gatv2,,,0.0488,,,0.0488,no-cgcnn
+gatv2,,,0.0443,,,0.0443,no-cgcnn
+gatv2,,,0.0452,,,0.0452,cgcnn-feature
+fastkan_gatv2,0.0255,,,,,0.0255,initial-test
+fastkan_gatv2,,,0.0534,,,0.0534,initial-test
+fastkan_gatv2,,,0.0565,,,0.0565,initial-test
