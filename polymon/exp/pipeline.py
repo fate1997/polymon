@@ -1,18 +1,21 @@
 import os
 from copy import deepcopy
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import loguru
+import logging
+import numpy as np
 import optuna
-from torch_geometric.loader import DataLoader
-from pytorch_lightning import seed_everything
 import torch_geometric.transforms as T
+from pytorch_lightning import seed_everything
+from sklearn.model_selection import KFold
+from torch_geometric.loader import DataLoader
 
 from polymon.data.dataset import PolymerDataset
 from polymon.data.utils import Normalizer
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
-from polymon.model import build_model, PNA
+from polymon.model import PNA, build_model
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -36,6 +39,7 @@ class Pipeline:
         device: str,
         n_trials: int,
         seed: int = 42,
+        split_mode: Literal['source', 'random', 'scaffold'] = 'random',
     ):
         seed_everything(seed)
         
@@ -55,9 +59,13 @@ class Pipeline:
         self.device = device
         self.n_trials = n_trials
         self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
+        self.split_mode = split_mode
         
         logger = loguru.logger
-        logger.add(os.path.join(out_dir, 'pipeline.log'))
+        log_path = os.path.join(out_dir, 'pipeline.log')
+        logger.add(log_path)
+        handler = logging.FileHandler(log_path)
+        optuna.logging.get_logger('optuna').addHandler(handler)
         self.logger = logger    
 
         self.logger.info(f'Building dataset for {label}...')
@@ -66,7 +74,7 @@ class Pipeline:
             self.num_descriptors = self.dataset[0].descriptors.shape[1]
         else:
             self.num_descriptors = 0
-        loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1)
+        loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1, self.split_mode)
         self.train_loader, self.val_loader, self.test_loader = loaders
         self.normalizer = Normalizer.from_loader(self.train_loader)
         self.logger.info(f'Number of descriptors used: {self.num_descriptors}')
@@ -103,11 +111,37 @@ class Pipeline:
         if loaders is None:
             loaders = (self.train_loader, self.val_loader, self.test_loader)
         test_err = trainer.train(loaders[0], loaders[1], loaders[2], self.label)
-        self.logger.info(f'test error: {test_err}')
         trainer.model.write(os.path.join(out_dir, f'{self.model_name}.pt'))
         return test_err
     
-    def optimize_hparams(self) -> Tuple[float, Dict[str, Any]]:
+    def cross_validation(
+        self, 
+        n_fold: int = 5,
+        model_hparams: Optional[Dict[str, Any]] = None,
+        out_dir: Optional[str] = None,
+    ) -> List[float]:
+        kfold = KFold(n_splits=n_fold, shuffle=True)
+        val_errors = []
+        for fold, (train_idx, val_idx) in enumerate(kfold.split(self.dataset)):
+            self.logger.info(f'Running fold {fold+1}/{n_fold}...')
+            train_loader = DataLoader(
+                self.dataset[train_idx], batch_size=self.batch_size, shuffle=True
+            )
+            val_loader = DataLoader(
+                self.dataset[val_idx], batch_size=self.batch_size, shuffle=False
+            )
+            val_error = self.train(
+                model_hparams=model_hparams,
+                out_dir=out_dir,
+                loaders=(train_loader, val_loader, None),
+            )
+            self.logger.info(f'{fold+1}/{n_fold} val error: {val_error}')
+            val_errors.append(val_error)
+        mean, std = np.mean(val_errors), np.std(val_errors)
+        self.logger.info(f'K-Fold validation error: {mean:.4f} ± {std:.4f}')
+        return val_errors
+    
+    def optimize_hparams(self, n_fold: int = 1) -> Tuple[float, Dict[str, Any]]:
         self.logger.info(f'Optimizing hyperparameters for {self.model_type}...')
         
         out_dir = os.path.join(self.out_dir, 'hparams_opt')
@@ -116,7 +150,14 @@ class Pipeline:
             model_hparams = get_hparams(trial, self.model_type)
             self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
             self.logger.info(f'Hyper-parameters: {model_hparams}')
-            return self.train(self.lr, model_hparams, out_dir)
+            if n_fold > 1:
+                val_errors = self.cross_validation(
+                    model_hparams=model_hparams, 
+                    out_dir=out_dir
+                )
+                return np.mean(val_errors)
+            else:
+                return self.train(self.lr, model_hparams, out_dir)
 
         study = optuna.create_study(direction='minimize')
         study.optimize(objective, n_trials = self.n_trials)
@@ -186,6 +227,17 @@ class Pipeline:
     
     def _build_dataset(self, sources: List[str]) -> PolymerDataset:
         feature_names = ['x', 'bond', 'z']
+        # feature_names += [
+        #     'degree', 
+        #     'is_aromatic', 
+        #     'chiral_tag', 
+        #     'num_hydrogens', 
+        #     'hybridization', 
+        #     'mass', 
+        #     'formal_charge', 
+        #     'is_attachment',
+        #     'cgcnn'
+        # ]
         if self.model_type.lower() in ['dimenetpp', 'gvp']:
             feature_names.append('pos')
             feature_names.remove('bond')

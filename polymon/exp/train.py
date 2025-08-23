@@ -2,7 +2,7 @@ import logging
 import os
 from glob import glob
 from time import perf_counter
-from typing import Dict
+from typing import Dict, Optional
 
 import numpy as np
 import torch
@@ -106,7 +106,7 @@ class Trainer:
         self,
         train_loader: DataLoader,
         val_loader: DataLoader,
-        test_loader: DataLoader = None,
+        test_loader: Optional[DataLoader] = None,
         label: str = 'Rg',
     ):
         """Train the model.
@@ -141,17 +141,19 @@ class Trainer:
         self.logger.info(f'Load best model from {save_path}')
 
         # Evaluate the best model on the test set
-        if test_loader is not None:
-            test_metrics = self.eval(test_loader, label)
-            for metric_name, metric_value in test_metrics.items():
-                self.logger.info(f'{metric_name}: {metric_value:.3f}')
-            self.logger.info(f'Test scaling error: {test_metrics["scaling_error"]:.4f}')
+        if test_loader is None:
+            test_loader = val_loader
+            self.logger.info('No test set provided, using validation set as test set')
+            
+        test_metrics = self.eval(test_loader, label)
+        for metric_name, metric_value in test_metrics.items():
+            self.logger.info(f'{metric_name}: {metric_value:.4f}')
 
         end_time = perf_counter()
         self.logger.info(f'Time taken: {end_time - start_time:.2f} seconds')
         self.logger.info(f'--------------------------------')
         
-        test_err = test_metrics['scaling_error'] if test_loader is not None else None
+        test_err = test_metrics['scaling_error']
         return test_err
 
     @torch.no_grad()

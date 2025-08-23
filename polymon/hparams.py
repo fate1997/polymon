@@ -281,3 +281,21 @@ def get_kan_gps_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
     }
     return param
+
+
+@register_hparams('fastkan_gatv2')
+def get_fastkan_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get FastKAN-GATv2 parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 64, 512, step=64),
+        "dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        "grid_min": trial.suggest_float("grid_min", -5.0, -2.0, step=1.0),
+        "grid_max": trial.suggest_float("grid_max", 2.0, 5.0, step=1.0),
+        "num_grids": trial.suggest_int("num_grids", 6, 10, step=2),
+    }
+    return param

@@ -1,25 +1,26 @@
 import os
 import os.path as osp
-from typing import List, Tuple, Union, Optional, Callable
 import random
+from typing import Callable, List, Literal, Optional, Tuple, Union
 
 import pandas as pd
 import torch
+from loguru import logger
 from rdkit import Chem
+from rdkit.Chem.Scaffolds.MurckoScaffold import MurckoScaffoldSmiles
 from torch_geometric.data import Batch, Dataset
 from torch_geometric.loader import DataLoader
 from tqdm import tqdm
-from loguru import logger
 
+from polymon.data.dedup import Dedup
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import Polymer
-from polymon.data.pretrained import (get_polybert_embeddings,
-                                     get_polycl_embeddings,
-                                     assign_pretrained_embeddings,
-                                     get_gaff2_features)
-from polymon.setting import TARGETS, UNIQUE_ATOM_NUMS, PRETRAINED_MODELS
-from polymon.data.dedup import Dedup
-from polymon.setting import REPO_DIR
+from polymon.data.pretrained import (assign_pretrained_embeddings,
+                                     get_gaff2_features,
+                                     get_polybert_embeddings,
+                                     get_polycl_embeddings)
+from polymon.setting import (PRETRAINED_MODELS, REPO_DIR, TARGETS,
+                             UNIQUE_ATOM_NUMS)
 
 
 class PolymerDataset(Dataset):
@@ -154,6 +155,7 @@ class PolymerDataset(Dataset):
         batch_size: int,
         n_train: Union[int, float],
         n_val: Union[int, float],
+        mode: Literal['source', 'random', 'scaffold'] = 'random',
         production_run: bool = False,
         num_workers: int = 0,
     ) -> Tuple[DataLoader, DataLoader, DataLoader]:
@@ -170,30 +172,14 @@ class PolymerDataset(Dataset):
         assert n_test >= 0
         logger.info(f'Split: {n_train} train, {n_val} val, {n_test} test')
         
-        if getattr(self.data_list[0], 'source', None) is not None:
-            logger.info('Splitting dataset by source...')
-            internal = [data for data in self.data_list if data.source == 'internal']
-            external = [data for data in self.data_list if data.source != 'internal']
-            random.shuffle(internal)
-            random.shuffle(external)
-            if production_run:
-                test_set = external[:n_test]
-                val_set = internal[:n_val]
-                train_set = internal[n_val:] + external[n_test:]
-            else:
-                test_set = internal[:n_test]
-                val_set = internal[n_test:n_test+n_val]
-                train_set = internal[n_test+n_val:] + external[n_val:]
-                if len(val_set) == 0:
-                    val_set = external[:n_val]
-                    train_set = internal[n_test:] + external[n_val:]
-                    logger.warning('No val set, using external as val')
-        if getattr(self.data_list[0], 'source', None) is None or len(external) == 0:
-            logger.info('Splitting dataset randomly...')
-            dataset = self.shuffle()
-            train_set = dataset[:n_train]
-            val_set = dataset[n_train:n_train+n_val]
-            test_set = dataset[n_train+n_val:]
+        if mode == 'source':
+            train_set, val_set, test_set = self._get_source_splits(n_train, n_val, production_run)
+        elif mode == 'random':
+            train_set, val_set, test_set = self._get_random_splits(n_train, n_val)
+        elif mode == 'scaffold':
+            train_set, val_set, test_set = self._get_scaffold_splits(n_train, n_val)
+        else:
+            raise ValueError(f'Invalid split mode: {mode}')
         
         train_loader = DataLoader(
             train_set, batch_size, shuffle=True, num_workers=num_workers
@@ -208,3 +194,86 @@ class PolymerDataset(Dataset):
         else:
             test_loader = None
         return train_loader, val_loader, test_loader
+    
+    def _get_source_splits(
+        self,
+        n_train: int,
+        n_val: int,
+        production_run: bool = False,
+    ) -> Tuple[Dataset, Dataset, Dataset]:
+        logger.info('Splitting dataset by source...')
+        
+        n_test = len(self) - n_train - n_val
+        assert n_test >= 0
+        
+        internal = [data for data in self.data_list if data.source == 'internal']
+        external = [data for data in self.data_list if data.source != 'internal']
+        random.shuffle(internal)
+        random.shuffle(external)
+        if production_run:
+            test_set = external[:n_test]
+            val_set = internal[:n_val]
+            train_set = internal[n_val:] + external[n_test:]
+        else:
+            test_set = internal[:n_test]
+            val_set = internal[n_test:n_test+n_val]
+            train_set = internal[n_test+n_val:] + external[n_val:]
+            if len(val_set) == 0:
+                val_set = external[:n_val]
+                train_set = internal[n_test:] + external[n_val:]
+                logger.warning('No val set, using external as val')
+        return train_set, val_set, test_set
+
+    def _get_random_splits(
+        self,
+        n_train: int,
+        n_val: int,
+    ) -> Tuple[Dataset, Dataset, Dataset]:
+        logger.info('Splitting dataset randomly...')
+        dataset = self.shuffle()
+        train_set = dataset[:n_train]
+        val_set = dataset[n_train:n_train+n_val]
+        test_set = dataset[n_train+n_val:]
+        return train_set, val_set, test_set
+    
+    def _get_scaffold_splits(
+        self,
+        n_train: int,
+        n_val: int,
+    ) -> Tuple[Dataset, Dataset, Dataset]:
+        logger.info('Splitting dataset by scaffold...')
+        
+        split_1 = n_train
+        split_2 = n_train + n_val
+        
+        train_inds = []
+        valid_inds = []
+        test_inds = []
+
+        scaffolds = {}
+
+        for idx, data in enumerate(self.data_list):
+            smiles = data.smiles
+            mol = Chem.MolFromSmiles(smiles)
+            scaffold = MurckoScaffoldSmiles(mol=mol)
+            if scaffold not in scaffolds:
+                scaffolds[scaffold] = [idx]
+            else:
+                scaffolds[scaffold].append(idx)
+        scaffolds = {key: sorted(value) for key, value in scaffolds.items()}
+        scaffold_sets = [scaffold_set for (scaffold, scaffold_set) in sorted(
+            scaffolds.items(), key=lambda x: (len(x[1]), x[1][0]), reverse=True)]
+
+        for scaffold_set in scaffold_sets:
+            if len(train_inds) + len(scaffold_set) > split_1:
+                if len(train_inds) + len(valid_inds) + len(scaffold_set) > split_2:
+                    test_inds += scaffold_set
+                else:
+                    valid_inds += scaffold_set
+            else:
+                train_inds += scaffold_set
+        
+        train_set = self[train_inds]
+        val_set = self[valid_inds]
+        test_set = self[test_inds]
+        return train_set, val_set, test_set
