@@ -9,6 +9,7 @@ from polymon.model.kan.fast_kan import FastKANWrapper
 from polymon.model.kan.efficient_kan import EfficientKANWrapper
 # from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
+from polymon.model.gatv2.fastkan_gatv2 import FastKAN_GATv2
 
 __all__ = [
     'GATv2',
@@ -29,4 +30,5 @@ __all__ = [
     'EfficientKANWrapper',
     # 'KANWrapper',
     'FourierKANWrapper',
+    'FastKAN_GATv2',
 ]

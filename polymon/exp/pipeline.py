@@ -16,7 +16,7 @@ from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
                            GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
                            GATv2ChainReadout, GraphTransformer, KAN_GATv2,
                            GraphGPS, KAN_GPS, FastKANWrapper, EfficientKANWrapper,
-                           FourierKANWrapper)
+                           FourierKANWrapper, FastKAN_GATv2)
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -227,8 +227,8 @@ class Pipeline:
                 'edge_dim': self.dataset.num_edge_features,
                 'num_descriptors': self.num_descriptors,
             }
-            input_args.update(hparams)
-            model = GATv2(**input_args)
+            hparams.update(input_args)
+            model = GATv2(**hparams)
         elif self.model_type == 'attentivefp':
             input_args = {
                 'in_channels': self.dataset.num_node_features,
@@ -344,6 +344,14 @@ class Pipeline:
             }
             input_args.update(hparams)
             model = FourierKANWrapper(**input_args)
+        elif self.model_type == 'fastkan_gatv2':
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = FastKAN_GATv2(**input_args)
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         
