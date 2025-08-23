@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
-import os
-from copy import deepcopy
-from typing import Dict, List, Optional, Tuple
-from glob import glob
 import hashlib
+import os
+from abc import ABC, abstractmethod
+from copy import deepcopy
+from glob import glob
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -18,8 +18,9 @@ from scipy.sparse import coo_matrix
 from torch_geometric.utils import to_undirected
 
 from polymon.data.polymer import OligomerBuilder
-from polymon.setting import (GEOMETRY_VOCAB, MAX_SEQ_LEN, MORDRED_UNSTABLE_IDS,
-                             SMILES_VOCAB, CGCNN_ELEMENT_INFO)
+from polymon.setting import (CGCNN_ELEMENT_INFO, DEFAULT_ATOM_FEATURES,
+                             GEOMETRY_VOCAB, MAX_SEQ_LEN, MORDRED_UNSTABLE_IDS,
+                             SMILES_VOCAB)
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
@@ -67,7 +68,7 @@ class AtomFeaturizer(Featurizer):
         'formal_charge', 
         'is_attachment',
         # 'xenonpy_atom',
-        # 'cgcnn',
+        'cgcnn',
     ]
     def __init__(
         self,
@@ -77,7 +78,7 @@ class AtomFeaturizer(Featurizer):
         super().__init__(feature_names)
         self.unique_atom_nums = unique_atom_nums
         if self.feature_names is None:
-            self.feature_names = self._avail_features
+            self.feature_names = DEFAULT_ATOM_FEATURES
     
     def __call__(
         self,
