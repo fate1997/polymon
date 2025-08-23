@@ -154,8 +154,8 @@ class Pipeline:
             self.logger.info(f'Hyper-parameters: {model_hparams}')
             if n_fold > 1:
                 val_errors = self.cross_validation(
+                    n_fold=n_fold,
                     model_hparams=model_hparams, 
-                    out_dir=out_dir
                 )
                 return np.mean(val_errors)
             else:
