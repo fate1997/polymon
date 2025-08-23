@@ -12,11 +12,7 @@ from polymon.data.dataset import PolymerDataset
 from polymon.data.utils import Normalizer
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
-from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
-                           GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
-                           GATv2ChainReadout, GraphTransformer, KAN_GATv2,
-                           GraphGPS, KAN_GPS, FastKANWrapper, EfficientKANWrapper,
-                           FourierKANWrapper, FastKAN_GATv2)
+from polymon.model import build_model, PNA
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -220,141 +216,17 @@ class Pipeline:
         self.logger.info(f'Bond features: {dataset.num_edge_features}')
         return dataset
     
-    def _build_model(self, hparams: Dict[str, Any]) -> ModelWrapper:
-        if self.model_type == 'gatv2':
-            input_args = {
-                'num_atom_features': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-                'num_descriptors': self.num_descriptors,
-            }
-            hparams.update(input_args)
-            model = GATv2(**hparams)
-        elif self.model_type == 'attentivefp':
-            input_args = {
-                'in_channels': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-                'out_channels': 1,
-            }
-            input_args.update(hparams)
-            model = AttentiveFPWrapper(**input_args)
-        elif self.model_type == 'dimenetpp':
-            input_args = {
-                'out_channels': 1,
-            }
-            input_args.update(hparams)
-            model = DimeNetPP(**input_args)
-        elif self.model_type == 'gatport':
-            input_args = {
-                'num_atom_features': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-                'num_descriptors': self.num_descriptors,
-            }
-            input_args.update(hparams)
-            model = GATPort(**input_args)
-        elif self.model_type == 'gatv2vn':
-            input_args = {
-                'num_atom_features': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-                'num_descriptors': self.num_descriptors,
-            }
-            input_args.update(hparams)
-            model = GATv2VirtualNode(**input_args)
-        elif self.model_type == 'gin':
-            input_args = {
-                'num_atom_features': self.dataset.num_node_features,
-            }
-            input_args.update(hparams)
-            model = GIN(**input_args)
-        elif self.model_type == 'pna':
-            input_args = {
-                'in_channels': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-                'deg': PNA.compute_deg(self.train_loader),
-            }
-            input_args.update(hparams)
-            model = PNA(**input_args)
-        elif self.model_type == 'gvp':
-            input_args = {
-                'in_node_nf': self.dataset.num_node_features,
-            }
-            input_args.update(hparams)
-            model = GVPModel(**input_args)
-        elif self.model_type == 'gatchain':
-            input_args = {
-                'num_atom_features': self.dataset.num_node_features,
-            }
-            input_args.update(hparams)
-            model = GATChain(**input_args)
-        elif self.model_type == 'gatv2chainreadout':
-            input_args = {
-                'num_atom_features': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-                'num_descriptors': self.num_descriptors,
-            }
-            input_args.update(hparams)
-            model = GATv2ChainReadout(**input_args)
-        elif self.model_type == 'gt':
-            input_args = {
-                'in_channels': self.dataset.num_node_features,
-            }
-            input_args.update(hparams)
-            model = GraphTransformer(**input_args)
-        elif self.model_type == 'kan_gatv2':
-            input_args = {
-                'num_node_features': self.dataset.num_node_features,
-            }
-            input_args.update(hparams)
-            model = KAN_GATv2(**input_args)
-        elif self.model_type == 'gps':
-            input_args = {
-                'in_channels': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-            }
-            input_args.update(hparams)
-            model = GraphGPS(**input_args)
-        elif self.model_type == 'kan_gps':
-            input_args = {
-                'in_channels': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-            }
-            input_args.update(hparams)
-            model = KAN_GPS(**input_args)
-        elif self.model_type == 'fastkan':
-            input_args = {
-                'in_channels': self.dataset[0].descriptors.shape[1],
-            }
-            input_args.update(hparams)
-            model = FastKANWrapper(**input_args)
-        elif self.model_type == 'efficientkan':
-            input_args = {
-                'in_channels': self.dataset[0].descriptors.shape[1],
-            }
-            input_args.update(hparams)
-            model = EfficientKANWrapper(**input_args)
-        # elif self.model_type == 'kan':
-        #     input_args = {
-        #         'in_channels': self.dataset[0].descriptors.shape[1],
-        #         'device': self.device,
-        #     }
-        #     input_args.update(hparams)
-        #     model = KANWrapper(**input_args)
-        elif self.model_type == 'fourierkan':
-            input_args = {
-                'in_channels': self.dataset[0].descriptors.shape[1],
-            }
-            input_args.update(hparams)
-            model = FourierKANWrapper(**input_args)
-        elif self.model_type == 'fastkan_gatv2':
-            input_args = {
-                'num_atom_features': self.dataset.num_node_features,
-                'edge_dim': self.dataset.num_edge_features,
-                'num_descriptors': self.num_descriptors,
-            }
-            input_args.update(hparams)
-            model = FastKAN_GATv2(**input_args)
-        else:
-            raise ValueError(f"Model type {self.model_type} not implemented")
+    def _build_model(self, model_hparams: Dict[str, Any]) -> ModelWrapper:
+        if self.model_type.lower() in ['pna']:
+            model_hparams['deg'] = PNA.compute_deg(self.train_loader)
         
+        model = build_model(
+            model_type=self.model_type,
+            num_node_features=self.dataset.num_node_features,
+            num_edge_features=self.dataset.num_edge_features,
+            num_descriptors=self.num_descriptors,
+            hparams=model_hparams,
+        )
         num_params = sum(p.numel() for p in model.parameters())
         self.logger.info(f'Model Parameters: {num_params / 1e6:.4f}M')
         if self.model_type.lower() in ['gps', 'kan_gps']:
