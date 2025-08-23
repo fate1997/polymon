@@ -224,3 +224,10 @@ kan_gps,0.0546,,,,,0.0546,KAN-NOT-EMB
 kan_gps,0.0323,,,,,0.0323,KAN-in-EMB
 kan_gps,0.0304,,,,,0.0304,fastkan-transformer
 kan_gps,0.0276,,,,,0.0276,fastkan-transformer-mlps
+rf,,0.0192,,,,0.0192,rdkit2d-debug
+xgb,,0.0172,,,,0.0172,rdkit2d-debug
+tabpfn,,0.0152,,,,0.0152,rdkit2d-debug
+tabpfn,,0.0150,,,,0.0150,mordred-debug
+tabpfn,,0.0211,,,,0.0211,maccs-debug
+gatv2,,0.0134,,,,0.0134,debug
+gps,,0.0113,,,,0.0113,debug

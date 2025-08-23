@@ -83,15 +83,6 @@ def main():
             test_err, hparams = pipeline.optimize_hparams()
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
         else:
-<<<<<<< HEAD:main_dl.py
-            # hparams = {'hidden_dim': 48,
-            #     'num_layers': 2,
-            #     'num_heads': 6,
-            #     'pred_hidden_dim': 224,
-            #     'pred_dropout': 0.07186093316810982,
-            #     'pred_layers': 3}
-            test_err = pipeline.train(model_hparams=None)
-=======
             hparams = {
                 'hidden_dim': args.hidden_dim,
                 'num_layers': args.num_layers}
@@ -104,7 +95,6 @@ def main():
                 pipeline.logger.info(f'Loading hparams from {args.hparams_from}')
                 hparams.update(hparams_loaded)
             test_err = pipeline.train(model_hparams=hparams)
->>>>>>> main:scripts/main_dl.py
             model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
         if args.finetune_csv_path is not None:
             test_err = pipeline.finetune(

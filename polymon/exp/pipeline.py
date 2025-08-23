@@ -13,14 +13,10 @@ from polymon.data.utils import Normalizer
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
-<<<<<<< HEAD
-                           GATv2VirtualNode, GIN, PNA, ESAWrapper)
-=======
                            GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
                            GATv2ChainReadout, GraphTransformer, KAN_GATv2,
                            GraphGPS, KAN_GPS, FastKANWrapper, EfficientKANWrapper,
                            FourierKANWrapper)
->>>>>>> main
 from polymon.model.base import ModelWrapper
 from polymon.setting import REPO_DIR
 
@@ -270,31 +266,6 @@ class Pipeline:
             input_args.update(hparams)
             model = GIN(**input_args)
         elif self.model_type == 'pna':
-<<<<<<< HEAD
-            model = PNA(
-                in_channels=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                deg=PNA.compute_deg(self.train_loader),
-                **hparams,
-            )
-        elif self.model_type == 'esa':
-            hidden_dims = hparams.pop('hidden_dim')
-            layer_types = ['M', 'M', 'S', 'P']
-            num_mlp_layers = hparams.pop('num_layers')
-            print('HPARAMS: ', hparams)
-            model = ESAWrapper(
-                task_type = "regression",
-                num_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                set_max_items = self.dataset.max_edge_global,
-                gradient_clip_val = 0.5,
-                graph_dim = 512,
-                hidden_dims = [hidden_dims]*4,
-                layer_types = layer_types,
-                num_mlp_layers = num_mlp_layers,
-                **hparams,
-            )
-=======
             input_args = {
                 'in_channels': self.dataset.num_node_features,
                 'edge_dim': self.dataset.num_edge_features,
@@ -373,7 +344,6 @@ class Pipeline:
             }
             input_args.update(hparams)
             model = FourierKANWrapper(**input_args)
->>>>>>> main
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         

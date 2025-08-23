@@ -1,7 +1,4 @@
 from polymon.model.gnn import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
-<<<<<<< HEAD
-                               GATv2VirtualNode, GIN, PNA, ESAWrapper)
-=======
                                GATv2VirtualNode, GIN, PNA, GraphTransformer)
 from polymon.model.gvp import GVPModel
 from polymon.model.gatv2.gat_chain import GATChain
@@ -12,7 +9,7 @@ from polymon.model.kan.fast_kan import FastKANWrapper
 from polymon.model.kan.efficient_kan import EfficientKANWrapper
 # from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
->>>>>>> main
+
 
 __all__ = [
     'GATv2',
@@ -22,9 +19,6 @@ __all__ = [
     'GATv2VirtualNode',
     'GIN',
     'PNA',
-<<<<<<< HEAD
-    'ESAWrapper',
-=======
     'GVPModel',
     'GATChain',
     'GATv2ChainReadout',
@@ -36,5 +30,4 @@ __all__ = [
     'EfficientKANWrapper',
     # 'KANWrapper',
     'FourierKANWrapper',
->>>>>>> main
 ]

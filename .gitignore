@@ -1,4 +1,4 @@
-*debug.ipynb
+*.ipynb
 database/*/*.pt
 results/
 polymon/model/polycl/*.pth
