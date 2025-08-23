@@ -5,15 +5,24 @@ from typing import Any, Dict, List, Optional, Tuple
 import loguru
 import optuna
 from torch_geometric.loader import DataLoader
+from pytorch_lightning import seed_everything
+import torch_geometric.transforms as T
 
 from polymon.data.dataset import PolymerDataset
 from polymon.data.utils import Normalizer
 from polymon.exp.train import Trainer
-from polymon.exp.utils import seed_everything
 from polymon.hparams import get_hparams
 from polymon.model import (AttentiveFPWrapper, DimeNetPP, GATPort, GATv2,
+<<<<<<< HEAD
                            GATv2VirtualNode, GIN, PNA, ESAWrapper)
+=======
+                           GATv2VirtualNode, GIN, PNA, GVPModel, GATChain,
+                           GATv2ChainReadout, GraphTransformer, KAN_GATv2,
+                           GraphGPS, KAN_GPS, FastKANWrapper, EfficientKANWrapper,
+                           FourierKANWrapper)
+>>>>>>> main
 from polymon.model.base import ModelWrapper
+from polymon.setting import REPO_DIR
 
 
 class Pipeline:
@@ -22,7 +31,8 @@ class Pipeline:
         tag: str,
         out_dir: str,
         batch_size: int,
-        raw_csv_path: str,
+        raw_csv: str,
+        sources: List[str],
         label: str,
         model_type: str,
         hidden_dim: int,
@@ -33,13 +43,15 @@ class Pipeline:
         early_stopping_patience: int,
         device: str,
         n_trials: int,
+        seed: int = 42,
     ):
-        seed_everything(42)
+        seed_everything(seed)
         
         self.tag = tag
         self.out_dir = out_dir
         self.batch_size = batch_size
-        self.raw_csv_path = raw_csv_path
+        self.raw_csv = raw_csv
+        self.sources = sources
         self.label = label
         self.model_type = model_type.lower()
         self.hidden_dim = hidden_dim
@@ -57,7 +69,7 @@ class Pipeline:
         self.logger = logger    
 
         self.logger.info(f'Building dataset for {label}...')
-        self.dataset = self._build_dataset(raw_csv_path)
+        self.dataset = self._build_dataset(sources)
         if self.descriptors is not None:
             self.num_descriptors = self.dataset[0].descriptors.shape[1]
         else:
@@ -110,6 +122,8 @@ class Pipeline:
         os.makedirs(out_dir, exist_ok=True)
         def objective(trial: optuna.Trial) -> float:
             model_hparams = get_hparams(trial, self.model_type)
+            self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
+            self.logger.info(f'Hyper-parameters: {model_hparams}')
             return self.train(self.lr, model_hparams, out_dir)
 
         study = optuna.create_study(direction='minimize')
@@ -174,68 +188,89 @@ class Pipeline:
         out_dir = os.path.join(self.out_dir, 'production')
         os.makedirs(out_dir, exist_ok=True)
 
-        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05)
+        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True)
         self.train(None, model_hparams, out_dir, loaders)
         self.logger.info(f'Production run complete.')
     
-    def _build_dataset(self, raw_csv_path: str) -> PolymerDataset:
+    def _build_dataset(self, sources: List[str]) -> PolymerDataset:
         feature_names = ['x', 'bond', 'z']
-        if self.model_type.lower() in ['dimenetpp']:
+        if self.model_type.lower() in ['dimenetpp', 'gvp']:
             feature_names.append('pos')
+            feature_names.remove('bond')
         if self.model_type.lower() in ['gatv2vn']:
             feature_names.append('virtual_bond')
             feature_names.remove('bond')
+        if self.model_type.lower() in ['gatchain']:
+            feature_names.append('bridge')
+        if self.model_type.lower() in ['fastkan', 'efficientkan', 'kan', 'fourierkan']:
+            assert self.descriptors is not None, 'Descriptors are required for KAN'
         if self.descriptors is not None:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
+        if self.model_type.lower() in ['gps', 'kan_gps']:
+            pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
+        else:
+            pre_transform = None
         dataset = PolymerDataset(
-            raw_csv_path=raw_csv_path,
+            raw_csv_path=self.raw_csv,
+            sources=sources,
             feature_names=feature_names,
             label_column=self.label,
             force_reload=True,
+            add_hydrogens=True,
+            pre_transform=pre_transform
         )
+        self.logger.info(f'Atom features: {dataset.num_node_features}')
+        self.logger.info(f'Bond features: {dataset.num_edge_features}')
         return dataset
     
     def _build_model(self, hparams: Dict[str, Any]) -> ModelWrapper:
         if self.model_type == 'gatv2':
-            model = GATv2(
-                num_atom_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                num_descriptors=self.num_descriptors,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATv2(**input_args)
         elif self.model_type == 'attentivefp':
-            model = AttentiveFPWrapper(
-                in_channels=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                out_channels=1,
-                **hparams,
-            )
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'out_channels': 1,
+            }
+            input_args.update(hparams)
+            model = AttentiveFPWrapper(**input_args)
         elif self.model_type == 'dimenetpp':
-            model = DimeNetPP(
-                out_channels=1,
-                **hparams,
-            )
+            input_args = {
+                'out_channels': 1,
+            }
+            input_args.update(hparams)
+            model = DimeNetPP(**input_args)
         elif self.model_type == 'gatport':
-            model = GATPort(
-                num_atom_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                num_descriptors=self.num_descriptors,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATPort(**input_args)
         elif self.model_type == 'gatv2vn':
-            model = GATv2VirtualNode(
-                num_atom_features=self.dataset.num_node_features,
-                edge_dim=self.dataset.num_edge_features,
-                num_descriptors=self.num_descriptors,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATv2VirtualNode(**input_args)
         elif self.model_type == 'gin':
-            model = GIN(
-                num_atom_features=self.dataset.num_node_features,
-                **hparams,
-            )
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GIN(**input_args)
         elif self.model_type == 'pna':
+<<<<<<< HEAD
             model = PNA(
                 in_channels=self.dataset.num_node_features,
                 edge_dim=self.dataset.num_edge_features,
@@ -259,8 +294,106 @@ class Pipeline:
                 num_mlp_layers = num_mlp_layers,
                 **hparams,
             )
+=======
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'deg': PNA.compute_deg(self.train_loader),
+            }
+            input_args.update(hparams)
+            model = PNA(**input_args)
+        elif self.model_type == 'gvp':
+            input_args = {
+                'in_node_nf': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GVPModel(**input_args)
+        elif self.model_type == 'gatchain':
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GATChain(**input_args)
+        elif self.model_type == 'gatv2chainreadout':
+            input_args = {
+                'num_atom_features': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+                'num_descriptors': self.num_descriptors,
+            }
+            input_args.update(hparams)
+            model = GATv2ChainReadout(**input_args)
+        elif self.model_type == 'gt':
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = GraphTransformer(**input_args)
+        elif self.model_type == 'kan_gatv2':
+            input_args = {
+                'num_node_features': self.dataset.num_node_features,
+            }
+            input_args.update(hparams)
+            model = KAN_GATv2(**input_args)
+        elif self.model_type == 'gps':
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+            }
+            input_args.update(hparams)
+            model = GraphGPS(**input_args)
+        elif self.model_type == 'kan_gps':
+            input_args = {
+                'in_channels': self.dataset.num_node_features,
+                'edge_dim': self.dataset.num_edge_features,
+            }
+            input_args.update(hparams)
+            model = KAN_GPS(**input_args)
+        elif self.model_type == 'fastkan':
+            input_args = {
+                'in_channels': self.dataset[0].descriptors.shape[1],
+            }
+            input_args.update(hparams)
+            model = FastKANWrapper(**input_args)
+        elif self.model_type == 'efficientkan':
+            input_args = {
+                'in_channels': self.dataset[0].descriptors.shape[1],
+            }
+            input_args.update(hparams)
+            model = EfficientKANWrapper(**input_args)
+        # elif self.model_type == 'kan':
+        #     input_args = {
+        #         'in_channels': self.dataset[0].descriptors.shape[1],
+        #         'device': self.device,
+        #     }
+        #     input_args.update(hparams)
+        #     model = KANWrapper(**input_args)
+        elif self.model_type == 'fourierkan':
+            input_args = {
+                'in_channels': self.dataset[0].descriptors.shape[1],
+            }
+            input_args.update(hparams)
+            model = FourierKANWrapper(**input_args)
+>>>>>>> main
         else:
             raise ValueError(f"Model type {self.model_type} not implemented")
         
-        model = ModelWrapper(model, self.normalizer, self.dataset.featurizer)
+        num_params = sum(p.numel() for p in model.parameters())
+        self.logger.info(f'Model Parameters: {num_params / 1e6:.4f}M')
+        if self.model_type.lower() in ['gps', 'kan_gps']:
+            transform_cls = 'AddRandomWalkPE'
+            transform_kwargs = {
+                'walk_length': 20,
+                'attr_name': 'pe',
+            }
+        else:
+            transform_cls = None
+            transform_kwargs = None
+        
+        model = ModelWrapper(
+            model,
+            self.normalizer,
+            self.dataset.featurizer,
+            transform_cls,
+            transform_kwargs,
+        )
         return model

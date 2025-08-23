@@ -1,8 +1,11 @@
 import argparse
+import yaml
 import os
+import json
 
 import numpy as np
 import pandas as pd
+import torch
 
 from polymon.exp.pipeline import Pipeline
 from polymon.exp.score import normalize_property_weight
@@ -16,8 +19,11 @@ def parse_args():
     
     # Dataset
     parser.add_argument('--batch-size', type=int, default=128)
-    parser.add_argument('--raw-csv-path', type=str, default='database/internal/train.csv')
+    parser.add_argument('--raw-csv', type=str, default=str(REPO_DIR / 'database' / 'database.csv'))
+    ## Internal data is `must_keep`
+    parser.add_argument('--sources', type=str, nargs='+', default=['official_external'])
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
+    parser.add_argument('--seed', type=int, default=42)
 
     # Model
     parser.add_argument(
@@ -28,6 +34,7 @@ def parse_args():
     parser.add_argument('--hidden-dim', type=int, default=32)
     parser.add_argument('--num-layers', type=int, default=3)
     parser.add_argument('--descriptors', type=str, default=None, nargs='+')
+    parser.add_argument('--hparams-from', type=str, default=None)
 
     # Training
     parser.add_argument('--num-epochs', type=int, default=2500)
@@ -56,7 +63,8 @@ def main():
             tag=args.tag,
             out_dir=out_dir,
             batch_size=args.batch_size,
-            raw_csv_path=args.raw_csv_path,
+            raw_csv=args.raw_csv,
+            sources=args.sources,
             label=label,
             model_type=args.model,
             hidden_dim=args.hidden_dim,
@@ -67,11 +75,15 @@ def main():
             early_stopping_patience=args.early_stopping_patience,
             device=args.device,
             n_trials=args.n_trials,
+            seed=args.seed,
         )
+        with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
+            yaml.dump(args.__dict__, f)
         if args.optimize_hparams:
             test_err, hparams = pipeline.optimize_hparams()
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
         else:
+<<<<<<< HEAD:main_dl.py
             # hparams = {'hidden_dim': 48,
             #     'num_layers': 2,
             #     'num_heads': 6,
@@ -79,6 +91,20 @@ def main():
             #     'pred_dropout': 0.07186093316810982,
             #     'pred_layers': 3}
             test_err = pipeline.train(model_hparams=None)
+=======
+            hparams = {
+                'hidden_dim': args.hidden_dim,
+                'num_layers': args.num_layers}
+            if args.hparams_from is not None:
+                if args.hparams_from.endswith('.pt'):
+                    hparams_loaded = torch.load(args.hparams_from)['model_init_params']
+                else:
+                    with open(args.hparams_from, 'r') as f:
+                        hparams_loaded = json.load(f)
+                pipeline.logger.info(f'Loading hparams from {args.hparams_from}')
+                hparams.update(hparams_loaded)
+            test_err = pipeline.train(model_hparams=hparams)
+>>>>>>> main:scripts/main_dl.py
             model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
         if args.finetune_csv_path is not None:
             test_err = pipeline.finetune(

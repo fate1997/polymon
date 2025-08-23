@@ -6,15 +6,23 @@ from matplotlib import pyplot as plt
 from rdkit import Chem
 from sklearn.linear_model import LinearRegression
 from polymon.setting import REPO_DIR
+from loguru import logger
 
 
 class Dedup:
-    def __init__(self, label: str, rtol: float = 0.05):
+    def __init__(
+        self, 
+        df: pd.DataFrame,
+        label: str, 
+        must_keep: List[str] = ['internal'],
+        rtol: float = 0.05,
+    ):
         self.label = label
         self.rtol = rtol
-        self.df = pd.DataFrame(
-            {'SMILES': [], self.label: [], 'Source': [], 'Confidence': []}
-        )
+        # Remove other columns
+        df = df[['SMILES', 'Source', 'Uncertainty', label, 'id']]
+        self.df = df
+        self.must_keep = must_keep
     
     def add_df(
         self,
@@ -22,7 +30,7 @@ class Dedup:
         smiles_col: str,
         label_col: str,
         source: str,
-        confidence: float,
+        uncertainty: int,
     ):
         if file_path.endswith('.csv'):
             df = pd.read_csv(file_path)
@@ -35,7 +43,7 @@ class Dedup:
         df = df[df[label_col].notna()]
         df = df[[smiles_col, label_col]].assign(
             Source=source,
-            Confidence=confidence,
+            Uncertainty=uncertainty,
         )
         df.rename(columns={
             label_col: self.label, 
@@ -46,12 +54,13 @@ class Dedup:
     
     def show_distribution(
         self, 
+        sources: List[str],
         bins: int = 50, 
         alpha: float = 0.5,
         density: bool = False,
     ):
         # Plot the distribution of the label for each source
-        for source in self.df['Source'].unique():
+        for source in sources:
             df = self.df[self.df['Source'] == source]
             plt.hist(
                 df[self.label], 
@@ -68,9 +77,15 @@ class Dedup:
     def run(self, sources: Optional[List[str]] = None, save: bool = False):
         if sources is None:
             sources = self.df['Source'].unique()
+        sources = list(set(sources + self.must_keep))
+        source_info = [
+            f'{source}: {len(self.df[self.df["Source"] == source])}' \
+            for source in sources
+        ]
+        logger.info(f'Sources: {", ".join(source_info)}')
         df = self.df[self.df['Source'].isin(sources)]
         
-        print(f'Number of rows before deduplication: {len(df)}')
+        logger.info(f'Number of rows before deduplication: {len(df)}')
         mask = df['SMILES'].duplicated(keep=False)
         duplicates = df[mask]
         smiles_groups = duplicates.groupby('SMILES').groups
@@ -78,10 +93,10 @@ class Dedup:
         for smiles, indices in smiles_groups.items():
             rows = df.loc[indices]
             # 1. Remove rows with lower confidence.
-            max_confidence = rows['Confidence'].max()
-            ids_low_confidence = rows[rows['Confidence'] < max_confidence].index
-            drop_indices.extend(ids_low_confidence)
-            rows = rows[rows['Confidence'] == max_confidence]
+            min_uncertainty = rows['Uncertainty'].min()
+            ids_low_uncertainty = rows[rows['Uncertainty'] > min_uncertainty].index
+            drop_indices.extend(ids_low_uncertainty)
+            rows = rows[rows['Uncertainty'] == min_uncertainty]
             
             # 2. Remove rows with higher relative difference.
             if len(rows) > 1:
@@ -91,8 +106,13 @@ class Dedup:
                 else:
                     df.loc[rows.index[0], self.label] = v.mean()
                     drop_indices.extend(rows.index[1:])
+        
+        # 3. Remove indices if the source is in must_keep
+        for source in self.must_keep:
+            drop_indices = list(set(drop_indices) - set(df[df['Source'] == source].index))
+        
         df = df.drop(drop_indices)
-        print(f'Number of rows after deduplication: {len(df)}')
+        logger.info(f'Number of rows after deduplication: {len(df)}')
         
         if save:
             path = str(REPO_DIR / 'database' / 'merged' / f'{self.label}_{"_".join(sources)}.csv')
@@ -114,7 +134,7 @@ class Dedup:
         x = df[self.label + '_x'].values
         y = df[self.label + '_y'].values
         # Swap x and y if x is the label with higher confidence
-        if df1['Confidence'].max() > df2['Confidence'].max():
+        if df1['Uncertainty'].min() > df2['Uncertainty'].min():
             x, y = y, x
             source1, source2 = source2, source1
         
@@ -128,15 +148,22 @@ class Dedup:
         plt.plot([min_val, max_val], [min_val, max_val], 'k--')
         
         if fitting:
+            # Remove outliers
+            mask = np.abs((y - x) / (x + 1e-6)) < 0.05
+            x = x[mask]
+            y = y[mask]
+            bias = np.mean(y - x)
+            y_pred = x + bias
             # Learn linear relationship y = ax + b to fit the data
-            model = LinearRegression().fit(x.reshape(-1, 1), y.reshape(-1, 1))
-            y_pred = model.predict(x.reshape(-1, 1))
-            print(f'Coefficient: {model.coef_[0][0]:.4f}, Intercept: {model.intercept_[0]:.4f}')
+            # model = LinearRegression().fit(x.reshape(-1, 1), y.reshape(-1, 1))
+            # y_pred = model.predict(x.reshape(-1, 1))
+            # logger.info(f'Coefficient: {model.coef_[0][0]:.4f}, Intercept: {model.intercept_[0]:.4f}')
             plt.scatter(y_pred, y, color='red', alpha=0.5, marker='x', label='Fitted')
             # Write the equation of the fitted line
             plt.text(
                 min_val, max_val, 
-                f'y = {model.coef_[0][0]:.4f}x + {model.intercept_[0]:.4f}',
+                # f'y = {model.coef_[0][0]:.4f}x + {model.intercept_[0]:.4f}',
+                f'y = x + {bias:.4f}',
                 fontsize=12,
                 ha='left',
             )
@@ -145,13 +172,14 @@ class Dedup:
         plt.show()
         if fitting:
             # Add the fitted points as a new source
-            df = self.df[self.df['Source'] == source1]
-            y_fitted = model.predict(df[self.label].values.reshape(-1, 1))
+            df = self.df[self.df['Source'] == source2]
+            # y_fitted = model.predict(df[self.label].values.reshape(-1, 1))
+            y_fitted = df[self.label].values.reshape(-1, 1) + bias
             df_fitted = pd.DataFrame({
                 'SMILES': df['SMILES'],
                 self.label: y_fitted.squeeze(-1),
-                'Source': f'{source1}_fitted',
-                'Confidence': 0.5,
+                'Source': f'{source2}_fitted',
+                'Uncertainty': 4,
             })
             self.df = pd.concat([self.df, df_fitted], ignore_index=True)
-        return df
+        return None

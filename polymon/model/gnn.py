@@ -1,17 +1,17 @@
-from typing import Literal, Tuple
+from typing import Dict, Any, Literal
 
 import torch
+from torch import nn
 import torch.nn.functional as F
-import torch.nn as nn
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import (AttentiveFP, BatchNorm, DimeNetPlusPlus,
+                                GATv2Conv, GINConv, PNAConv, TransformerConv,
+                                global_add_pool, global_max_pool)
 from torch_geometric.utils import degree
-from torch_geometric.nn import (AttentiveFP, DimeNetPlusPlus, GATv2Conv,
-                                global_add_pool, global_max_pool, GINConv,
-                                PNAConv, BatchNorm)
 
 from polymon.data.polymer import Polymer
 from polymon.model.base import BaseModel
-from polymon.model.module import MLP, ReadoutPhase, init_weight
+from polymon.model.utils import MLP, ReadoutPhase, init_weight
 from polymon.model.register import register_init_params
 
 from polymon.model.esa.esa_model import ESA
@@ -539,6 +539,7 @@ class PNA(BaseModel):
 
 
 @register_init_params
+<<<<<<< HEAD
 class ESAWrapper(BaseModel):
     def __init__(
         self,
@@ -773,3 +774,45 @@ class ESAWrapper(BaseModel):
         
         
         
+=======
+class GraphTransformer(BaseModel):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_dim: int,
+        num_layers: int,
+        num_heads: int = 8,
+        dropout: float=0.2,
+        pred_hidden_dim: int=128,
+        pred_dropout: float=0.2,
+        pred_layers:int=2,
+    ):
+        super().__init__()
+        
+        self.layers = nn.ModuleList()
+        for i in range(num_layers):
+            layer = TransformerConv(
+                in_channels=in_channels if i == 0 else hidden_dim,
+                out_channels=hidden_dim // num_heads,
+                heads=num_heads,
+                dropout=dropout,
+            )
+            self.layers.append(layer)
+        
+        self.readout = ReadoutPhase(hidden_dim)
+
+        self.predict = MLP(
+            input_dim=2*hidden_dim,
+            hidden_dim=pred_hidden_dim,
+            output_dim=1,
+            n_layers=pred_layers,
+            dropout=pred_dropout,
+            activation='prelu'
+        )
+    
+    def forward(self, batch: Polymer):
+        x = batch.x
+        for layer in self.layers:
+            x = layer(x, batch.edge_index)
+        return self.predict(self.readout(x, batch.batch))
+>>>>>>> main

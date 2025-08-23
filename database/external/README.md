@@ -17,15 +17,23 @@
 
 - Bicerano_bigsmiles.csv, JCIM_sup_bigsmiles.csv: https://springernature.figshare.com/articles/dataset/dataset_with_glass_transition_temperature/24219958?file=42507037
 
+- PCO2-Tg-Thd-data-all-simulated.csv: https://www.nature.com/articles/s41524-023-01088-3#Sec3 calculated by PPP engine (QSPR model)
+- ap0c00524_si_001.csv: https://pubs.acs.org/doi/10.1021/acsapm.0c00524
 
 # FFV
 - FFV_homopolymer.xlsx: Source not found. May be removed from github
 - FFV_polyamides.xlsx: Source not found. May be removed from github
 
 # Density
-- raw_data.xlsx: https://github.com/Duke-MatSci/ChemProps
+- raw_data.xlsx: https://github.com/Duke-MatSci/ChemProps, No attachment point!
+- ap0c00524_si_001.csv
+
+# Tc
+- tc_pd0.24.2.pkl: no SMILES column
 
 # Mixed
 - PI1070.csv: https://github.com/RadonPy/RadonPy/blob/develop/data/PI1070.csv
 
 - 29482_shortlisted polymers_PI1M.xlsx: https://github.com/maowang-code/polymer-FFV-prediction/blob/main/data/29482_shortlisted%20polymers_PI1M.xlsx
+
+- ap0c00524_si_001.xlsx: https://pubs.acs.org/doi/suppl/10.1021/acsapm.0c00524/suppl_file/ap0c00524_si_001.xlsx

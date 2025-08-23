@@ -191,9 +191,96 @@ def get_pna_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     param = {
         "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
         "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
-        "towers": trial.suggest_int("towers", 1, 6, step=1),
+        "towers": trial.suggest_categorical("towers", [1, 2, 4, 8]),
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
         "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
         "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+    }
+    return param
+
+
+@register_hparams('gvp')
+def get_gvp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GVP parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+        "normalization_factor": trial.suggest_float("normalization_factor", 10.0, 1000.0, step=10.0),
+        "drop_rate": trial.suggest_float("drop_rate", 0.0, 0.5),
+        "cutoff": trial.suggest_categorical("cutoff", [5.0, 10.0])
+    }
+    return param
+
+
+@register_hparams('gt')
+def get_gt_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get Graph Transformer parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 512, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 6, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 128, 1024, step=128),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+    }
+    return param
+
+
+@register_hparams('kan_gatv2')
+def get_kan_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get KAN-GATv2 parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5),
+        "pred_layers": trial.suggest_int("pred_layers", 2, 4, step=1),
+        "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
+    }
+    return param
+
+
+@register_hparams('gps')
+def get_gps_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GPS parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 10, step=1),
+        "pe_dim": trial.suggest_int("pe_dim", 4, 8, step=1),
+        "heads": trial.suggest_int("heads", 4, 8, step=4),
+        "attn_type": trial.suggest_categorical("attn_type", ["performer", "multihead"]),
+        "attn_kwargs": {
+            "dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        },
+    }
+    return param
+
+
+@register_hparams('kan_gps')
+def get_kan_gps_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get KAN-GPS parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 10, step=1),
+        "pe_dim": trial.suggest_int("pe_dim", 4, 8, step=1),
+        "heads": trial.suggest_int("heads", 4, 8, step=4),
+        "attn_kwargs": {
+            "dropout": trial.suggest_float("dropout", 0.0, 0.5),
+        },
+        "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
     }
     return param

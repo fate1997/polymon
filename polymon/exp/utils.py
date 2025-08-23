@@ -6,8 +6,10 @@ from typing import Tuple
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
-from polymon.model.base import ModelWrapper 
+from polymon.model.base import ModelWrapper
+
 
 class EarlyStopping:
     """Early stopping for training.
@@ -83,3 +85,20 @@ def loader2numpy(loader: DataLoader) -> Tuple[np.ndarray, np.ndarray]:
         x.append(batch.descriptors.numpy())
         y.append(batch.y.numpy().ravel())
     return np.concatenate(x, 0), np.concatenate(y, 0)
+
+
+def predict_batch(
+    sklearn_model, 
+    X: np.ndarray, 
+    batch_size: int=1024,
+    show_progress: bool=True,
+) -> np.ndarray:
+    y_pred = []
+    if show_progress:
+        iterator = tqdm(range(0, len(X), batch_size))
+    else:
+        iterator = range(0, len(X), batch_size)
+    for i in iterator:
+        X_batch = X[i:i+batch_size]
+        y_pred.append(sklearn_model.predict(X_batch))
+    return np.concatenate(y_pred, 0)

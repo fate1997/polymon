@@ -1,4 +1,6 @@
 import pathlib
+import pandas as pd
+import json
 
 
 REPO_DIR = pathlib.Path(__file__).parent.parent
@@ -23,3 +25,14 @@ UNIQUE_ATOM_NUMS = [
 with open(REPO_DIR / 'polymon' / 'data' / 'mordred_unstable.txt', 'r') as f:
     MORDRED_UNSTABLE_IDS = f.read().splitlines()
     MORDRED_UNSTABLE_IDS = list(map(int, MORDRED_UNSTABLE_IDS))
+
+
+XENONPY_ELEMENTS_INFO = pd.read_csv(
+    REPO_DIR / 'polymon' / 'data' / 'xenonpy_elements.csv',
+    index_col=0,
+)
+
+GEOMETRY_VOCAB = REPO_DIR / 'database' / 'geometry_vocab'
+
+with open(REPO_DIR / 'polymon' / 'data' / 'cgcnn.json', 'r') as f:
+    CGCNN_ELEMENT_INFO = json.load(f)

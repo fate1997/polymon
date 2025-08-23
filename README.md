@@ -9,13 +9,22 @@ pip install rdkit==2023.09.3
 ```
 
 ## TODO
-- [ ] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
+- [ ] Dataset ablation study. Find the best sources for each property.
+- [ ] Non-bonded (based on conformer or Transformer)
+- [ ] Use linear first in the KAN-GNN models (https://github.com/WillHua127/GraphKAN-Graph-Kolmogorov-Arnold-Networks)
+- [ ] Try this model: https://github.com/wjxts/MIPS (no open source weights)
+- [ ] https://github.com/pnnl/FragNet
+- [ ] https://github.com/syr-cn/SimSGT
+- [ ] Pretrained on our own dataset following MIPS, FragNet or SimSGT
+- [ ] Review: https://www.sciencedirect.com/science/article/pii/S0079642525001227#b1005
+
+- [x] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
 - [ ] Calculate `Rg` based on MD files
-- [ ] Test `GATv2` with bond features
-- [ ] Test `GATv2` with different loss functions l1-loss and mse-loss
+- [x] Test `GATv2` with bond features
+- [x] Test `GATv2` with different loss functions l1-loss and mse-loss
 - [ ] Implement cross-validation methods for DL models
-- [ ] GIN, GCN2, PNA, ESA implementation and hyperparameter optimization
-- [ ] Test performance of `GATPort`
+- [x] GIN, GCN2, PNA, ESA implementation and hyperparameter optimization
+- [x] Test performance of `GATPort`
 - [x] Virtual node (use descriptors as the initial features) (atom + descriptors seems have potential)
 - [x] Incorporate more atom features and bond features and tried more GNN models.
 - [x] log file is only shown in the first one ('Rg'), this might be solved by using `loguru`
@@ -25,6 +34,52 @@ pip install rdkit==2023.09.3
 - [x] Monomer grow to dimer and then calculate the descriptors
 
 ## Progress
+**2025-08-19**
+Dataset ablation study ($^1$ means the dataset is splitted randomly):
+- Tc: 
+  - previous$^1$: 0.0470 (local); 0.069 (kaggle)
+  - only internal$^1$: 0.0538 (local); 0.070 (kaggle)
+  - \+ official_external: 0.0678 (local)
+  - \+ official_external (internal serves as test/val): 0.0.0614 (local); 0.071 (kaggle)
+  - \+ Kaggle: 0.0663 (local)
+  - \+ PI1070: 0.0651 (local); 0.069 (kaggle)
+  - \+ PI1070 (internal serves as test/val): 0.0592 (local); 0.068 (kaggle)
+  - \+ PI1070 (internal serves as val in production): 0.0589 (local); 0.068 (kaggle)
+- Density (all the below are using internal as test/val):
+  - previous (only internal)$^1$: 0.0188; 0.067 (kaggle)
+  - \+ MAFA-MD: 0.0297 (local); 
+  - \+ MAFA-exp: 0.0224 (local); 0.069 (kaggle)
+  - \+ GREA: 0.0501 (local); 
+  - \+ PI1070:0.0252 (local)
+  - \+ PI1070 (linear fitting): 0.0331 (local)
+  - \+ PI1070 (only bias): 0.0310 (local)
+- Rg:
+  - previous$^1$: 0.0458 (local); 0.067 (kaggle)
+  - only internal$^1$: 0.0739 (local)
+  - \+ PI1070: 0.0814 (local)
+- FFV:
+  - previous$^1$: 0.0082 (local); 0.067 (kaggle)
+  - only internal$^1$: 0.0099 (local)
+  - \+ official_external: 0.0087 (local)
+  - \+ unknown (have the same number of data points as official_external): 0.0094 (local)
+- Tg:
+  - previous$^1$: 0.0280 (local)
+  - only internal$^1$: 0.0798, 0.0965, 0.0875
+  - \+ official_external: 0.0880, 0.0925, 0.0716
+  - \+ MAFA-exp: 0.0843, 0.0943, 0.0841
+  - \+ MAFA-MD: 0.0970, 0.1076, 0.087
+  - \+ SC-Bicerano: 0.0841, 0.0913, 0.0779
+  - \+ SC-JCIM: 0.0824, 0.0882, 0.0669
+  - \+ GREA: 0.0918, 0.0947, 0.0949
+  - \+ PolyMetriX: 0.0924, 0.0899, 0.0934
+  - \+ LT-exp: 0.0855, 0.0975, 0.0685
+  - \+ LT-MD: 0.0869, 0.0967, 0.0692
+  - \+ HT-PolyInfo: 0.0972, 0.0939, 0.0939
+  - \+ HT-exp: 0.0897, 0.0966, 
+  - \+ HT-MD: 0.0864 (local)
+
+**2025-07-03**
+- Finally know why `GATv2` is good after refactoring. Just because add hydrogens = =.
 
 **2025-07-01**
 - `GATv2VirtualNode` is not good. Tg val R2 is 0.855 even after 800 epochs.
