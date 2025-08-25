@@ -5,6 +5,8 @@ polymon/model/polycl/*.pth
 geometry_vocab/
 .history/
 *.pbs
+database/conformer/
+!database/ckpts/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
