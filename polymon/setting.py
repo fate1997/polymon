@@ -48,3 +48,5 @@ DEFAULT_ATOM_FEATURES = [
     'formal_charge', 
     'is_attachment',
 ]
+
+DEFAULT_TOPK_DESCRIPTORS = 25
