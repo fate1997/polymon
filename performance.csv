@@ -234,3 +234,29 @@ fastkan_gatv2,,,0.0565,,,0.0565,initial-test
 gatv2,,,0.0468,,,0.0468,initial-test
 gatv2,,,0.0396,,,0.0396,scaffold (Optuna) (scaffold)
 gatv2,,,0.0433,,,0.0433,cgcnn-feature (Optuna)
+fastkan_gatv2,,,0.0429,,,0.0429,initial-test (Optuna)
+gatv2,,,0.0549,,,0.0549,new-split (Optuna) (source) significant difference with previous results (same settings)
+gatv2,,,0.0533,,,0.0533,use-selected-descriptors (Optuna)
+gatv2,,,0.0437,,,0.0437,initial-test (K-Fold) (Optuna)
+gatv2,,,,,,,initial-test
+gatv2,,,,,,,initial-test
+gatv2,,,,0.0250,,0.0250,finetune-not-freeze-repr
+gatv2,,,,0.0277,,0.0277,finetune-freeze-repr
+gatv2,,,,0.0268,,0.0268,finetune-freeze-repr
+gatv2,,,,0.0269,,0.0269,finetune
+gatv2,,,,0.0266,,0.0266,finetune-lr5e-4-not-freeze
+gatv2,,,,0.0245,,0.0245,finetune-lr5e-4-freeze
+gatv2,,,,0.0101,,0.0101,finetune-lr5e-4-no-freeze-cv (K-Fold)
+gatv2,,,,0.0129,,0.0129,finetune-lr5e-4-freeze-cv (K-Fold)
+gatv2,,,,0.0211,,0.0211,cv (K-Fold)
+gatv2,,,,0.0101,,0.0101,finetune-lr5e-4-from-FFV-cv (K-Fold)
+gatv2,,,,0.0184,,0.0184,ensemble-test
+gatv2,,,0.0558,,,0.0558,ensemble-test
+gatv2,,0.0096,,,,0.0096,ensemble-test
+kan_gatv2,,,,,0.1260,0.1260,all-PI1070
+kan_gatv2,,,,,0.0483,0.0483,test
+gatv2,,,,0.0187,,0.0187,PI1070-difference-merged
+gatv2,,,,0.0212,,0.0212,PI1070-difference-merged
+gatv2,,,,0.0242,,0.0242,PI1070-uncertainty-merged
+gatv2,,,,0.0230,,0.0230,PI1070-epig-merged
+gatv2,,,,0.0211,,0.0211,all-difference-merged
