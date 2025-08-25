@@ -45,8 +45,11 @@ def parse_args():
     parser.add_argument('--n-trials', type=int, default=25)
     parser.add_argument('--optimize-hparams', action='store_true')
     parser.add_argument('--run-production', action='store_true')
+    parser.add_argument('--finetune', action='store_true')
     parser.add_argument('--finetune-csv-path', type=str, default=None)
+    parser.add_argument('--pretrained-model', type=str, default=None)
     parser.add_argument('--n-fold', type=int, default=1)
+    parser.add_argument('--n-estimator', type=int, default=1)
 
     return parser.parse_args()
 
@@ -87,7 +90,7 @@ def main():
         if args.optimize_hparams:
             test_err, hparams = pipeline.optimize_hparams(n_fold=args.n_fold)
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
-        else:
+        elif not args.finetune:
             hparams = {
                 'hidden_dim': args.hidden_dim,
                 'num_layers': args.num_layers}
@@ -101,25 +104,33 @@ def main():
                 hparams.update(hparams_loaded)
             
             # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
-            if args.n_fold == 1:
+            if args.n_fold == 1 and args.n_estimator == 1:
                 test_err = pipeline.train(model_hparams=hparams)
-            else:
+            if args.n_fold > 1 and args.n_estimator == 1:
                 test_err = pipeline.cross_validation(
                     n_fold=args.n_fold,
                     model_hparams=hparams,
                 )
                 test_err = np.mean(test_err)
+            if args.n_estimator > 1:
+                test_err = pipeline.run_ensemble(
+                    n_estimator=args.n_estimator,
+                    model_hparams=hparams,
+                    run_production=args.run_production,
+                )
             model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
         
         # CHOICE 3: Finetune model OR run production
-        if args.finetune_csv_path is not None:
+        if args.finetune:
             test_err = pipeline.finetune(
-                0.001, 
+                0.0005, 
+                args.pretrained_model or model_path, 
                 args.finetune_csv_path, 
-                model_path, 
-                args.run_production
+                args.run_production,
+                freeze_repr_layers=False,
+                n_fold=args.n_fold
             )
-        elif args.run_production:
+        elif args.run_production and args.n_estimator == 1:
             pipeline.production_run(hparams)
         
         performance[label] = test_err

@@ -1,5 +1,6 @@
 import os
 from copy import deepcopy
+from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import loguru
@@ -10,13 +11,16 @@ import torch_geometric.transforms as T
 from pytorch_lightning import seed_everything
 from sklearn.model_selection import KFold
 from torch_geometric.loader import DataLoader
-
+from torchensemble import VotingRegressor
+from torch import nn
+from polymon.exp.score import scaling_error
+from torchensemble.utils import io
 from polymon.data.dataset import PolymerDataset
-from polymon.data.utils import Normalizer
+from polymon.data.utils import Normalizer, DescriptorSelector
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
 from polymon.model import PNA, build_model
-from polymon.model.base import ModelWrapper
+from polymon.model.base import ModelWrapper, EnsembleModelWrapper
 from polymon.setting import REPO_DIR
 
 
@@ -78,6 +82,7 @@ class Pipeline:
         self.train_loader, self.val_loader, self.test_loader = loaders
         self.normalizer = Normalizer.from_loader(self.train_loader)
         self.logger.info(f'Number of descriptors used: {self.num_descriptors}')
+        self.transform_cls, self.transform_kwargs = self._init_transform()
     
     def train(
         self,
@@ -85,16 +90,18 @@ class Pipeline:
         model_hparams: Optional[Dict[str, Any]] = None,
         out_dir: Optional[str] = None,
         loaders: Optional[Tuple[DataLoader, DataLoader, DataLoader]] = None,
+        model: Optional[ModelWrapper] = None,
     ):
         self.logger.info(f'Training {self.model_type} model for {self.label}...')
         if lr is None:
             lr = self.lr
-        if model_hparams is None:
-            model_hparams = {
-                'num_layers': self.num_layers,
-                'hidden_dim': self.hidden_dim,
-            }
-        model = self._build_model(model_hparams)
+        if model is None:
+            if model_hparams is None:
+                model_hparams = {
+                    'num_layers': self.num_layers,
+                    'hidden_dim': self.hidden_dim,
+                }
+            model = self._build_model(model_hparams)
         
         if out_dir is None:
             out_dir = os.path.join(self.out_dir, 'train')
@@ -118,7 +125,7 @@ class Pipeline:
         self, 
         n_fold: int = 5,
         model_hparams: Optional[Dict[str, Any]] = None,
-        out_dir: Optional[str] = None,
+        model: Optional[ModelWrapper] = None,
     ) -> List[float]:
         kfold = KFold(n_splits=n_fold, shuffle=True)
         val_errors = []
@@ -136,6 +143,7 @@ class Pipeline:
                 model_hparams=model_hparams,
                 out_dir=out_dir,
                 loaders=(train_loader, val_loader, None),
+                model=model,
             )
             self.logger.info(f'{fold+1}/{n_fold} val error: {val_error}')
             val_errors.append(val_error)
@@ -173,59 +181,140 @@ class Pipeline:
     def finetune(
         self,
         lr: float,
-        csv_path: str,
         pretrained_model_path: str,
+        csv_path: str = None,
         production_run: bool = False,
         freeze_repr_layers: bool = True,
+        n_fold: int = 1,
     ):
         out_dir = os.path.join(self.out_dir, 'finetune')
         os.makedirs(out_dir, exist_ok=True)
         self.logger.info(f'Finetuning {self.model_type} model for {self.label}...')
-        dataset = self._build_dataset(csv_path)
-        loaders = dataset.get_loaders(self.batch_size, 0.8, 0.1)
+        if csv_path is not None:
+            self.raw_csv = csv_path
+            self.dataset = self._build_dataset(self.sources)
         
-        model = ModelWrapper.from_file(pretrained_model_path, self.device)
+        pretrained_model = ModelWrapper.from_file(pretrained_model_path, self.device)
+        pretrained_dict = {k: v for k, v in pretrained_model.info['model'].items() if not k.startswith('predict')}
+        model = self._build_model(pretrained_model.info['model_init_params'])
+        model_dict = model.info['model']
+        model_dict.update(pretrained_dict)
+        model.model.load_state_dict(model_dict)
         if freeze_repr_layers:
             # Freeze the layers that are not starting with 'predict'
             for name, param in model.model.named_parameters():
                 if not name.startswith('predict'):
                     param.requires_grad = False
-        
-        trainer = Trainer(
-            out_dir=out_dir,
-            model=deepcopy(model),
-            lr=lr,
-            num_epochs=self.num_epochs,
-            logger=self.logger,
-            device=self.device,
-            early_stopping_patience=self.early_stopping_patience,
-        )
-        test_err = trainer.train(loaders[0], loaders[1], loaders[2], self.label)
+        if n_fold == 1:
+            test_err = self.train(
+                lr=lr,
+                model_hparams=pretrained_model.info['model_init_params'],
+                out_dir=out_dir,
+                model=model,
+            )
+        else:
+            test_err = self.cross_validation(
+                n_fold=n_fold,
+                model_hparams=pretrained_model.info['model_init_params'],
+                model=model,
+            )
+            test_err = np.mean(test_err)
         self.logger.info(f'test error: {test_err}')
         if production_run:
-            self.logger.info(f'Running production run for {self.model_type}...')
-            loaders = dataset.get_loaders(self.batch_size, 0.95, 0.05)
-            trainer = Trainer(
-                out_dir=out_dir,
-                model=deepcopy(model),
-                lr=lr,
-                num_epochs=self.num_epochs,
-                logger=self.logger,
-                device=self.device,
-                early_stopping_patience=self.early_stopping_patience,
+            self.production_run(
+                model_hparams=pretrained_model.info['model_init_params'],
+                model=model,
             )
-            trainer.train(loaders[0], loaders[1], loaders[2], self.label)
-        trainer.model.write(os.path.join(out_dir, f'{self.model_name}.pt'))
         return test_err
     
-    def production_run(self, model_hparams: Optional[Dict[str, Any]] = None):
+    def production_run(
+        self, 
+        model_hparams: Optional[Dict[str, Any]] = None,
+        model: Optional[ModelWrapper] = None,
+    ):
         self.logger.info(f'Running production run for {self.model_type}...')
         out_dir = os.path.join(self.out_dir, 'production')
         os.makedirs(out_dir, exist_ok=True)
 
         loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True)
-        self.train(None, model_hparams, out_dir, loaders)
+        self.train(None, model_hparams, out_dir, loaders, model)
         self.logger.info(f'Production run complete.')
+    
+    def run_ensemble(
+        self,
+        n_estimator: int,
+        model_hparams: Optional[Dict[str, Any]] = None,
+        run_production: bool = False,
+    ):
+        self.logger.info(f'Running ensemble for {self.model_type}...')
+        out_dir = os.path.join(self.out_dir, 'ensemble', 'train')
+        os.makedirs(out_dir, exist_ok=True)
+        if model_hparams is None:
+            model_hparams = {
+                'num_layers': self.num_layers,
+                'hidden_dim': self.hidden_dim,
+            }
+        model_wrapper = self._build_model(model_hparams)
+        
+        def build_ensemble(model_wrapper: ModelWrapper, n_estimator: int) -> VotingRegressor:
+            model = VotingRegressor(
+                estimator=model_wrapper.model.__class__,
+                estimator_args=model_wrapper.info['model_init_params'],
+                n_estimators=n_estimator,
+            )
+            model.logger = self.logger
+            model.set_criterion(nn.L1Loss())
+            model.set_optimizer('AdamW', lr=self.lr, weight_decay=1e-12)
+            return model
+
+        ensemble_model = build_ensemble(model_wrapper, n_estimator)
+        ensemble_wrapper = EnsembleModelWrapper(
+            model=ensemble_model,
+            normalizer=self.normalizer,
+            featurizer=self.dataset.featurizer,
+            transform_cls=self.transform_cls,
+            transform_kwargs=self.transform_kwargs,
+        )
+        test_err = ensemble_wrapper.fit(
+            epochs=self.num_epochs,
+            train_loader=self.train_loader,
+            val_loader=self.val_loader,
+            test_loader=self.test_loader,
+            save_dir=out_dir,
+            save_model=True,
+            log_interval=1000000000,
+            label=self.label,
+        )
+        self.logger.info(f'Ensemble test error: {test_err}')
+        
+        if run_production:
+            self.logger.info(f'Running ensemble production run for {self.model_type}...')
+            train_loader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
+            prod_ensemble_model = build_ensemble(model_wrapper, n_estimator)
+            prod_ensemble_wrapper = EnsembleModelWrapper(
+                model=prod_ensemble_model,
+                normalizer=self.normalizer,
+                featurizer=self.dataset.featurizer,
+                transform_cls=self.transform_cls,
+                transform_kwargs=self.transform_kwargs,
+            )
+            save_dir = os.path.join(self.out_dir, 'ensemble', 'production')
+            prod_ensemble_wrapper.fit(
+                train_loader=train_loader,
+                epochs=self.num_epochs,
+                save_dir=save_dir,
+                save_model=True,
+                log_interval=1000000000,
+                label=self.label,
+            )
+            prod_ensemble_model = build_ensemble(model_wrapper, n_estimator)
+            io.load(prod_ensemble_model, save_dir)
+            prod_ensemble_wrapper.model = prod_ensemble_model
+            prod_ensemble_wrapper.write(
+                os.path.join(self.out_dir, 'ensemble', 'production', f'{self.model_name}.pt')
+            )
+        
+        return test_err
     
     def _build_dataset(self, sources: List[str]) -> PolymerDataset:
         feature_names = ['x', 'bond', 'z']
@@ -266,6 +355,26 @@ class Pipeline:
             add_hydrogens=True,
             pre_transform=pre_transform
         )
+        if self.descriptors is not None and self.model_type.lower():
+            self.logger.info(f'Creating descriptor selector for {self.descriptors}...')
+            loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+            if self.model_type.lower() in ['gatv2']:
+                selector = DescriptorSelector.from_rf(loader)
+            else:
+                selector = DescriptorSelector.from_rf(loader, top_k=-1)
+            if pre_transform is not None:
+                self.logger.error(f'Not support multiple pre-transforms')
+                raise NotImplementedError
+            dataset = PolymerDataset(
+                raw_csv_path=self.raw_csv,
+                sources=sources,
+                feature_names=feature_names,
+                label_column=self.label,
+                force_reload=True,
+                add_hydrogens=True,
+                pre_transform=selector
+            )
+        
         self.logger.info(f'Atom features: {dataset.num_node_features}')
         self.logger.info(f'Bond features: {dataset.num_edge_features}')
         return dataset
@@ -283,6 +392,17 @@ class Pipeline:
         )
         num_params = sum(p.numel() for p in model.parameters())
         self.logger.info(f'Model Parameters: {num_params / 1e6:.4f}M')
+        
+        model = ModelWrapper(
+            model,
+            self.normalizer,
+            self.dataset.featurizer,
+            self.transform_cls,
+            self.transform_kwargs,
+        )
+        return model
+    
+    def _init_transform(self):
         if self.model_type.lower() in ['gps', 'kan_gps']:
             transform_cls = 'AddRandomWalkPE'
             transform_kwargs = {
@@ -292,12 +412,11 @@ class Pipeline:
         else:
             transform_cls = None
             transform_kwargs = None
-        
-        model = ModelWrapper(
-            model,
-            self.normalizer,
-            self.dataset.featurizer,
-            transform_cls,
-            transform_kwargs,
-        )
-        return model
+        if self.descriptors is not None:
+            transform_cls = 'DescriptorSelector'
+            transform_kwargs = {
+                'ids': self.dataset.pre_transform.ids,
+                'mean': self.dataset.pre_transform.mean,
+                'std': self.dataset.pre_transform.std,
+            }
+        return transform_cls, transform_kwargs
