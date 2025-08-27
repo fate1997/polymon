@@ -262,7 +262,7 @@ def merge(
     uncertainty_threshold: float = 0.1,
     difference_threshold: float = 0.1,
     target_size: int = 1000,
-    internal_path: str = str(REPO_DIR / 'database' / 'database.csv')
+    internal_path: str = str(REPO_DIR / 'database' / 'database.csv'),
 ):
     
     df = pd.read_csv(internal_path)
@@ -323,6 +323,7 @@ def merge(
     query_smiles = [smiles for smiles in query_smiles if smiles not in df_internal['SMILES'].tolist()]
     ref_props = [props_dict[smiles] for smiles in query_smiles]
     df_add = pd.DataFrame(zip(query_smiles, ref_props), columns=['SMILES', label])
+    df_add.to_csv(str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}_add.csv'), index=False)
     df_merged = pd.concat([df_internal, df_add], ignore_index=True)
     merge_path = str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}.csv')
     df_merged.to_csv(merge_path, index=False)

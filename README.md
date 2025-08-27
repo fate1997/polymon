@@ -18,6 +18,8 @@ pip install rdkit==2023.09.3
 - [x] Dataset ablation study. Find the best sources for each property. = = rather than using the previous datasets.
 - [ ] Maybe add pruner for hyper-parameter optimization to accelerate the process.
 - [ ] Non-bonded (based on conformer or Transformer)
+- [ ] Source as one-hot encoding!
+- [ ] Atom features from pretrained GNN models
 - [x] RF -> IMPORTANT FEATURES -> GNN = = not so good
 - [ ] Use linear first in the KAN-GNN models (https://github.com/WillHua127/GraphKAN-Graph-Kolmogorov-Arnold-Networks)
 - [ ] Pretrained on our own dataset following [MIPS](https://github.com/wjxts/MIPS), [FragNet](https://github.com/pnnl/FragNet) or [SimSGT](https://github.com/syr-cn/SimSGT)
