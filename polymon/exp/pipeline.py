@@ -16,12 +16,12 @@ from torch import nn
 from polymon.exp.score import scaling_error
 from torchensemble.utils import io
 from polymon.data.dataset import PolymerDataset
-from polymon.data.utils import Normalizer, DescriptorSelector
+from polymon.data.utils import Normalizer, DescriptorSelector, RgEstimator
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
 from polymon.model import PNA, build_model
 from polymon.model.base import ModelWrapper, EnsembleModelWrapper
-from polymon.setting import REPO_DIR
+from polymon.setting import REPO_DIR, DEFAULT_ATOM_FEATURES
 
 
 class Pipeline:
@@ -44,6 +44,8 @@ class Pipeline:
         n_trials: int,
         seed: int = 42,
         split_mode: Literal['source', 'random', 'scaffold'] = 'random',
+        train_residual: bool = False,
+        additional_features: Optional[List[str]] = None,
     ):
         seed_everything(seed)
         
@@ -64,6 +66,8 @@ class Pipeline:
         self.n_trials = n_trials
         self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
         self.split_mode = split_mode
+        self.train_residual = train_residual
+        self.additional_features = additional_features
         
         logger = loguru.logger
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -318,17 +322,8 @@ class Pipeline:
     
     def _build_dataset(self, sources: List[str]) -> PolymerDataset:
         feature_names = ['x', 'bond', 'z']
-        # feature_names += [
-        #     'degree', 
-        #     'is_aromatic', 
-        #     'chiral_tag', 
-        #     'num_hydrogens', 
-        #     'hybridization', 
-        #     'mass', 
-        #     'formal_charge', 
-        #     'is_attachment',
-        #     'cgcnn'
-        # ]
+        if self.additional_features is not None:
+            feature_names.extend(self.additional_features + DEFAULT_ATOM_FEATURES)
         if self.model_type.lower() in ['dimenetpp', 'gvp']:
             feature_names.append('pos')
             feature_names.remove('bond')
@@ -342,10 +337,15 @@ class Pipeline:
         if self.descriptors is not None:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
+        pre_transform = None
         if self.model_type.lower() in ['gps', 'kan_gps']:
             pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
-        else:
-            pre_transform = None
+        if self.train_residual:
+            pre_transform = RgEstimator(
+                N=600,
+                C_inf=6.7,
+                solvent='theta',
+            )
         dataset = PolymerDataset(
             raw_csv_path=self.raw_csv,
             sources=sources,
@@ -418,5 +418,13 @@ class Pipeline:
                 'ids': self.dataset.pre_transform.ids,
                 'mean': self.dataset.pre_transform.mean,
                 'std': self.dataset.pre_transform.std,
+            }
+        if self.train_residual:
+            assert self.label == 'Rg', 'Train residual is only supported for Rg'
+            transform_cls = 'RgEstimator'
+            transform_kwargs = {
+                'N': 600,
+                'C_inf': 6.7,
+                'solvent': 'theta',
             }
         return transform_cls, transform_kwargs

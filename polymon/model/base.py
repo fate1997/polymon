@@ -83,6 +83,7 @@ class ModelWrapper(nn.Module):
         for i, smiles in enumerate(smiles_list):
             rdmol = Chem.MolFromSmiles(smiles)
             mol_dict = self.featurizer(rdmol)
+            mol_dict['smiles'] = smiles
             if None in mol_dict.values():
                 mol_dict = backup_model.featurizer(rdmol)
                 backup_ids.append(i)
@@ -99,6 +100,8 @@ class ModelWrapper(nn.Module):
                 output = self.model(batch)
                 output = self.normalizer.inverse(output)
                 output = output.squeeze(0).squeeze(0)
+                if hasattr(batch, 'estimated_y'):
+                    output = output + batch.estimated_y.squeeze(0).squeeze(0)
                 y_pred_list.append(output)
             else:
                 y_pred_list.append(backup_model.predict([smiles_list[i]]))
@@ -219,7 +222,9 @@ class EnsembleModelWrapper(nn.Module):
             batch = batch.to(device)
             y_pred = self.model(batch)
             y_pred = self.normalizer.inverse(y_pred)
-            y_trues.extend(batch.y.detach().cpu().numpy())
+            y_pred = y_pred + getattr(batch, 'estimated_y', 0)
+            y_true = batch.y.detach() + getattr(batch, 'estimated_y', 0)
+            y_trues.extend(y_true.cpu().numpy())
             y_preds.extend(y_pred.detach().cpu().numpy())
         y_trues = np.array(y_trues)
         y_preds = np.array(y_preds)
@@ -239,6 +244,7 @@ class EnsembleModelWrapper(nn.Module):
         for i, smiles in enumerate(smiles_list):
             rdmol = Chem.MolFromSmiles(smiles)
             mol_dict = self.featurizer(rdmol)
+            mol_dict['smiles'] = smiles
             polymer = Polymer(**mol_dict)
             if self.transform is not None:
                 polymer = self.transform(polymer)
@@ -251,6 +257,8 @@ class EnsembleModelWrapper(nn.Module):
             output = self.model(batch)
             output = self.normalizer.inverse(output)
             output = output.squeeze(0).squeeze(0)
+            if hasattr(batch, 'estimated_y'):
+                output = output + batch.estimated_y.squeeze(0).squeeze(0)
             y_pred_list.append(output)
         if len(y_pred_list) == 1:
             return y_pred_list[0].detach().cpu()

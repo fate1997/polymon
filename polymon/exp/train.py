@@ -182,8 +182,11 @@ class Trainer:
             batch = batch.to(self.device)
             y_pred = self.model.model(batch)
             y_pred = self.model.normalizer.inverse(y_pred)
-            y_trues.extend(batch.y.detach().cpu().numpy())
+            y_pred = y_pred + getattr(batch, 'estimated_y', 0)
+            y_true = batch.y.detach() + getattr(batch, 'estimated_y', 0)
+            y_trues.extend(y_true.cpu().numpy())
             y_preds.extend(y_pred.detach().cpu().numpy())
+
         y_trues = np.array(y_trues)
         y_preds = np.array(y_preds)
         if np.isnan(y_trues).any() or np.isnan(y_preds).any():

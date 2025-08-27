@@ -25,6 +25,7 @@ def parse_args():
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--split-mode', type=str, default='random')
+    parser.add_argument('--train-residual', action='store_true')
 
     # Model
     parser.add_argument(
@@ -50,6 +51,7 @@ def parse_args():
     parser.add_argument('--pretrained-model', type=str, default=None)
     parser.add_argument('--n-fold', type=int, default=1)
     parser.add_argument('--n-estimator', type=int, default=1)
+    parser.add_argument('--additional-features', type=str, default=None, nargs='+')
 
     return parser.parse_args()
 
@@ -82,6 +84,8 @@ def main():
             n_trials=args.n_trials,
             seed=args.seed,
             split_mode=args.split_mode,
+            train_residual=args.train_residual,
+            additional_features=args.additional_features,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
