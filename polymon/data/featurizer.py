@@ -69,30 +69,44 @@ class AtomFeaturizer(Featurizer):
         'is_attachment',
         # 'xenonpy_atom',
         'cgcnn',
+        'source',
     ]
     def __init__(
         self,
         feature_names: List[str] = None,
         unique_atom_nums: List[int] = None,
+        unique_sources: List[str] = None,
     ):
         super().__init__(feature_names)
         self.unique_atom_nums = unique_atom_nums
         if self.feature_names is None:
             self.feature_names = DEFAULT_ATOM_FEATURES
+        self.unique_sources = unique_sources
     
     def __call__(
         self,
         rdmol: Chem.Mol,
     ) -> Dict[str, torch.Tensor]:
         atom_num = self.get_atom_num(rdmol, self.unique_atom_nums)
+        feature_names = deepcopy(self.feature_names)
+        if 'source' in feature_names:
+            feature_names.remove('source')
         
         x = []
         for atom in rdmol.GetAtoms():
             atom_features = []
-            for feature_name in self.feature_names:
+            for feature_name in feature_names:
                 atom_features.append(getattr(self, feature_name)(atom))
             x.append(torch.cat(atom_features))
         feature_exclude_atom_num = torch.stack(x, dim=0)
+        
+        if 'source' in self.feature_names:
+            source_feature = torch.zeros(len(self.unique_sources))
+            source_feature[self.unique_sources.index(rdmol.GetProp('Source'))] = 1
+            feature_exclude_atom_num = torch.cat([
+                feature_exclude_atom_num, 
+                source_feature.repeat(feature_exclude_atom_num.shape[0], 1)
+            ], dim=1)
         return {'x': torch.cat([atom_num, feature_exclude_atom_num], dim=1).float()}
     
     @staticmethod

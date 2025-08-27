@@ -57,6 +57,8 @@ class PolymerDataset(Dataset):
             self.data_list = data['data_list']
             self.label_column = data['label_column']
         else:
+            if self.pre_transform is not None:
+                logger.info(f'Applying pre-transform: {self.pre_transform}')
             df_nonan = pd.read_csv(raw_csv_path).dropna(subset=[label_column])
             if 'Source' in df_nonan.columns:
                 dedup = Dedup(df_nonan, label_column)
@@ -70,10 +72,13 @@ class PolymerDataset(Dataset):
             
             if 'pos' in feature_names:
                 add_hydrogens = True
+            
+            config = {}
             if 'x' in feature_names:
-                config = {'x': {'unique_atom_nums': UNIQUE_ATOM_NUMS}}
-            else:
-                config = {}
+                config['x'] = {'unique_atom_nums': UNIQUE_ATOM_NUMS}
+            if 'source' in feature_names:
+                config['x']['unique_sources'] = self.sources + ['internal']
+                
             featurizer = ComposeFeaturizer(feature_names, config, add_hydrogens)
             self.featurizer = featurizer
         
@@ -84,6 +89,8 @@ class PolymerDataset(Dataset):
                     logger.warning(f'Skipping {row[smiles_column]} because of not 2 attachments')
                     continue
                 rdmol = Chem.MolFromSmiles(row[smiles_column])
+                if 'source' in feature_names:
+                    rdmol.SetProp('Source', row['Source'])
                 label = row[self.label_column]
                 mol_dict = self.featurizer(rdmol)
                 mol_dict['y'] = torch.tensor(label).unsqueeze(0).unsqueeze(0).float()
@@ -126,6 +133,7 @@ class PolymerDataset(Dataset):
             
             if save_processed:
                 os.makedirs(osp.dirname(processed_path), exist_ok=True)
+                logger.info(f'Saving processed dataset to {processed_path}')
                 torch.save({
                     'data_list': self.data_list,
                     'label_column': self.label_column
