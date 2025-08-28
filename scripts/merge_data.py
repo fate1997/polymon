@@ -263,6 +263,7 @@ def merge(
     difference_threshold: float = 0.1,
     target_size: int = 1000,
     internal_path: str = str(REPO_DIR / 'database' / 'database.csv'),
+    base_csv: str = None,
 ):
     
     df = pd.read_csv(internal_path)
@@ -323,11 +324,16 @@ def merge(
     query_smiles = [smiles for smiles in query_smiles if smiles not in df_internal['SMILES'].tolist()]
     ref_props = [props_dict[smiles] for smiles in query_smiles]
     df_add = pd.DataFrame(zip(query_smiles, ref_props), columns=['SMILES', label])
-    df_add.to_csv(str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}_add.csv'), index=False)
-    df_merged = pd.concat([df_internal, df_add], ignore_index=True)
+    
+    if base_csv is not None:
+        df_base = pd.read_csv(base_csv)[['SMILES', label]]
+    else:
+        df_base = df_internal
+        
+    df_merged = pd.concat([df_base, df_add], ignore_index=True)
     merge_path = str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}.csv')
     df_merged.to_csv(merge_path, index=False)
-    print(f'Merged {sample_size} samples from {sources} to internal {len(df_internal)}: {len(df_merged)}')
+    print(f'Merged {len(df_add)} samples from {sources} to internal {len(df_internal)}: {len(df_merged)}')
 
 def arg_parser():
     parser = argparse.ArgumentParser()
@@ -339,6 +345,7 @@ def arg_parser():
     parser.add_argument('--uncertainty-threshold', type=float, default=0.1)
     parser.add_argument('--difference-threshold', type=float, default=0.1)
     parser.add_argument('--target-size', type=int, default=1000)
+    parser.add_argument('--base-csv', type=str, default=None)
     return parser.parse_args()
 
 def main():
@@ -352,6 +359,7 @@ def main():
         uncertainty_threshold=args.uncertainty_threshold,
         difference_threshold=args.difference_threshold,
         target_size=args.target_size,
+        base_csv=args.base_csv,
     )
 
 if __name__ == '__main__':
