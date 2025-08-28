@@ -280,3 +280,5 @@ kan_gps,,,,0.0255,,0.0255,hparams-opt (K-Fold)
 gatv2,,,,0.0186,,0.0186,residual-cv (K-Fold) (Optuna)
 gatv2,,,,0.0180,,0.0180,residual-cv-ensemble
 gatv2,,,,,0.0717,0.0717,residual-epig-300samples (Optuna)
+gatv2,,,,,0.0526,0.0526,MD-PI1070-Difference-All (K-Fold) (Optuna)
+gatv2,,,,,0.0550,0.0550,MD-PI1070-Difference-All

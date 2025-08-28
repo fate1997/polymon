@@ -313,6 +313,7 @@ class Pipeline:
                 featurizer=self.dataset.featurizer,
                 transform_cls=self.transform_cls,
                 transform_kwargs=self.transform_kwargs,
+                estimator=self.estimator,
             )
             save_dir = os.path.join(self.out_dir, 'ensemble', 'production')
             prod_ensemble_wrapper.fit(

@@ -60,6 +60,8 @@ def parse_args():
 def main():
     args = parse_args()
     out_dir = os.path.join(args.out_dir, args.model)
+    if args.n_estimator > 1:
+        args.tag += f'-ensemble'
     os.makedirs(out_dir, exist_ok=True)
     performance = {}
     n_tests = []
