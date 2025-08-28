@@ -276,3 +276,7 @@ gatv2,,,,,0.0541,0.0541,residual-cv-best (K-Fold)
 gatv2,,,,,0.0507,0.0507,residual-ensemble-cv-hparams-opt-2000epochs
 gatv2,,,,,0.0784,0.0784,residual-source-as-feature (Optuna)
 gatv2,,,,,0.0653,0.0653,residual-ensemble-MD-merged
+kan_gps,,,,0.0255,,0.0255,hparams-opt (K-Fold)
+gatv2,,,,0.0186,,0.0186,residual-cv (K-Fold) (Optuna)
+gatv2,,,,0.0180,,0.0180,residual-cv-ensemble
+gatv2,,,,,0.0717,0.0717,residual-epig-300samples (Optuna)
