@@ -52,6 +52,7 @@ def parse_args():
     parser.add_argument('--n-fold', type=int, default=1)
     parser.add_argument('--n-estimator', type=int, default=1)
     parser.add_argument('--additional-features', type=str, default=None, nargs='+')
+    parser.add_argument('--skip-train', action='store_true')
 
     return parser.parse_args()
 
@@ -108,21 +109,24 @@ def main():
                 hparams.update(hparams_loaded)
             
             # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
-            if args.n_fold == 1 and args.n_estimator == 1:
-                test_err = pipeline.train(model_hparams=hparams)
-            if args.n_fold > 1 and args.n_estimator == 1:
-                test_err = pipeline.cross_validation(
-                    n_fold=args.n_fold,
-                    model_hparams=hparams,
-                )
-                test_err = np.mean(test_err)
-            if args.n_estimator > 1:
-                test_err = pipeline.run_ensemble(
-                    n_estimator=args.n_estimator,
-                    model_hparams=hparams,
-                    run_production=args.run_production,
-                )
-            model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
+            if not args.skip_train:
+                if args.n_fold == 1 and args.n_estimator == 1:
+                    test_err = pipeline.train(model_hparams=hparams)
+                if args.n_fold > 1 and args.n_estimator == 1:
+                    test_err = pipeline.cross_validation(
+                        n_fold=args.n_fold,
+                        model_hparams=hparams,
+                    )
+                    test_err = np.mean(test_err)
+                if args.n_estimator > 1:
+                    test_err = pipeline.run_ensemble(
+                        n_estimator=args.n_estimator,
+                        model_hparams=hparams,
+                        run_production=args.run_production,
+                    )
+                model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
+            else:
+                test_err = np.nan
         
         # CHOICE 3: Finetune model OR run production
         if args.finetune:
