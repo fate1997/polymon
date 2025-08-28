@@ -38,6 +38,7 @@ class PolymerDataset(Dataset):
         add_hydrogens: bool = False,
         fitting_source: List[str] = None,
         pre_transform: Optional[Callable] = None,
+        estimator: Optional[Callable] = None,
     ):
         super().__init__()
         
@@ -47,6 +48,7 @@ class PolymerDataset(Dataset):
         self.sources = sources
         assert self.label_column in TARGETS
         self.pre_transform = pre_transform
+        self.estimator = estimator
         
         processed_name = f'{label_column}_{"_".join(sources)}.pt'
         os.makedirs(str(REPO_DIR / 'database' / 'processed'), exist_ok=True)
@@ -105,6 +107,8 @@ class PolymerDataset(Dataset):
                 data = Polymer(**mol_dict)
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
+                if self.estimator is not None:
+                    data = self.estimator(data)
                 data_list.append(data)
 
             # Add pretrained embeddings

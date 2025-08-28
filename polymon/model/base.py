@@ -16,6 +16,7 @@ from polymon.data.featurizer import ComposeFeaturizer
 from polymon.exp.score import scaling_error
 from polymon.data.polymer import Polymer
 from polymon.data.utils import Normalizer
+from polymon.estimator.base import BaseEstimator
 
 
 class BaseModel(nn.Module, ABC):
@@ -36,6 +37,7 @@ class ModelWrapper(nn.Module):
         featurizer: ComposeFeaturizer,
         transform_cls: str = None,
         transform_kwargs: Dict[str, Any] = None,
+        estimator: BaseEstimator = None,
     ):
         super().__init__()
         self.model = model
@@ -48,6 +50,7 @@ class ModelWrapper(nn.Module):
             self.transform = transform_cls(**transform_kwargs)
         else:
             self.transform = None
+        self.estimator = estimator
 
     def forward(
         self, 
@@ -90,6 +93,8 @@ class ModelWrapper(nn.Module):
             polymer = Polymer(**mol_dict)
             if self.transform is not None:
                 polymer = self.transform(polymer)
+            if self.estimator is not None:
+                polymer = self.estimator(polymer)
             polymers.append(polymer)
         loader = DataLoader(polymers, batch_size=batch_size)
         
@@ -127,6 +132,9 @@ class ModelWrapper(nn.Module):
             'transform_cls': self.transform_cls,
             'transform_kwargs': self.transform_kwargs,
         }
+        if self.estimator is not None:
+            output['estimator_cls'] = self.estimator.__class__.__name__
+            output['estimator_init_params'] = self.estimator.init_params
         return output
     
     def write(self, path: str) -> str:
@@ -150,7 +158,15 @@ class ModelWrapper(nn.Module):
         )
         transform_cls = model_info.get('transform_cls', None)
         transform_kwargs = model_info.get('transform_kwargs', None)
-        return cls(model, normalizer, featurizer, transform_cls, transform_kwargs)
+        
+        estimator_cls = model_info.get('estimator_cls', None)
+        estimator_kwargs = model_info.get('estimator_init_params', None)
+        if estimator_cls is not None:
+            estimator_cls = getattr(import_module('polymon.estimator'), estimator_cls)
+            estimator = estimator_cls(**estimator_kwargs)
+        else:
+            estimator = None
+        return cls(model, normalizer, featurizer, transform_cls, transform_kwargs, estimator)
     
     @classmethod
     def from_file(
@@ -171,6 +187,7 @@ class EnsembleModelWrapper(nn.Module):
         featurizer: ComposeFeaturizer,
         transform_cls: str = None,
         transform_kwargs: Dict[str, Any] = None,
+        estimator: BaseEstimator = None,
     ):
         super().__init__()
         self.model = model
@@ -183,6 +200,7 @@ class EnsembleModelWrapper(nn.Module):
             self.transform = transform_cls(**transform_kwargs)
         else:
             self.transform = None
+        self.estimator = estimator
 
     def fit(
         self, 
@@ -248,6 +266,8 @@ class EnsembleModelWrapper(nn.Module):
             polymer = Polymer(**mol_dict)
             if self.transform is not None:
                 polymer = self.transform(polymer)
+            if self.estimator is not None:
+                polymer = self.estimator(polymer)
             polymers.append(polymer)
         loader = DataLoader(polymers, batch_size=batch_size)
         
@@ -284,6 +304,9 @@ class EnsembleModelWrapper(nn.Module):
             'transform_cls': self.transform_cls,
             'transform_kwargs': self.transform_kwargs,
         }
+        if self.estimator is not None:
+            output['base_estimator_cls'] = self.estimator.__class__.__name__
+            output['base_estimator_init_params'] = self.estimator.init_params
         return output
     
     def write(self, path: str) -> str:
@@ -314,7 +337,15 @@ class EnsembleModelWrapper(nn.Module):
         )
         transform_cls = model_info.get('transform_cls', None)
         transform_kwargs = model_info.get('transform_kwargs', None)
-        return cls(model, normalizer, featurizer, transform_cls, transform_kwargs)
+        
+        base_estimator_cls = model_info.get('base_estimator_cls', None)
+        base_estimator_kwargs = model_info.get('base_estimator_init_params', None)
+        if base_estimator_cls is not None:
+            base_estimator_cls = getattr(import_module('polymon.estimator'), base_estimator_cls)
+            base_estimator = base_estimator_cls(**base_estimator_kwargs)
+        else:
+            base_estimator = None
+        return cls(model, normalizer, featurizer, transform_cls, transform_kwargs, base_estimator)
     
     @classmethod
     def from_file(

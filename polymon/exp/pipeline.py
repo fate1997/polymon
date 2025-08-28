@@ -22,6 +22,7 @@ from polymon.hparams import get_hparams
 from polymon.model import PNA, build_model
 from polymon.model.base import ModelWrapper, EnsembleModelWrapper
 from polymon.setting import REPO_DIR, DEFAULT_ATOM_FEATURES
+from polymon.estimator import get_estimator
 
 
 class Pipeline:
@@ -75,6 +76,11 @@ class Pipeline:
         handler = logging.FileHandler(log_path)
         optuna.logging.get_logger('optuna').addHandler(handler)
         self.logger = logger    
+        
+        self.estimator = None
+        if self.train_residual:
+            self.logger.info(f'Train residual: {self.label}')
+            self.estimator = get_estimator(self.label)
 
         self.logger.info(f'Building dataset for {label}...')
         self.dataset = self._build_dataset(sources)
@@ -130,11 +136,15 @@ class Pipeline:
         n_fold: int = 5,
         model_hparams: Optional[Dict[str, Any]] = None,
         model: Optional[ModelWrapper] = None,
+        current_trial: Optional[int] = None,
     ) -> List[float]:
         kfold = KFold(n_splits=n_fold, shuffle=True)
         val_errors = []
         for fold, (train_idx, val_idx) in enumerate(kfold.split(self.dataset)):
-            self.logger.info(f'Running fold {fold+1}/{n_fold}...')
+            print_str = f'Running fold {fold+1}/{n_fold}'
+            if current_trial is not None:
+                print_str += f' (trial {current_trial}/{self.n_trials})'
+            self.logger.info(print_str)
             train_loader = DataLoader(
                 self.dataset[train_idx], batch_size=self.batch_size, shuffle=True
             )
@@ -168,6 +178,7 @@ class Pipeline:
                 val_errors = self.cross_validation(
                     n_fold=n_fold,
                     model_hparams=model_hparams, 
+                    current_trial=trial.number+1,
                 )
                 return np.mean(val_errors)
             else:
@@ -278,6 +289,7 @@ class Pipeline:
             featurizer=self.dataset.featurizer,
             transform_cls=self.transform_cls,
             transform_kwargs=self.transform_kwargs,
+            estimator=self.estimator,
         )
         test_err = ensemble_wrapper.fit(
             epochs=self.num_epochs,
@@ -321,6 +333,7 @@ class Pipeline:
         return test_err
     
     def _build_dataset(self, sources: List[str]) -> PolymerDataset:
+        # Set feature names
         feature_names = ['x', 'bond', 'z']
         if self.additional_features is not None:
             feature_names.extend(self.additional_features + DEFAULT_ATOM_FEATURES)
@@ -337,15 +350,12 @@ class Pipeline:
         if self.descriptors is not None:
             feature_names.extend(self.descriptors)
         self.logger.info(f'Feature names: {feature_names}')
+        
+        # Set pre-transforms
         pre_transform = None
         if self.model_type.lower() in ['gps', 'kan_gps']:
             pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
-        if self.train_residual:
-            pre_transform = RgEstimator(
-                N=600,
-                C_inf=6.7,
-                solvent='theta',
-            )
+
         dataset = PolymerDataset(
             raw_csv_path=self.raw_csv,
             sources=sources,
@@ -353,9 +363,12 @@ class Pipeline:
             label_column=self.label,
             force_reload=True,
             add_hydrogens=True,
-            pre_transform=pre_transform
+            pre_transform=pre_transform,
+            estimator=self.estimator,
         )
-        if self.descriptors is not None and self.model_type.lower():
+        
+        # Post-transforms after creating dataset
+        if self.descriptors is not None and self.model_type.lower() in ['gatv2']:
             self.logger.info(f'Creating descriptor selector for {self.descriptors}...')
             loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
             if self.model_type.lower() in ['gatv2']:
@@ -372,7 +385,8 @@ class Pipeline:
                 label_column=self.label,
                 force_reload=True,
                 add_hydrogens=True,
-                pre_transform=selector
+                pre_transform=selector,
+                estimator=self.estimator,
             )
         
         self.logger.info(f'Atom features: {dataset.num_node_features}')
@@ -399,6 +413,7 @@ class Pipeline:
             self.dataset.featurizer,
             self.transform_cls,
             self.transform_kwargs,
+            self.estimator,
         )
         return model
     
@@ -418,13 +433,5 @@ class Pipeline:
                 'ids': self.dataset.pre_transform.ids,
                 'mean': self.dataset.pre_transform.mean,
                 'std': self.dataset.pre_transform.std,
-            }
-        if self.train_residual:
-            assert self.label == 'Rg', 'Train residual is only supported for Rg'
-            transform_cls = 'RgEstimator'
-            transform_kwargs = {
-                'N': 600,
-                'C_inf': 6.7,
-                'solvent': 'theta',
             }
         return transform_cls, transform_kwargs
