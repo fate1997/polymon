@@ -21,7 +21,7 @@ class Dedup:
         self.rtol = rtol
         # Remove other columns
         df = df[['SMILES', 'Source', 'Uncertainty', label, 'id']]
-        self.df = df
+        self.df = df.dropna(subset=[label])
         self.must_keep = must_keep
     
     def add_df(
@@ -139,6 +139,9 @@ class Dedup:
             source1, source2 = source2, source1
         
         # Plot the comparison
+        nan_mask = np.isnan(x) | np.isnan(y)
+        x = x[~nan_mask]
+        y = y[~nan_mask]
         plt.scatter(x, y, color='blue', alpha=0.5, label='Data')
         plt.xlabel(f'{self.label} ({source1})')
         plt.ylabel(f'{self.label} ({source2})')

@@ -224,10 +224,59 @@ kan_gps,0.0546,,,,,0.0546,KAN-NOT-EMB
 kan_gps,0.0323,,,,,0.0323,KAN-in-EMB
 kan_gps,0.0304,,,,,0.0304,fastkan-transformer
 kan_gps,0.0276,,,,,0.0276,fastkan-transformer-mlps
-rf,,0.0192,,,,0.0192,rdkit2d-debug
-xgb,,0.0172,,,,0.0172,rdkit2d-debug
-tabpfn,,0.0152,,,,0.0152,rdkit2d-debug
-tabpfn,,0.0150,,,,0.0150,mordred-debug
-tabpfn,,0.0211,,,,0.0211,maccs-debug
-gatv2,,0.0134,,,,0.0134,debug
-gps,,0.0113,,,,0.0113,debug
+gatv2,,,0.0447,,,0.0447,cgcnn-feature
+gatv2,,,0.0488,,,0.0488,no-cgcnn
+gatv2,,,0.0443,,,0.0443,no-cgcnn
+gatv2,,,0.0452,,,0.0452,cgcnn-feature
+fastkan_gatv2,0.0255,,,,,0.0255,initial-test
+fastkan_gatv2,,,0.0534,,,0.0534,initial-test
+fastkan_gatv2,,,0.0565,,,0.0565,initial-test
+gatv2,,,0.0468,,,0.0468,initial-test
+gatv2,,,0.0396,,,0.0396,scaffold (Optuna) (scaffold)
+gatv2,,,0.0433,,,0.0433,cgcnn-feature (Optuna)
+fastkan_gatv2,,,0.0429,,,0.0429,initial-test (Optuna)
+gatv2,,,0.0549,,,0.0549,new-split (Optuna) (source) significant difference with previous results (same settings)
+gatv2,,,0.0533,,,0.0533,use-selected-descriptors (Optuna)
+gatv2,,,0.0437,,,0.0437,initial-test (K-Fold) (Optuna)
+gatv2,,,,,,,initial-test
+gatv2,,,,,,,initial-test
+gatv2,,,,0.0250,,0.0250,finetune-not-freeze-repr
+gatv2,,,,0.0277,,0.0277,finetune-freeze-repr
+gatv2,,,,0.0268,,0.0268,finetune-freeze-repr
+gatv2,,,,0.0269,,0.0269,finetune
+gatv2,,,,0.0266,,0.0266,finetune-lr5e-4-not-freeze
+gatv2,,,,0.0245,,0.0245,finetune-lr5e-4-freeze
+gatv2,,,,0.0101,,0.0101,finetune-lr5e-4-no-freeze-cv (K-Fold)
+gatv2,,,,0.0129,,0.0129,finetune-lr5e-4-freeze-cv (K-Fold)
+gatv2,,,,0.0211,,0.0211,cv (K-Fold)
+gatv2,,,,0.0101,,0.0101,finetune-lr5e-4-from-FFV-cv (K-Fold)
+gatv2,,,,0.0184,,0.0184,ensemble-test
+gatv2,,,0.0558,,,0.0558,ensemble-test
+gatv2,,0.0096,,,,0.0096,ensemble-test
+kan_gatv2,,,,,0.1260,0.1260,all-PI1070
+kan_gatv2,,,,,0.0483,0.0483,test
+gatv2,,,,0.0187,,0.0187,PI1070-difference-merged
+gatv2,,,,0.0212,,0.0212,PI1070-difference-merged
+gatv2,,,,0.0242,,0.0242,PI1070-uncertainty-merged
+gatv2,,,,0.0230,,0.0230,PI1070-epig-merged
+gatv2,,,,0.0211,,0.0211,all-difference-merged
+gatv2,,,,,0.0566,0.0566,residual
+gatv2,,,,,0.0478,0.0478,residual (Optuna)
+gatv2,,,,0.0195,,0.0195,PI1070-epig-merged (K-Fold) (Optuna)
+kan_gatv2,,,,,0.0527,0.0527,residual (Optuna)
+kan_gatv2,,,,,0.0687,0.0687,residual-with-previous-hparams
+gatv2,,,,,0.0521,0.0521,residual-ensemble
+kan_gatv2,,,,,0.0545,0.0545,residual-cv (K-Fold) (Optuna) not tested on kaggle
+gatv2,,,,,0.0729,0.0729,residual-epig (Optuna)
+gatv2,,,,,0.0720,0.0720,residual-epig-ensemble
+gatv2,,,,,0.0522,0.0522,residual-new-difference (Optuna)
+gatv2,,,,,0.0537,0.0537,residual-cv (K-Fold) (Optuna)
+gatv2,,,,,0.0540,0.0540,residual-ensemble-cv-hparams-opt
+gatv2,,,,,0.0541,0.0541,residual-cv-best (K-Fold)
+gatv2,,,,,0.0507,0.0507,residual-ensemble-cv-hparams-opt-2000epochs
+gatv2,,,,,0.0784,0.0784,residual-source-as-feature (Optuna)
+gatv2,,,,,0.0653,0.0653,residual-ensemble-MD-merged
+kan_gps,,,,0.0255,,0.0255,hparams-opt (K-Fold)
+gatv2,,,,0.0186,,0.0186,residual-cv (K-Fold) (Optuna)
+gatv2,,,,0.0180,,0.0180,residual-cv-ensemble
+gatv2,,,,,0.0717,0.0717,residual-epig-300samples (Optuna)

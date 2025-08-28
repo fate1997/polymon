@@ -219,14 +219,17 @@ class FastKANWrapper(BaseModel):
         in_channels: int,
         hidden_dim: int,
         num_layers: int,
+        grid_min: float = -2.,
+        grid_max: float = 2.,
+        num_grids: int = 8,
     ):
         super(FastKANWrapper, self).__init__()
 
         self.fastkan = FastKAN(
             layers_hidden=[in_channels] + [hidden_dim] * num_layers + [1],
-            grid_min=-2.,
-            grid_max=2.,
-            num_grids=8,
+            grid_min=grid_min,
+            grid_max=grid_max,
+            num_grids=num_grids,
         )
 
     def forward(self, batch: Polymer):

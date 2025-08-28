@@ -36,3 +36,17 @@ GEOMETRY_VOCAB = REPO_DIR / 'database' / 'geometry_vocab'
 
 with open(REPO_DIR / 'polymon' / 'data' / 'cgcnn.json', 'r') as f:
     CGCNN_ELEMENT_INFO = json.load(f)
+
+
+DEFAULT_ATOM_FEATURES = [
+    'degree', 
+    'is_aromatic', 
+    'chiral_tag', 
+    'num_hydrogens', 
+    'hybridization', 
+    'mass', 
+    'formal_charge', 
+    'is_attachment',
+]
+
+DEFAULT_TOPK_DESCRIPTORS = 25

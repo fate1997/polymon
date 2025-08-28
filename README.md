@@ -7,22 +7,29 @@ This is for the Kaggle competition about polymer property prediction.
 pip install tabpfn==2.0.9
 pip install rdkit==2023.09.3
 ```
+## Overall TODO
+1. `Dataset`: Merge datasets more wisely (e.g., using uncertainty to merge datasets)
+2. `Feature`: Explore new node features, bond features, and graph features.
+3. `Graph`: How to construct a good polymer graph?
+4. `Model`: Explore more GNNs, Transformers, or other models. Check the existing hyperparameters.
+5. `Training`: Add learning rate scheduler, cross-validation, multi-task training, scaffold-based splitting, ensemble, etc.
 
 ## TODO
-- [ ] Dataset ablation study. Find the best sources for each property.
+- [x] Dataset ablation study. Find the best sources for each property. = = rather than using the previous datasets.
+- [ ] Maybe add pruner for hyper-parameter optimization to accelerate the process.
 - [ ] Non-bonded (based on conformer or Transformer)
+- [ ] Source as one-hot encoding!
+- [ ] Atom features from pretrained GNN models
+- [x] RF -> IMPORTANT FEATURES -> GNN = = not so good
 - [ ] Use linear first in the KAN-GNN models (https://github.com/WillHua127/GraphKAN-Graph-Kolmogorov-Arnold-Networks)
-- [ ] Try this model: https://github.com/wjxts/MIPS (no open source weights)
-- [ ] https://github.com/pnnl/FragNet
-- [ ] https://github.com/syr-cn/SimSGT
-- [ ] Pretrained on our own dataset following MIPS, FragNet or SimSGT
+- [ ] Pretrained on our own dataset following [MIPS](https://github.com/wjxts/MIPS), [FragNet](https://github.com/pnnl/FragNet) or [SimSGT](https://github.com/syr-cn/SimSGT)
 - [ ] Review: https://www.sciencedirect.com/science/article/pii/S0079642525001227#b1005
 
 - [x] Try to assign 3D coordinates to polymers, and use `DimeNet++` to predict the properties.
 - [ ] Calculate `Rg` based on MD files
 - [x] Test `GATv2` with bond features
 - [x] Test `GATv2` with different loss functions l1-loss and mse-loss
-- [ ] Implement cross-validation methods for DL models
+- [x] Implement cross-validation methods for DL models
 - [x] GIN, GCN2, PNA, ESA implementation and hyperparameter optimization
 - [x] Test performance of `GATPort`
 - [x] Virtual node (use descriptors as the initial features) (atom + descriptors seems have potential)

@@ -24,6 +24,8 @@ def parse_args():
     parser.add_argument('--sources', type=str, nargs='+', default=['official_external'])
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
     parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument('--split-mode', type=str, default='random')
+    parser.add_argument('--train-residual', action='store_true')
 
     # Model
     parser.add_argument(
@@ -44,7 +46,13 @@ def parse_args():
     parser.add_argument('--n-trials', type=int, default=25)
     parser.add_argument('--optimize-hparams', action='store_true')
     parser.add_argument('--run-production', action='store_true')
+    parser.add_argument('--finetune', action='store_true')
     parser.add_argument('--finetune-csv-path', type=str, default=None)
+    parser.add_argument('--pretrained-model', type=str, default=None)
+    parser.add_argument('--n-fold', type=int, default=1)
+    parser.add_argument('--n-estimator', type=int, default=1)
+    parser.add_argument('--additional-features', type=str, default=None, nargs='+')
+    parser.add_argument('--skip-train', action='store_true')
 
     return parser.parse_args()
 
@@ -76,13 +84,18 @@ def main():
             device=args.device,
             n_trials=args.n_trials,
             seed=args.seed,
+            split_mode=args.split_mode,
+            train_residual=args.train_residual,
+            additional_features=args.additional_features,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
+        
+        # CHOICE 1: Optimize hyperparameters OR train model on default parameters
         if args.optimize_hparams:
-            test_err, hparams = pipeline.optimize_hparams()
+            test_err, hparams = pipeline.optimize_hparams(n_fold=args.n_fold)
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
-        else:
+        elif not args.finetune:
             hparams = {
                 'hidden_dim': args.hidden_dim,
                 'num_layers': args.num_layers}
@@ -94,16 +107,38 @@ def main():
                         hparams_loaded = json.load(f)
                 pipeline.logger.info(f'Loading hparams from {args.hparams_from}')
                 hparams.update(hparams_loaded)
-            test_err = pipeline.train(model_hparams=hparams)
-            model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
-        if args.finetune_csv_path is not None:
+            
+            # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
+            if not args.skip_train:
+                if args.n_fold == 1 and args.n_estimator == 1:
+                    test_err = pipeline.train(model_hparams=hparams)
+                if args.n_fold > 1 and args.n_estimator == 1:
+                    test_err = pipeline.cross_validation(
+                        n_fold=args.n_fold,
+                        model_hparams=hparams,
+                    )
+                    test_err = np.mean(test_err)
+                if args.n_estimator > 1:
+                    test_err = pipeline.run_ensemble(
+                        n_estimator=args.n_estimator,
+                        model_hparams=hparams,
+                        run_production=args.run_production,
+                    )
+                model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
+            else:
+                test_err = np.nan
+        
+        # CHOICE 3: Finetune model OR run production
+        if args.finetune:
             test_err = pipeline.finetune(
-                0.001, 
+                0.0005, 
+                args.pretrained_model or model_path, 
                 args.finetune_csv_path, 
-                model_path, 
-                args.run_production
+                args.run_production,
+                freeze_repr_layers=False,
+                n_fold=args.n_fold
             )
-        elif args.run_production:
+        elif args.run_production and args.n_estimator == 1:
             pipeline.production_run(hparams)
         
         performance[label] = test_err
@@ -115,6 +150,12 @@ def main():
     performance['score'] = np.average(list(performance.values()), weights=property_weight)
     performance['model'] = args.model
     performance['extra_info'] = f'{args.tag}'
+    if args.n_fold > 1:
+        performance['extra_info'] += f' (K-Fold)'
+    if args.optimize_hparams:
+        performance['extra_info'] += f' (Optuna)'
+    if args.split_mode != 'random':
+        performance['extra_info'] += f' ({args.split_mode})'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
     df = pd.concat([df, new_df], ignore_index=True)
     df.to_csv(results_path, index=False, float_format="%.4f")
