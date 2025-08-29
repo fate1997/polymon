@@ -16,9 +16,11 @@ pip install rdkit==2023.09.3
 
 ## TODO
 - [x] Dataset ablation study. Find the best sources for each property. = = rather than using the previous datasets.
+- [ ] Loss weights for different fidelities.
 - [ ] Maybe add pruner for hyper-parameter optimization to accelerate the process.
 - [ ] Non-bonded (based on conformer or Transformer)
 - [ ] Source as one-hot encoding!
+- [ ] Group contribution in https://github.com/IBM/polymer_property_prediction/blob/main/src/polymer_property_prediction/polymer_properties_from_smiles.py
 - [ ] Atom features from pretrained GNN models
 - [x] RF -> IMPORTANT FEATURES -> GNN = = not so good
 - [ ] Use linear first in the KAN-GNN models (https://github.com/WillHua127/GraphKAN-Graph-Kolmogorov-Arnold-Networks)
