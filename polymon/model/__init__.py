@@ -1,6 +1,6 @@
+import typing
 from typing import Any, Dict
 
-from polymon.model.base import BaseModel
 from polymon.model.gatv2.fastkan_gatv2 import FastKAN_GATv2
 from polymon.model.gatv2.gat_chain import GATChain
 from polymon.model.gatv2.gat_chain_readout import GATv2ChainReadout
@@ -15,6 +15,8 @@ from polymon.model.kan.fast_kan import FastKANWrapper
 # from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
 
+if typing.TYPE_CHECKING:
+    from polymon.model.base import BaseModel
 
 def build_model(
     model_type: str, 
@@ -22,7 +24,7 @@ def build_model(
     num_edge_features: int,
     num_descriptors: int,
     hparams: Dict[str, Any]
-) -> BaseModel:
+) -> 'BaseModel':
     if model_type == 'gatv2':
         input_args = {
             'num_atom_features': num_node_features,

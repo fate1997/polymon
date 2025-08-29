@@ -15,10 +15,6 @@ from tqdm import tqdm
 from polymon.data.dedup import Dedup
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import Polymer
-from polymon.data.pretrained import (assign_pretrained_embeddings,
-                                     get_gaff2_features,
-                                     get_polybert_embeddings,
-                                     get_polycl_embeddings)
 from polymon.setting import (PRETRAINED_MODELS, REPO_DIR, TARGETS,
                              UNIQUE_ATOM_NUMS)
 
@@ -114,6 +110,12 @@ class PolymerDataset(Dataset):
             # Add pretrained embeddings
             if len(self.feature_names) != len(feature_names):
                 logger.info(f'Building pretrained embeddings...')
+                from polymon.data.pretrained import (
+                    assign_pretrained_embeddings,
+                    get_gaff2_features,
+                    get_polybert_embeddings,
+                    get_polycl_embeddings,
+                )
             if 'polycl' in self.feature_names:
                 pretrained_embeddings = get_polycl_embeddings(
                     df_nonan[smiles_column].tolist(),

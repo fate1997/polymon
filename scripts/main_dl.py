@@ -53,6 +53,7 @@ def parse_args():
     parser.add_argument('--n-estimator', type=int, default=1)
     parser.add_argument('--additional-features', type=str, default=None, nargs='+')
     parser.add_argument('--skip-train', action='store_true')
+    parser.add_argument('--low-fidelity-model', type=str, default=None)
 
     return parser.parse_args()
 
@@ -89,6 +90,7 @@ def main():
             split_mode=args.split_mode,
             train_residual=args.train_residual,
             additional_features=args.additional_features,
+            low_fidelity_model=args.low_fidelity_model,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)

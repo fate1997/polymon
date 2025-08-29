@@ -18,7 +18,7 @@ class Normalizer:
     def from_loader(cls, loader: DataLoader) -> 'Normalizer':
         x = []
         for batch in loader:
-            x.append(batch.y.numpy().ravel())
+            x.append(batch.y.cpu().numpy().ravel())
         x = np.concatenate(x, 0)
         mean = x.mean(axis=0)
         std = x.std(axis=0)
