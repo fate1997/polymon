@@ -1,10 +1,12 @@
 import torch
 import torch.nn as nn
+from functools import partial
 
 from polymon.data.polymer import Polymer
 from polymon.model.utils import MLP, KANLinear, ReadoutPhase
 from polymon.model.register import register_init_params
 from polymon.model.base import BaseModel
+from polymon.model.kan.fast_kan import FastKAN
 
 
 @register_init_params
@@ -38,6 +40,7 @@ class KAN_GATv2(BaseModel):
                     self.num_heads,
                     dropout=self.dropout,
                     grid_size=self.grid_size,
+                    use_kan=True,
                 ))
         self.readout = ReadoutPhase(self.hidden_dim)
         self.predict = MLP(
@@ -69,7 +72,11 @@ class KAN_GATv2Layer(nn.Module):
         activation=nn.PReLU(), 
         concat: bool = True, 
         residual: bool = True,
-        bias: bool = True, dropout: float = 0.1, share_weights: bool = False):
+        bias: bool = True, 
+        dropout: float = 0.1, 
+        share_weights: bool = False,
+        use_kan: bool = True,
+    ):
         super(KAN_GATv2Layer, self).__init__()
 
         self.num_node_features = num_node_features
@@ -82,12 +89,17 @@ class KAN_GATv2Layer(nn.Module):
         self.share_weights = share_weights
         self.grid_size = grid_size
 
+        if use_kan:
+            linear_cls = partial(KANLinear, grid_size=grid_size, add_bias=False)
+        else:
+            linear_cls = partial(nn.Linear, bias=False)
+
         # Embedding by linear projection
-        self.linear_src = KANLinear(num_node_features, output_dim * num_heads, grid_size, add_bias=False)
+        self.linear_src = linear_cls(num_node_features, output_dim * num_heads)
         if self.share_weights:
             self.linear_dst = self.linear_src
         else:
-            self.linear_dst = KANLinear(num_node_features, output_dim * num_heads, grid_size, add_bias=False)
+            self.linear_dst = linear_cls(num_node_features, output_dim * num_heads)
 
         # The learnable parameters to compute attention coefficients
         self.double_attn = nn.Parameter(torch.Tensor(1, num_heads, output_dim))
@@ -104,7 +116,7 @@ class KAN_GATv2Layer(nn.Module):
             if num_node_features == num_heads * output_dim:
                 self.residual_linear = nn.Identity()
             else:
-                self.residual_linear = KANLinear(num_node_features, num_heads * output_dim, grid_size, add_bias=False)
+                self.residual_linear = linear_cls(num_node_features, num_heads * output_dim)
         else:
             self.register_parameter('residual_linear', None)
 

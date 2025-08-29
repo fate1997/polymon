@@ -333,7 +333,7 @@ def merge(
     df_merged = pd.concat([df_base, df_add], ignore_index=True)
     merge_path = str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}.csv')
     df_merged.to_csv(merge_path, index=False)
-    print(f'Merged {len(df_add)} samples from {sources} to internal {len(df_internal)}: {len(df_merged)}')
+    print(f'Merged {len(df_add)} samples from {sources} to internal {len(df_base)}: {len(df_merged)}')
 
 def arg_parser():
     parser = argparse.ArgumentParser()
