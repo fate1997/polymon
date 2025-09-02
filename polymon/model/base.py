@@ -16,7 +16,9 @@ from polymon.data.featurizer import ComposeFeaturizer
 from polymon.exp.score import scaling_error
 from polymon.data.polymer import Polymer
 from polymon.data.utils import Normalizer
-from polymon.estimator.base import BaseEstimator
+
+if TYPE_CHECKING:
+    from polymon.estimator.base import BaseEstimator
 
 
 class BaseModel(nn.Module, ABC):
@@ -37,7 +39,7 @@ class ModelWrapper(nn.Module):
         featurizer: ComposeFeaturizer,
         transform_cls: str = None,
         transform_kwargs: Dict[str, Any] = None,
-        estimator: BaseEstimator = None,
+        estimator: 'BaseEstimator' = None,
     ):
         super().__init__()
         self.model = model
@@ -65,6 +67,22 @@ class ModelWrapper(nn.Module):
         y_true_transformed = self.normalizer(batch.y)
         loss = loss_fn(y_pred, y_true_transformed)
         return loss
+    
+    @torch.no_grad()
+    def predict_batch(
+        self, 
+        batch: Batch,
+        device: str = 'cuda',
+    ) -> torch.Tensor:
+        self.model.eval()
+        self.model.to(device)
+        batch = batch.to(device)
+        y_pred = self.model(batch)
+        y_pred = self.normalizer.inverse(y_pred)
+        y_pred = y_pred.squeeze(0).squeeze(0)
+        if hasattr(batch, 'estimated_y'):
+            y_pred = y_pred + batch.estimated_y.squeeze(0).squeeze(0)
+        return y_pred
 
     @torch.no_grad()
     def predict(
@@ -94,20 +112,16 @@ class ModelWrapper(nn.Module):
             if self.transform is not None:
                 polymer = self.transform(polymer)
             if self.estimator is not None:
-                polymer = self.estimator(polymer)
+                polymer = self.estimator.forward(polymer, device=device)
             polymers.append(polymer)
         loader = DataLoader(polymers, batch_size=batch_size)
         
         y_pred_list = []
         for i, batch in enumerate(loader):
-            batch.to(device)
+            batch = batch.to(device)
             if i not in backup_ids:
-                output = self.model(batch)
-                output = self.normalizer.inverse(output)
-                output = output.squeeze(0).squeeze(0)
-                if hasattr(batch, 'estimated_y'):
-                    output = output + batch.estimated_y.squeeze(0).squeeze(0)
-                y_pred_list.append(output)
+                y_pred = self.predict_batch(batch, device)
+                y_pred_list.append(y_pred)
             else:
                 y_pred_list.append(backup_model.predict([smiles_list[i]]))
         if len(y_pred_list) == 1:
@@ -187,7 +201,7 @@ class EnsembleModelWrapper(nn.Module):
         featurizer: ComposeFeaturizer,
         transform_cls: str = None,
         transform_kwargs: Dict[str, Any] = None,
-        estimator: BaseEstimator = None,
+        estimator: 'BaseEstimator' = None,
     ):
         super().__init__()
         self.model = model
@@ -267,7 +281,7 @@ class EnsembleModelWrapper(nn.Module):
             if self.transform is not None:
                 polymer = self.transform(polymer)
             if self.estimator is not None:
-                polymer = self.estimator(polymer)
+                polymer = self.estimator.forward(polymer, device=device)
             polymers.append(polymer)
         loader = DataLoader(polymers, batch_size=batch_size)
         

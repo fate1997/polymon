@@ -280,3 +280,34 @@ kan_gps,,,,0.0255,,0.0255,hparams-opt (K-Fold)
 gatv2,,,,0.0186,,0.0186,residual-cv (K-Fold) (Optuna)
 gatv2,,,,0.0180,,0.0180,residual-cv-ensemble
 gatv2,,,,,0.0717,0.0717,residual-epig-300samples (Optuna)
+gatv2,,,,,0.0526,0.0526,MD-PI1070-Difference-All (K-Fold) (Optuna)
+gatv2,,,,,0.0550,0.0550,MD-PI1070-Difference-All
+gatv2,,,,0.0208,,0.0208,residual-PI1070-epig-300 (K-Fold)  -> ensemble
+gatv2,,,,0.0216,,0.0216,residual-PI1070-difference-300 (K-Fold)
+gatv2,,,,0.0272,,0.0272,residual-GREA-difference-300 (K-Fold)
+gatv2,,,,0.0225,,0.0225,residual-MAFA-MD-100 (K-Fold)
+gatv2,,,,0.0222,,0.0222,residual-MAFA-EXP-100 (K-Fold)
+gatv2,,,,,0.0543,0.0543,residual-PI1070-MD-500-0.15diff (K-Fold)
+gatv2,,,,,0.0550,0.0550,residual-PI1070-MD-manually (K-Fold)
+kan_gatv2,,,,0.0190,,0.0190,residual-first-no-kan (K-Fold) (Optuna) -> ensemble
+kan_gatv2,,,,0.0186,,0.0186,residual-cv-allkan (K-Fold) (Optuna)
+gatv2,,,,0.0185,,0.0185,residual-PI1070-epig-300-ensemble
+gatv2,,,,0.0180,,0.0180,residual-PI1070-epig-300-ensemble
+kan_gatv2,,,,0.0163,,0.0163,residual-cv-allkan-ensemble
+kan_gatv2,,,,0.0172,,0.0172,residual-cv-allkan-ensemble
+gatv2,,,,0.0175,,0.0175,residual-with-low-fidelity-estimator (K-Fold)
+gatv2,,0.0102,,,,0.0102,atom-contrib-residual
+gatv2,,,,0.0151,,0.0151,residual-with-low-fidelity-estimator-ensemble
+gatv2,,,,0.0152,,0.0152,residual-with-low-fidelity-estimator-ensemble
+gatv2,,,,,0.0559,0.0559,MD-2nd (K-Fold)
+kan_gatv2,,,,0.0196,,0.0196,residual-cv-MD-merged-ensemble
+gatv2,,,,,0.0662,0.0662,10-estimator-ensemble
+gatv2,,,,,0.0559,0.0559,MD-2nd-ensemble
+gatv2,,,,,0.0637,0.0637,10-estimator-ensemble
+gatv2,,,0.0562,,,0.0562,atom-contrib-residual-ensemble
+gatport,,,,,0.0611,0.0611,revenge-ensemble
+gatv2,,,,0.0207,,0.0207,residual-with-low-fidelity-estimator
+gatv2,,,,,,,low-fidelity-residual
+gatv2,,,,,,,low-fidelity-residual-prod
+gatv2,,,,,,,no-outliers
+gatport,,,,,0.0606,0.0606,revenge-ensemble

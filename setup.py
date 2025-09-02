@@ -11,7 +11,7 @@ setup(
     description="PolyMon",
     name='polymon',
     packages=find_packages(include=['polymon', 'polymon.*', 'polymon.*.*']),
-    package_data={'': ['*.yml', '*.txt', '*.csv', '*.json']},
+    package_data={'': ['*.yml', '*.txt', '*.csv', '*.json', '*.npy']},
     include_package_data=True,
     version=__version__,
 )

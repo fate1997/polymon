@@ -9,7 +9,7 @@ from polymon.data.polymer import Polymer
 
 class BaseEstimator(BaseTransform, ABC):
 
-    def forward(self, data: Polymer) -> Polymer:
+    def forward(self, data: Polymer, **kwargs) -> Polymer:
         estimated_y = self.estimated_y(data.smiles)
         data.estimated_y = torch.tensor([[estimated_y]]).to(data.x.device)
         if getattr(data, 'y', None) is not None:

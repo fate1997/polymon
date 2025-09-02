@@ -1,4 +1,5 @@
 import os
+import json
 from copy import deepcopy
 from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Tuple
@@ -47,6 +48,7 @@ class Pipeline:
         split_mode: Literal['source', 'random', 'scaffold'] = 'random',
         train_residual: bool = False,
         additional_features: Optional[List[str]] = None,
+        low_fidelity_model: Optional[str] = None,
     ):
         seed_everything(seed)
         
@@ -69,6 +71,7 @@ class Pipeline:
         self.split_mode = split_mode
         self.train_residual = train_residual
         self.additional_features = additional_features
+        self.low_fidelity_model = low_fidelity_model
         
         logger = loguru.logger
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -80,7 +83,14 @@ class Pipeline:
         self.estimator = None
         if self.train_residual:
             self.logger.info(f'Train residual: {self.label}')
-            self.estimator = get_estimator(self.label)
+            if self.low_fidelity_model is not None:
+                self.logger.info(f'Using low fidelity model: {self.low_fidelity_model}')
+                model = ModelWrapper.from_file(self.low_fidelity_model, self.device)
+                self.estimator = get_estimator(
+                    'LowFidelity', model_info=model.info
+                )
+            else:
+                self.estimator = get_estimator(self.label)
 
         self.logger.info(f'Building dataset for {label}...')
         self.dataset = self._build_dataset(sources)
@@ -190,6 +200,10 @@ class Pipeline:
         self.logger.info(f'{self.model_type}')
         self.logger.info(f'Best hyper-parameters: {study.best_params}')
         self.logger.info(f'Best test error: {study.best_value}')
+        
+        hparams_path = os.path.join(out_dir, 'hparams.json')
+        with open(hparams_path, 'w') as f:
+            json.dump(study.best_params, f)
         
         return study.best_value, study.best_params
     
@@ -313,6 +327,7 @@ class Pipeline:
                 featurizer=self.dataset.featurizer,
                 transform_cls=self.transform_cls,
                 transform_kwargs=self.transform_kwargs,
+                estimator=self.estimator,
             )
             save_dir = os.path.join(self.out_dir, 'ensemble', 'production')
             prod_ensemble_wrapper.fit(
