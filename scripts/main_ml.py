@@ -163,6 +163,7 @@ def train(
     X_total = np.concatenate([x_train, x_val, x_test], axis=0)
     y_total = np.concatenate([y_train, y_val, y_test], axis=0)
     model.fit(X_total, y_total)
+    model.feature_names = feature_names
     
     # 4. Save model and results
     if model_type == 'tabpfn':
