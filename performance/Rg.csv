@@ -1,0 +1,11 @@
+No.,model,performance,tag,kaggle
+1,gatv2,0.0559,MD-2nd (K-Fold),
+2,gatv2,0.0537,residual-cv (K-Fold) (Optuna),
+3,gatv2,0.0541,residual-cv-best (K-Fold),
+4,gatv2,0.0526,MD-PI1070-Difference-All (K-Fold) (Optuna),
+5,gatv2,0.0543,residual-PI1070-MD-500-0.15diff (K-Fold),
+6,gatv2,0.0550,residual-PI1070-MD-manually (K-Fold),
+7,gatv2,,original Rg,
+8,gatv2,,PI1070 difference,~>7
+9,pna,,,>8(+4)
+10,gvp,,,<9(-6)

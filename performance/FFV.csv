@@ -1,0 +1,6 @@
+No.,model,performance,tag,kaggle
+1,gatv2,,original FFV,
+2,gatv2,,more bond features,<1(-6)
+3,gin,,original FFV,~1
+4,pna,,original FFV,<1(-1)
+5,gatv2,,official_external,~1

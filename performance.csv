@@ -307,7 +307,37 @@ gatv2,,,,,0.0637,0.0637,10-estimator-ensemble
 gatv2,,,0.0562,,,0.0562,atom-contrib-residual-ensemble
 gatport,,,,,0.0611,0.0611,revenge-ensemble
 gatv2,,,,0.0207,,0.0207,residual-with-low-fidelity-estimator
-gatv2,,,,,,,low-fidelity-residual
-gatv2,,,,,,,low-fidelity-residual-prod
 gatv2,,,,,,,no-outliers
 gatport,,,,,0.0606,0.0606,revenge-ensemble
+kan_gps,,,,,,,hparams-opt
+gatv2,,,,0.0108,,0.0108,low-fidelity-no-residual (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2,,,,0.0171,,0.0171,low-fidelity-wo-base-residual (K-Fold) !UNBELIEVABLE
+gatv2,,,,0.0199,,0.0199,low-fidelity-wo-base-residual-no-normalizer (K-Fold) !UNBELIEVABLE
+gatv2,,,0.0495,,,0.0495,low-fidelity-prod (K-Fold) without optimization !UNBELIEVABLE
+gatv2,,,0.0483,,,0.0483,low-fidelity-prod (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2,,0.0083,,,,0.0083,cv (K-Fold) !UNBELIEVABLE
+gatv2,,,,0.0108,,0.0108,ibm-estimator (K-Fold) !UNBELIEVABLE
+gatv2,,,,0.0083,,0.0083,ibm-estimator (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2,,,,,0.0367,0.0367,MD-3rd (K-Fold) !UNBELIEVABLE
+gatv2,,,,0.0078,,0.0078,fedors-estimator (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2,,,,,0.0302,0.0302,MD-3rd (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2,,,,0.0091,,0.0091,fedors-estimator (K-Fold) !UNBELIEVABLE
+gatv2,,,,,0.0586,0.0586,MD-3rd-ensemble
+gatv2,,,,,0.0617,0.0617,MD-3rd-ensemble
+gatv2,,,0.0410,,,0.0410,periodic (K-Fold) !UNBELIEVABLE
+gatv2,,,0.0345,,,0.0345,periodic (K-Fold) !UNBELIEVABLE
+gatv2,,,0.0354,,,0.0354,remove-hydrogen (K-Fold) !UNBELIEVABLE
+gatv2,,0.0077,,,,0.0077,periodic (K-Fold) !UNBELIEVABLE
+rf,,,,0.0176,,0.0176,mordred-low-fidelity
+gatv2,,,,0.0136,,0.0136,rf-low-fidelity (K-Fold) !UNBELIEVABLE
+gatv2_lineevo,,,,,0.0290,0.0290,initial-test (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2_sage,,,,,0.0282,0.0282,initial-test (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2,,,,,0.0288,0.0288,log (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2_sage,,,,,0.0597,0.0597,initial-test-ensemble
+gatv2_lineevo,,,,,0.0392,0.0392,initial-test (K-Fold) !UNBELIEVABLE
+gatv2_lineevo,,,,,0.0350,0.0350,initial-test (K-Fold) !UNBELIEVABLE
+gatv2,,0.0049,,,,0.0049,log (K-Fold) !UNBELIEVABLE
+gatv2_source,,,,0.0112,,0.0112,source-head (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2_source,,,,,0.0433,0.0433,source-head (K-Fold) (Optuna) !UNBELIEVABLE
+gatv2_source,,,,,0.0466,0.0466,source-head (K-Fold) !UNBELIEVABLE
+gatv2,,,,,0.0608,0.0608,MD-3rd (K-Fold)
