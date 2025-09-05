@@ -26,6 +26,8 @@ def parse_args():
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--split-mode', type=str, default='random')
     parser.add_argument('--train-residual', action='store_true')
+    parser.add_argument('--normalizer-type', type=str, default='normalizer', 
+                        choices=['normalizer', 'log_normalizer', 'none'])
 
     # Model
     parser.add_argument(
@@ -54,6 +56,8 @@ def parse_args():
     parser.add_argument('--additional-features', type=str, default=None, nargs='+')
     parser.add_argument('--skip-train', action='store_true')
     parser.add_argument('--low-fidelity-model', type=str, default=None)
+    parser.add_argument('--estimator-name', type=str, default=None)
+    parser.add_argument('--remove-hydrogens', action='store_true')
 
     return parser.parse_args()
 
@@ -91,6 +95,9 @@ def main():
             train_residual=args.train_residual,
             additional_features=args.additional_features,
             low_fidelity_model=args.low_fidelity_model,
+            normalizer_type=args.normalizer_type,
+            estimator_name=args.estimator_name,
+            remove_hydrogens=args.remove_hydrogens,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
@@ -115,7 +122,7 @@ def main():
             # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
             if not args.skip_train:
                 if args.n_fold == 1 and args.n_estimator == 1:
-                    test_err = pipeline.train(model_hparams=hparams)
+                    test_err, _ = pipeline.train(model_hparams=hparams)
                 if args.n_fold > 1 and args.n_estimator == 1:
                     test_err = pipeline.cross_validation(
                         n_fold=args.n_fold,
@@ -161,8 +168,9 @@ def main():
     if args.split_mode != 'random':
         performance['extra_info'] += f' ({args.split_mode})'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
-    df = pd.concat([df, new_df], ignore_index=True)
-    df.to_csv(results_path, index=False, float_format="%.4f")
+    if not args.skip_train:
+        df = pd.concat([df, new_df], ignore_index=True)
+        df.to_csv(results_path, index=False, float_format="%.4f")
 
 
 if __name__ == '__main__':

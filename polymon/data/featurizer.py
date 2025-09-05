@@ -96,7 +96,7 @@ class AtomFeaturizer(Featurizer):
         for atom in rdmol.GetAtoms():
             atom_features = []
             for feature_name in feature_names:
-                atom_features.append(getattr(self, feature_name)(atom))
+                atom_features.append(getattr(self, feature_name)(atom, rdmol))
             x.append(torch.cat(atom_features))
         feature_exclude_atom_num = torch.stack(x, dim=0)
         
@@ -129,7 +129,7 @@ class AtomFeaturizer(Featurizer):
         onehot.scatter_(1, indices.unsqueeze(1), 1)
         return onehot
     
-    def degree(self, atom: Chem.Atom) -> torch.Tensor:
+    def degree(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         degree_choice = [0, 1, 2, 3, 4]
         onehot = torch.zeros(len(degree_choice) + 1)
         try:
@@ -139,10 +139,10 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def is_aromatic(self, atom: Chem.Atom) -> torch.Tensor:
+    def is_aromatic(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         return torch.tensor([int(atom.GetIsAromatic())])
     
-    def chiral_tag(self, atom: Chem.Atom) -> torch.Tensor:
+    def chiral_tag(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         chiral_tag_choice = list(range(len(Chem.ChiralType.names)-1))
         chiral_tag = atom.GetChiralTag()
         onehot = torch.zeros(len(chiral_tag_choice) + 1)
@@ -152,7 +152,7 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def num_hydrogens(self, atom: Chem.Atom) -> torch.Tensor:
+    def num_hydrogens(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         num_hydrogen_choice = list(range(len(Chem.rdchem.ChiralType.names)-1))
         num_hydrogen = atom.GetNumImplicitHs()
         onehot = torch.zeros(len(num_hydrogen_choice) + 1)
@@ -162,7 +162,7 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def hybridization(self, atom: Chem.Atom) -> torch.Tensor:
+    def hybridization(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         hybridization_choices = list(range(len(Chem.HybridizationType.names)-1))
         hybridization = int(atom.GetHybridization())
         onehot = torch.zeros(len(hybridization_choices) + 1)
@@ -172,23 +172,23 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def mass(self, atom: Chem.Atom) -> torch.Tensor:
+    def mass(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         return torch.tensor([atom.GetMass() / 100])
     
-    def formal_charge(self, atom: Chem.Atom) -> torch.Tensor:
+    def formal_charge(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         return torch.tensor([atom.GetFormalCharge() / 10])
     
-    def is_attachment(self, atom: Chem.Atom) -> torch.Tensor:
+    def is_attachment(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         return torch.tensor([int(atom.GetAtomicNum() == 0)])
     
-    def xenonpy_atom(self, atom: Chem.Atom) -> torch.Tensor:
+    def xenonpy_atom(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         from polymon.setting import XENONPY_ELEMENTS_INFO
 
         # preset.sync('elements_completed')
         symbol = Chem.GetPeriodicTable().GetElementSymbol(atom.GetAtomicNum())
         return torch.tensor(XENONPY_ELEMENTS_INFO.loc[symbol].values)
     
-    def cgcnn(self, atom: Chem.Atom) -> torch.Tensor:
+    def cgcnn(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
         atom_num = atom.GetAtomicNum()
         CGCNN_ELEMENT_INFO['0'] = [0] * len(CGCNN_ELEMENT_INFO['1'])
         return torch.tensor(CGCNN_ELEMENT_INFO[str(atom_num)])
@@ -261,10 +261,15 @@ class BondFeaturizer(Featurizer):
         bond_attr = bond_info['edge_attr']
         
         # Add bonds between attachment points
-        attachments = [
-            atom.GetIdx() for atom in rdmol.GetAtoms() \
-                if atom.GetAtomicNum() == 0
-        ]
+        # attachments = [
+        #     atom.GetIdx() for atom in rdmol.GetAtoms() \
+        #         if atom.GetAtomicNum() == 0
+        # ]
+        attachments = []
+        for atom in rdmol.GetAtoms():
+            if atom.GetPropsAsDict().get('attachment', 'False') == 'True':
+                attachments.append(atom.GetIdx())
+        
         bond_attr = torch.cat([bond_attr, torch.zeros(bond_attr.shape[0], 1)], dim=1)
         for i in range(len(attachments)):
             for j in range(i + 1, len(attachments)):
@@ -274,6 +279,7 @@ class BondFeaturizer(Featurizer):
                 ]).T
                 attach_bond_attr = torch.tensor([0] * bond_attr.shape[1])
                 attach_bond_attr[-1] = 1
+                attach_bond_attr[0] = 1
                 attach_bond_attr = attach_bond_attr.unsqueeze(0)
                 attach_bond_attr = torch.cat([attach_bond_attr, attach_bond_attr], dim=0)
                 bond_index = torch.cat([bond_index, attach_bond_index], dim=1)
@@ -588,6 +594,33 @@ class DescFeaturizer(Featurizer):
         return torch.from_numpy(descriptor.to_numpy())
 
 
+class RDMolPreprocessor:
+    AVAIL_PREPROCESSORS = set(
+        ['monomer']
+    )
+    
+    @staticmethod
+    def monomer(
+        rdmol: Chem.Mol,
+    ) -> Chem.Mol:
+        rdmol = deepcopy(rdmol)
+        attachments = [atom for atom in rdmol.GetAtoms() if atom.GetSymbol() == '*']
+        
+        ids = []
+        for attachment in attachments:
+            attachment_nbrs = attachment.GetNeighbors()
+            for attachment_nbr in attachment_nbrs:
+                attachment_nbr.SetProp('attachment', 'True')
+            ids.append(attachment.GetIdx())
+        
+        ids = sorted(ids, reverse=True)
+        rwmol = Chem.RWMol(rdmol)
+        for i in ids:
+            rwmol.RemoveAtom(i)
+        rdmol = rwmol.GetMol()
+        return rdmol
+
+
 ########################################################
 ############# End of new featurizers ###################
 ########################################################
@@ -607,6 +640,15 @@ class ComposeFeaturizer:
         self.names = names
         self.config = config
         self.add_hydrogens = add_hydrogens
+        
+        preprocessor = set(names) & RDMolPreprocessor.AVAIL_PREPROCESSORS
+        assert len(preprocessor) <= 1, \
+            f'Only one preprocessor is allowed, but got {preprocessor}'
+        if preprocessor:
+            self.preprocessor = getattr(RDMolPreprocessor, list(preprocessor)[0])
+        else:
+            self.preprocessor = None
+        names = [name for name in names if name not in RDMolPreprocessor.AVAIL_PREPROCESSORS]
         
         invalid_names = set(names) - set(AVAIL_FEATURES)
         if invalid_names:
@@ -630,6 +672,9 @@ class ComposeFeaturizer:
     def __call__(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
         if self.add_hydrogens:
             rdmol = Chem.AddHs(rdmol)
+        
+        if self.preprocessor is not None:
+            rdmol = self.preprocessor(rdmol)
         
         mol_dict = {}
         for featurizer in self.featurizers:
