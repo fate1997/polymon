@@ -55,6 +55,7 @@ class Pipeline:
         normalizer_type: Literal['normalizer', 'log_normalizer', 'none'] = 'normalizer',
         estimator_name: Optional[str] = None,
         remove_hydrogens: bool = False,
+        augmentation: bool = False,
     ):
         seed_everything(seed)
         
@@ -81,6 +82,7 @@ class Pipeline:
         self.normalizer_type = normalizer_type
         self.estimator_name = estimator_name if estimator_name is not None else self.label
         self.remove_hydrogens = remove_hydrogens
+        self.augmentation = augmentation
         
         logger = loguru.logger
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -110,7 +112,7 @@ class Pipeline:
             self.num_descriptors = self.dataset[0].descriptors.shape[1]
         else:
             self.num_descriptors = 0
-        loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1, self.split_mode)
+        loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1, self.split_mode, augmentation=self.augmentation)
         self.train_loader, self.val_loader, self.test_loader = loaders
         
         self.logger.info(f'Using {self.normalizer_type} normalizer')
@@ -180,8 +182,40 @@ class Pipeline:
             if current_trial is not None:
                 print_str += f' (trial {current_trial}/{self.n_trials})'
             self.logger.info(print_str)
+            train_set = self.dataset[train_idx]
+            if self.augmentation:
+                from polymon.data.polymer import OligomerBuilder
+                train_set_aug = []
+                for data in train_set:
+                    train_set_aug.append(data)
+                    for i in range(1):
+                        oligomer = OligomerBuilder.get_oligomer(data.smiles, i+2)
+                        mol_dict = self.dataset.featurizer(oligomer)
+                        aug_data = data.clone()
+                        for key, value in mol_dict.items():
+                            setattr(aug_data, key, value)
+                        train_set_aug.append(aug_data)
+                    # from rdkit import Chem
+                    # from rdkit.Chem.MolStandardize import rdMolStandardize
+                    # ps = rdMolStandardize.CleanupParameters()
+                    # ps.maxTransforms = 5000
+                    # te = rdMolStandardize.TautomerEnumerator(ps)
+                    # rdmol = Chem.MolFromSmiles(data.smiles)
+                    # tautomers = te.Enumerate(rdmol)
+                    # for tautomer in tautomers:
+                    #     if Chem.MolToSmiles(tautomer) == Chem.MolToSmiles(rdmol):
+                    #         continue
+                    #     mol_dict = self.dataset.featurizer(tautomer)
+                    #     aug_data = data.clone()
+                    #     for key, value in mol_dict.items():
+                    #         setattr(aug_data, key, value)
+                    #     train_set_aug.append(aug_data)
+                self.logger.info(f'Train set augmented from {len(train_set)} to {len(train_set_aug)}')
+            else:
+                train_set_aug = train_set
+            
             train_loader = DataLoader(
-                self.dataset[train_idx], batch_size=self.batch_size, shuffle=True
+                train_set_aug, batch_size=self.batch_size, shuffle=True
             )
             val_loader = DataLoader(
                 self.dataset[val_idx], batch_size=self.batch_size, shuffle=False
@@ -295,7 +329,7 @@ class Pipeline:
         out_dir = os.path.join(self.out_dir, 'production')
         os.makedirs(out_dir, exist_ok=True)
 
-        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True)
+        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True, augmentation=self.augmentation)
         self.train(None, model_hparams, out_dir, loaders, model)
         self.logger.info(f'Production run complete.')
     

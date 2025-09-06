@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument('--train-residual', action='store_true')
     parser.add_argument('--normalizer-type', type=str, default='normalizer', 
                         choices=['normalizer', 'log_normalizer', 'none'])
+    parser.add_argument('--augmentation', action='store_true')
 
     # Model
     parser.add_argument(
@@ -98,6 +99,7 @@ def main():
             normalizer_type=args.normalizer_type,
             estimator_name=args.estimator_name,
             remove_hydrogens=args.remove_hydrogens,
+            augmentation=args.augmentation,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
