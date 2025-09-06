@@ -21,14 +21,16 @@ class EnsembleRegressor(nn.Module):
             meta_weigths: torch.Tensor,
             meta_bias: torch.Tensor,
             random_state: int = 42,
+            strategy: str = 'stacking',
     ):
 
         super().__init__()
-
+        assert strategy in ['stacking', 'averaging']
         self.base_builders = base_builders
         self.meta_weigths = meta_weigths
         self.meta_bias = meta_bias
         self.random_state = random_state
+        self.strategy = strategy
 
     def fit(
             self, 
@@ -43,13 +45,21 @@ class EnsembleRegressor(nn.Module):
             device=device,
         )
 
+        n_models = len(self.base_builders)
+        if self.strategy == 'averaging': 
+            weights = np.full(n_models, 1.0/n_models, dtype=np.float32)
+            bias = np.array(0.0, dtype=np.float32)
+            self.meta_weigths = torch.from_numpy(weights)
+            self.meta_bias = torch.from_numpy(bias)
+            return self.meta_weigths, self.meta_bias
+
         meta_builder = LinearRegression(fit_intercept=True)
         meta_builder.fit(base_preds, y)
         corf = meta_builder.coef_.astype(np.float32).reshape(-1)
         intercept = meta_builder.intercept_.astype(np.float32).reshape(())
         self.meta_weigths = torch.from_numpy(corf)
         self.meta_bias = torch.from_numpy(intercept)
-        return self
+        return self.meta_weigths, self.meta_bias
     
     def predict(
         self,
@@ -61,7 +71,7 @@ class EnsembleRegressor(nn.Module):
         base_preds = torch.from_numpy(base_preds)
         meta_preds = self.meta_bias + base_preds @ self.meta_weigths
         meta_preds = meta_preds.detach().numpy()
-        return meta_preds
+        return meta_preds, base_preds.detach().numpy()
     
     def base_predict(
         self,

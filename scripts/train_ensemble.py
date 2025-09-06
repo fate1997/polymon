@@ -27,6 +27,7 @@ def parse_args():
     parser.add_argument('--model-paths', type=str, nargs='+', default=[])
     parser.add_argument('--out-dir', type=str, default='./results')
     parser.add_argument('--device', type=str, default='cpu')
+    parser.add_argument('--strategy', type=str, choices=['stacking', 'averaging'], default='stacking')
     return parser.parse_args()
 
 PREDICT_BATCH_SIZE = 128
@@ -39,6 +40,7 @@ def train_ensemble(
     raw_csv_path: str,
     sources: List[str],
     tag: str,
+    strategy: str = 'stacking',
     device: str = 'cpu',
 ) -> Tuple[float, float]:
     '''
@@ -92,23 +94,34 @@ def train_ensemble(
         meta_weigths=None,
         meta_bias=None,
         random_state=42,
+        strategy=strategy,
     )
-    ensemble.fit(smiles_list, y)
-    y_pred = ensemble.predict(smiles_list, batch_size=PREDICT_BATCH_SIZE, device=device)
+    meta_weigths, meta_bias = ensemble.fit(smiles_list, y)
+    y_pred, base_preds = ensemble.predict(smiles_list, batch_size=PREDICT_BATCH_SIZE, device=device)
     y_pred = y_pred.reshape(-1, 1)
     logger.info(f'Scaled MAE: {scaling_error(y, y_pred, label): .4f}')
     logger.info(f'MAE: {mean_absolute_error(y, y_pred): .4f}')
     logger.info(f'R2: {r2_score(y, y_pred): .4f}')
+    if strategy == 'stacking':
+        logger.info(f'Meta weights: {meta_weigths}')
+        logger.info(f'Meta bias: {meta_bias}')
 
     # 4. Save model and results
     model_path = os.path.join(out_dir, f'{tag}.pt')
     torch.save(ensemble, model_path)
     results_path = os.path.join(out_dir, f'{tag}.csv')
-    pd.DataFrame(y_pred).to_csv(results_path, index=False)
-    # pd.DataFrame({
-    #     'y_true': y,
-    #     'y_pred': y_pred,
-    # }).to_csv(results_path, index=False)
+    #pd.DataFrame(y_pred).to_csv(results_path, index=False)
+    # Flatten y and y_pred to 1D arrays for DataFrame
+    y_flat = y.flatten()
+    y_pred_flat = y_pred.flatten()
+    # Prepare base_preds columns
+    base_preds_df = pd.DataFrame(base_preds, columns=[f'base_pred_{i+1}' for i in range(base_preds.shape[1])])
+    df = pd.DataFrame({
+        'y_true': y_flat,
+        'y_pred': y_pred_flat
+    })
+    df = pd.concat([df, base_preds_df], axis=1)
+    df.to_csv(results_path, index=False)
 
     return scaling_error(y, y_pred, label), len(y)
 
@@ -131,6 +144,7 @@ def main():
             sources=args.sources,
             tag=args.tag,
             device=args.device,
+            strategy=args.strategy,
         )
             
         performance[label] = scaling_error
