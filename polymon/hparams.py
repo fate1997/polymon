@@ -380,3 +380,19 @@ def get_gatv2_source_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
     }
     return param
+
+
+@register_hparams('gatv2_pe')
+def get_gatv2_pe_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GATv2-PE parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5, step=0.1),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+    }
+    return param

@@ -416,6 +416,29 @@ class AtomNumFeaturizer(Featurizer):
         return {'z': torch.tensor(atom_nums)}
 
 
+@register_cls('relative_position')
+class RelativePositionFeaturizer(Featurizer):
+    def __call__(
+        self,
+        rdmol: Chem.Mol,
+    ) -> Dict[str, torch.Tensor]:
+        attachments = [atom for atom in rdmol.GetAtoms() if atom.GetSymbol() == '*']
+        # Find the length of the shortest path between atoms and their closest attachment
+        pe = []
+        for atom in rdmol.GetAtoms():
+            if atom.GetSymbol() == '*':
+                pe.append(0)
+            else:
+                min_dist = float('inf')
+                for attachment in attachments:
+                    shortest_path = Chem.GetShortestPath(rdmol, atom.GetIdx(), attachment.GetIdx())
+                    dist = len(shortest_path) - 1
+                    if dist < min_dist:
+                        min_dist = dist
+                pe.append(min_dist)
+        return {'relative_position': torch.LongTensor(pe)}
+
+
 @register_cls('seq')
 class SeqFeaturizer(Featurizer):
     # Double tokens

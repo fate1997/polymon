@@ -17,6 +17,7 @@ from polymon.model.kan.fourier_kan import FourierKANWrapper
 from polymon.model.gatv2.lineevo import GATv2LineEvo
 from polymon.model.gatv2.gatv2_sage import GATv2SAGE
 from polymon.model.gatv2.multi_fidelity import GATv2_Source
+from polymon.model.gatv2.position_encoding import GATv2_PE
 
 if typing.TYPE_CHECKING:
     from polymon.model.base import BaseModel
@@ -184,6 +185,15 @@ def build_model(
         }
         input_args.update(hparams)
         model = GATv2_Source(**input_args)
+    elif model_type == 'gatv2_pe':
+        input_args = {
+            'num_atom_features': num_node_features,
+            'hidden_dim': 128,
+            'num_layers': 2,
+            'edge_dim': num_edge_features,
+        }
+        input_args.update(hparams)
+        model = GATv2_PE(**input_args)
     else:
         raise ValueError(f"Model type {model_type} not implemented")
     
