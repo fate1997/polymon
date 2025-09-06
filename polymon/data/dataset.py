@@ -84,9 +84,9 @@ class PolymerDataset(Dataset):
             data_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
                 row = df_nonan.iloc[i]
-                if row[smiles_column].count('*') != 2:
-                    logger.warning(f'Skipping {row[smiles_column]} because of not 2 attachments')
-                    continue
+                # if row[smiles_column].count('*') != 2:
+                #     logger.warning(f'Skipping {row[smiles_column]} because of not 2 attachments')
+                #     continue
                 rdmol = Chem.MolFromSmiles(row[smiles_column])
                 if 'source' in feature_names:
                     rdmol.SetProp('Source', row['Source'])
@@ -201,6 +201,12 @@ class PolymerDataset(Dataset):
             train_set, val_set, test_set = self._get_scaffold_splits(n_train, n_val)
         else:
             raise ValueError(f'Invalid split mode: {mode}')
+        
+        # train_sampler=torch.utils.data.WeightedRandomSampler(
+        #     weights=torch.tensor([0.8 if data.source == 'internal' else 0.2 for data in train_set]),
+        #     num_samples=len(train_set),
+        #     replacement=True,
+        # )
         
         train_loader = DataLoader(
             train_set, batch_size, shuffle=True, num_workers=num_workers

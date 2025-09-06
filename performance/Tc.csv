@@ -1,0 +1,6 @@
+No.,model,performance,tag,kaggle
+1,gatv2,0.0437,initial-test (K-Fold) (Optuna),
+2,gatv2,,original,
+3,pna,,original,~2
+4,gatv2,,official_external,~2
+

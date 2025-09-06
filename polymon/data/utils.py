@@ -1,9 +1,13 @@
 import numpy as np
 import torch
+import networkx as nx
 from rdkit import Chem
 from torch_geometric.loader import DataLoader
 from torch_geometric.transforms import BaseTransform, AddRandomWalkPE
 from sklearn.ensemble import RandomForestRegressor
+from collections import defaultdict, OrderedDict
+from itertools import chain, combinations
+from typing import Dict
 
 from polymon.data.polymer import Polymer
 from polymon.setting import DEFAULT_TOPK_DESCRIPTORS
@@ -13,6 +17,13 @@ class Normalizer:
     def __init__(self, mean: float, std: float, eps: float = 1e-6):
         self.mean = mean
         self.std = std + eps
+    
+    @property
+    def init_params(self) -> Dict[str, float]:
+        return {
+            'mean': self.mean,
+            'std': self.std,
+        }
     
     @classmethod
     def from_loader(cls, loader: DataLoader) -> 'Normalizer':
@@ -24,11 +35,31 @@ class Normalizer:
         std = x.std(axis=0)
         return cls(mean, std)
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
+    def __call__(self, x: torch.Tensor) -> torch.Tensor:
         return (x - self.mean) / self.std
     
-    def inverse(self, x: np.ndarray) -> np.ndarray:
+    def inverse(self, x: torch.Tensor) -> torch.Tensor:
         return x * self.std + self.mean
+
+
+class LogNormalizer:
+    def __init__(
+        self,
+        eps: float = 1e-10,
+    ):
+        self.eps = eps
+    
+    @property
+    def init_params(self) -> Dict[str, float]:
+        return {
+            'eps': self.eps,
+        }
+    
+    def __call__(self, x: torch.Tensor) -> torch.Tensor:
+        return torch.log(x + self.eps)
+    
+    def inverse(self, x: torch.Tensor) -> torch.Tensor:
+        return torch.exp(x) - self.eps
 
 
 class DescriptorSelector(BaseTransform):
@@ -74,6 +105,53 @@ class DescriptorSelector(BaseTransform):
         ids = self.ids.to(data.descriptors.device)
         data.descriptors = (data.descriptors[:, ids] - self.mean) / self.std
         return data
+
+
+class LineEvoTransform(BaseTransform):
+    def __init__(self, depth: int = 2):
+        self.depth = depth
+    
+    def forward(self, data: Polymer) -> Polymer:
+        edges = torch.LongTensor(
+            np.array(nx.from_edgelist(data.edge_index.T.tolist()).edges)
+        )
+            
+        num_nodes = data.x.shape[0]
+        isolated_nodes = set(range(num_nodes)).difference(set(edges.flatten().tolist()))
+        edges = torch.cat(
+            [edges, torch.LongTensor([[i, i] for i in isolated_nodes])], dim=0
+        ).to(torch.long)
+        
+        setattr(data, f'edges_{0}', edges)
+        
+        for i in range(self.depth):
+            
+            num_nodes = edges.shape[0]
+            edges = self.evolve_edges_generater(edges)
+
+            # create edges for isolated nodes
+            isolated_nodes = set(range(num_nodes)).difference(set(edges.flatten().tolist()))
+            edges = torch.cat(
+                [edges, torch.LongTensor([[i, i] for i in isolated_nodes]).to(edges.device)], 
+                dim=0
+            )
+            
+            setattr(data, f'edges_{i+1}', edges)
+        return data
+    
+    @staticmethod
+    def evolve_edges_generater(edges):
+        l = edges[:, 0].tolist()+ edges[:, 1].tolist()
+        tally = defaultdict(list)
+        for i, item in enumerate(l):
+            tally[item].append(i if i < len(l)//2 else i - len(l)//2)
+        
+        output = []
+        for _, locs in tally.items():
+            if len(locs) > 1:
+                output.append(list(combinations(locs, 2)))
+        
+        return torch.LongTensor(list(chain(*output))).to(edges.device)
 
 
 class RgEstimator(BaseTransform):

@@ -1,29 +1,32 @@
-import os
 import json
+import logging
+import os
 from copy import deepcopy
 from functools import partial
 from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import loguru
-import logging
 import numpy as np
 import optuna
+import torch
 import torch_geometric.transforms as T
 from pytorch_lightning import seed_everything
 from sklearn.model_selection import KFold
+from torch import nn
 from torch_geometric.loader import DataLoader
 from torchensemble import VotingRegressor
-from torch import nn
-from polymon.exp.score import scaling_error
 from torchensemble.utils import io
+
 from polymon.data.dataset import PolymerDataset
-from polymon.data.utils import Normalizer, DescriptorSelector, RgEstimator
+from polymon.data.utils import DescriptorSelector, Normalizer, RgEstimator, LineEvoTransform, LogNormalizer
+from polymon.estimator import get_estimator
+from polymon.exp.score import scaling_error
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
 from polymon.model import PNA, build_model
-from polymon.model.base import ModelWrapper, EnsembleModelWrapper
-from polymon.setting import REPO_DIR, DEFAULT_ATOM_FEATURES
-from polymon.estimator import get_estimator
+from polymon.model.base import EnsembleModelWrapper, KFoldModel, ModelWrapper
+from polymon.setting import DEFAULT_ATOM_FEATURES, REPO_DIR
+from polymon.estimator.ml import MLEstimator
 
 
 class Pipeline:
@@ -49,6 +52,9 @@ class Pipeline:
         train_residual: bool = False,
         additional_features: Optional[List[str]] = None,
         low_fidelity_model: Optional[str] = None,
+        normalizer_type: Literal['normalizer', 'log_normalizer', 'none'] = 'normalizer',
+        estimator_name: Optional[str] = None,
+        remove_hydrogens: bool = False,
     ):
         seed_everything(seed)
         
@@ -72,6 +78,9 @@ class Pipeline:
         self.train_residual = train_residual
         self.additional_features = additional_features
         self.low_fidelity_model = low_fidelity_model
+        self.normalizer_type = normalizer_type
+        self.estimator_name = estimator_name if estimator_name is not None else self.label
+        self.remove_hydrogens = remove_hydrogens
         
         logger = loguru.logger
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -85,12 +94,15 @@ class Pipeline:
             self.logger.info(f'Train residual: {self.label}')
             if self.low_fidelity_model is not None:
                 self.logger.info(f'Using low fidelity model: {self.low_fidelity_model}')
-                model = ModelWrapper.from_file(self.low_fidelity_model, self.device)
-                self.estimator = get_estimator(
-                    'LowFidelity', model_info=model.info
-                )
+                if self.low_fidelity_model.endswith('.pt'):
+                    model = ModelWrapper.from_file(self.low_fidelity_model, self.device)
+                    self.estimator = get_estimator(
+                        'LowFidelity', model_info=model.info
+                    )
+                elif self.low_fidelity_model.endswith('.pkl'):
+                    self.estimator = MLEstimator.from_pickle(self.low_fidelity_model)
             else:
-                self.estimator = get_estimator(self.label)
+                self.estimator = get_estimator(self.estimator_name)
 
         self.logger.info(f'Building dataset for {label}...')
         self.dataset = self._build_dataset(sources)
@@ -100,7 +112,19 @@ class Pipeline:
             self.num_descriptors = 0
         loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1, self.split_mode)
         self.train_loader, self.val_loader, self.test_loader = loaders
-        self.normalizer = Normalizer.from_loader(self.train_loader)
+        
+        self.logger.info(f'Using {self.normalizer_type} normalizer')
+        if self.normalizer_type in ['normalizer', 'none']:
+            self.normalizer = Normalizer.from_loader(self.train_loader)
+            if self.normalizer_type == 'none':
+                self.normalizer.mean = 0.0
+                self.normalizer.std = 1.0
+        elif self.normalizer_type == 'log_normalizer':
+            eps = 273.15 if self.label == 'Tg' else 1e-10
+            self.normalizer = LogNormalizer(eps=eps)
+        else:
+            raise ValueError(f'Invalid normalizer type: {self.normalizer_type}')
+        
         self.logger.info(f'Number of descriptors used: {self.num_descriptors}')
         self.transform_cls, self.transform_kwargs = self._init_transform()
     
@@ -139,7 +163,7 @@ class Pipeline:
             loaders = (self.train_loader, self.val_loader, self.test_loader)
         test_err = trainer.train(loaders[0], loaders[1], loaders[2], self.label)
         trainer.model.write(os.path.join(out_dir, f'{self.model_name}.pt'))
-        return test_err
+        return test_err, model
     
     def cross_validation(
         self, 
@@ -150,6 +174,7 @@ class Pipeline:
     ) -> List[float]:
         kfold = KFold(n_splits=n_fold, shuffle=True)
         val_errors = []
+        models = []
         for fold, (train_idx, val_idx) in enumerate(kfold.split(self.dataset)):
             print_str = f'Running fold {fold+1}/{n_fold}'
             if current_trial is not None:
@@ -163,16 +188,21 @@ class Pipeline:
             )
             out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
             os.makedirs(out_dir, exist_ok=True)
-            val_error = self.train(
+            val_error, trained_model = self.train(
                 model_hparams=model_hparams,
                 out_dir=out_dir,
                 loaders=(train_loader, val_loader, None),
-                model=model,
+                model=deepcopy(model) if model is not None else None,
             )
             self.logger.info(f'{fold+1}/{n_fold} val error: {val_error}')
+            models.append(trained_model)
             val_errors.append(val_error)
         mean, std = np.mean(val_errors), np.std(val_errors)
         self.logger.info(f'K-Fold validation error: {mean:.4f} ± {std:.4f}')
+        kfold_model = KFoldModel.from_models(models)
+        kfold_model_wrapper = models[0]
+        kfold_model_wrapper.model = kfold_model
+        kfold_model_wrapper.write(os.path.join(self.out_dir, f'{self.model_name}-KFold.pt'))
         return val_errors
     
     def optimize_hparams(self, n_fold: int = 1) -> Tuple[float, Dict[str, Any]]:
@@ -192,7 +222,7 @@ class Pipeline:
                 )
                 return np.mean(val_errors)
             else:
-                return self.train(self.lr, model_hparams, out_dir)
+                return self.train(self.lr, model_hparams, out_dir)[0]
 
         study = optuna.create_study(direction='minimize')
         study.optimize(objective, n_trials = self.n_trials)
@@ -240,7 +270,7 @@ class Pipeline:
                 model_hparams=pretrained_model.info['model_init_params'],
                 out_dir=out_dir,
                 model=model,
-            )
+            )[0]
         else:
             test_err = self.cross_validation(
                 n_fold=n_fold,
@@ -352,6 +382,8 @@ class Pipeline:
         feature_names = ['x', 'bond', 'z']
         if self.additional_features is not None:
             feature_names.extend(self.additional_features + DEFAULT_ATOM_FEATURES)
+        if 'periodic_bond' in feature_names:
+            feature_names.remove('bond')
         if self.model_type.lower() in ['dimenetpp', 'gvp']:
             feature_names.append('pos')
             feature_names.remove('bond')
@@ -370,6 +402,8 @@ class Pipeline:
         pre_transform = None
         if self.model_type.lower() in ['gps', 'kan_gps']:
             pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
+        if self.model_type.lower() in ['gatv2_lineevo']:
+            pre_transform = LineEvoTransform(depth=2)
 
         dataset = PolymerDataset(
             raw_csv_path=self.raw_csv,
@@ -377,7 +411,7 @@ class Pipeline:
             feature_names=feature_names,
             label_column=self.label,
             force_reload=True,
-            add_hydrogens=True,
+            add_hydrogens=not self.remove_hydrogens,
             pre_transform=pre_transform,
             estimator=self.estimator,
         )
@@ -411,7 +445,9 @@ class Pipeline:
     def _build_model(self, model_hparams: Dict[str, Any]) -> ModelWrapper:
         if self.model_type.lower() in ['pna']:
             model_hparams['deg'] = PNA.compute_deg(self.train_loader)
-        
+        if self.model_type.lower() in ['gatv2_source']:
+            model_hparams['source_names'] = self.sources + ['internal']
+
         model = build_model(
             model_type=self.model_type,
             num_node_features=self.dataset.num_node_features,
@@ -448,5 +484,10 @@ class Pipeline:
                 'ids': self.dataset.pre_transform.ids,
                 'mean': self.dataset.pre_transform.mean,
                 'std': self.dataset.pre_transform.std,
+            }
+        if self.model_type.lower() in ['gatv2_lineevo']:
+            transform_cls = 'LineEvoTransform'
+            transform_kwargs = {
+                'depth': 2,
             }
         return transform_cls, transform_kwargs

@@ -15,7 +15,7 @@ from sklearn.linear_model import LinearRegression
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.exp.score import scaling_error
 from polymon.data.polymer import Polymer
-from polymon.data.utils import Normalizer
+from polymon.data.utils import Normalizer, LogNormalizer
 
 if TYPE_CHECKING:
     from polymon.estimator.base import BaseEstimator
@@ -30,6 +30,48 @@ class BaseModel(nn.Module, ABC):
     def init_params(self) -> Dict[str, Any]:
         return getattr(self, '_init_params')
 
+
+class KFoldModel(BaseModel):
+    def __init__(
+        self,
+        model_cls: str,
+        model_init_params: Dict[str, Any],
+        n_fold: int = 5,
+    ):
+        super().__init__()
+        self.model_cls = model_cls
+        self.model_init_params = model_init_params
+        self.n_fold = n_fold
+        self.models = nn.ModuleList()
+        for _ in range(n_fold):
+            model_cls = getattr(import_module('polymon.model'), self.model_cls)
+            model = model_cls(**self.model_init_params)
+            self.models.append(model)
+    
+    @classmethod
+    def from_models(cls, models: List['ModelWrapper']) -> 'KFoldModel':
+        model_cls = models[0].info['model_cls']
+        model_init_params = models[0].info['model_init_params']
+        n_fold = len(models)
+        kfold_model = cls(model_cls, model_init_params, n_fold)
+        for i, model in enumerate(models):
+            kfold_model.models[i].load_state_dict(model.info['model'])
+        return kfold_model
+    
+    def forward(self, batch: Polymer) -> torch.Tensor:
+        output = []
+        for model in self.models:
+            output.append(model(batch))
+        output = torch.stack(output, dim=0).mean(0)
+        return output
+
+    @property
+    def init_params(self) -> Dict[str, Any]:
+        return {
+            'model_cls': self.model_cls,
+            'model_init_params': self.model_init_params,
+            'n_fold': self.n_fold,
+        }
 
 class ModelWrapper(nn.Module):
     def __init__(
@@ -112,7 +154,10 @@ class ModelWrapper(nn.Module):
             if self.transform is not None:
                 polymer = self.transform(polymer)
             if self.estimator is not None:
-                polymer = self.estimator.forward(polymer, device=device)
+                try:
+                    polymer = self.estimator.forward(polymer, device=device)
+                except Exception as e:
+                    backup_ids.append(i)
             polymers.append(polymer)
         loader = DataLoader(polymers, batch_size=batch_size)
         
@@ -120,10 +165,13 @@ class ModelWrapper(nn.Module):
         for i, batch in enumerate(loader):
             batch = batch.to(device)
             if i not in backup_ids:
-                y_pred = self.predict_batch(batch, device)
-                y_pred_list.append(y_pred)
+                try:
+                    y_pred = self.predict_batch(batch, device)
+                except Exception as e:
+                    y_pred = backup_model.predict([smiles_list[i]], device=device)
             else:
-                y_pred_list.append(backup_model.predict([smiles_list[i]]))
+                y_pred = backup_model.predict([smiles_list[i]], device=device)
+            y_pred_list.append(y_pred)
         if len(y_pred_list) == 1:
             return y_pred_list[0].detach().cpu()
         if batch_size == 1:
@@ -135,10 +183,7 @@ class ModelWrapper(nn.Module):
         output = {
             'model_cls': self.model.__class__.__name__,
             'model': self.model.state_dict(),
-            'normalizer': {
-                'mean': self.normalizer.mean,
-                'std': self.normalizer.std,
-            },
+            'normalizer': self.normalizer.init_params,
             'model_init_params': self.model.init_params,
             'featurizer_names': self.featurizer.names,
             'featurizer_config': self.featurizer.config,
@@ -158,13 +203,19 @@ class ModelWrapper(nn.Module):
     @classmethod
     def from_dict(cls, model_info: Dict[str, Any]) -> 'ModelWrapper':
         model_cls = model_info['model_cls']
-        model_cls = getattr(import_module('polymon.model'), model_cls)
+        if model_cls == 'KFoldModel':
+            model_cls = KFoldModel
+        else:
+            model_cls = getattr(import_module('polymon.model'), model_cls)
         model = model_cls(**model_info['model_init_params'])
         model.load_state_dict(model_info['model'])
-        normalizer = Normalizer(
-            mean=model_info['normalizer']['mean'],
-            std=model_info['normalizer']['std'],
-        )
+        if 'mean' in model_info['normalizer']:
+            normalizer = Normalizer(
+                mean=model_info['normalizer']['mean'],
+                std=model_info['normalizer']['std'],
+            )
+        else:
+            normalizer = LogNormalizer(eps=model_info['normalizer']['eps'])
         featurizer = ComposeFeaturizer(
             names=model_info['featurizer_names'],
             config=model_info['featurizer_config'],

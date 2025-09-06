@@ -14,6 +14,9 @@ from polymon.model.kan.efficient_kan import EfficientKANWrapper
 from polymon.model.kan.fast_kan import FastKANWrapper
 # from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
+from polymon.model.gatv2.lineevo import GATv2LineEvo
+from polymon.model.gatv2.gatv2_sage import GATv2SAGE
+from polymon.model.gatv2.multi_fidelity import GATv2_Source
 
 if typing.TYPE_CHECKING:
     from polymon.model.base import BaseModel
@@ -155,6 +158,32 @@ def build_model(
         }
         input_args.update(hparams)
         model = FastKAN_GATv2(**input_args)
+    elif model_type == 'gatv2_lineevo':
+        input_args = {
+            'num_atom_features': num_node_features,
+            'hidden_dim': 128,
+            'num_layers': 2,
+        }
+        input_args.update(hparams)
+        model = GATv2LineEvo(**input_args)
+    elif model_type == 'gatv2_sage':
+        input_args = {
+            'num_atom_features': num_node_features,
+            'hidden_dim': 128,
+            'num_layers': 2,
+            'edge_dim': num_edge_features,
+        }
+        input_args.update(hparams)
+        model = GATv2SAGE(**input_args)
+    elif model_type == 'gatv2_source':
+        input_args = {
+            'num_atom_features': num_node_features,
+            'hidden_dim': 128,
+            'num_layers': 2,
+            'edge_dim': num_edge_features,
+        }
+        input_args.update(hparams)
+        model = GATv2_Source(**input_args)
     else:
         raise ValueError(f"Model type {model_type} not implemented")
     

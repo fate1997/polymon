@@ -129,7 +129,7 @@ def get_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     param = {
         "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
         "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
-        "num_heads": trial.suggest_int("num_heads", 2, 8, step=2),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
         "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5, step=0.1),
         "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
@@ -332,5 +332,55 @@ def get_gatport_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
         "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5, step=0.1),
         "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+    }
+    return param
+
+
+@register_hparams('gatv2_lineevo')
+def get_gatv2_lineevo_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GATv2-LineEvo parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 8, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5, step=0.1),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+        "num_lineevo_layers": trial.suggest_int("num_lineevo_layers", 1, 2, step=1),
+    }
+    return param
+
+
+@register_hparams('gatv2_sage')
+def get_gatv2_sage_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GATv2-SAGE parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 1, 2, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5, step=0.1),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+        "sage_aggr": trial.suggest_categorical("sage_aggr", ["mean", "sum", "lstm"]),
+        "sage_normalize": trial.suggest_categorical("sage_normalize", [True, False]),
+        "sage_project": trial.suggest_categorical("sage_project", [True, False]),
+    }
+    return param
+
+
+@register_hparams('gatv2_source')
+def get_gatv2_source_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GATv2-Source parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 1, 2, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
     }
     return param

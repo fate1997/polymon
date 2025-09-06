@@ -79,6 +79,12 @@ class Polymer(Data):
     def num_descriptors(self) -> int:
         return self.descriptors.shape[0]
     
+    def __inc__(self, key, value, *args, **kwargs):
+        if 'edges' in key:
+            return self.num_nodes if key[-1] == '0' else getattr(self, 'edges_'+str(int(key[-1])-1)).size(0)
+        else:
+            return super().__inc__(key, value, *args, **kwargs)
+    
     
 class OligomerBuilder:
     def __init__(self):
