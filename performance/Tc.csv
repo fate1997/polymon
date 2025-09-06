@@ -1,6 +1,13 @@
-No.,model,performance,tag,kaggle
-1,gatv2,0.0437,initial-test (K-Fold) (Optuna),
-2,gatv2,,original,
-3,pna,,original,~2
-4,gatv2,,official_external,~2
-
+No.,model,performance,tag,kaggle,score
+1,gatv2,0.0437,initial-test (K-Fold) (Optuna),,
+2,gatv2,,original,,10
+3,pna,,original,~2,10
+4,gatv2,,official_external,~2,10
+5,gatv2,0.0484,PI1070-new-split,>2(+1),11
+6,gatv2,0.0626,with-official-external,~2,10
+7,kan_gatv2,0.0478,hparams-opt(Tc_merged),<5(-2),8
+8,gt,0.0445,hparams-opt,<5(-1),8
+9,gatv2,0.0447,cgcnn-feature,<5(-1),8
+10,fastkan_gatv2,0.0565,initial-test,<5(-2),7
+11,gatv2,0.0452,remove-hydrogen (K-Fold),<5(-1),8
+12,gatv2,0.0487,low-fidelity-prod (K-Fold) (Optuna),<5(-1),8
