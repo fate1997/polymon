@@ -65,6 +65,7 @@ def get_lgbm_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     """
     
     param = {
+        'verbose': -1,
         'metric': 'mae', 
         'random_state': 2025,
         'n_estimators': 10000,
@@ -99,6 +100,9 @@ def get_catboost_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     param['loss_function'] = 'MAE'
     param['random_state'] = 2025
     param['logging_level'] = 'Silent'
+    param['colsample_bylevel'] = trial.suggest_float('colsample_bylevel', 0.01, 0.90)
+    param['border_count'] = trial.suggest_int('border_count', 30, 250)
+    param['bootstrap_type'] = trial.suggest_categorical('bootstrap_type', ['Bayesian', 'Bernoulli', 'MVS'])
 
     return param
 

@@ -70,6 +70,21 @@ class AtomFeaturizer(Featurizer):
         # 'xenonpy_atom',
         'cgcnn',
         'source',
+        ### New node features ###
+        'total_valence',
+        'num_radical_electrons',
+        'isin_ring',
+        'ring_size_onehot',
+        'ring_count',
+        'heavy_neighbor_count',
+        'hetero_neighbor_count',
+        'neighbor_aromatic_count',
+        'local_bond_order_sum',
+        'n_outer_electrons',
+        'vdw_radius',
+        'covalent_radius',
+        'gasteiger_charge',
+        'explicit_hs',
     ]
     def __init__(
         self,
@@ -96,7 +111,7 @@ class AtomFeaturizer(Featurizer):
         for atom in rdmol.GetAtoms():
             atom_features = []
             for feature_name in feature_names:
-                atom_features.append(getattr(self, feature_name)(atom))
+                atom_features.append(getattr(self, feature_name)(atom, rdmol))
             x.append(torch.cat(atom_features))
         feature_exclude_atom_num = torch.stack(x, dim=0)
         
@@ -129,7 +144,7 @@ class AtomFeaturizer(Featurizer):
         onehot.scatter_(1, indices.unsqueeze(1), 1)
         return onehot
     
-    def degree(self, atom: Chem.Atom) -> torch.Tensor:
+    def degree(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         degree_choice = [0, 1, 2, 3, 4]
         onehot = torch.zeros(len(degree_choice) + 1)
         try:
@@ -139,10 +154,10 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def is_aromatic(self, atom: Chem.Atom) -> torch.Tensor:
+    def is_aromatic(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         return torch.tensor([int(atom.GetIsAromatic())])
     
-    def chiral_tag(self, atom: Chem.Atom) -> torch.Tensor:
+    def chiral_tag(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         chiral_tag_choice = list(range(len(Chem.ChiralType.names)-1))
         chiral_tag = atom.GetChiralTag()
         onehot = torch.zeros(len(chiral_tag_choice) + 1)
@@ -152,7 +167,7 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def num_hydrogens(self, atom: Chem.Atom) -> torch.Tensor:
+    def num_hydrogens(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         num_hydrogen_choice = list(range(len(Chem.rdchem.ChiralType.names)-1))
         num_hydrogen = atom.GetNumImplicitHs()
         onehot = torch.zeros(len(num_hydrogen_choice) + 1)
@@ -162,7 +177,7 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def hybridization(self, atom: Chem.Atom) -> torch.Tensor:
+    def hybridization(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         hybridization_choices = list(range(len(Chem.HybridizationType.names)-1))
         hybridization = int(atom.GetHybridization())
         onehot = torch.zeros(len(hybridization_choices) + 1)
@@ -172,27 +187,99 @@ class AtomFeaturizer(Featurizer):
             onehot[-1] = 1
         return onehot
     
-    def mass(self, atom: Chem.Atom) -> torch.Tensor:
+    def mass(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         return torch.tensor([atom.GetMass() / 100])
     
-    def formal_charge(self, atom: Chem.Atom) -> torch.Tensor:
+    def formal_charge(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         return torch.tensor([atom.GetFormalCharge() / 10])
     
-    def is_attachment(self, atom: Chem.Atom) -> torch.Tensor:
+    def is_attachment(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         return torch.tensor([int(atom.GetAtomicNum() == 0)])
     
-    def xenonpy_atom(self, atom: Chem.Atom) -> torch.Tensor:
+    def xenonpy_atom(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         from polymon.setting import XENONPY_ELEMENTS_INFO
 
         # preset.sync('elements_completed')
         symbol = Chem.GetPeriodicTable().GetElementSymbol(atom.GetAtomicNum())
         return torch.tensor(XENONPY_ELEMENTS_INFO.loc[symbol].values)
     
-    def cgcnn(self, atom: Chem.Atom) -> torch.Tensor:
+    def cgcnn(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
         atom_num = atom.GetAtomicNum()
         CGCNN_ELEMENT_INFO['0'] = [0] * len(CGCNN_ELEMENT_INFO['1'])
         return torch.tensor(CGCNN_ELEMENT_INFO[str(atom_num)])
+    
+    # New node features
+    def total_valence(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        return torch.tensor([atom.GetTotalValence()])
+    
+    def num_radical_electrons(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        return torch.tensor([atom.GetNumRadicalElectrons()])
+    
+    def isin_ring(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        return torch.tensor([atom.IsInRing()])
+    
+    def ring_size_onehot(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        sizes = (3, 4, 5, 6, 7, 8)
+        onehot = torch.zeros(len(sizes) + 1)
+        hit = False
+        for i, s in enumerate(sizes):
+            if atom.IsInRingSize(int(s)):
+                onehot[i] = 1
+                hit = True
+                # allow multi-ring membership → multiple 1s (leave as multi-hot)
+        if not hit:
+            onehot[-1] = 1
+        return onehot
+    
+    def ring_count(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        ri = rdmol.GetRingInfo()
+        return torch.tensor([ri.NumAtomRings(atom.GetIdx())])
 
+    def heavy_neighbor_count(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        cnt = sum(1 for nbr in atom.GetNeighbors() if nbr.GetAtomicNum() > 1)
+        return torch.tensor([cnt])
+    
+    def hetero_neighbor_count(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        cnt = sum(1 for nbr in atom.GetNeighbors() if nbr.GetAtomicNum() not in (0, 1, 6))
+        return torch.tensor([cnt])
+    
+    def neighbor_aromatic_count(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        cnt = sum(1 for nbr in atom.GetNeighbors() if nbr.GetIsAromatic())
+        return torch.tensor([cnt])
+    
+    def local_bond_order_sum(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        s = 0.0
+        for b in atom.GetBonds():
+            try:
+                s += float(b.GetBondTypeAsDouble())
+            except Exception:
+                pass
+        return torch.tensor([s])
+    
+    def n_outer_electrons(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        pt = Chem.GetPeriodicTable()
+        return torch.tensor([pt.GetNOuterElecs(atom.GetAtomicNum())])
+    
+    def vdw_radius(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        pt = Chem.GetPeriodicTable()
+        return torch.tensor([pt.GetRvdw(atom.GetAtomicNum())])
+    
+    def covalent_radius(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        pt = Chem.GetPeriodicTable()
+        return torch.tensor([pt.GetRcovalent(atom.GetAtomicNum())])
+    
+    def gasteiger_charge(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        try:
+            q = atom.GetDoubleProp('_GasteigerCharge')
+            if np.isnan(q) or np.isinf(q):
+                q = 0.0
+        except Exception:
+            q = 0.0
+        return torch.tensor([float(q)])
+    
+    def explicit_hs(self, atom: Chem.Atom, rdmol: Chem.Mol = None) -> torch.Tensor:
+        return torch.tensor([atom.GetNumExplicitHs()])
+    
 
 @register_cls('edge')
 class BondFeaturizer(Featurizer):

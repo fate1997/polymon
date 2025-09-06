@@ -1,15 +1,18 @@
 import argparse
 import os
 import pickle
-from typing import List, Tuple
+
+from typing import List, Tuple, Callable, Optional, Any, Dict, Literal
 
 import numpy as np
+import torch
 import optuna
 import pandas as pd
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from loguru import logger
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.metrics import mean_absolute_error, r2_score
 from tabpfn import TabPFNRegressor
 from tabpfn.model_loading import (load_fitted_tabpfn_model,
@@ -18,10 +21,16 @@ from tqdm import tqdm
 from xgboost import XGBRegressor
 
 from polymon.data.dataset import PolymerDataset
+from polymon.data.polymer import Polymer
+from polymon.data.featurizer import ComposeFeaturizer
 from polymon.exp.score import normalize_property_weight, scaling_error
 from polymon.exp.utils import loader2numpy, predict_batch, seed_everything
 from polymon.hparams import get_hparams
 from polymon.setting import REPO_DIR, TARGETS
+from sklearn.model_selection import KFold
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="lightgbm")
+
 
 MODELS = {
     'rf': RandomForestRegressor,
@@ -44,6 +53,7 @@ def parse_args():
     parser.add_argument('--n-trials', type=int, default=10)
     parser.add_argument('--out-dir', type=str, default='./results')
     parser.add_argument('--hparams-from', type=str, default=None)
+    parser.add_argument('--n-fold', type=int, default=None)
     return parser.parse_args()
 
 PREDICT_BATCH_SIZE = 128
@@ -59,6 +69,7 @@ def train(
     sources: List[str],
     n_trials: int,
     tag: str,
+    n_fold: int,
 ) -> Tuple[float, float]:
     seed_everything(42)
     out_dir = os.path.join(out_dir, model)
@@ -127,7 +138,9 @@ def train(
         logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     elif optimize_hparams:
         logger.info(f'Optimizing hyper-parameters for {model}...')
-        
+        x_train = np.concatenate([x_train, x_val], axis=0)
+        y_train = np.concatenate([y_train, y_val], axis=0)
+        logger.info(f'Concatenating train and val data..., train size: {x_train.shape[0]}')
         def objective(trial: optuna.Trial, model: str = model) -> float:
             hparams = get_hparams(trial, model)
             if model_type == 'tabpfn':
@@ -138,9 +151,22 @@ def train(
                     },
                 })
             model = MODELS[model](**hparams)
-            model.fit(x_train, y_train)
-            y_pred = predict_batch(model, x_val, batch_size=PREDICT_BATCH_SIZE)
-            return mean_absolute_error(y_val, y_pred)
+            if n_fold is not None:
+                kf = KFold(n_splits=n_fold, shuffle=True, random_state=42)
+                maes = []
+                for fold, (train_idx, val_idx) in enumerate(kf.split(x_train)):
+                    logger.info(f'Training fold {fold+1}/{n_fold}...')
+                    logger.info(f'trial {trial.number+1}/{n_trials}')
+                    x_train_fold, x_val_fold = x_train[train_idx], x_train[val_idx]
+                    y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx]
+                    model.fit(x_train_fold, y_train_fold)
+                    y_hat = predict_batch(model, x_val_fold, batch_size=PREDICT_BATCH_SIZE)
+                    maes.append(mean_absolute_error(y_val_fold, y_hat))
+                return float(np.mean(maes))
+            else:
+                model.fit(x_train, y_train)
+                y_pred = predict_batch(model, x_val, batch_size=PREDICT_BATCH_SIZE)
+                return mean_absolute_error(y_val, y_pred)
         
         study = optuna.create_study(direction='minimize')
         study.optimize(objective, n_trials=n_trials)
@@ -163,6 +189,7 @@ def train(
     X_total = np.concatenate([x_train, x_val, x_test], axis=0)
     y_total = np.concatenate([y_train, y_val, y_test], axis=0)
     model.fit(X_total, y_total)
+    model.feature_names = feature_names
     
     # 4. Save model and results
     if model_type == 'tabpfn':
@@ -202,6 +229,7 @@ def main():
             sources=args.sources,
             n_trials=args.n_trials,
             tag=args.tag,
+            n_fold=args.n_fold,
         )    
         performance[label] = scaling_error
         n_tests.append(n_test)
