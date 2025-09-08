@@ -179,6 +179,11 @@ class AtomFeaturizer(Featurizer):
         return torch.tensor([atom.GetFormalCharge() / 10])
     
     def is_attachment(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
+        # if atom.GetPropsAsDict().get('attachment', 'False') == 'True':
+        #     return torch.tensor([1])
+        # elif atom.GetAtomicNum() == 0:
+        #     return torch.tensor([1])
+        # return torch.tensor([0])
         return torch.tensor([int(atom.GetAtomicNum() == 0)])
     
     def xenonpy_atom(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
@@ -422,7 +427,14 @@ class RelativePositionFeaturizer(Featurizer):
         self,
         rdmol: Chem.Mol,
     ) -> Dict[str, torch.Tensor]:
-        attachments = [atom for atom in rdmol.GetAtoms() if atom.GetSymbol() == '*']
+        attachments = [
+            atom for atom in rdmol.GetAtoms() \
+                if atom.GetSymbol() == '*' or \
+                    atom.GetPropsAsDict().get('attachment', 'False') == 'True'
+        ]
+        if len(attachments) == 0:
+            return {'relative_position': None}
+        
         # Find the length of the shortest path between atoms and their closest attachment
         pe = []
         for atom in rdmol.GetAtoms():

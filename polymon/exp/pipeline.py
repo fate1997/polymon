@@ -173,6 +173,7 @@ class Pipeline:
         model_hparams: Optional[Dict[str, Any]] = None,
         model: Optional[ModelWrapper] = None,
         current_trial: Optional[int] = None,
+        lr: Optional[float] = None,
     ) -> List[float]:
         kfold = KFold(n_splits=n_fold, shuffle=True)
         val_errors = []
@@ -223,6 +224,7 @@ class Pipeline:
             out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
             os.makedirs(out_dir, exist_ok=True)
             val_error, trained_model = self.train(
+                lr=lr,
                 model_hparams=model_hparams,
                 out_dir=out_dir,
                 loaders=(train_loader, val_loader, None),
@@ -246,13 +248,18 @@ class Pipeline:
         os.makedirs(out_dir, exist_ok=True)
         def objective(trial: optuna.Trial) -> float:
             model_hparams = get_hparams(trial, self.model_type)
+            hparams = {
+                'lr': trial.suggest_float("lr", 1e-4, 2e-3, log=True),
+                **model_hparams,
+            }
             self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
-            self.logger.info(f'Hyper-parameters: {model_hparams}')
+            self.logger.info(f'Hyper-parameters: {hparams}')
             if n_fold > 1:
                 val_errors = self.cross_validation(
                     n_fold=n_fold,
                     model_hparams=model_hparams, 
                     current_trial=trial.number+1,
+                    lr=hparams['lr'],
                 )
                 return np.mean(val_errors)
             else:
@@ -338,6 +345,7 @@ class Pipeline:
         n_estimator: int,
         model_hparams: Optional[Dict[str, Any]] = None,
         run_production: bool = False,
+        skip_train: bool = False,
     ):
         self.logger.info(f'Running ensemble for {self.model_type}...')
         out_dir = os.path.join(self.out_dir, 'ensemble', 'train')
@@ -360,26 +368,30 @@ class Pipeline:
             model.set_optimizer('AdamW', lr=self.lr, weight_decay=1e-12)
             return model
 
-        ensemble_model = build_ensemble(model_wrapper, n_estimator)
-        ensemble_wrapper = EnsembleModelWrapper(
-            model=ensemble_model,
-            normalizer=self.normalizer,
-            featurizer=self.dataset.featurizer,
-            transform_cls=self.transform_cls,
-            transform_kwargs=self.transform_kwargs,
-            estimator=self.estimator,
-        )
-        test_err = ensemble_wrapper.fit(
-            epochs=self.num_epochs,
-            train_loader=self.train_loader,
-            val_loader=self.val_loader,
-            test_loader=self.test_loader,
-            save_dir=out_dir,
-            save_model=True,
-            log_interval=1000000000,
-            label=self.label,
-        )
-        self.logger.info(f'Ensemble test error: {test_err}')
+        if skip_train:
+            test_err = np.nan
+            self.logger.info(f'Skipping ensemble training')
+        else:
+            ensemble_model = build_ensemble(model_wrapper, n_estimator)
+            ensemble_wrapper = EnsembleModelWrapper(
+                model=ensemble_model,
+                normalizer=self.normalizer,
+                featurizer=self.dataset.featurizer,
+                transform_cls=self.transform_cls,
+                transform_kwargs=self.transform_kwargs,
+                estimator=self.estimator,
+            )
+            test_err = ensemble_wrapper.fit(
+                epochs=self.num_epochs,
+                train_loader=self.train_loader,
+                val_loader=self.val_loader,
+                test_loader=self.test_loader,
+                save_dir=out_dir,
+                save_model=True,
+                log_interval=1000000000,
+                label=self.label,
+            )
+            self.logger.info(f'Ensemble test error: {test_err}')
         
         if run_production:
             self.logger.info(f'Running ensemble production run for {self.model_type}...')
@@ -482,6 +494,9 @@ class Pipeline:
         if self.model_type.lower() in ['gatv2_source']:
             model_hparams['source_names'] = self.sources + ['internal']
 
+        if self.model_type.lower() in ['gatv2_embed_residual'] and self.low_fidelity_model is not None:
+            model_hparams['pretrained_model'] = ModelWrapper.from_file(self.low_fidelity_model, self.device).model
+
         model = build_model(
             model_type=self.model_type,
             num_node_features=self.dataset.num_node_features,
@@ -513,12 +528,13 @@ class Pipeline:
             transform_cls = None
             transform_kwargs = None
         if self.descriptors is not None:
-            transform_cls = 'DescriptorSelector'
-            transform_kwargs = {
-                'ids': self.dataset.pre_transform.ids,
-                'mean': self.dataset.pre_transform.mean,
-                'std': self.dataset.pre_transform.std,
-            }
+            # transform_cls = 'DescriptorSelector'
+            # transform_kwargs = {
+            #     'ids': self.dataset.pre_transform.ids,
+            #     'mean': self.dataset.pre_transform.mean,
+            #     'std': self.dataset.pre_transform.std,
+            # }
+            pass
         if self.model_type.lower() in ['gatv2_lineevo']:
             transform_cls = 'LineEvoTransform'
             transform_kwargs = {

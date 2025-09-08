@@ -356,10 +356,7 @@ class EnsembleModelWrapper(nn.Module):
         output = {
             'model_cls': self.model.__class__.__name__,
             'model': self.model.state_dict(),
-            'normalizer': {
-                'mean': self.normalizer.mean,
-                'std': self.normalizer.std,
-            },
+            'normalizer': self.normalizer.init_params,
             'model_init_params': self.model.estimator_args,
             'estimator_cls': self.model.base_estimator_.__name__,
             'n_estimators': self.model.n_estimators,
@@ -391,10 +388,13 @@ class EnsembleModelWrapper(nn.Module):
         for _ in range(model_info['n_estimators']):
             model.estimators_.append(model._make_estimator())
         model.load_state_dict(model_info['model'])
-        normalizer = Normalizer(
-            mean=model_info['normalizer']['mean'],
-            std=model_info['normalizer']['std'],
-        )
+        if 'mean' in model_info['normalizer']:
+            normalizer = Normalizer(
+                mean=model_info['normalizer']['mean'],
+                std=model_info['normalizer']['std'],
+            )
+        else:
+            normalizer = LogNormalizer(eps=model_info['normalizer']['eps'])
         featurizer = ComposeFeaturizer(
             names=model_info['featurizer_names'],
             config=model_info['featurizer_config'],
