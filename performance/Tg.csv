@@ -3,9 +3,9 @@ No.,model,performance,tag,kaggle
 2,gatv2,,train longer,~1,10
 3,gatv2,,train much longer ~2000epochs,>2(+1),11
 4,gatv2,,with_xenonpy(add hydrogens),<3(-1),10
-5,gin,,original Tg,~>3,11
-6,pna,,original Tg,<5(-1),10
-7,gt,,,>6(+1),11
+5,gin,0.0255,original Tg,~>3,11
+6,pna,0.0213,original Tg,<5(-1),10
+7,gt,0.0296,,>6(+1),11
 8,kan_gatv2,0.0287,hparams-opt,>1(+1),11
 9,gt,0.0271,hparams-opt,<8(-2),9
 10,kan_gps,,hparams-opt,>8(+1),12
