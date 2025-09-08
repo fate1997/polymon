@@ -81,13 +81,15 @@ def train_ensemble(
             logger.info(f'Loading ML model {model_path}...')
             with open(model_path, 'rb') as f:
                 model = pickle.load(f)
-            base_builders[f'estimator_{i}_ML'] = model
+            model_name = os.path.basename(model_path).replace('.pkl', '')
+            base_builders[f'{model_name}_ML'] = model
 
         if model_path.endswith('pt'):
             logger.info(f'Loading DL model {model_path}...')
             model_cls = ModelWrapper
             model = model_cls.from_file(model_path, weights_only=False, map_location=device)
-            base_builders[f'estimator_{i}_DL'] = model
+            model_name = os.path.basename(model_path).replace('.pt', '')
+            base_builders[f'{model_name}_DL'] = model
 
     ensemble = EnsembleRegressor(
         base_builders=base_builders,
@@ -108,7 +110,8 @@ def train_ensemble(
 
     # 4. Save model and results
     model_path = os.path.join(out_dir, f'{tag}.pt')
-    torch.save(ensemble, model_path)
+    #torch.save(ensemble, model_path)
+    ensemble.write(model_path)
     results_path = os.path.join(out_dir, f'{tag}.csv')
     #pd.DataFrame(y_pred).to_csv(results_path, index=False)
     # Flatten y and y_pred to 1D arrays for DataFrame

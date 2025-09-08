@@ -1,6 +1,6 @@
 import os
 
-from typing import List, Callable, Any, Dict
+from typing import List, Callable, Any, Dict, Tuple
 
 import numpy as np
 import torch
@@ -31,6 +31,8 @@ class EnsembleRegressor(nn.Module):
         self.meta_bias = meta_bias
         self.random_state = random_state
         self.strategy = strategy
+
+        self._feature_cache: Dict[Tuple[str, ...], Dict[str, np.ndarray]] = {}
 
     def fit(
             self, 
@@ -69,6 +71,8 @@ class EnsembleRegressor(nn.Module):
     ) -> torch.Tensor:
         base_preds = self.base_predict(smiles_list, batch_size, device)
         base_preds = torch.from_numpy(base_preds)
+        self.meta_weigths = self.meta_weigths.to(base_preds.device, dtype=base_preds.dtype)
+        self.meta_bias = self.meta_bias.to(base_preds.device, dtype=base_preds.dtype)
         meta_preds = self.meta_bias + base_preds @ self.meta_weigths
         meta_preds = meta_preds.detach().numpy()
         return meta_preds, base_preds.detach().numpy()
@@ -97,14 +101,27 @@ class EnsembleRegressor(nn.Module):
         
         return base_preds
             
-    @staticmethod
-    def ml_predict(model: Any, smiles_list: List[str]) -> torch.Tensor:
+    def ml_predict(self, model: Any, smiles_list: List[str]) -> torch.Tensor:
         feature_names = model.feature_names
+        feature_key = tuple(feature_names)
         featurizer = ComposeFeaturizer(feature_names)
-        X = np.array([
-            featurizer(Chem.MolFromSmiles(smiles)) for smiles in tqdm(smiles_list)
-        ])
-        X = np.array([X[i]['descriptors'] for i in range(len(X))]).squeeze(1)
+        feats_cache = self._feature_cache.setdefault(feature_key, {})
+        feats_permol = []
+        for smiles in tqdm(smiles_list, desc = f'Featurizing for {feature_names}'):
+            X = feats_cache.get(smiles)
+            if X is None:
+                mol = Chem.MolFromSmiles(smiles)
+                X = featurizer(mol)['descriptors']
+                X = np.asarray(X).reshape(-1)
+                feats_cache[smiles] = X
+            feats_permol.append(X)
+        
+        # X = np.array(feats_permol).squeeze(1)
+        # X = np.array([
+        #     featurizer(Chem.MolFromSmiles(smiles)) for smiles in tqdm(smiles_list)
+        # ])
+        # X = np.array([X[i]['descriptors'] for i in range(len(X))]).squeeze(1)
+        X = np.vstack(feats_permol)
         y_pred = model.predict(X)
         return torch.from_numpy(y_pred)
     
