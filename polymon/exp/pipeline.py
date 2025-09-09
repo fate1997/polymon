@@ -55,6 +55,7 @@ class Pipeline:
         normalizer_type: Literal['normalizer', 'log_normalizer', 'none'] = 'normalizer',
         estimator_name: Optional[str] = None,
         remove_hydrogens: bool = False,
+        augmentation: bool = False,
     ):
         seed_everything(seed)
         
@@ -81,6 +82,7 @@ class Pipeline:
         self.normalizer_type = normalizer_type
         self.estimator_name = estimator_name if estimator_name is not None else self.label
         self.remove_hydrogens = remove_hydrogens
+        self.augmentation = augmentation
         
         logger = loguru.logger
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -110,7 +112,7 @@ class Pipeline:
             self.num_descriptors = self.dataset[0].descriptors.shape[1]
         else:
             self.num_descriptors = 0
-        loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1, self.split_mode)
+        loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1, self.split_mode, augmentation=self.augmentation)
         self.train_loader, self.val_loader, self.test_loader = loaders
         
         self.logger.info(f'Using {self.normalizer_type} normalizer')
@@ -171,6 +173,7 @@ class Pipeline:
         model_hparams: Optional[Dict[str, Any]] = None,
         model: Optional[ModelWrapper] = None,
         current_trial: Optional[int] = None,
+        lr: Optional[float] = None,
     ) -> List[float]:
         kfold = KFold(n_splits=n_fold, shuffle=True)
         val_errors = []
@@ -180,8 +183,40 @@ class Pipeline:
             if current_trial is not None:
                 print_str += f' (trial {current_trial}/{self.n_trials})'
             self.logger.info(print_str)
+            train_set = self.dataset[train_idx]
+            if self.augmentation:
+                from polymon.data.polymer import OligomerBuilder
+                train_set_aug = []
+                for data in train_set:
+                    train_set_aug.append(data)
+                    for i in range(1):
+                        oligomer = OligomerBuilder.get_oligomer(data.smiles, i+2)
+                        mol_dict = self.dataset.featurizer(oligomer)
+                        aug_data = data.clone()
+                        for key, value in mol_dict.items():
+                            setattr(aug_data, key, value)
+                        train_set_aug.append(aug_data)
+                    # from rdkit import Chem
+                    # from rdkit.Chem.MolStandardize import rdMolStandardize
+                    # ps = rdMolStandardize.CleanupParameters()
+                    # ps.maxTransforms = 5000
+                    # te = rdMolStandardize.TautomerEnumerator(ps)
+                    # rdmol = Chem.MolFromSmiles(data.smiles)
+                    # tautomers = te.Enumerate(rdmol)
+                    # for tautomer in tautomers:
+                    #     if Chem.MolToSmiles(tautomer) == Chem.MolToSmiles(rdmol):
+                    #         continue
+                    #     mol_dict = self.dataset.featurizer(tautomer)
+                    #     aug_data = data.clone()
+                    #     for key, value in mol_dict.items():
+                    #         setattr(aug_data, key, value)
+                    #     train_set_aug.append(aug_data)
+                self.logger.info(f'Train set augmented from {len(train_set)} to {len(train_set_aug)}')
+            else:
+                train_set_aug = train_set
+            
             train_loader = DataLoader(
-                self.dataset[train_idx], batch_size=self.batch_size, shuffle=True
+                train_set_aug, batch_size=self.batch_size, shuffle=True
             )
             val_loader = DataLoader(
                 self.dataset[val_idx], batch_size=self.batch_size, shuffle=False
@@ -189,6 +224,7 @@ class Pipeline:
             out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
             os.makedirs(out_dir, exist_ok=True)
             val_error, trained_model = self.train(
+                lr=lr,
                 model_hparams=model_hparams,
                 out_dir=out_dir,
                 loaders=(train_loader, val_loader, None),
@@ -212,13 +248,18 @@ class Pipeline:
         os.makedirs(out_dir, exist_ok=True)
         def objective(trial: optuna.Trial) -> float:
             model_hparams = get_hparams(trial, self.model_type)
+            hparams = {
+                'lr': trial.suggest_float("lr", 1e-4, 2e-3, log=True),
+                **model_hparams,
+            }
             self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
-            self.logger.info(f'Hyper-parameters: {model_hparams}')
+            self.logger.info(f'Hyper-parameters: {hparams}')
             if n_fold > 1:
                 val_errors = self.cross_validation(
                     n_fold=n_fold,
                     model_hparams=model_hparams, 
                     current_trial=trial.number+1,
+                    lr=hparams['lr'],
                 )
                 return np.mean(val_errors)
             else:
@@ -295,7 +336,7 @@ class Pipeline:
         out_dir = os.path.join(self.out_dir, 'production')
         os.makedirs(out_dir, exist_ok=True)
 
-        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True)
+        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True, augmentation=self.augmentation)
         self.train(None, model_hparams, out_dir, loaders, model)
         self.logger.info(f'Production run complete.')
     
@@ -304,6 +345,7 @@ class Pipeline:
         n_estimator: int,
         model_hparams: Optional[Dict[str, Any]] = None,
         run_production: bool = False,
+        skip_train: bool = False,
     ):
         self.logger.info(f'Running ensemble for {self.model_type}...')
         out_dir = os.path.join(self.out_dir, 'ensemble', 'train')
@@ -326,26 +368,30 @@ class Pipeline:
             model.set_optimizer('AdamW', lr=self.lr, weight_decay=1e-12)
             return model
 
-        ensemble_model = build_ensemble(model_wrapper, n_estimator)
-        ensemble_wrapper = EnsembleModelWrapper(
-            model=ensemble_model,
-            normalizer=self.normalizer,
-            featurizer=self.dataset.featurizer,
-            transform_cls=self.transform_cls,
-            transform_kwargs=self.transform_kwargs,
-            estimator=self.estimator,
-        )
-        test_err = ensemble_wrapper.fit(
-            epochs=self.num_epochs,
-            train_loader=self.train_loader,
-            val_loader=self.val_loader,
-            test_loader=self.test_loader,
-            save_dir=out_dir,
-            save_model=True,
-            log_interval=1000000000,
-            label=self.label,
-        )
-        self.logger.info(f'Ensemble test error: {test_err}')
+        if skip_train:
+            test_err = np.nan
+            self.logger.info(f'Skipping ensemble training')
+        else:
+            ensemble_model = build_ensemble(model_wrapper, n_estimator)
+            ensemble_wrapper = EnsembleModelWrapper(
+                model=ensemble_model,
+                normalizer=self.normalizer,
+                featurizer=self.dataset.featurizer,
+                transform_cls=self.transform_cls,
+                transform_kwargs=self.transform_kwargs,
+                estimator=self.estimator,
+            )
+            test_err = ensemble_wrapper.fit(
+                epochs=self.num_epochs,
+                train_loader=self.train_loader,
+                val_loader=self.val_loader,
+                test_loader=self.test_loader,
+                save_dir=out_dir,
+                save_model=True,
+                log_interval=1000000000,
+                label=self.label,
+            )
+            self.logger.info(f'Ensemble test error: {test_err}')
         
         if run_production:
             self.logger.info(f'Running ensemble production run for {self.model_type}...')
@@ -392,6 +438,8 @@ class Pipeline:
             feature_names.remove('bond')
         if self.model_type.lower() in ['gatchain']:
             feature_names.append('bridge')
+        if self.model_type.lower() in ['gatv2_pe']:
+            feature_names.append('relative_position')
         if self.model_type.lower() in ['fastkan', 'efficientkan', 'kan', 'fourierkan']:
             assert self.descriptors is not None, 'Descriptors are required for KAN'
         if self.descriptors is not None:
@@ -448,6 +496,9 @@ class Pipeline:
         if self.model_type.lower() in ['gatv2_source']:
             model_hparams['source_names'] = self.sources + ['internal']
 
+        if self.model_type.lower() in ['gatv2_embed_residual'] and self.low_fidelity_model is not None:
+            model_hparams['pretrained_model'] = ModelWrapper.from_file(self.low_fidelity_model, self.device).model
+
         model = build_model(
             model_type=self.model_type,
             num_node_features=self.dataset.num_node_features,
@@ -479,12 +530,13 @@ class Pipeline:
             transform_cls = None
             transform_kwargs = None
         if self.descriptors is not None:
-            transform_cls = 'DescriptorSelector'
-            transform_kwargs = {
-                'ids': self.dataset.pre_transform.ids,
-                'mean': self.dataset.pre_transform.mean,
-                'std': self.dataset.pre_transform.std,
-            }
+            # transform_cls = 'DescriptorSelector'
+            # transform_kwargs = {
+            #     'ids': self.dataset.pre_transform.ids,
+            #     'mean': self.dataset.pre_transform.mean,
+            #     'std': self.dataset.pre_transform.std,
+            # }
+            pass
         if self.model_type.lower() in ['gatv2_lineevo']:
             transform_cls = 'LineEvoTransform'
             transform_kwargs = {

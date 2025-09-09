@@ -179,6 +179,7 @@ class PolymerDataset(Dataset):
         mode: Literal['source', 'random', 'scaffold'] = 'random',
         production_run: bool = False,
         num_workers: int = 0,
+        augmentation: bool = False,
     ) -> Tuple[DataLoader, DataLoader, DataLoader]:
         
         if isinstance(n_train, float):
@@ -207,9 +208,39 @@ class PolymerDataset(Dataset):
         #     num_samples=len(train_set),
         #     replacement=True,
         # )
-        
+        if augmentation:
+            from polymon.data.polymer import OligomerBuilder
+            train_set_aug = []
+            for data in train_set:
+                train_set_aug.append(data)
+                for i in range(1):
+                    oligomer = OligomerBuilder.get_oligomer(data.smiles, i+2)
+                    mol_dict = self.featurizer(oligomer)
+                    aug_data = data.clone()
+                    for key, value in mol_dict.items():
+                        setattr(aug_data, key, value)
+                    train_set_aug.append(aug_data)
+                # from rdkit import Chem
+                # from rdkit.Chem.MolStandardize import rdMolStandardize
+                # ps = rdMolStandardize.CleanupParameters()
+                # ps.maxTransforms = 5000
+                # te = rdMolStandardize.TautomerEnumerator(ps)
+                # rdmol = Chem.MolFromSmiles(data.smiles)
+                # tautomers = te.Enumerate(rdmol)
+                # for tautomer in tautomers:
+                #     if Chem.MolToSmiles(tautomer) == Chem.MolToSmiles(rdmol):
+                #         continue
+                #     mol_dict = self.featurizer(tautomer)
+                #     aug_data = data.clone()
+                #     for key, value in mol_dict.items():
+                #         setattr(aug_data, key, value)
+                #     train_set_aug.append(aug_data)
+            logger.info(f'Train set augmented from {len(train_set)} to {len(train_set_aug)}')
+        else:
+            train_set_aug = train_set
+            
         train_loader = DataLoader(
-            train_set, batch_size, shuffle=True, num_workers=num_workers
+            train_set_aug, batch_size, shuffle=True, num_workers=num_workers
         )
         val_loader = DataLoader(
             val_set, batch_size, num_workers=num_workers

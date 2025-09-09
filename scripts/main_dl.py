@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument('--train-residual', action='store_true')
     parser.add_argument('--normalizer-type', type=str, default='normalizer', 
                         choices=['normalizer', 'log_normalizer', 'none'])
+    parser.add_argument('--augmentation', action='store_true')
 
     # Model
     parser.add_argument(
@@ -98,6 +99,7 @@ def main():
             normalizer_type=args.normalizer_type,
             estimator_name=args.estimator_name,
             remove_hydrogens=args.remove_hydrogens,
+            augmentation=args.augmentation,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
@@ -106,6 +108,9 @@ def main():
         if args.optimize_hparams:
             test_err, hparams = pipeline.optimize_hparams(n_fold=args.n_fold)
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
+            if 'lr' in hparams:
+                args.lr = hparams['lr']
+                hparams.pop('lr')
         elif not args.finetune:
             hparams = {
                 'hidden_dim': args.hidden_dim,
@@ -118,26 +123,32 @@ def main():
                         hparams_loaded = json.load(f)
                 pipeline.logger.info(f'Loading hparams from {args.hparams_from}')
                 hparams.update(hparams_loaded)
+                if 'lr' in hparams:
+                    args.lr = hparams['lr']
+                    hparams.pop('lr')
             
             # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
             if not args.skip_train:
                 if args.n_fold == 1 and args.n_estimator == 1:
-                    test_err, _ = pipeline.train(model_hparams=hparams)
+                    test_err, _ = pipeline.train(lr=args.lr, model_hparams=hparams)
                 if args.n_fold > 1 and args.n_estimator == 1:
                     test_err = pipeline.cross_validation(
                         n_fold=args.n_fold,
                         model_hparams=hparams,
+                        lr=args.lr,
                     )
                     test_err = np.mean(test_err)
-                if args.n_estimator > 1:
-                    test_err = pipeline.run_ensemble(
-                        n_estimator=args.n_estimator,
-                        model_hparams=hparams,
-                        run_production=args.run_production,
-                    )
                 model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
             else:
                 test_err = np.nan
+
+            if args.n_estimator > 1:
+                test_err = pipeline.run_ensemble(
+                    n_estimator=args.n_estimator,
+                    model_hparams=hparams,
+                    run_production=args.run_production,
+                    skip_train=args.skip_train,
+                )
         
         # CHOICE 3: Finetune model OR run production
         if args.finetune:

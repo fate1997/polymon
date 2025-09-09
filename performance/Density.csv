@@ -1,13 +1,22 @@
-No.,model,performance,tag,kaggle
-1,gatv2,0.0211,cv (K-Fold),
-2,gatv2,0.0195,PI1070-epig-merged (K-Fold) (Optuna),
-3,kan_gps,0.0255,hparams-opt (K-Fold),
-4,gatv2,0.0186,residual-cv (K-Fold) (Optuna),
-5,kan_gatv2,0.0190,residual-first-no-kan (K-Fold) (Optuna) -> ensemble,
-6,kan_gatv2,0.0186,residual-cv-allkan (K-Fold) (Optuna),
-7,gatv2,0.0175,residual-with-low-fidelity-estimator (K-Fold),
-8,gatv2,,original density,
-9,gatv2,,with PI1070 std,~>8
-10,pna,,,<9(-1)
-
+No.,model,performance,tag,kaggle,score
+1,gatv2,0.0211,cv (K-Fold),,
+2,gatv2,0.0195,PI1070-epig-merged (K-Fold) (Optuna),,
+3,kan_gps,0.0255,hparams-opt (K-Fold),,
+4,gatv2,0.0211,residual-cv (K-Fold) (Optuna),,
+5,kan_gatv2,0.0190,residual-first-no-kan (K-Fold) (Optuna) -> ensemble,,
+6,kan_gatv2,0.0186,residual-cv-allkan (K-Fold) (Optuna),~11,11
+7,gatv2,0.0175,residual-with-low-fidelity-estimator (K-Fold),<6(-2),9
+8,gatv2,,original density,,10
+9,gatv2,,with PI1070 std,~8,10
+10,pna,,,<9(-1),9
+11,gatv2,0.0186,residual-cv-ensemble (K-Fold) (Optuna),>8(+1),11
+12,gatv2,,low-fidelity-wo-base-residual (K-Fold),,
+13,kan_gatv2,0.0199,hparams-opt,<8(-1),9
+14,gt,0.0175,hparams-opt,,
+15,kan_gatv2,0.0196,residual-cv-MD-merged-ensemble,<6(-1),10
+16,gatv2,0.0174,low-fidelity-wo-base-residual (K-Fold),~>6,11
+17,gatv2,0.0184,fedors-estimator (K-Fold) (Optuna),<16(-2),9
+18,gatv2_source,0.0171,source-head (K-Fold) (Optuna),<16(-1),10
+19,gatv2,0.0203,rf-low-fidelity (K-Fold),<16(-1),10
+20,gatv2,0.0110,low-fidelity-estimator (K-Fold),<16(-2),9
 

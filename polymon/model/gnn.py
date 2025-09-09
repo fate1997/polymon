@@ -41,6 +41,7 @@ class GATv2(BaseModel):
         num_descriptors: int = 0,
     ):
         super().__init__()
+        self.hidden_dim = hidden_dim
 
         # update phase
         feature_per_layer = [num_atom_features + num_descriptors] + [hidden_dim] * num_layers
@@ -94,6 +95,17 @@ class GATv2(BaseModel):
         #     output = torch.cat([output, batch.descriptors], dim=1)
 
         return self.predict(output)
+    
+    def get_embeddings(self, batch: Polymer):
+        x = batch.x.float()
+        for layer in self.layers:
+            x = layer(x, batch.edge_index, batch.edge_attr)
+        batch_index = batch.batch
+        weighted = self.atom_weighting(x)
+        output1 = global_max_pool(x, batch_index)
+        output2 = global_add_pool(weighted * x, batch_index)
+        output = torch.cat([output1, output2], dim=1)
+        return output
 
 
 @register_init_params

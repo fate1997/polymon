@@ -84,12 +84,14 @@ def train_ensemble(
             model_name = os.path.basename(model_path).replace('.pkl', '')
             base_builders[f'{model_name}_ML'] = model
 
+
         if model_path.endswith('pt'):
             logger.info(f'Loading DL model {model_path}...')
             model_cls = ModelWrapper
             model = model_cls.from_file(model_path, weights_only=False, map_location=device)
             model_name = os.path.basename(model_path).replace('.pt', '')
             base_builders[f'{model_name}_DL'] = model
+
 
     ensemble = EnsembleRegressor(
         base_builders=base_builders,

@@ -1,5 +1,4 @@
 import os
-
 from typing import List, Callable, Any, Dict, Tuple
 
 import numpy as np
@@ -122,6 +121,7 @@ class EnsembleRegressor(nn.Module):
         # ])
         # X = np.array([X[i]['descriptors'] for i in range(len(X))]).squeeze(1)
         X = np.vstack(feats_permol)
+        feature_name_str = '_'.join(feature_names)
         y_pred = model.predict(X)
         return torch.from_numpy(y_pred)
     
@@ -131,7 +131,7 @@ class EnsembleRegressor(nn.Module):
     
     @classmethod
     def from_file(cls, path: str) -> 'EnsembleRegressor':
-        info = torch.load(path)
+        info = torch.load(path, map_location='cpu', weights_only=False)
         base_builders = {}
         for name, builder in info['base_builders'].items():
             if name.endswith('DL'):

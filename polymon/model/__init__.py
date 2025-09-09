@@ -17,6 +17,8 @@ from polymon.model.kan.fourier_kan import FourierKANWrapper
 from polymon.model.gatv2.lineevo import GATv2LineEvo
 from polymon.model.gatv2.gatv2_sage import GATv2SAGE
 from polymon.model.gatv2.multi_fidelity import GATv2_Source
+from polymon.model.gatv2.position_encoding import GATv2_PE
+from polymon.model.gatv2.embed_residual import GATv2EmbedResidual
 
 if typing.TYPE_CHECKING:
     from polymon.model.base import BaseModel
@@ -48,8 +50,8 @@ def build_model(
         input_args = {
             'out_channels': 1,
         }
-        input_args.update(hparams)
-        model = DimeNetPP(**input_args)
+        hparams.update(input_args)
+        model = DimeNetPP(**hparams)
     elif model_type == 'gatport':
         input_args = {
             'num_atom_features': num_node_features,
@@ -103,8 +105,8 @@ def build_model(
         input_args = {
             'in_channels': num_node_features,
         }
-        input_args.update(hparams)
-        model = GraphTransformer(**input_args)
+        hparams.update(input_args)
+        model = GraphTransformer(**hparams)
     elif model_type == 'kan_gatv2':
         input_args = {
             'num_node_features': num_node_features,
@@ -148,42 +150,51 @@ def build_model(
         input_args = {
             'in_channels': num_descriptors,
         }
-        input_args.update(hparams)
-        model = FourierKANWrapper(**input_args)
+        hparams.update(input_args)
+        model = FourierKANWrapper(**hparams)
     elif model_type == 'fastkan_gatv2':
         input_args = {
             'num_atom_features': num_node_features,
             'edge_dim': num_edge_features,
             'num_descriptors': num_descriptors,
         }
-        input_args.update(hparams)
-        model = FastKAN_GATv2(**input_args)
+        hparams.update(input_args)
+        model = FastKAN_GATv2(**hparams)
     elif model_type == 'gatv2_lineevo':
         input_args = {
             'num_atom_features': num_node_features,
-            'hidden_dim': 128,
-            'num_layers': 2,
         }
-        input_args.update(hparams)
-        model = GATv2LineEvo(**input_args)
+        hparams.update(input_args)
+        model = GATv2LineEvo(**hparams)
     elif model_type == 'gatv2_sage':
         input_args = {
             'num_atom_features': num_node_features,
-            'hidden_dim': 128,
-            'num_layers': 2,
             'edge_dim': num_edge_features,
         }
-        input_args.update(hparams)
-        model = GATv2SAGE(**input_args)
+        hparams.update(input_args)
+        model = GATv2SAGE(**hparams)
     elif model_type == 'gatv2_source':
         input_args = {
             'num_atom_features': num_node_features,
-            'hidden_dim': 128,
-            'num_layers': 2,
             'edge_dim': num_edge_features,
         }
-        input_args.update(hparams)
-        model = GATv2_Source(**input_args)
+        hparams.update(input_args)
+        model = GATv2_Source(**hparams)
+    elif model_type == 'gatv2_pe':
+        input_args = {
+            'num_atom_features': num_node_features,
+            'edge_dim': num_edge_features,
+        }
+        hparams.update(input_args)
+        model = GATv2_PE(**hparams)
+    elif model_type == 'gatv2_embed_residual':
+        input_args = {
+            'num_atom_features': num_node_features,
+            'edge_dim': num_edge_features,
+            'num_descriptors': num_descriptors,
+        }
+        hparams.update(input_args)
+        model = GATv2EmbedResidual(**hparams)
     else:
         raise ValueError(f"Model type {model_type} not implemented")
     

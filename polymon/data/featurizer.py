@@ -194,6 +194,11 @@ class AtomFeaturizer(Featurizer):
         return torch.tensor([atom.GetFormalCharge() / 10])
     
     def is_attachment(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
+        # if atom.GetPropsAsDict().get('attachment', 'False') == 'True':
+        #     return torch.tensor([1])
+        # elif atom.GetAtomicNum() == 0:
+        #     return torch.tensor([1])
+        # return torch.tensor([0])
         return torch.tensor([int(atom.GetAtomicNum() == 0)])
     
     def xenonpy_atom(self, atom: Chem.Atom, rdmol: Chem.Mol=None) -> torch.Tensor:
@@ -501,6 +506,39 @@ class AtomNumFeaturizer(Featurizer):
     ) -> Dict[str, torch.Tensor]:
         atom_nums = [atom.GetAtomicNum() for atom in rdmol.GetAtoms()]
         return {'z': torch.tensor(atom_nums)}
+
+
+@register_cls('relative_position')
+class RelativePositionFeaturizer(Featurizer):
+    def __call__(
+        self,
+        rdmol: Chem.Mol,
+    ) -> Dict[str, torch.Tensor]:
+        attachments = [
+            atom for atom in rdmol.GetAtoms() \
+                if atom.GetSymbol() == '*' or \
+                    atom.GetPropsAsDict().get('attachment', 'False') == 'True'
+        ]
+        if len(attachments) == 0:
+            return {'relative_position': torch.LongTensor([200] * rdmol.GetNumAtoms())}
+        
+        # Find the length of the shortest path between atoms and their closest attachment
+        pe = []
+        for atom in rdmol.GetAtoms():
+            if atom.GetSymbol() == '*':
+                pe.append(0)
+            else:
+                min_dist = float('inf')
+                for attachment in attachments:
+                    if atom.GetIdx() == attachment.GetIdx():
+                        min_dist = 0
+                        break
+                    shortest_path = Chem.GetShortestPath(rdmol, atom.GetIdx(), attachment.GetIdx())
+                    dist = len(shortest_path) - 1
+                    if dist < min_dist:
+                        min_dist = dist
+                pe.append(min_dist)
+        return {'relative_position': torch.LongTensor(pe)}
 
 
 @register_cls('seq')
