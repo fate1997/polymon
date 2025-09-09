@@ -433,7 +433,7 @@ class RelativePositionFeaturizer(Featurizer):
                     atom.GetPropsAsDict().get('attachment', 'False') == 'True'
         ]
         if len(attachments) == 0:
-            return {'relative_position': None}
+            return {'relative_position': torch.LongTensor([200] * rdmol.GetNumAtoms())}
         
         # Find the length of the shortest path between atoms and their closest attachment
         pe = []
@@ -443,6 +443,9 @@ class RelativePositionFeaturizer(Featurizer):
             else:
                 min_dist = float('inf')
                 for attachment in attachments:
+                    if atom.GetIdx() == attachment.GetIdx():
+                        min_dist = 0
+                        break
                     shortest_path = Chem.GetShortestPath(rdmol, atom.GetIdx(), attachment.GetIdx())
                     dist = len(shortest_path) - 1
                     if dist < min_dist:

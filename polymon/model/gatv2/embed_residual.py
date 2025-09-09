@@ -3,7 +3,6 @@ from typing import Any, Dict, Literal
 import torch
 from torch import nn
 from torch_geometric.nn import GATv2Conv, global_add_pool, global_max_pool
-from loguru import logger
 
 from polymon.data.polymer import Polymer
 from polymon.model.base import BaseModel
@@ -68,14 +67,14 @@ class GATv2EmbedResidual(BaseModel):
         )
         self.pretrained_model = pretrained_model
         if self.pretrained_model is not None:
-            logger.info(f'Using pretrained model: {pretrained_model.__class__.__name__}')
+            print(f'Using pretrained model: {pretrained_model.__class__.__name__}')
             if pretrained_model.hidden_dim != hidden_dim:
-                logger.info(f'Resizing pretrained model from {pretrained_model.hidden_dim*2} to {hidden_dim*2}')
+                print(f'Resizing pretrained model from {pretrained_model.hidden_dim*2} to {hidden_dim*2}')
                 self.pretrained_encoder = nn.Linear(pretrained_model.hidden_dim*2, hidden_dim*2)
                 self.pretrained_encoder.apply(init_weight)
         self.num_descriptors = num_descriptors
         if self.num_descriptors > 0:
-            logger.info(f'Using {num_descriptors} descriptors')
+            print(f'Using {num_descriptors} descriptors')
             self.descriptor_embedding = nn.Linear(num_descriptors, hidden_dim * 2)
             self.descriptor_embedding.apply(init_weight)
         

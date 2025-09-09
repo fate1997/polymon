@@ -438,6 +438,8 @@ class Pipeline:
             feature_names.remove('bond')
         if self.model_type.lower() in ['gatchain']:
             feature_names.append('bridge')
+        if self.model_type.lower() in ['gatv2_pe']:
+            feature_names.append('relative_position')
         if self.model_type.lower() in ['fastkan', 'efficientkan', 'kan', 'fourierkan']:
             assert self.descriptors is not None, 'Descriptors are required for KAN'
         if self.descriptors is not None:
