@@ -56,6 +56,7 @@ class Pipeline:
         estimator_name: Optional[str] = None,
         remove_hydrogens: bool = False,
         augmentation: bool = False,
+        emb_model: Optional[str] = None,
     ):
         seed_everything(seed)
         
@@ -83,6 +84,7 @@ class Pipeline:
         self.estimator_name = estimator_name if estimator_name is not None else self.label
         self.remove_hydrogens = remove_hydrogens
         self.augmentation = augmentation
+        self.emb_model = emb_model
         
         logger = loguru.logger
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -465,7 +467,7 @@ class Pipeline:
         )
         
         # Post-transforms after creating dataset
-        if self.descriptors is not None and self.model_type.lower() in ['gatv2']:
+        if self.descriptors is not None and self.model_type.lower() in []: #'gatv2'
             self.logger.info(f'Creating descriptor selector for {self.descriptors}...')
             loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
             if self.model_type.lower() in ['gatv2']:
@@ -496,8 +498,8 @@ class Pipeline:
         if self.model_type.lower() in ['gatv2_source']:
             model_hparams['source_names'] = self.sources + ['internal']
 
-        if self.model_type.lower() in ['gatv2_embed_residual'] and self.low_fidelity_model is not None:
-            model_hparams['pretrained_model'] = ModelWrapper.from_file(self.low_fidelity_model, self.device).model
+        if self.model_type.lower() in ['gatv2_embed_residual'] and self.emb_model is not None:
+            model_hparams['pretrained_model'] = ModelWrapper.from_file(self.emb_model, self.device).model
 
         model = build_model(
             model_type=self.model_type,

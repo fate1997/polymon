@@ -593,6 +593,7 @@ class DescFeaturizer(Featurizer):
         'oligomer_ecfp4',
         'xenonpy_desc',
         'mordred3d',
+        'fedors_density',
     ]
 
     def __init__(
@@ -692,6 +693,14 @@ class DescFeaturizer(Featurizer):
         rdmol_smiles = Chem.MolToSmiles(rdmol)
         oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
         return self.rdkit2d(oligomer)
+    
+    def fedors_density(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        from polymon.estimator.density_Fedors import get_fedors_density
+        density = get_fedors_density(rdmol)
+        return torch.tensor(density).reshape(1, 1)
     
     def oligomer_mordred(
         self,

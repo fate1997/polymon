@@ -78,10 +78,10 @@ def get_fedors_density(mol):
     from rdkit import Chem
     if type(mol) is Chem.rdchem.Mol:
         rdkitmol = Chem.Mol(mol)
-        no_H_mol = mol
+        no_H_mol = Chem.RemoveHs(rdkitmol)
     else:
         rdkitmol = Chem.MolFromSmiles(mol)
-        no_H_mol = Chem.Mol(rdkitmol)
+        no_H_mol = Chem.RemoveHs(rdkitmol)
 
     # Canont modify the molecule we are given
     rdkitmol = Chem.AddHs(rdkitmol)
