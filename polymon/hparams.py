@@ -394,3 +394,43 @@ def get_gatv2_pe_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "position_encoding_type": trial.suggest_categorical("position_encoding_type", ["sin", "rope", "learned"]),
     }
     return param
+
+
+@register_hparams('kan_gin')
+def get_kan_gin_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get KAN-GIN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 64, 256, step=64),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "dropout": trial.suggest_float("dropout", 0.0, 0.5, step=0.1),
+        "n_mlp_layers": trial.suggest_int("n_mlp_layers", 1, 3, step=1),
+        "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
+    }
+    return param
+
+@register_hparams('fastkan_gin')
+def get_fastkan_gin_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get FastKAN-GIN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 64, 256, step=64),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+    }
+    return param
+
+
+@register_hparams('kan_gcn')
+def get_kan_gcn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get KAN-GCN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 64, 256, step=64),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "grid_size": trial.suggest_int("grid_size", 2, 10, step=1),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 64, 512, step=16),
+    }
+    return param
