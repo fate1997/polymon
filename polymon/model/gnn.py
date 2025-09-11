@@ -37,7 +37,7 @@ class GATv2(BaseModel):
         self.hidden_dim = hidden_dim
 
         # update phase
-        feature_per_layer = [num_atom_features + num_descriptors] + [hidden_dim] * num_layers
+        feature_per_layer = [num_atom_features] + [hidden_dim] * num_layers
         layers = []
         for i in range(num_layers):
             layer = GATv2Conv(
@@ -61,7 +61,7 @@ class GATv2(BaseModel):
 
         # prediction phase
         self.predict = MLP(
-            input_dim=feature_per_layer[-1] * 2,
+            input_dim=feature_per_layer[-1] * 2 + num_descriptors,
             hidden_dim=pred_hidden_dim,
             output_dim=num_tasks,
             n_layers=pred_layers,
@@ -72,8 +72,8 @@ class GATv2(BaseModel):
         
     def forward(self, batch: Polymer): 
         x = batch.x.float()
-        if self.num_descriptors > 0:
-            x = torch.cat([x, batch.descriptors[batch.batch]], dim=1)
+        # if self.num_descriptors > 0:
+        #     x = torch.cat([x, batch.descriptors[batch.batch]], dim=1)
         
         for layer in self.layers:
             x = layer(x, batch.edge_index, batch.edge_attr)
@@ -84,8 +84,8 @@ class GATv2(BaseModel):
         output2 = global_add_pool(weighted * x, batch_index)
         output = torch.cat([output1, output2], dim=1)
         
-        # if self.num_descriptors > 0:
-        #     output = torch.cat([output, batch.descriptors], dim=1)
+        if self.num_descriptors > 0:
+            output = torch.cat([output, batch.descriptors], dim=1)
 
         return self.predict(output)
     
