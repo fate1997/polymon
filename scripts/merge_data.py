@@ -3,6 +3,7 @@ import logging
 import math
 import pickle
 from typing import List
+import json
 
 import numpy as np
 import pandas as pd
@@ -335,9 +336,73 @@ def merge(
     df_merged.to_csv(merge_path, index=False)
     print(f'Merged {len(df_add)} samples from {sources} to internal {len(df_base)}: {len(df_merged)}')
 
+def sample_internal(
+    label: str,
+    hparams_from: str,
+    acquisition: str,
+    sample_size: int = 20,
+    internal_path: str = str(REPO_DIR / 'database' / 'database.csv')
+):
+    df = pd.read_csv(internal_path)
+    df = df[df['Source'] == 'internal']
+    df = df[['SMILES', 'Source', 'Uncertainty', label, 'id']]
+    df = df[df[label].isna()]
+    smiles_list = df['SMILES'].tolist()
+    
+    filtered_smiles = []
+    for smiles in smiles_list:
+        mol = Chem.MolFromSmiles(smiles)
+        mol = Chem.AddHs(mol)
+        if mol.GetNumAtoms() > 100 and mol.GetNumAtoms() < 150 and smiles.count('*') == 2 and smiles.count('Si') == 0:
+            filtered_smiles.append(smiles)
+    smiles_list = filtered_smiles
+    
+    props_dict = dict(zip(smiles_list, df[label].tolist()))
+    def featurize_mols(smiles_list):
+        features = []
+        for smiles in tqdm(smiles_list):
+            rdmol = Chem.MolFromSmiles(smiles)
+            mol_dict = ComposeFeaturizer(['rdkit2d'])(rdmol)
+            features.append(mol_dict['descriptors'])
+        features = torch.from_numpy(np.array(features)).squeeze(1)
+        return features
+    features_pool = featurize_mols(smiles_list)
+
+    with open(hparams_from, 'rb') as f:
+        rf_model = pickle.load(f)
+    model = RFUncertainty(rf_model)
+    if acquisition == 'uncertainty':
+        uncertainty = model._uncertainty(features_pool)
+        # select top sample_size highest uncertainty
+        if len(uncertainty) <= sample_size:
+            query_idx = np.argsort(uncertainty)[::-1]
+        else:
+            query_idx = np.argsort(uncertainty)[::-1][:sample_size]
+        query_smiles = [smiles_list[i] for i in query_idx]
+    elif acquisition == 'difference':
+        predictions = model._predict(features_pool)
+        props_list = [props_dict[smiles] for smiles in smiles_list]
+        relative_difference = np.abs(predictions - props_list) / props_list
+        # select top sample_size highest relative difference
+        query_idx = np.argsort(relative_difference)[::-1][:sample_size]
+        query_smiles = [smiles_list[i] for i in query_idx]
+        print(relative_difference[query_idx])
+    else:
+        raise ValueError(f'Invalid acquisition method: {acquisition}')
+        
+    smiles_dict = {}
+    for smiles in query_smiles:
+        id = df[df['SMILES'] == smiles]['id'].tolist()[0]
+        smiles_dict[id] = smiles
+        
+    smiles_dict = {f'k_{i}': smiles_dict[i] for i in smiles_dict}
+    with open(f'../results/sample_internal_{label}_{acquisition}_{sample_size}.json', 'w') as f:
+        json.dump(smiles_dict, f, indent=4, ensure_ascii=False)  
+    return smiles_dict
+
 def arg_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--sources', type=str, required=True, nargs='+')
+    parser.add_argument('--sources', type=str, nargs='+')
     parser.add_argument('--label', type=str, required=True)
     parser.add_argument('--hparams-from', type=str, required=True)
     parser.add_argument('--acquisition', type=str, required=True, choices=['epig', 'uncertainty', 'difference'])
@@ -346,21 +411,30 @@ def arg_parser():
     parser.add_argument('--difference-threshold', type=float, default=0.1)
     parser.add_argument('--target-size', type=int, default=1000)
     parser.add_argument('--base-csv', type=str, default=None)
+    parser.add_argument('--sample-internal', action='store_true')
     return parser.parse_args()
 
 def main():
     args = arg_parser()
-    merge(
-        sources=args.sources,
-        label=args.label,
-        hparams_from=args.hparams_from,
-        acquisition=args.acquisition,
-        sample_size=args.sample_size,
-        uncertainty_threshold=args.uncertainty_threshold,
-        difference_threshold=args.difference_threshold,
-        target_size=args.target_size,
-        base_csv=args.base_csv,
-    )
+    if args.sample_internal:
+        sample_internal(
+            label=args.label,
+            hparams_from=args.hparams_from,
+            acquisition=args.acquisition,
+            sample_size=args.sample_size,
+        )
+    else:
+        merge(
+            sources=args.sources,
+            label=args.label,
+            hparams_from=args.hparams_from,
+            acquisition=args.acquisition,
+            sample_size=args.sample_size,
+            uncertainty_threshold=args.uncertainty_threshold,
+            difference_threshold=args.difference_threshold,
+            target_size=args.target_size,
+            base_csv=args.base_csv,
+        )
 
 if __name__ == '__main__':
     main()
