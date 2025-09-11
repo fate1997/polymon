@@ -58,7 +58,7 @@ class PolymerDataset(Dataset):
             if self.pre_transform is not None:
                 logger.info(f'Applying pre-transform: {self.pre_transform}')
             df_nonan = pd.read_csv(raw_csv_path).dropna(subset=[label_column])
-            if 'Source' in df_nonan.columns:
+            if 'Uncertainty' in df_nonan.columns:
                 dedup = Dedup(df_nonan, label_column)
                 if fitting_source is not None:
                     for source in fitting_source:
@@ -96,7 +96,7 @@ class PolymerDataset(Dataset):
                     mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
                 if 'Source' in df_nonan.columns:
-                    mol_dict['source'] = row['Source']
+                    mol_dict['source'] = int(row['Source'] == 'internal')
                 if None in mol_dict.values():
                     logger.warning(f'Skipping {row[smiles_column]} because of None in featurization')
                     continue

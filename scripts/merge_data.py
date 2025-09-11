@@ -273,6 +273,7 @@ def merge(
     df_external = df[df['Source'].isin(sources)]
     smiles_list = df_external['SMILES'].tolist()
     props_dict = dict(zip(smiles_list, df_external[label].tolist()))
+    source_dict = dict(zip(smiles_list, df_external['Source'].tolist()))
     def featurize_mols(smiles_list):
         features = []
         for smiles in tqdm(smiles_list):
@@ -320,18 +321,19 @@ def merge(
     
     df_internal = df[df['Source'] == 'internal']
     df_internal = df_internal[df_internal[label].notna()]
-    df_internal = df_internal[['SMILES', label]]
+    df_internal = df_internal[['SMILES', label, 'Source']]
     query_smiles = [smiles for smiles in query_smiles if smiles not in df_internal['SMILES'].tolist()]
     ref_props = [props_dict[smiles] for smiles in query_smiles]
-    df_add = pd.DataFrame(zip(query_smiles, ref_props), columns=['SMILES', label])
+    ref_sources = [source_dict[smiles] for smiles in query_smiles]
+    df_add = pd.DataFrame(zip(query_smiles, ref_props, ref_sources), columns=['SMILES', label, 'Source'])
     
     if base_csv is not None:
-        df_base = pd.read_csv(base_csv)[['SMILES', label]]
+        df_base = pd.read_csv(base_csv)[['SMILES', label, 'Source']]
     else:
         df_base = df_internal
         
     df_merged = pd.concat([df_base, df_add], ignore_index=True)
-    merge_path = str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}.csv')
+    merge_path = str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}_{sample_size}.csv')
     df_merged.to_csv(merge_path, index=False)
     print(f'Merged {len(df_add)} samples from {sources} to internal {len(df_base)}: {len(df_merged)}')
 
