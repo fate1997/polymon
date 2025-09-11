@@ -59,6 +59,7 @@ def parse_args():
     parser.add_argument('--low-fidelity-model', type=str, default=None)
     parser.add_argument('--estimator-name', type=str, default=None)
     parser.add_argument('--remove-hydrogens', action='store_true')
+    parser.add_argument('--emb-model', type=str, default=None)
 
     return parser.parse_args()
 
@@ -100,6 +101,7 @@ def main():
             estimator_name=args.estimator_name,
             remove_hydrogens=args.remove_hydrogens,
             augmentation=args.augmentation,
+            emb_model=args.emb_model,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
