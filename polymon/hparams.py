@@ -417,7 +417,7 @@ def get_fastkan_gin_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     
     param = {
         "hidden_dim": trial.suggest_int("hidden_dim", 64, 256, step=64),
-        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "num_layers": trial.suggest_int("num_layers", 2, 6, step=1),
     }
     return param
 
@@ -430,7 +430,7 @@ def get_kan_gcn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     param = {
         "hidden_dim": trial.suggest_int("hidden_dim", 64, 256, step=64),
         "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
-        "grid_size": trial.suggest_int("grid_size", 2, 10, step=1),
+        "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 64, 512, step=16),
     }
     return param
