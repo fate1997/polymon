@@ -465,7 +465,7 @@ class Pipeline:
         )
         
         # Post-transforms after creating dataset
-        if self.descriptors is not None and self.model_type.lower() in ['gatv2']:
+        if self.descriptors is not None and self.model_type.lower() in []: #'gatv2'
             self.logger.info(f'Creating descriptor selector for {self.descriptors}...')
             loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
             if self.model_type.lower() in ['gatv2']:
