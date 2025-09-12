@@ -19,6 +19,8 @@ from polymon.model.gatv2.gatv2_sage import GATv2SAGE
 from polymon.model.gatv2.multi_fidelity import GATv2_Source
 from polymon.model.gatv2.position_encoding import GATv2_PE
 from polymon.model.gatv2.embed_residual import GATv2EmbedResidual
+from polymon.model.kan.gin import KAN_GIN, FastKAN_GIN
+from polymon.model.kan.gcn import KAN_GCN
 
 if typing.TYPE_CHECKING:
     from polymon.model.base import BaseModel
@@ -195,6 +197,24 @@ def build_model(
         }
         hparams.update(input_args)
         model = GATv2EmbedResidual(**hparams)
+    elif model_type == 'kan_gin':
+        input_args = {
+            'num_atom_features': num_node_features,
+        }
+        hparams.update(input_args)
+        model = KAN_GIN(**hparams)
+    elif model_type == 'fastkan_gin':
+        input_args = {
+            'num_atom_features': num_node_features,
+        }
+        hparams.update(input_args)
+        model = FastKAN_GIN(**hparams)
+    elif model_type == 'kan_gcn':
+        input_args = {
+            'num_node_features': num_node_features,
+        }
+        hparams.update(input_args)
+        model = KAN_GCN(**hparams)
     else:
         raise ValueError(f"Model type {model_type} not implemented")
     
