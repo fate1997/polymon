@@ -455,6 +455,8 @@ class Pipeline:
             pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
         if self.model_type.lower() in ['gatv2_lineevo']:
             pre_transform = LineEvoTransform(depth=2)
+        if self.model_type.lower() in ['dmpnn']:
+            pre_transform = DMPNNTransform()
 
         dataset = PolymerDataset(
             raw_csv_path=self.raw_csv,
@@ -545,4 +547,7 @@ class Pipeline:
             transform_kwargs = {
                 'depth': 2,
             }
+        if self.model_type.lower() in ['dmpnn']:
+            transform_cls = 'DMPNNTransform'
+            transform_kwargs = {}
         return transform_cls, transform_kwargs
