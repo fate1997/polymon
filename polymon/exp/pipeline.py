@@ -252,6 +252,7 @@ class Pipeline:
             model_hparams = get_hparams(trial, self.model_type)
             hparams = {
                 'lr': trial.suggest_float("lr", 1e-4, 2e-3, log=True),
+                'batch_size': trial.suggest_categorical('batch_size', [32, 64, 128, 256]),
                 **model_hparams,
             }
             self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
