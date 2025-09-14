@@ -21,6 +21,7 @@ from polymon.model.gatv2.position_encoding import GATv2_PE
 from polymon.model.gatv2.embed_residual import GATv2EmbedResidual
 from polymon.model.kan.gin import KAN_GIN, FastKAN_GIN
 from polymon.model.kan.gcn import KAN_GCN
+from polymon.model.dmpnn import DMPNN
 
 if typing.TYPE_CHECKING:
     from polymon.model.base import BaseModel
@@ -215,6 +216,14 @@ def build_model(
         }
         hparams.update(input_args)
         model = KAN_GCN(**hparams)
+    elif model_type == 'dmpnn':
+        input_args = {
+            'atom_fdim': num_node_features,
+            'bond_fdim': num_edge_features,
+            'global_features_size': num_descriptors,
+        }
+        hparams.update(input_args)
+        model = DMPNN(**hparams)
     else:
         raise ValueError(f"Model type {model_type} not implemented")
     

@@ -278,10 +278,22 @@ class EnsembleModelWrapper(nn.Module):
         val_loader: DataLoader = None,
         test_loader: DataLoader = None,
     ) -> torch.Tensor:
+        if self.model.__class__.__name__ != 'BaggingRegressor':
+            train_loader = self.loader_wrapper(train_loader)
+            test_loader = self.loader_wrapper(val_loader) if val_loader is not None else None
+        else:
+            train_loader_ = []
+            for data in train_loader.dataset:
+                data_copy = data.clone()
+                data_copy.y = self.normalizer(data_copy.y)
+                train_loader_.append(data_copy)
+                test_loader = None
+            train_loader = DataLoader(train_loader_, batch_size=128, shuffle=True)
+        
         self.model.fit(
-            train_loader=self.loader_wrapper(train_loader),
+            train_loader=train_loader,
             epochs=epochs,
-            test_loader=self.loader_wrapper(val_loader) if val_loader is not None else None,
+            test_loader=test_loader,
             save_dir=save_dir,
             save_model=save_model,
             log_interval=log_interval,
