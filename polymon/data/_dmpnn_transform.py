@@ -17,7 +17,7 @@ class DMPNNTransform(BaseTransform):
 
     def __call__(self, data: Polymer) -> '_ModData':
         mapper = _MapperDMPNN(data)
-        y = data['y']
+        y = getattr(data, 'y', torch.tensor([], device=data.x.device))
         x = data['x']
         edge_index = data['edge_index']
         edge_attr = data['edge_attr']

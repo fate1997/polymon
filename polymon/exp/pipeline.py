@@ -432,7 +432,7 @@ class Pipeline:
                 epochs=self.num_epochs,
                 save_dir=save_dir,
                 save_model=True,
-                log_interval=1000000000,
+                log_interval=1,
                 label=self.label,
             )
             prod_ensemble_model = build_ensemble(model_wrapper, n_estimator)
@@ -473,7 +473,7 @@ class Pipeline:
             pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
         if self.model_type.lower() in ['gatv2_lineevo']:
             pre_transform = LineEvoTransform(depth=2)
-        if self.model_type.lower() in ['dmpnn']:
+        if self.model_type.lower() in ['dmpnn', 'kan_dmpnn']:
             pre_transform = DMPNNTransform()
 
         dataset = PolymerDataset(
@@ -565,7 +565,7 @@ class Pipeline:
             transform_kwargs = {
                 'depth': 2,
             }
-        if self.model_type.lower() in ['dmpnn']:
+        if self.model_type.lower() in ['dmpnn', 'kan_dmpnn']:
             transform_cls = 'DMPNNTransform'
             transform_kwargs = {}
         return transform_cls, transform_kwargs
