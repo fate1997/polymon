@@ -60,6 +60,7 @@ def parse_args():
     parser.add_argument('--estimator-name', type=str, default=None)
     parser.add_argument('--remove-hydrogens', action='store_true')
     parser.add_argument('--emb-model', type=str, default=None)
+    parser.add_argument('--ensemble-type', type=str, default='voting')
 
     return parser.parse_args()
 
@@ -102,6 +103,7 @@ def main():
             remove_hydrogens=args.remove_hydrogens,
             augmentation=args.augmentation,
             emb_model=args.emb_model,
+            ensemble_type=args.ensemble_type,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)

@@ -438,3 +438,17 @@ def get_kan_gcn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 64, 512, step=16),
     }
     return param
+
+
+@register_hparams('dmpnn')
+def get_dmpnn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get DMPNN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 100, 500, step=100),
+        "num_layers": trial.suggest_int("num_layers", 2, 6, step=1),
+        "enc_activation": trial.suggest_categorical("enc_activation", ["relu", "leakyrelu", "prelu", "selu", "elu"]),
+        "enc_dropout_p": trial.suggest_float("enc_dropout_p", 0.0, 0.5, step=0.1),
+    }
+    return param

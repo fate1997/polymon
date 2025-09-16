@@ -14,19 +14,24 @@ from pytorch_lightning import seed_everything
 from sklearn.model_selection import KFold
 from torch import nn
 from torch_geometric.loader import DataLoader
-from torchensemble import VotingRegressor
+from torchensemble import (AdversarialTrainingRegressor, BaggingRegressor,
+                           FastGeometricRegressor, GradientBoostingRegressor,
+                           NeuralForestRegressor, SnapshotEnsembleRegressor,
+                           SoftGradientBoostingRegressor, VotingRegressor)
 from torchensemble.utils import io
 
 from polymon.data.dataset import PolymerDataset
-from polymon.data.utils import DescriptorSelector, Normalizer, RgEstimator, LineEvoTransform, LogNormalizer
+from polymon.data._dmpnn_transform import DMPNNTransform
+from polymon.data.utils import (DescriptorSelector, LineEvoTransform,
+                                LogNormalizer, Normalizer, RgEstimator)
 from polymon.estimator import get_estimator
+from polymon.estimator.ml import MLEstimator
 from polymon.exp.score import scaling_error
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
 from polymon.model import PNA, build_model
 from polymon.model.base import EnsembleModelWrapper, KFoldModel, ModelWrapper
 from polymon.setting import DEFAULT_ATOM_FEATURES, REPO_DIR
-from polymon.estimator.ml import MLEstimator
 
 
 class Pipeline:
@@ -57,6 +62,7 @@ class Pipeline:
         remove_hydrogens: bool = False,
         augmentation: bool = False,
         emb_model: Optional[str] = None,
+        ensemble_type: str = 'voting',
     ):
         seed_everything(seed)
         
@@ -85,6 +91,7 @@ class Pipeline:
         self.remove_hydrogens = remove_hydrogens
         self.augmentation = augmentation
         self.emb_model = emb_model
+        self.ensemble_type = ensemble_type
         
         logger = loguru.logger
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -361,7 +368,18 @@ class Pipeline:
         model_wrapper = self._build_model(model_hparams)
         
         def build_ensemble(model_wrapper: ModelWrapper, n_estimator: int) -> VotingRegressor:
-            model = VotingRegressor(
+            ensemble_dict: Dict[str, Any] = {
+                'voting': VotingRegressor,
+                'gradient_boosting': GradientBoostingRegressor,
+                'bagging': BaggingRegressor,
+                'snapshot': SnapshotEnsembleRegressor,
+                'soft_gradient_boosting': SoftGradientBoostingRegressor,
+                'FastGeometricRegressor': FastGeometricRegressor,
+                # 'AdversarialTrainingRegressor': AdversarialTrainingRegressor,
+                # 'NeuralForestRegressor': NeuralForestRegressor,
+            }
+            
+            model = ensemble_dict[self.ensemble_type](
                 estimator=model_wrapper.model.__class__,
                 estimator_args=model_wrapper.info['model_init_params'],
                 n_estimators=n_estimator,
@@ -414,7 +432,7 @@ class Pipeline:
                 epochs=self.num_epochs,
                 save_dir=save_dir,
                 save_model=True,
-                log_interval=1000000000,
+                log_interval=1,
                 label=self.label,
             )
             prod_ensemble_model = build_ensemble(model_wrapper, n_estimator)
@@ -455,6 +473,8 @@ class Pipeline:
             pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
         if self.model_type.lower() in ['gatv2_lineevo']:
             pre_transform = LineEvoTransform(depth=2)
+        if self.model_type.lower() in ['dmpnn', 'kan_dmpnn']:
+            pre_transform = DMPNNTransform()
 
         dataset = PolymerDataset(
             raw_csv_path=self.raw_csv,
@@ -545,4 +565,7 @@ class Pipeline:
             transform_kwargs = {
                 'depth': 2,
             }
+        if self.model_type.lower() in ['dmpnn', 'kan_dmpnn']:
+            transform_cls = 'DMPNNTransform'
+            transform_kwargs = {}
         return transform_cls, transform_kwargs

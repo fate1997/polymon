@@ -11,6 +11,7 @@ from typing import Dict
 
 from polymon.data.polymer import Polymer
 from polymon.setting import DEFAULT_TOPK_DESCRIPTORS
+from polymon.data._dmpnn_transform import DMPNNTransform
 
 
 class Normalizer:

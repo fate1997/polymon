@@ -1,6 +1,7 @@
 *.ipynb
 database/*/*.pt
 results/
+results-backup/
 polymon/model/polycl/*.pth
 geometry_vocab/
 .history/
