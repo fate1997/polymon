@@ -2,9 +2,8 @@ from typing import List, Sequence
 
 import numpy as np
 import torch
-from torch import Tensor
-from torch import nn
-from torch_geometric.data import Batch, Data
+from torch import Tensor, nn
+from torch_geometric.data import Data
 from torch_geometric.transforms import BaseTransform
 
 from polymon.data.polymer import Polymer

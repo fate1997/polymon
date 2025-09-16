@@ -1,9 +1,0 @@
-No.,model,performance,tag,kaggle,score
-1,gatv2,,original FFV,,10
-2,gatv2,,more bond features,<1(-6),4
-3,gin,,original FFV,~1,10
-4,pna,,original FFV,<1(-1),9
-5,gatv2,,official_external,~1,10
-6,pna,0.0075,with-official-external,~4,9
-7,kan_gatv2,0.0101,hparams-opt,~<1,10
-
