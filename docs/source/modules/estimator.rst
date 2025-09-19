@@ -22,7 +22,7 @@ Available Estimators
    * - ``density``
      - :ref:`DensityEstimator <estimator-density>`
      - Density estimator
-   * - ``density_ibm``
+   * - ``Density-IBM``
      - :ref:`DensityIBMEstimator <estimator-density_ibm>`
      - Density estimator
    * - ``low_fidelity``
