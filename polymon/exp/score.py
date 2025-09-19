@@ -12,11 +12,11 @@ class ParticipantVisibleError(Exception):
 
 # These values are from the train data.
 MINMAX_DICT =  {
-        'Tg': [-148.0297376, 472.25],
-        'FFV': [0.2269924, 0.77709707],
-        'Tc': [0.0465, 0.524],
-        'Density': [0.748691234, 1.840998909],
-        'Rg': [9.7283551, 34.672905605],
+        'Tg': [-139.000000, 495.000000],
+        'FFV': [ 0.226992, 0.777097],
+        'Tc': [0.082201, 0.618760],
+        'Density': [0.742359, 1.914482],
+        'Rg': [9.728355, 85.684019],
     }
 NULL_FOR_SUBMISSION = -9999
 
