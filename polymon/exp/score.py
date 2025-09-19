@@ -12,11 +12,16 @@ class ParticipantVisibleError(Exception):
 
 # These values are from the train data.
 MINMAX_DICT =  {
-        'Tg': [-148.0297376, 472.25],
+        # 'Tg': [-148.0297376, 472.25],
+        # 'FFV': [0.2269924, 0.77709707],
+        # 'Tc': [0.0465, 0.524],
+        # 'Density': [0.748691234, 1.840998909],
+        # 'Rg': [9.7283551, 34.672905605],
+        'Tg': [-139.0, 495.0],
         'FFV': [0.2269924, 0.77709707],
-        'Tc': [0.0465, 0.524],
-        'Density': [0.748691234, 1.840998909],
-        'Rg': [9.7283551, 34.672905605],
+        'Tc': [0.082200976, 0.618759937],
+        'Density': [0.742358507, 1.914482486],
+        'Rg': [9.7283551, 85.68401866]
     }
 NULL_FOR_SUBMISSION = -9999
 
@@ -27,9 +32,10 @@ def normalize_property_weight(property_weight: List[int]) -> np.ndarray:
     property_weight = (property_weight / np.sum(property_weight)) * len(property_weight)
     return property_weight
 
-def scaling_error(labels, preds, property):
+def scaling_error(labels, preds, property, minmax_dict=MINMAX_DICT):
     error = np.abs(labels - preds)
-    min_val, max_val = MINMAX_DICT[property]
+    #min_val, max_val = MINMAX_DICT[property]
+    min_val, max_val = minmax_dict[property]
     label_range = max_val - min_val
     return np.mean(error / label_range)
 

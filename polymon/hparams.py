@@ -68,7 +68,7 @@ def get_lgbm_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         'verbose': -1,
         'metric': 'mae', 
         'random_state': 2025,
-        'n_estimators': 10000,
+        'n_estimators': trial.suggest_int('n_estimators', 1000, 10000),
         'reg_alpha': trial.suggest_float('reg_alpha', 1e-3, 10.0, log=True),
         'reg_lambda': trial.suggest_float('reg_lambda', 1e-3, 10.0, log=True),
         'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.3,0.4,0.5,0.6,0.7,0.8,0.9, 1.0]),
@@ -95,7 +95,7 @@ def get_catboost_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     param['l2_leaf_reg'] = trial.suggest_float('l2_leaf_reg', 1.0, 5.5, step=0.5)
     param['min_child_samples'] = trial.suggest_categorical('min_child_samples', [1, 4, 8, 16, 32])
     param['grow_policy'] = 'Depthwise'
-    param['iterations'] = 10000
+    param['iterations'] = trial.suggest_int('iterations', 1000, 10000)
     param['eval_metric'] = 'MAE'
     param['loss_function'] = 'MAE'
     param['random_state'] = 2025

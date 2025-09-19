@@ -9,7 +9,7 @@ POLYCL_DIR = REPO_DIR / 'polymon' / 'model' / 'polycl' / 'model_utils'
 POLYCL_MODEL_PTH = REPO_DIR / 'polymon' / 'model' / 'polycl' / 'polycl.pth'
 POLYBERT_DIR = 'kuelumbus/polyBERT'
 
-TARGETS = ['Tg', 'FFV', 'Tc', 'Density', 'Rg']
+TARGETS = ['Tg', 'FFV', 'Tc', 'Density', 'Rg', 'Bulk_modulus']
 
 MAX_SEQ_LEN = 120
 SMILES_VOCAB = [
@@ -32,7 +32,11 @@ XENONPY_ELEMENTS_INFO = pd.read_csv(
     index_col=0,
 )
 
-GEOMETRY_VOCAB = REPO_DIR / 'database' / 'geometry_vocab'
+GEOMETRY_VOCAB = REPO_DIR / 'database' / 'feature_cache' / 'geometry_vocab.pt'
+XENONPY_VOCAB = REPO_DIR / 'database' / 'feature_cache' / 'xenonpy_vocab.pt'
+MORDRED_VOCAB = REPO_DIR / 'database' / 'feature_cache' / 'mordred_vocab.pt'
+MORDRED_DIMER_VOCAB = REPO_DIR / 'database' / 'feature_cache' / 'mordred_dimer_vocab.pt'
+MORDRED_3D_VOCAB = REPO_DIR / 'database' / 'feature_cache' / 'mordred_3d_vocab.pt'
 
 with open(REPO_DIR / 'polymon' / 'data' / 'cgcnn.json', 'r') as f:
     CGCNN_ELEMENT_INFO = json.load(f)

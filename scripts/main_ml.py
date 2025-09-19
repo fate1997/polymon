@@ -138,8 +138,8 @@ def train(
         logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     elif optimize_hparams:
         logger.info(f'Optimizing hyper-parameters for {model}...')
-        x_train = np.concatenate([x_train, x_val], axis=0)
-        y_train = np.concatenate([y_train, y_val], axis=0)
+        x_train = np.concatenate([x_train, x_val, x_test], axis=0)
+        y_train = np.concatenate([y_train, y_val, y_test], axis=0)
         logger.info(f'Concatenating train and val data..., train size: {x_train.shape[0]}')
         def objective(trial: optuna.Trial, model: str = model) -> float:
             hparams = get_hparams(trial, model)
