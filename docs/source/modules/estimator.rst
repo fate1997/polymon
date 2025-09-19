@@ -19,19 +19,22 @@ Available Estimators
    * - ``atom_contrib``
      - :ref:`AtomContribEstimator <estimator-atom_contrib>`
      - Atom contribution estimator
-   * - ``density``
+   * - ``Density``
      - :ref:`DensityEstimator <estimator-density>`
      - Density estimator
    * - ``Density-IBM``
      - :ref:`DensityIBMEstimator <estimator-density_ibm>`
-     - Density estimator
-   * - ``low_fidelity``
+     - Density estimator (IBM)
+   * - ``Density-Fedors``
+     - :ref:`DensityFedorsEstimator <estimator-density_fedors>`
+     - Density estimator (Fedors)
+   * - ``LowFidelity``
      - :ref:`LowFidelityEstimator <estimator-low_fidelity>`
      - Low fidelity estimator
    * - ``ml``
      - :ref:`MLEstimator <estimator-ml>`
      - Machine learning estimator
-   * - ``nx_rg``
+   * - ``NxRg``
      - :ref:`NxRgEstimator <estimator-nx_rg>`
      - Rg estimator (NetworkX)
    * - ``rg``
