@@ -1,16 +1,31 @@
-import torch
-import torch.nn as nn
 from functools import partial
 
+import torch
+import torch.nn as nn
+
 from polymon.data.polymer import Polymer
-from polymon.model.utils import MLP, KANLinear, ReadoutPhase
-from polymon.model.register import register_init_params
 from polymon.model.base import BaseModel
 from polymon.model.kan.fast_kan import FastKAN
+from polymon.model.register import register_init_params
+from polymon.model.utils import MLP, KANLinear, ReadoutPhase
 
 
 @register_init_params
 class KAN_GATv2(BaseModel):
+    """KAN-augmented GATv2.
+    
+    Args:
+        num_node_features (int): The number of node features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        grid_size (int): The size of the grid. Default to :obj:`3`.
+        dropout (float): The dropout rate. Default to :obj:`0.1`.
+        pred_hidden_dim (int): The number of hidden dimensions for the prediction 
+            MLP. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.
+        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.
+    """
     def __init__(
         self, 
         num_node_features: int, 
@@ -55,6 +70,14 @@ class KAN_GATv2(BaseModel):
         )
     
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         x = batch.x
         for layer in self.message_passing:
             x = layer(x, batch.edge_index)

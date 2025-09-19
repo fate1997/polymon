@@ -8,6 +8,7 @@ geometry_vocab/
 *.pbs
 database/conformer/
 !database/ckpts/
+performance.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -10,15 +10,28 @@ NA = 6.022e23
 A3_TO_CM3 = 1e-24
 DEFAULT_PACKING_COEFF = 0.80
 
+
 @register_init_params
 class DensityEstimator(BaseEstimator):
+    """Density estimator using the van der Waals method. This is a simple
+    method that estimates the density of a polymer based on the van der Waals
+    volume of the atoms in the molecule.
+    """
     def __init__(self, packing_coeff: float = DEFAULT_PACKING_COEFF):
         self.packing_coeff = packing_coeff
 
     def estimated_y(self, smiles: str) -> float:
-        return self.density_vdw(smiles)
+        """Estimate the density of a polymer based on the van der Waals method.
+
+        Args:
+            smiles (str): The SMILES of the polymer.
+
+        Returns:
+            float: The estimated density of the polymer.
+        """
+        return self._density_vdw(smiles)
     
-    def density_vdw(self, smiles: str) -> float: 
+    def _density_vdw(self, smiles: str) -> float: 
         packing_coeff = self.packing_coeff
         
         mol = Chem.MolFromSmiles(smiles)

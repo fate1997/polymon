@@ -10,35 +10,61 @@ from polymon.data.polymer import Polymer
 
 
 class DMPNNTransform(BaseTransform):
+    r"""Transform the Polymer object to a Data object for DMPNN. The code is 
+    adapted from `deepchem`. The transformed Data object contains the following
+    attributes:
+        - `atom_features`: The features of the atoms.
+    
+    Args:
+        max_num_bonds (int): The maximum number of bonds in a molecule.
+        
+    """
     def __init__(self, max_num_bonds: int = 500):
         super().__init__()
         self.max_num_bonds = max_num_bonds
 
     def __call__(self, data: Polymer) -> '_ModData':
-        mapper = _MapperDMPNN(data)
+        # Get the necessary data from the Polymer object
         y = getattr(data, 'y', torch.tensor([], device=data.x.device))
         x = data['x']
         edge_index = data['edge_index']
         edge_attr = data['edge_attr']
         smiles = data['smiles']
-        atom_features, f_ini_atoms_bonds, atom_to_incoming_bonds, mapping, global_features = mapper.values
+        
+        # Extract the information from the Polymer object
+        mapper = _MapperDMPNN(data)
+        (
+            atom_features,
+            f_ini_atoms_bonds,
+            atom_to_incoming_bonds,
+            mapping,
+            global_features,
+        ) = mapper.values
 
-        data = _ModData(required_inc=len(f_ini_atoms_bonds),
-                        atom_features=atom_features.float(),
-                        f_ini_atoms_bonds=f_ini_atoms_bonds.float(),
-                        atom_to_incoming_bonds=atom_to_incoming_bonds,
-                        mapping=mapping,
-                        global_features=global_features)
-        required_padding: int = self.max_num_bonds - data['atom_to_incoming_bonds'].shape[1]
+        # Create the Data object
+        data = _ModData(
+            required_inc=len(f_ini_atoms_bonds),
+            atom_features=atom_features.float(),
+            f_ini_atoms_bonds=f_ini_atoms_bonds.float(),
+            atom_to_incoming_bonds=atom_to_incoming_bonds,
+            mapping=mapping,
+            global_features=global_features
+        )
+        
+        # Pad the data and assign the necessary data to the Data object
+        num_bonds = data['atom_to_incoming_bonds'].shape[1]
+        required_padding: int = self.max_num_bonds - num_bonds
         data['atom_to_incoming_bonds'] = nn.functional.pad(
-                        data['atom_to_incoming_bonds'],
-                        (0, required_padding, 0, 0),
-                        mode='constant',
-                        value=-1)
+            data['atom_to_incoming_bonds'],
+            (0, required_padding, 0, 0),
+            mode='constant',
+            value=-1
+        )
         data['mapping'] = nn.functional.pad(
-                        data['mapping'], (0, required_padding, 0, 0),
-                        mode='constant',
-                        value=-1)
+            data['mapping'], (0, required_padding, 0, 0),
+            mode='constant',
+            value=-1
+        )
         data['y'] = y
         data['x'] = x
         data['edge_index'] = edge_index

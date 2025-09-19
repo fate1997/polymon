@@ -1,8 +1,11 @@
 import re
+
 import rdkit.Chem.Descriptors as rdcd
 from rdkit import Chem
+
 from polymon.estimator.base import BaseEstimator
 from polymon.model.register import register_init_params
+
 
 fedors_allowed_atoms = frozenset(['C', 'H', 'O', 'N', 'F', 'Cl', 'Br', 'I', 'S'])
 fedors_contributions = {'C': 34.426, 'H': 9.172, 'O': 20.291,
@@ -19,10 +22,21 @@ amine_smarts = '[NX3+0,NX4+;!$([N]~[!#6]);!$([N]*~[#7,#8,#15,#16])]'
 
 @register_init_params
 class DensityFedorsEstimator(BaseEstimator):
+    """Density estimator using the Fedors method. This is a group contribution
+    method that assigns a contribution to each group of atoms in the molecule.
+    """
     def __init__(self):
         pass
 
     def estimated_y(self, smiles: str) -> float:
+        """Estimate the density of a polymer based on the Fedors method.
+
+        Args:
+            smiles (str): The SMILES of the polymer.
+
+        Returns:
+            float: The estimated density of the polymer.
+        """
         return get_fedors_density(Chem.MolFromSmiles(smiles))
 
 

@@ -1,0 +1,316 @@
+sl_num,Poymer name,"SMILES (Atoms Ce and Th are placeholders for head and tail information, respectively)",Experiment Tg (K),Calculated Tg (K),Calculated Tg std. dev. (K),Experiment density at 300K (g/cc),Calculated density at 300K (g/cc),Calulated density at 300K std. dev. (g/cc),Calculated glass CTE (10-6/K),Calculated glass CTE std. dev. (10-6/K) ,Calculated rubber CTE (10-6/K),Calculated rubber CTE std. dev. (10-6/K)
+1,Poly[oxy(diethylsilylene)] ,[Ce]O[Si](CC)(CC)[Th],130,138.0,3.8,,0.955,0.001,NA,NA,1047.7,78.0
+2,Poly(dimethyl siloxane) ,[Ce][Si](C)(C)O[Th],152,193.3,51.1,0.965,0.962,0.001,NA,NA,1459.1,227.6
+3,"Poly(1,4-butadiene) (cis)",[Ce]C/C=C\C[Th],171,211.7,3.1,0.89,0.887,0.001,NA,NA,1389.4,196.7
+4,Poly(dimethylsilylenemethylene) ,[Ce][Si](C)(C)C[Th],173,258.7,4.7,0.892,0.930,0.002,NA,NA,1386.1,197.8
+5,Poly[oxy(methylphenylsilylene)] ,[Ce][Si](C)(C1=CC=CC=C1)O[Th],187,286.9,5.8,1.11,1.123,0.002,NA,NA,876.0,55.3
+6,Poly(3-hexoxypropylene oxide) ,[Ce]OC(COCCCCCC)C[Th],188,229.0,5.1,,0.940,0.002,NA,NA,1493.2,155.4
+7,Polyoxytetramethylene ,[Ce]OCCCC[Th],190,238.0,5.1,0.98,0.965,0.002,NA,NA,1617.6,258.3
+8,"Poly(1 , 1 -dimethylsilazane) ",[Ce][Si](C)(C)N[Th],191,267.2,5.7,,1.062,0.002,NA,NA,1261.5,174.7
+9,"Poly(2-n-butyl- 1 ,4-butadiene) ",[Ce]CC(CCCC)=CC[Th],192,232.6,9.7,,0.864,0.003,NA,NA,1503.7,185.3
+10,Poly(vinyl n-octyl ether),[Ce]CC(OCCCCCCCC)[Th],194,221.1,5.3,0.914,0.884,0.001,NA,NA,1351.3,120.6
+11,Poly(3-butoxypropylene oxide) ,[Ce]OC(COCCCC)C[Th],194,233.8,4.0,,0.970,0.002,NA,NA,1518.7,162.5
+12,Polyethylene ,[Ce]CC[Th],195,237.1,3.2,0.85,0.842,0.002,NA,NA,1622.1,263.6
+13,Polyoxytrimethylene ,[Ce]CCCO[Th],195,245.8,6.1,,1.006,0.002,NA,NA,1578.8,266.1
+14,"Poly(2-n-propyl-1 ,4-butadiene) ",[Ce]CC(CCC)=CC[Th],196,240.6,4.5,,0.869,0.002,NA,NA,1468.9,174.6
+15,"Poly(2-ethyl- 1 ,4-butadiene) ",[Ce]CC(CC)=CC[Th],197,220.7,7.1,0.883,0.876,0.002,NA,NA,1365.0,126.3
+16,Poly(vinyl n-decyl ether) ,[Ce]CC(OCCCCCCCCCC)[Th],197,251.2,9.0,,0.879,0.003,NA,NA,1436.0,166.1
+17,Polyisobutylene ,[Ce]CC(C)(C)[Th],199,198.6,37.7,1.3,1.294,0.002,NA,NA,1137.0,65.6
+18,Poly[oxy(methyl y-trifluoropropylsilylene)] ,[Ce][Si](C)(CCC(F)(F)F)O[Th],199,396.1,11.5,0.84,0.882,0.003,NA,NA,957.1,97.9
+19,Poly(dimethylsilylenetrimethylene) ,[Ce][Si](C)(C)CCC[Th],203,240.0,7.6,,0.861,0.002,NA,NA,1667.8,225.9
+20,Polyisoprene ,[Ce]CC=C(C)C[Th],203,236.1,6.2,,0.903,0.002,NA,NA,1641.0,263.9
+21,Polyoxyoctamethylene ,[Ce]CCCCCCCCO[Th],203,276.5,5.3,0.905999999999999,0.887,0.001,NA,NA,1403.9,168.3
+22,Polyoxyhexamethylene ,[Ce]CCCCCCO[Th],204,234.9,3.9,0.932,0.925,0.001,NA,NA,1676.1,290.3
+23,Poly(tetramethylene adipate) ,[Ce]CCCCOC(=O)CCCCC(=O)O[Th],205,249.2,5.0,1.219,1.131,0.003,NA,NA,1043.6,113.7
+24,Poly(propylene oxide) ,[Ce]CC(C)O[Th],206,260.3,3.4,1.125,1.110,0.001,NA,NA,1602.7,265.1
+25,Polyoxyethylene ,[Ce]OCC[Th],206,274.0,6.7,1,0.997,0.002,NA,NA,1582.7,208.3
+26,Poly(vinyl 2-ethylhexyl ether) ,[Ce]CC(OCC(CC)CCCC)[Th],207,227.8,10.5,0.917999999999999,0.904,0.003,NA,NA,1373.8,121.6
+27,Poly(vinyl n-pentyl ether),[Ce]CC(OCCCCC)[Th],207,240.0,30.3,0.904,0.887,0.002,NA,NA,1059.8,46.8
+28,Poly(n-octyl acrylate) ,[Ce]CC(C(=O)OCCCCCCCC)[Th],208,221.9,6.0,0.971,0.958,0.002,NA,NA,1208.1,100.0
+29,Poly(vinyl n-hexyl ether) ,[Ce]CC(OCCCCCC)[Th],209,224.9,8.8,0.925,0.895,0.002,NA,NA,1358.4,114.6
+30,Poly(3-methoxypropylene oxide) ,[Ce]OC(COC)C[Th],211,277.7,6.7,,1.083,0.002,NA,NA,1543.9,198.8
+31,Polypentadiene ,[Ce]C(C=CC)C[Th],213,316.0,15.4,0.89,0.851,0.003,NA,NA,1499.1,151.8
+32,Poly(n-heptyl acrylate) ,[Ce]CC(C(=O)OCCCCCCC)[Th],213,227.2,7.0,,0.971,0.001,NA,NA,1190.7,96.5
+33,Poly(e-caprolactone) ,[Ce]OCCCCCC(=O)[Th],213,248.7,4.4,1.095,1.083,0.001,NA,NA,1121.8,132.7
+34,Poly(n-nonyl acrylate) ,[Ce]CC(C(=O)OCCCCCCCCC)[Th],215,221.4,6.4,,0.948,0.002,NA,NA,1227.4,105.7
+35,Poly(n-hexyl acrylate) ,[Ce]CC(C(=O)OCCCCCC)[Th],216,231.8,6.8,,0.985,0.002,NA,NA,1156.9,80.9
+36,Poly(decamethylene adipate) ,[Ce]CCCCCCCCCCOC(=O)CCCCC(=O)O[Th],217,240.2,4.9,,1.024,0.002,NA,NA,1231.3,159.3
+37,Poly(n-dodecyl methacrylate) ,[Ce]CC(C)(C(=O)OCCCCCCCCCCCC)[Th],218,255.1,7.3,1.25,1.299,0.001,NA,NA,1186.2,161.1
+38,Polyoxymethylene ,[Ce]OC[Th],218,238.4,7.3,0.929,0.933,0.001,NA,NA,1195.4,110.9
+39,Poly(n-butyl acrylate) ,[Ce]CC(C(=O)OCCCC)[Th],219,235.0,8.7,1.087,1.027,0.003,NA,NA,1129.8,91.6
+40,Poly (1 -heptene) ,[Ce]CC(CCCCC)[Th],220,234.9,6.9,,0.835,0.001,NA,NA,1331.8,124.2
+41,Poly(oxycarbonyl-3-methylpentamethylene) ,[Ce]CCC(C)CCC(=O)O[Th],220,265.0,5.8,,1.056,0.002,NA,NA,1117.4,126.0
+42,"Poly(2-isopropyl-1 ,4-butadiene) ",[Ce]CC(C(C)C)=CC[Th],221,242.7,9.4,0.927,0.912,0.002,NA,NA,1390.2,123.0
+43,Poly(vinyl n-butyl ether) ,[Ce]CC(OCCCC)[Th],221,278.4,7.8,,0.872,0.002,NA,NA,1346.2,137.0
+44,Poly(1-pentene) ,[Ce]CC(CCC)[Th],223,260.4,14.2,0.86,0.834,0.002,NA,NA,1333.3,114.1
+45,Poly(1-hexene),[Ce]CC(CCCC)[Th],223,291.4,15.5,0.85,0.832,0.002,NA,NA,1336.0,132.6
+46,Polychloroprene ,[Ce]CC=C(Cl)C[Th],225,293.7,5.3,1.24299999999999,1.217,0.002,NA,NA,1046.2,111.7
+47,Poly(propylene sulfide) ,[Ce]SC(C)C[Th],226,321.0,3.4,,1.130,0.002,NA,NA,947.2,103.6
+48,Poly(1-butene),[Ce]CC(CC)[Th],228,295.4,10.8,0.86,0.844,0.002,NA,NA,1310.0,148.1
+49,Poly(2-octyl acrylate) ,[Ce]CC(C(=O)OC(C)CCCCCC)[Th],228,256.1,3.4,1.183,1.107,0.002,NA,NA,1085.7,122.9
+50,Poly(ethylene azelate) ,[Ce]CCOC(=O)CCCCCCCC(=O)O[Th],228,241.1,14.0,,0.954,0.001,NA,NA,1072.6,59.1
+51,Poly(n-propyl acrylate) ,[Ce]CC(C(=O)OCCC)[Th],229,243.1,6.0,1.08,1.060,0.002,NA,NA,1077.6,84.8
+52,Polypropylene ,[Ce]CC(C)[Th],233,318.1,6.8,0.85,0.841,0.002,NA,NA,1376.5,177.5
+53,Poly(ethylene adipate) ,[Ce]CCOC(=O)CCCCC(=O)O[Th],233,362.9,9.8,1.6,1.611,0.004,NA,NA,1398.1,250.3
+54,Poly(vinylidene fluoride) ,[Ce]CC(F)(F)[Th],233,263.2,2.6,1.188,1.199,0.002,NA,NA,947.8,89.4
+55,Poly(2-heptyl acrylate) ,[Ce]CC(C(=O)OC(C)CCCCC)[Th],235,248.0,9.4,,0.965,0.002,NA,NA,1059.3,66.9
+56,Poly(6-methyl-1 -heptene) ,[Ce]CC(CCCC(C)C)[Th],239,262.5,15.9,,0.836,0.002,NA,NA,1222.5,85.2
+57,"Poly(2-bromo-1 ,4-butadiene) ",[Ce]CC(Br)=CC[Th],241,301.3,7.5,,1.772,0.004,NA,NA,893.1,81.1
+58,Poly[(methyl)phenylsilylenetrimethylene] ,[Ce][Si](C)(C1=CC=CC=C1)CCC[Th],243,254.7,1.8,1.085,1.085,0.002,NA,NA,1126.4,136.2
+59,Poly(ethylene sebacate) ,[Ce]CCOC(=O)CCCCCCCCC(=O)O[Th],243,290.7,6.7,,0.999,0.002,NA,NA,1122.7,106.3
+60,Poly(isobutyl acrylate) ,[Ce]CC(C(=O)OCC(C)C)[Th],249,268.9,5.5,1.06,1.027,0.002,NA,NA,1048.1,72.3
+61,Poly(vinyl isobutyl ether) ,[Ce]CC(OCC(C)C)[Th],251,277.7,6.9,0.93,0.902,0.003,NA,NA,1250.9,84.4
+62,Poly(ethyl acrylate) ,[Ce]CC(C(=O)OCC)[Th],251,301.4,9.6,1.12,1.100,0.003,NA,NA,1014.1,77.7
+63,Poly(vinyl sec-butyl ether) ,C(C)(CC)OC(C[Th])[Ce],253,252.1,9.0,0.971,0.963,0.002,NA,NA,1139.5,98.0
+64,Poly(n-octyl methacrylate),[Ce]CC(C)(C(=O)OCCCCCCCC)[Th],253,272.5,10.3,0.92,0.913,0.003,NA,NA,1093.3,62.5
+65,Poly(sec-butyl acrylate),[Ce]CC(C(=O)OC(C)CC)[Th],253,270.1,11.1,1.052,1.022,0.002,NA,NA,975.2,58.6
+66,Poly(vinyl ethyl ether) ,[Ce]CC(OCC)[Th],254,320.9,9.2,0.94,0.949,0.003,NA,NA,1464.4,156.5
+67,Perfluoropolymer 2 ,[Ce]C(F)(F)C(F)(F)C(F)(F)C(F)(F)C1(=NC(C(F)(F)C(F)(F)OC(F)(F)F)=NC([Th])=N1),255,345.4,9.7,,1.858,0.005,NA,NA,1245.9,76.7
+68,Poly(vinylidene chloride) ,[Ce]CC(Cl)(Cl)[Th],256,473.3,26.5,1.63,1.734,0.003,NA,NA,589.0,41.3
+69,Poly(3-pentyl acrylate) ,[Ce]CC(C(=O)OC(CC)CC)[Th],257,263.3,8.0,,1.004,0.002,NA,NA,942.8,43.8
+70,Poly(5-methyl-1-hexene),[Ce]CC(CCC(C)C)[Th],259,283.6,9.9,,0.833,0.003,NA,NA,1195.6,83.5
+71,Perfluoropolymer 1,[Ce]C(F)(C(F)(F)F)OC(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)OC(F)(C(F)(F)F)C1(=NC(C(F)(F)F)=NC([Th])=N1),260,364.0,6.5,,1.854,0.005,NA,NA,1286.3,68.4
+72,"Poly(oxy-2,2-dichloromethyltrimethylene) ",[Ce]CC(CCl)(CCl)CO[Th],265,408.5,12.2,1.386,1.328,0.004,NA,NA,763.5,62.9
+73,Poly[(4-dimethylaminophenyl)methylsilylenetrimethylene] ,[Ce][Si](C)(C1=CC=C(N(C)C)C=C1)CCC[Th],267,339.6,10.7,,1.001,0.002,NA,NA,1241.8,134.5
+74,Poly(n-hexyl methacrylate) ,[Ce]CC(C)(C(=O)OCCCCCC)[Th],268,259.4,12.3,1.01,0.988,0.002,NA,NA,1083.0,85.6
+75,"Poly(1,2-butadiene)",[Ce]CC(C=C)[Th],269,286.5,9.2,0.909,0.890,0.003,NA,NA,1291.5,134.4
+76,Poly(vinyl isopropyl ether) ,[Ce]CC(OC(C)C)[Th],270,307.7,15.7,0.924,0.927,0.003,NA,NA,1202.9,93.3
+77,Poly(vinyl methyl sulfide) ,[Ce]CC(SC)[Th],272,288.1,6.3,1.175,1.300,0.002,NA,NA,838.3,70.7
+78,Poly(ethylene succinate) ,[Ce]OCCOC(=O)CCC(=O)[Th],272,355.3,8.3,1.18,1.140,0.002,NA,NA,853.7,82.1
+79,"Poly(oxydiphenylsilyleneoxydimethylsilylene-1,4-phenylenedimethylsilylene) ",[Ce]O[Si](C1=CC=CC=C1)(C1=CC=CC=C1)O[Si](C)(C)C1=CC=C(C=C1)[Si](C)(C)[Th],273,322.8,5.6,,1.076,0.002,NA,NA,1059.9,79.5
+80,Poly(p-n-hexoxymethyl styrene) ,[Ce]CC(C1=CC=C(COCCCCCC)C=C1)[Th],278,313.2,26.0,,1.059,0.002,NA,NA,1109.6,96.3
+81,Poly(vinyl butyrate) ,[Ce]CC(OC(=O)CCC)[Th],278,288.0,12.6,,0.970,0.002,NA,NA,1192.0,104.7
+82,Poly(p-n-butyl styrene) ,[Ce]CC(C1=CC=C(CCCC)C=C1)[Th],279,281.5,33.0,,0.950,0.002,NA,NA,1101.8,85.3
+83,Poly(methyl acrylate) ,[Ce]CC(C(=O)OC)[Th],281,360.8,11.0,1.22,1.165,0.002,NA,NA,936.4,76.8
+84,Poly(vinyl propionate) ,[Ce]CC(OC(=O)CC)[Th],283,328.6,14.3,1.02,1.094,0.002,NA,NA,1048.6,87.3
+85,Poly(2-ethylbutyl methacrylate) ,[Ce]CC(C)(C(=O)OCC(CC)CC)[Th],284,294.4,17.3,1.04,0.985,0.003,NA,NA,947.5,53.0
+86,Poly(o-n-octoxy styrene) ,[Ce]CC(C1=C(OCCCCCCCC)C=CC=C1)[Th],286,292.8,20.6,,0.959,0.002,NA,NA,948.1,44.2
+87,"Poly(2-t-butyl-1,4-butadiene) ",[Ce]CC(C(C)(C)C)=CC[Th],293,369.3,11.6,,0.866,0.003,NA,NA,1125.2,98.0
+88,Poly(n-butyl methacrylate) ,[Ce]CC(C)(C(=O)OCCCC)[Th],293,296.0,20.3,1.055,1.019,0.003,NA,NA,1008.0,75.5
+89,Poly(2-methoxyethyl methacrylate) ,[Ce]CC(C)(C(=O)OCCOC)[Th],293,334.8,16.0,,1.127,0.003,NA,NA,952.5,76.1
+90,Poly(p-n-propoxymethyl styrene) ,[Ce]CC(C1=CC=C(COCCC)C=C1)[Th],295,323.8,23.4,,1.008,0.002,NA,NA,1151.3,98.4
+91,Poly(ethyl-p-xylylene) ,[Ce]CC1=CC=C(C(CC)=C1)C[Th],298,371.9,16.4,,0.995,0.002,NA,NA,1062.8,112.5
+92,"Poly(3,3,3-trifluoropropylene) ",[Ce]CC(C(F)(F)F)[Th],300,365.3,8.3,1.58,1.520,0.005,385.3,11.7,1199.8,89.1
+93,Poly(vinyl acetate) ,[Ce]CC(OC(=O)C)[Th],301,406.3,12.7,1.19,1.150,0.004,326.0,10.6,950.7,84.0
+94,Poly(4-methyl-1-pentene),[Ce]CC(CC(C)C)[Th],302,330.0,10.7,0.838,0.824,0.003,484.4,5.9,1135.6,89.2
+95,Poly(vinyl formate) ,[Ce]CC(OC(=O))[Th],304,388.5,8.1,,1.246,0.002,257.1,7.3,681.0,50.2
+96,Poly(vinyl chloroacetate) ,[Ce]CC(OC(=O)CCl)[Th],304,361.7,18.1,1.45,1.417,0.003,294.4,5.1,696.3,47.8
+97,Poly(neopentyl methacrylate) ,[Ce]CC(C)(C(=O)OCC(C)(C)C)[Th],306,507.6,12.2,0.993,0.954,0.004,301.2,7.2,889.4,54.9
+98,Poly(n-propyl methacrylate) ,[Ce]CC(C)(C(=O)OCCC)[Th],308,336.1,32.7,1.08,1.039,0.002,375.2,9.9,956.4,68.3
+99,Poly(12-aminododecanoic acid) ,[Ce]NCCCCCCCCCCCC(=O)[Th],310,285.2,12.6,0.99,0.959,0.002,463.3,10.0,1165.4,145.6
+100,Poly[di(p-tolyl)silylenetrimethylene] ,[Ce][Si](C1=CC=C(C)C=C1)(C1=CC=C(C)C=C1)CCC[Th],311,383.0,8.1,,1.019,0.002,347.4,5.6,1023.8,85.5
+101,Poly(4-cyclohexyl- 1 -butene) ,[Ce]CC(CCC1CCCCC1)[Th],313,301.1,8.5,1.04,1.016,0.002,392.1,6.1,975.9,104.4
+102,Poly(hexamethylene sebacamide) ,[Ce]NCCCCCCNC(=O)CCCCCCCCC(=O)[Th],313,318.8,16.1,,0.901,0.002,409.9,14.9,972.9,75.7
+103,Poly[(pentafluoroethyl)ethylene] ,[Ce]CC(C(F)(F)C(F)(F)F)[Th],314,367.2,10.1,,1.618,0.006,402.1,11.3,1032.1,33.1
+104,Poly(11-aminoundecanoic acid),[Ce]NCCCCCCCCCCC(=O)[Th],315,304.7,12.3,1.01,0.970,0.002,451.4,4.4,1135.6,143.3
+105,Poly(t-butyl acrylate),[Ce]CC(C(=O)OC(C)(C)C)[Th],315,378.4,14.5,1,0.995,0.003,368.6,10.1,887.9,61.9
+106,Poly(3-phenoxypropylene oxide) ,[Ce]OC(COC1=CC=CC=C1)C[Th],315,329.6,5.3,,1.151,0.002,372.2,5.9,973.0,81.4
+107,"Poly(2,3,3,3-tetrafluoropropylene) ",[Ce]CC(F)(C(F)(F)F)[Th],315,410.1,8.1,,1.687,0.007,279.6,8.4,1092.1,66.1
+108,Poly(10-aminodecanoic acid) ,[Ce]C(=O)CCCCCCCCCN[Th],316,302.0,15.5,,0.980,0.002,428.7,6.8,1097.0,136.9
+109,"Poly(3,3-dimethylbutyl methacrylate)",[Ce]CC(C)(C(=O)OCCC(C)(C)C)[Th],318,359.8,5.6,,1.243,0.002,280.7,5.2,822.4,65.7
+110,Poly[oxy(m-phenylene)] ,[Ce]C1=CC(=CC=C1)O[Th],318,391.0,21.9,1.001,0.969,0.004,357.9,14.1,962.9,63.9
+111,Poly(decamethylene sebacamide) ,[Ce]NCCCCCCCCCCNC(=O)CCCCCCCCC(=O)[Th],319,302.0,15.6,,0.983,0.001,437.4,9.0,1086.9,127.1
+112,Poly(N-butyl acrylamide) ,[Ce]CC(C(=O)NCCCC)[Th],319,297.3,38.8,,1.011,0.003,443.7,10.8,1053.1,90.3
+113,Poly(vinyl trifluoroacetate) ,[Ce]CC(OC(=O)C(F)(F)F)[Th],319,407.0,10.0,,1.547,0.003,345.7,11.5,1041.5,71.4
+114,Poly(p-n-butoxy styrene) ,[Ce]CC(C1=CC=C(C=C1)OCCCC)[Th],320,267.5,10.4,,1.001,0.004,469.8,7.3,1163.0,104.8
+115,Poly(isobutyl methacrylate) ,[Ce]CC(C)(C(=O)OCC(C)C)[Th],321,375.2,27.9,1.045,1.004,0.004,357.2,14.3,943.1,63.4
+116,Poly(3-methyl-1-butene),[Ce]CC(C(C)C)[Th],323,376.6,9.5,,0.820,0.002,386.9,11.1,1024.0,67.1
+117,Poly(9-aminononanoic acid) ,[Ce]C(=O)CCCCCCCCN[Th],324,309.7,13.6,,0.997,0.003,418.3,7.6,1041.5,116.9
+118,Poly(vinyl butyral) ,CCCC1OC([Ce])CC(C[Th])O1,324,316.4,12.9,1.04,1.015,0.001,393.3,8.6,989.6,109.1
+119,Poly(8-aminocaprylic acid) ,[Ce]NCCCCCCCC(=O)[Th],324,336.2,9.8,1.083,1.053,0.002,406.1,8.7,1271.1,165.8
+120,Poly(ethyl methacrylate) ,[Ce]CC(C)(C(=O)OCC)[Th],324,420.3,9.6,1.34,1.288,0.002,213.5,4.2,714.7,57.6
+121,Poly(ethylene isophthalate) ,C(=O)(O[Ce])C1=CC=CC(=C1)C(=O)OCC[Th],324,422.2,14.9,1.119,1.071,0.004,306.5,10.2,881.4,57.7
+122,Poly[(4-dimethylaminophenyl)phenylsilylenetrimethylene)] ,[Ce][Si](C1=CC=CC=C1)(C1=CC=C(N(C)C)C=C1)CCC[Th],325,385.1,6.8,,1.048,0.001,344.9,8.5,1031.3,89.2
+123,Poly(isopropyl methacrylate) ,[Ce]CC(C)(C(=O)OC(C)C)[Th],327,455.4,18.8,1.033,1.013,0.005,293.0,10.7,852.8,55.6
+124,Poly(methyl-p-xylylene) ,[Ce]CC1=CC=C(C(C)=C1)C[Th],328,407.6,9.5,,1.018,0.002,267.8,7.5,976.2,100.3
+125,Poly(vinyl isobutyral) ,[Ce]CC(C(=O)C(C)C)[Th],329,355.6,22.2,,0.981,0.002,403.0,9.0,883.6,53.4
+126,Poly(p-isopentoxy styrene) ,[Ce]CC(C1=CC=C(C=C1)OCCC(C)C)[Th],330,311.0,17.6,1.24,1.201,0.004,404.7,7.2,950.9,71.6
+127,Poly(sec-butyl methacrylate),[Ce]CC(C)(C(=O)OC(C)CC)[Th],330,324.1,12.7,,1.039,0.002,365.8,10.5,925.1,96.3
+128,Poly(7-aminoheptanoic acid) ,[Ce]C(=O)CCCCCCN[Th],330,428.7,32.0,1.052,0.999,0.005,340.4,9.7,876.8,47.5
+129,Poly(hexamethylene adipamide) ,[Ce]C(=O)CCCCC(=O)NCCCCCCN[Th],330,322.9,5.5,1.07,1.069,0.002,336.9,6.8,850.8,79.6
+130,Poly(n-butyl a-chloroacrylate) ,[Ce]C(Cl)(C(=O)OCCCC)C[Th],330,299.3,16.8,,0.986,0.003,451.2,11.6,1136.5,96.4
+131,"Poly(oxydiphenylsilylene-1,3-phenylene)",[Ce]O[Si](C1=CC=CC=C1)(C1=CC=CC=C1)C1=CC(=CC=C1)[Th],331,413.2,16.4,,1.650,0.005,399.0,19.5,1021.1,24.2
+132,Poly[(heptafluoropropyl)ethylene] ,[Ce]CC(C(F)(F)C(F)(F)C(F)(F)F)[Th],331,427.9,8.8,,1.145,0.002,246.3,4.0,828.5,54.8
+133,Poly(3-cyclopentyl- 1 -propene) ,[Ce]CC(CC1CCCC1)[Th],333,369.2,14.8,,1.055,0.004,322.3,8.0,908.9,85.1
+134,Poly(3-phenyl- 1-propene) ,[Ce]CC(CC1=CC=CC=C1)[Th],333,350.9,14.5,,0.911,0.003,421.9,8.7,958.3,66.0
+135,Poly(p-xylylene) ,[Ce]CC1=CC=C(C=C1)C[Th],333,386.7,6.4,1.046,1.020,0.002,293.1,4.6,800.6,45.8
+136,Poly(e-caprolactam) ,[Ce]NCCCCCC(=O)[Th],335,332.7,8.4,1.084,1.070,0.002,342.4,5.1,852.9,81.4
+137,"Poly(ethylene- 1 ,4-naphthalenedicarboxylate) ",[Ce]OC(=O)C1=CC=C(C2=CC=CC=C12)C(=O)OCC[Th],337,442.0,5.2,1.33,1.292,0.002,190.1,5.1,653.4,49.4
+138,Poly(p-n-propoxy styrene),[Ce]CC(C1=CC=C(C=C1)OCCC)[Th],343,329.5,34.6,,1.012,0.003,426.6,12.1,1122.8,84.8
+139,Poly(n-propyl a-chloroacrylate) ,[Ce]C(Cl)(C(=O)OCCC)C[Th],344,393.4,27.0,1.3,1.244,0.005,344.5,13.8,886.4,60.4
+140,"Poly(ethylene-1,5-naphthalenedicarboxylate)",[Ce]OC(=O)C1=CC=CC2=C(C=CC=C12)C(=O)OCC[Th],344,433.5,12.0,,1.302,0.002,198.7,4.1,643.6,47.5
+141,Poly(vinyl propional) ,[Ce]CC(C(C)C(=O))[Th],345,426.7,18.0,,1.009,0.003,271.7,7.2,695.0,43.3
+142,Poly(ethylene terephthalate) ,[Ce]CCOC(=O)C1=CC=C(C=C1)C(=O)O[Th],345,434.0,7.4,1.385,1.279,0.002,210.0,5.8,690.9,59.2
+143,Poly(sec-butyl a-chloroacrylate) ,[Ce]C(Cl)(C(=O)OC(C)CC)C[Th],347,380.0,14.8,1.24,1.184,0.004,328.6,10.0,824.9,46.2
+144,Poly(3-cyclohexyl- 1-propene) ,[Ce]CC(CC1CCCCC1)[Th],348,421.9,10.2,1.385,1.373,0.004,219.0,4.9,798.5,78.0
+145,Poly(vinyl cyclopentane) ,[Ce]CC(C1CCCC1)[Th],348,359.5,12.1,,0.899,0.004,348.6,10.7,888.1,55.3
+146,Poly(vinyl chloride) ,[Ce]CC(Cl)[Th],348,423.2,17.8,,0.913,0.004,356.4,10.3,868.6,56.6
+147,Poly(2-hydroxypropyl methacrylate) ,[Ce]CC(C)(C(=O)OCC(O)C)[Th],349,402.7,12.7,,1.155,0.004,238.5,10.1,813.4,56.2
+148,Poly(p-methoxymethyl styrene),[Ce]CC(C1=CC=C(C=C1)COC)[Th],350,375.7,23.9,,1.050,0.002,417.4,5.7,1060.2,87.0
+149,Poly(chloro-p-xylylene) ,[Ce]CC1=CC=C(C(Cl)=C1)C[Th],353,408.7,8.2,,1.225,0.003,242.3,4.1,804.4,67.3
+150,Poly(bromo-p-xylylene) ,[Ce]CC1=CC=C(C(Br)=C1)C[Th],353,429.9,11.2,,1.585,0.003,216.0,4.9,725.1,55.5
+151,Poly(vinyl acetal) ,[Ce]CC(OC(=O)C)[Th],355,409.2,10.2,,1.149,0.004,323.6,11.1,950.0,85.6
+152,Poly(ethylene oxybenzoate) ,[Ce]OC1=CC=C(C=C1)C(=O)OCC[Th],355,391.1,6.2,,1.246,0.002,242.3,5.7,798.4,72.9
+153,Poly(vinyl alcohol) ,[Ce]CC(O)[Th],358,412.7,10.8,1.19,1.219,0.004,179.3,10.9,755.6,79.4
+154,Poly[oxy(p-phenylene)] ,[Ce]C1=CC=C(C=C1)O[Th],358,391.3,13.6,,1.243,0.002,249.5,5.3,820.6,80.4
+155,Poly(p-sec-butyl styrene) ,[Ce]CC(C1=CC=C(C=C1)C(C)CC)[Th],359,413.6,26.5,,0.939,0.002,417.9,11.3,1016.4,57.3
+156,Poly(p-ethoxy styrene) ,[Ce]CC(C1=CC=C(C=C1)OCC)[Th],359,399.3,25.0,,1.034,0.003,367.8,10.5,1099.1,92.1
+157,Poly(2-hydroxyethyl methacrylate) ,[Ce]CC(C)(C(=O)OCCO)[Th],359,421.3,12.8,1.15,1.209,0.004,202.8,6.4,721.5,56.6
+158,Poly(2-methyl-5-t-butyl styrene) ,[Ce]CC(C1=C(C)C=CC(=C1)C(C)(C)C)[Th],360,455.0,7.5,,1.289,0.003,194.6,5.4,518.1,12.9
+159,Poly(p-isopropyl styrene) ,[Ce]CC(C1=CC=C(C=C1)C(C)C)[Th],360,444.3,24.7,,0.942,0.004,399.0,11.9,1020.3,72.1
+160,Poly[thio(p-phenylene)] ,[Ce]C1=CC=C(C=C1)S[Th],360,512.5,30.3,,0.912,0.003,307.6,14.0,709.0,31.9
+161,Poly(p-methoxy styrene) ,[Ce]CC(C1=CC=C(C=C1)OC)[Th],362,439.3,13.2,,1.065,0.002,301.5,7.4,996.1,75.9
+162,Poly(vinyl cyclohexane) ,[Ce]CC(C1CCCCC1)[Th],363,451.1,21.2,1.27,1.219,0.007,272.1,8.8,802.8,50.7
+163,Poly(4-methoxy-2-methyl styrene) ,[Ce]CC(C1=C(C)C=C(C=C1)OC)[Th],363,466.1,14.9,,1.039,0.004,278.0,8.3,921.0,56.4
+164,Poly(cyano-p-xylylene) ,[Ce]CC1=CC=C(C(C#N)=C1)C[Th],363,476.8,19.5,0.95,0.877,0.005,258.9,11.2,839.4,51.4
+165,Poly(m-xylylene adipamide) ,[Ce]C(=O)CCCCC(=O)NCC1=CC=CC(=C1)CN[Th],363,461.3,10.7,,1.072,0.003,195.4,6.4,722.9,52.3
+166,Poly(m-chloro styrene) ,[Ce]CC(C1=CC(Cl)=C(C=C1))[Th],363,530.2,29.9,,1.487,0.008,286.4,10.6,1142.9,83.6
+167,Poly(isopropyl a-chloroacrylate) ,[Ce]C(Cl)(C(=O)OC(C)C)C[Th],363,397.9,11.0,,1.160,0.004,239.3,7.6,742.1,61.9
+168,"Poly(a,a,a',a'-tetrafluoro-p-xylylene) ",[Ce]C(F)(F)C1=CC=C(C=C1)C(F)(F)[Th],363,460.6,8.9,,1.188,0.003,247.8,9.2,774.2,41.9
+169,Poly(2-chloroethyl methacrylate) ,[Ce]CC(C)(C(=O)OCCCl)[Th],365,403.7,8.1,1.32,1.268,0.003,252.8,5.8,735.2,53.2
+170,Poly(cyclohexylmethylsilane) ,[Ce][Si](C)(C1CCCCC1)[Th],366,452.9,15.1,1.39,1.312,0.004,275.9,10.0,806.7,54.4
+171,Poly(ethyl a-chloroacrylate) ,[Ce]CC(Cl)(C(=O)OCC)[Th],366,548.3,33.6,,0.924,0.005,199.1,10.3,727.9,51.1
+172,"Poly(1,4-cyclohexylidene dimethylene terephthalate)",[Ce]C(=O)C1=CC=C(C=C1)C(=O)OCC1CCC(CC1)CO[Th],368,426.9,5.5,1.196,1.156,0.002,225.3,4.2,740.6,67.6
+173,Poly(m-methyl styrene) ,[Ce]CC(C1=CC(C)=C(C=C1))[Th],370,452.3,8.8,,0.977,0.003,308.8,10.2,914.7,48.8
+174,"Poly(2,5-dimethyl-p-xylylene) ",[Ce]CC1=C(C)C=C(C(C)=C1)C[Th],373,484.3,5.6,,0.974,0.003,233.1,7.1,1010.4,104.3
+175,Polystyrene ,[Ce]CC(C1=CC=CC=C1)[Th],373,438.5,4.2,1.92,2.049,0.005,216.8,6.2,817.5,70.0
+176,Phenoxy resin ,[Ce]C1=CC=C(C=C1)C(C)(C)C1=CC=C(C=C1)OCC(O)CO[Th],373,457.5,14.4,1.05,1.014,0.004,284.2,6.4,842.3,50.2
+177,Polychlorotrifluoroethylene ,[Ce]C(F)(F)C(F)(Cl)[Th],373,423.1,8.8,,1.128,0.002,225.4,3.8,936.5,94.5
+178,Poly(p-methyl styrene) ,[Ce]CC(C1=CC=C(C=C1)C)[Th],374,491.5,7.0,1.04,0.976,0.003,311.0,10.3,979.2,74.4
+179,"Poly(2,5-difluoro styrene) ",[Ce]CC(C1=C(F)C=C(C(F)=C1))[Th],374,469.2,10.5,,1.243,0.004,254.5,9.0,892.2,38.1
+180,Poly(o-ethyl styrene) ,[Ce]CC(C1=C(CC)C=C(C=C1))[Th],376,433.9,23.9,,0.982,0.004,299.8,11.2,765.0,36.0
+181,"Poly(3,5-dimethyl styrene) ",[Ce]CC(C1=CC(C)=C(C(C)=C1))[Th],377,460.8,2.8,,0.953,0.001,320.0,9.1,957.8,49.2
+182,Poly(cyclohexyl methacrylate) ,[Ce]CC(C)(C(=O)OC1CCCCC1)[Th],377,461.2,17.3,1.09799999999999,1.023,0.003,252.8,10.3,771.2,47.2
+183,Poly(o-vinyl pyridine) ,[Ce]CC(C1=NC=CC=C1)[Th],377,506.6,8.8,,1.076,0.002,222.6,6.5,722.3,49.7
+184,Polyacrylonitrile ,[Ce]CC(C#N)[Th],378,483.9,13.1,1.17,1.118,0.004,196.3,8.3,802.1,50.9
+185,Poly(methyl methacrylate) ,[Ce]CC(C)(C(=O)OC)[Th],378,454.3,9.2,1.184,1.078,0.002,157.5,5.7,532.1,16.0
+186,Poly(vinyl formal) ,[Ce]CC1OCOC(C1)[Th],378,494.1,8.2,1.23,1.165,0.006,180.1,6.1,959.9,106.3
+187,Poly(o-fluoro styrene) ,[Ce]CC(C1=C(F)C=C(C=C1))[Th],378,457.6,8.5,,1.134,0.003,257.6,8.0,816.9,40.0
+188,"Poly(2,3,4,5,6-pentafluoro styrene) ",[Ce]CC(C1=C(F)C(F)=C(F)(C(F)=C1(F)))[Th],378,461.2,12.2,,1.492,0.004,268.3,4.1,919.4,28.6
+189,Poly(p-fluoro styrene) ,[Ce]CC(C1=CC=C(C=C1)F)[Th],379,471.9,9.0,1.15,1.355,0.002,132.9,2.7,475.9,23.3
+190,Poly(acrylic acid) ,[Ce]CC(C(=O)O)[Th],379,465.6,9.8,,1.130,0.004,276.8,8.4,857.3,47.0
+191,Poly(t-butyl methacrylate) ,[Ce]CC(C)(C(=O)OC(C)(C)C)[Th],380,515.0,16.0,1.02,0.962,0.005,248.6,8.6,772.3,43.4
+192,"Poly(3,4-dimethyl styrene) ",[Ce]CC(C1=CC(C)=C(C=C1)C)[Th],384,483.0,10.4,,0.955,0.004,301.2,12.4,949.0,55.5
+193,Poly(2-fluoro-5-methyl styrene) ,[Ce]CC(C1=C(F)C=C(C(C)=C1))[Th],384,468.1,12.7,,1.078,0.003,287.5,9.5,863.0,37.7
+194,Resin F ,[Ce]C1=CC=CC(=C1)NC(=O)CCCC(=O)NC1=CC=CC(=C1)OCC(O)CO[Th],384,443.9,9.6,,1.237,0.003,183.2,6.4,714.2,59.0
+195,"Poly(2,4-dimethyl styrene) ",[Ce]CC(C1=C(C)C=C(C=C1)C)[Th],385,526.0,15.0,,0.956,0.004,279.4,8.7,890.8,53.2
+196,Poly(p-methoxycarbonyl styrene) ,[Ce]CC(C1=CC=C(C=C1)C(=O)OC)[Th],386,491.9,17.1,,1.131,0.004,255.8,4.3,851.1,63.1
+197,Poly(3-methyl-4-chloro styrene) ,[Ce]CC(C1=CC(C)=C(C=C1)Cl)[Th],387,491.6,13.2,,1.137,0.005,272.4,7.8,811.9,42.7
+198,Poly(cyclohexyl a-chloroacrylate) ,[Ce]C(Cl)(C(=O)OC1CCCCC1)C[Th],387,468.1,14.8,1.25,1.180,0.003,243.2,9.0,740.9,43.4
+199,Poly(p-xylylene sebacamide) ,[Ce]NCC1=CC=C(C=C1)CNC(=O)CCCCCCCCC(=O)[Th],388,371.8,16.5,,1.090,0.002,311.6,5.1,847.7,78.7
+200,Poly[thio bis(4-phenyl)carbonate] ,[Ce]C1=CC=C(C=C1)SC1=CC=C(C=C1)OC(=O)O[Th],388,442.9,11.8,1.355,1.322,0.002,202.1,4.7,644.0,44.2
+201,Poly(p-chloro styrene) ,[Ce]CC(C1=CC=C(C=C1)Cl)[Th],389,495.0,9.5,,1.189,0.003,246.1,6.7,770.2,46.0
+202,Poly(phenylmethylsilane) ,[Ce][Si](C)(C1=CC=CC=C1)[Th],390,530.0,25.8,,1.929,0.015,216.0,9.9,1035.3,137.3
+203,Perfluoropolymer 3,[Ce]C(F)(F)C1(F)C(F)(F)C(F)(F)C(F)(C1(F)(F))[Th],390,481.8,11.2,,1.047,0.004,248.8,9.5,685.6,31.7
+204,"Poly[2,2-butane bis{4-(2-methylphenyl)}carbonate] ",[Ce]C1=CC(C)=C(C=C1)C(C)(CC)C1=C(C)C=C(C=C1)OC(=O)O[Th],392,474.5,11.6,,1.204,0.004,222.1,5.8,691.0,34.2
+205,Poly(o-chloro styrene) ,[Ce]CC(C1=C(Cl)C=C(C=C1))[Th],392,554.1,8.5,,1.097,0.004,196.8,8.8,781.8,63.5
+206,Poly(phenyl methacrylate) ,[Ce]CC(C)(C(=O)OC1=CC=CC=C1)[Th],393,501.5,10.8,,1.337,0.004,204.9,6.0,660.8,28.2
+207,Polymethacrylonitrile ,[Ce]CC(C)(C#N)[Th],393,502.2,15.0,1.21,1.151,0.004,213.1,5.4,716.9,45.8
+208,"Poly(2,5-dichloro styrene) ",[Ce]CC(C1=C(Cl)C=C(C(Cl)=C1))[Th],393,549.9,17.4,1.1,1.024,0.003,157.0,5.9,573.6,35.8
+209,Poly(a-p-dimethyl styrene),[Ce]CC(C)(C1=CC=C(C=C1)C)[Th],394,604.8,10.5,,0.953,0.005,212.0,6.4,890.4,74.5
+210,Poly(3-fluoro-4-chloro styrene) ,[Ce]CC(C1=CC(F)=C(C=C1)Cl)[Th],395,503.0,9.7,,1.283,0.004,246.3,7.4,760.2,39.0
+211,"Poly[1,1-butane bis(4-phenyl)carbonate] ",[Ce]C1=CC=C(C=C1)C(CCC)C1=CC=C(C=C1)OC(=O)O[Th],396,427.2,21.2,,1.156,0.002,274.7,5.1,866.5,85.7
+212,"Poly(ethylene-2,6-naphthalenedicarboxylate) ",[Ce]OCCOC(=O)C2=CC1=CC=C(C=C1C=C2)C(=O)[Th],397,483.6,11.4,,1.265,0.003,177.6,4.8,639.3,49.7
+213,Poly(m-hydroxymethyl styrene) ,[Ce]CC(C1=CC(CO)=C(C=C1))[Th],398,425.1,15.5,,1.108,0.003,227.3,9.9,824.5,51.4
+214,Polyetherimide 1 ,[Ce]OC1=CC=C(C=C1)OC1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)CCCCCCN1C(=O)C2=CC=C(C=C2C1(=O))[Th],401,516.0,13.1,,1.333,0.004,215.8,5.4,680.4,45.4
+215,"Poly(3,4-dichlorostyrene) ",[Ce]CC(C1=CC(Cl)=C(C=C1)Cl)[Th],401,475.5,9.3,,1.251,0.003,180.5,4.3,638.0,46.8
+216,Poly(p-t-butyl styrene),[Ce]CC(C1=CC=C(C=C1)C(C)(C)C)[Th],402,531.9,24.2,0.95,0.910,0.005,343.6,11.0,944.2,57.5
+217,Poly(hexamethylene isophthalamide) ,[Ce]NCCCCCCNC(=O)C1=CC=CC(=C1)C(=O)[Th],403,424.3,13.6,,1.149,0.003,230.7,7.8,732.0,60.8
+218,"Poly[1,1-ethane bis(4-phenyl)carbonate] ",[Ce]C1=CC=C(C=C1)C(C)C1=CC=C(C=C1)OC(=O)O[Th],403,431.8,12.8,,1.209,0.002,227.8,6.5,770.2,69.1
+219,"Poly(2,4-dichloro styrene) ",[Ce]CC(C1=C(Cl)C=C(C=C1)Cl)[Th],406,508.8,13.0,,1.340,0.003,207.5,7.1,676.3,38.9
+220,"Poly[2,2-butane bis(4-phenyl)carbonate] ",[Ce]C1=CC=C(C=C1)C(C)(CC)C1=CC=C(C=C1)OC(=O)O[Th],407,465.9,10.4,,1.153,0.003,206.1,5.6,782.8,64.2
+221,Poly(o-methyl styrene) ,[Ce]CC(C1=CC=CC=C1(C))[Th],409,493.3,11.7,1.027,0.990,0.003,245.5,11.8,778.7,43.5
+222,Poly(a-methyl styrene) ,[Ce]CC(C)(C1=CC=CC=C1)[Th],409,580.3,10.5,1.065,0.992,0.005,166.1,7.7,780.0,61.0
+223,"Poly[2,2-pentane bis(4-phenyl)carbonate]",[Ce]C1=CC=C(C=C1)C(C)(CCC)C1=CC=C(C=C1)OC(=O)O[Th],410,462.4,9.4,,1.128,0.003,220.7,7.6,842.9,80.7
+224,"Poly(oxycarbonyloxy-2-chloro-1,4-phenyleneisopropylidene-2-methyl- 1,4-phenylene)",[Ce]C1=C(C)C=C(C=C1)C(C)(C)C1=CC=C(C(Cl)=C1)OC(=O)O[Th],411,550.9,8.4,,1.281,0.003,162.3,3.7,633.6,48.2
+225,Poly(m-phenylene isophthalate) ,[Ce]C(=O)C1=CC=CC(=C1)C(=O)OC1=CC=CC(=C1)O[Th],411,488.7,19.5,,1.060,0.005,247.7,8.7,826.5,57.3
+226,Poly(p-phenyl styrene) ,[Ce]CC(C1=CC=C(C=C1)C1=CC=CC=C1)[Th],411,508.6,8.9,,1.211,0.001,192.0,7.5,813.2,67.3
+227,Poly(p-hydroxymethyl styrene) ,[Ce]CC(C1=CC=C(C=C1)CO)[Th],413,455.8,14.7,,1.103,0.003,221.4,5.5,859.6,64.4
+228,"Poly [2,2-butane bis {4-(2-chlorophenyl)} carbonate] ",[Ce]C1=CC=C(C(Cl)=C1)C(C)(CC)C1=C(Cl)C=C(C=C1)OC(=O)O[Th],415,517.0,15.2,,1.081,0.004,194.7,6.6,634.2,34.3
+229,Poly(p-vinyl pyridine) ,[Ce]CC(C1=CC=NC=C1)[Th],415,574.6,9.2,,1.276,0.004,170.1,8.6,697.8,56.3
+230,"Poly(2,5-dimethyl styrene) ",[Ce]CC(C1=C(C)C=C(C(C)=C1))[Th],416,508.2,14.1,,0.954,0.005,275.6,9.2,798.5,32.6
+231,Poly(p-bromo styrene),[Ce]CC(C1=CC=C(C=C1)Br)[Th],417,511.2,13.7,,1.548,0.004,226.7,8.0,683.8,37.9
+232,Poly(N-vinyl pyrrolidone),[Ce]CC(N1CCCC1=O)[Th],418,528.4,10.0,,1.145,0.003,227.9,6.5,727.6,34.5
+233,Poly(2-methyl-4-chloro styrene),[Ce]CC(C1=C(C)C=C(C=C1)Cl)[Th],418,569.5,12.9,1.25,1.116,0.004,243.2,8.7,610.5,31.4
+234,"Poly(oxycarbonyloxy-2-chloro- 1 ,4-phenyleneisopropylidene-1,4-phenylene)",[Ce]C1=CC=C(C=C1)C(C)(C)C1=CC=C(C(Cl)=C1)OC(=O)O[Th],419,484.5,10.8,,1.252,0.003,189.9,6.2,755.9,61.6
+235,"Poly(oxy- 1 ,4-phenylene-oxy- 1 ,4-phenylene-carbonyl-1 ,4-phenylene)",[Ce]OC1=CC=C(C=C1)OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[Th],419,574.2,12.0,,1.307,0.004,164.3,6.3,673.5,49.6
+236,"Poly[2,2-propane bis{4-(2-chlorophenyl)}carbonate]",[Ce]C1=CC=C(C(Cl)=C1)C(C)(C)C1=C(Cl)C=C(C=C1)OC(=O)O[Th],419,488.5,11.7,,1.225,0.002,173.0,8.9,720.8,61.9
+237,Poly[methane bis(4-phenyl)carbonate],[Ce]C1=CC=C(C=C1)CC1=CC=C(C=C1)OC(=O)O[Th],420,417.5,12.3,1.24,1.242,0.003,229.8,5.7,724.2,63.5
+238,Poly(p-hydroxybenzoate),[Ce]OC1=CC=C(C=C1)C(=O)[Th],420,589.9,74.7,,1.322,0.005,146.3,5.8,540.3,69.6
+239,"Poly[4,4-heptane bis(4-phenyl)carbonate]",[Ce]C1=CC=C(C=C1)C(CCC)(CCC)C1=CC=C(C=C1)OC(=O)O[Th],421,508.9,14.5,,1.073,0.004,223.7,8.1,918.7,88.2
+240,"Poly[1,1-(2-methyl propane) bis(4-phenyl)carbonate]",[Ce]C1=CC=C(C=C1)C(C(C)C)C1=CC=C(C=C1)OC(=O)O[Th],422,467.9,10.2,,1.141,0.002,225.0,6.2,826.9,75.4
+241,Poly(N-vinyl carbazole),[Ce]CC([N]1C3=C(C2=CC=CC=C12)C=CC=C3)[Th],423,460.8,6.3,1.2,1.182,0.002,206.6,8.5,753.8,60.1
+242,Bisphenol-A polycarbonate,[Ce]OC1=CC=C(C=C1)C(C)(C)C1=CC=C(C=C1)OC(=O)[Th],423,607.7,17.1,1.2,1.114,0.004,177.3,3.6,591.5,27.8
+243,Poly(p-vinyl naphthalene),[Ce]CC(C1=CC=C2C=CC=CC2=C1)[Th],424,532.8,14.6,,1.057,0.003,212.1,7.2,746.3,42.2
+244,Polyhexafluoropropylene,[Ce]C(F)(F)C(F)(C(F)(F)F)[Th],425,570.5,12.6,,1.886,0.005,221.0,11.9,1018.2,81.5
+245,"Poly[1 ,1-dichloroethylene bis(4-phenyl)carbonate] ",[Ce]C1=CC=C(C=C1)C(=C(Cl)Cl)C1=CC=C(C=C1)OC(=O)O[Th],430,509.7,8.4,,1.365,0.002,189.3,4.3,734.7,57.1
+246,Poly(a-vinyl naphthalene),[Ce]CC(C1=CC=CC2=CC=CC=C12)[Th],432,516.9,14.1,,1.073,0.003,200.6,9.4,664.8,27.8
+247,Poly(o-hydroxymethyl styrene),[Ce]CC(C1=C(CO)C=C(C=C1))[Th],433,486.4,13.1,,1.114,0.004,204.0,7.6,717.1,41.3
+248,Poly(methyl a-cyanoacrylate),[Ce]CC(C#N)(C(=O)OC)[Th],433,586.4,15.7,1.1,1.214,0.005,168.4,6.3,705.6,71.1
+249,"Poly [1,1 -cyclopentane bis(4-phenyl)carbonate]",[Ce]C1=CC=C(C=C1)C1(CCCC1)C1=CC=C(C=C1)OC(=O)O[Th],440,461.0,10.3,,1.191,0.002,216.8,6.7,731.8,60.9
+250,"Poly(oxyterephthaloyloxy-2-methyl-1 ,4-phenyleneisopropylidene-3-methyl-1 ,4-phenylene)",[Ce]OC(=O)C1=CC=C(C=C1)C(=O)OC1=C(C)C=C(C=C1)C(C)(C)C1=CC(C)=C(C=C1)[Th],444,584.9,14.0,,1.115,0.004,182.2,6.5,797.4,81.9
+251,"Poly[1,1-cyclohexane bis(4-phenyl)carbonate] ",[Ce]C1=CC=C(C=C1)C1(CCCCC1)C1=CC=C(C=C1)OC(=O)O[Th],444,508.4,17.2,,1.162,0.004,195.8,5.9,729.0,64.3
+252,"Poly[1,1-(1-phenylethane) bis(4-phenyl)carbonate]",[Ce]C1=CC=C(C=C1)C(C1=CC=CC=C1)(C)C1=CC=C(C=C1)OC(=O)O[Th],449,493.4,9.3,,1.477,0.005,197.3,9.6,821.8,67.0
+253,"Poly[2,2-hexafluoropropane bis(4-phenyl)carbonate]",[Ce]C1=CC=C(C=C1)C(C(F)(F)F)(C(F)(F)F)C1=CC=C(C=C1)OC(=O)O[Th],449,516.2,12.5,1.2,1.179,0.002,188.3,3.7,753.9,64.5
+254,"Poly [2,2-( 1 ,3-dichloro-1 ,1 ,3,3-tetrafluoro)propane bis(4-phenyl)carbonate]",[Ce]C1=CC=C(C=C1)C(C(F)(Cl)F)(C(F)(Cl)F)C1=CC=C(C=C1)OC(=O)O[Th],457,553.2,12.3,,1.486,0.006,172.0,8.3,727.5,54.3
+255,"Poly[4,4'-isopropylidene diphenoxy di(4-phenylene)sulfone]",[Ce]C1=CC=C(C=C1)C(C)(C)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)O[Th],458,562.9,8.2,1.24,1.201,0.002,186.8,5.1,783.0,75.1
+256,"Poly(oxycarbonyloxy-2,6-dichloro-1,4-phenyleneisopropylidene-1,4-phenylene)",[Ce]C1=CC=C(C=C1)C(C)(C)C2=CC(=C(C(=C2)Cl)OC(=O)O[Th])Cl,459,551.2,10.9,,1.296,0.003,175.1,5.3,757.1,65.4
+257,Poly(perfluorostyrene),[Ce]C(F)(F)C(F)(C1=C(F)C(F)=C(F)(C(F)=C1(F)))[Th],467,579.9,14.2,,1.691,0.010,217.8,9.1,905.9,24.0
+258,"Poly[2,2-propane bis{4-(2,6-dimethylphenyl)} carbonate]",[Ce]C1=CC(C)=C(C(C)=C1)C(C)(C)C1=C(C)C=C(C=C1(C))OC(=O)O[Th],473,580.4,13.1,,1.099,0.005,184.5,6.9,754.7,64.6
+259,Polyetherimide 6,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))OC1=CC=C(C=C1)SC1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)C(=O)C1=CC=CC(=C1)[Th],473,631.2,11.9,,1.281,0.004,139.3,3.3,546.6,41.5
+260,"Poly(a,b,b-trifluoro styrene) ",[Ce]C(F)(F)C(F)(C1=CC=C(C=C1))[Th],475,590.3,14.1,,1.328,0.005,186.9,9.5,812.7,56.9
+261,Poly(bisphenol-A terephthalate) ,[Ce]C1=CC=C(C=C1)C(C)(C)C1=CC=C(C=C1)OC(=O)C1=CC=C(C=C1)C(=O)O[Th],478,578.2,10.2,,1.167,0.004,183.1,5.5,693.1,66.4
+262,"Poly[oxy(2,6-dimethyl-1 ,4-phenylene)] ",[Ce]OC1=C(C)C=C(C=C1(C))[Th],482,568.1,10.4,,1.040,0.006,245.4,9.9,1069.6,96.3
+263,Polyetherimide 2,[Ce]OC1=CC=C(C=C1)SC1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)N1C(=O)C2=CC=C(C=C2C1(=O))[Th],482,648.7,13.6,,1.291,0.004,134.9,3.4,535.1,46.3
+264,Polyetherimide 7,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))OC1=CC=C(C=C1)SC1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=C(C=CC=C1)C(=O)C1=CC=C(C=C1)[Th],485,667.5,15.3,,1.262,0.004,142.8,3.4,551.8,55.1
+265,Polyetherimide 8,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))OC1=CC=C(C=C1)SC1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)C(=O)C1=CC=C(C=C1)[Th],486,626.5,12.0,,1.281,0.002,137.6,5.7,541.0,41.9
+266,"Poly[oxy(2,6-diphenyl-1,4-phenylene)] ",[Ce]OC2=C(C1=CC=CC=C1)C=C(C=C2C3=CC=CC=C3)[Th],493,562.1,15.2,1.14,1.096,0.003,207.9,9.5,808.1,46.7
+267,Ultem ,CC(C)(c1ccc(O[[Ce]])cc1)c7ccc(Oc6ccc5c(=O)n(c4cccc(n3c(=O)c2ccc([[Th]])cc2c3=O)c4)c(=O)c5c6)cc7,493,581.5,9.7,1.29,1.248,0.003,180.3,7.6,720.0,60.4
+268,"Poly[4,4'-diphenoxy di(4-phenylene)sulfone] ",[Ce]OC1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)[Th],493,619.9,8.8,1.37,1.323,0.003,174.9,5.7,638.1,50.6
+269,"Poly[4,4'-sulfone diphenoxy di(4-phenylene)sulfone] ",[Ce]C1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)OC1=CC=C(C=C1)S(=O)(=O)C1=CC=C(C=C1)O[Th],493,647.6,16.6,1.27,1.220,0.003,138.9,4.7,579.5,57.3
+270,Polyetherimide 9,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))OC1=CC=C(C=C1)SC1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[Th],494,649.9,12.4,1.27,1.280,0.002,140.5,4.3,543.2,48.6
+271,"Poly[N,N'-(m,m'-oxydiphenylene-oxy-m-phenylene)pyromellitimide] ",[Ce]C1=CC=CC(=C1)N6C(=O)C5=CC2=C(C(N(C2=O)C3=CC(=CC=C3)OC4=CC=CC(=C4)O[Th])=O)C=C5C6=O,494,665.0,13.2,,1.318,0.003,128.9,3.3,501.4,49.5
+272,Polyetherimide 3,[Ce]OC1=CC=C(C=C1)OC1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)N1C(=O)C2=CC=C(C=C2C1(=O))[Th],500,642.4,14.2,,1.283,0.004,133.4,6.3,546.1,44.8
+273,"Poly[2,2-propane bis{4-(2,6-dichlorophenyl)} carbonate] ",[Ce]C1=C(Cl)C=C(C=C1(Cl))C(C)(C)C1=CC(Cl)=C(C(Cl)=C1)OC(=O)O[Th],503,630.1,13.8,,1.377,0.004,160.1,6.5,719.3,67.7
+274,Polycarbonate 2,[Ce]C1=CC=C(C=C1)C1(CC2CC1CC2)C1=CC=C(C=C1)OC(=O)O[Th],505,594.2,13.1,1.2,1.162,0.004,185.2,7.9,704.9,61.6
+275,Polyetherimide 4,[Ce]OC1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)N1C(=O)C2=CC=C(C=C2C1(=O))[Th],512,661.7,7.6,,1.280,0.004,120.2,3.6,523.3,53.1
+276,Polyimide 10,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))C(=O)C1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)C(=O)C1=CC=CC(=C1)[Th],513,743.8,34.3,,1.289,0.004,111.6,5.6,438.8,65.7
+277,Polycarbonate 3,[Ce]C1=CC=C(C=C1)C2(CC3C4C(C2C3)CCC4)C5=CC=C(C=C5)OC(=O)O[Th],520,638.2,11.0,,1.137,0.003,194.5,3.8,701.3,67.4
+278,Polyetherimide 5,[Ce]OC1=CC=C(C=C1)C1=CC=C(C=C1)OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)N1C(=O)C2=CC=C(C=C2C1(=O))[Th],520,692.7,20.3,,1.261,0.004,128.1,4.7,536.6,64.6
+279,"Poly[2,2-propane bis{4-(2,6-dibromophenyl)}carbonate]",[Ce]C1=C(Br)C=C(C=C1(Br))C(C)(C)C1=CC(Br)=C(C(Br)=C1)OC(=O)O[Th],523,674.8,14.3,1.953,1.932,0.003,145.5,4.4,612.9,68.2
+280,Polyimide 1F,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))C(C(F)(F)F)(C(F)(F)F)C1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)C(=O)C1=CC=CC(=C1)[Th],533,736.2,36.3,,1.363,0.003,123.3,6.6,508.1,78.7
+281,Polyquinoline 5,[Ce]C1=CC(C2=CC=CC=C2)=C2C=C(OC3=CC4=C(C=C(N=C4C=C3)C3=CC=C(OC4=CC=C([Th])C=C4)C=C3)C3=CC=CC=C3)C=CC2=N1,539,652.8,13.2,,1.141,0.004,161.2,8.5,711.9,78.6
+282,Polyquinoline 1,[Ce]C1=NC2=C(C=CC=C2)C(=C1)C1=CC=C(OC2=CC=C(C=C2)C2=CC(=NC3=C2C=CC=C3)C2=CC=CC([Th])=C2)C=C1,541,706.8,12.4,,1.128,0.003,150.6,5.7,664.0,85.1
+283,"Poly[3,5-(4-phenyl-1,2,4-triazole)-1,4-phenylene-3,5-(4-phenyl-1,2,4-triazole)-1,3-phenylene] ",[Ce]C1=CC=C(C=C1)C2=NN=C([N]2C3=CC=CC=C3)C4=CC(=CC=C4)C5=NN=C([N]5C6=CC=CC=C6)[Th],543,644.8,15.6,,1.148,0.004,149.3,6.5,627.9,59.5
+284,Poly(m-phenylene isophthalamide) ,[Ce]C(=O)C1=CC=CC(=C1)C(=O)NC1=CC=CC(=C1)N[Th],545,680.0,8.2,,1.268,0.002,119.8,2.8,540.6,56.2
+285,Polyquinoline 2,[Ce]C1=NC2=C(C=CC=C2)C(C2=CC=C(OC3=CC=C(C=C3)C3=C(C4=CC=CC=C4)C(=NC4=C3C=CC=C4)C3=CC=CC([Th])=C3)C=C2)=C1C1=CC=CC=C1,546,695.3,16.1,,1.076,0.004,172.8,5.4,682.3,83.2
+286,Torlon ,[Ce]NC(=O)C1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=C(C=C1)CC1=CC=C(C=C1)[Th],550,756.9,46.3,,1.244,0.005,132.0,6.3,517.2,79.1
+287,Polyimide 3F,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))C(C(F)(F)F)(C(F)(F)F)C1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=CC(=C1)C(=O)C1=CC=C(C=C1)[Th],561,752.3,44.5,,1.359,0.004,121.5,4.3,487.2,79.5
+288,Polyimide 2F,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))C(C(F)(F)F)(C(F)(F)F)C1=CC=C2C(=O)N(C(=O)C2=C1)C1=C(C=CC=C1)C(=O)C1=CC=C(C=C1)[Th],562,801.0,65.2,,1.331,0.006,133.3,9.9,432.6,77.1
+289,Polyquinoline 9,[Ce]C1=CC(C2=CC=CC=C2)=C2C=C(OC3=CC4=C(C=C(N=C4C=C3)C3=CC=C([Th])C=C3)C3=CC=CC=C3)C=CC2=N1,573,680.9,38.1,,1.121,0.007,156.5,10.0,665.3,99.2
+290,Polyquinoline 6,[Ce]C1=C(C2=CC=CC=C2)C(C2=CC=CC=C2)=C2C=C(OC3=CC4=C(C5=CC=CC=C5)C(C5=CC=CC=C5)=C(N=C4C=C3)C3=CC=C(OC4=CC=C([Th])C=C4)C=C3)C=CC2=N1,578,656.7,17.2,,1.085,0.006,174.4,10.2,742.7,88.2
+291,"Poly(quinoxaline-2,7-diylquinoxaline-7,2-diyl-p-terphenyl-4,4'-ylene)",[Ce]C1=CN=C2C=CC(=CC2=N1)C1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)C1=CC=C(C=C1)[Th],578,770.6,65.7,,1.140,0.008,143.2,5.4,406.2,67.8
+292,"Poly(quinoxaline-2,7-diyloxyquinoxaline-7,2-diyl-1,4-phenylene) ",[Ce]C1=CN=C2C=CC(=CC2=N1)OC1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)[Th],579,685.5,15.9,,1.239,0.003,131.3,4.9,549.6,65.5
+293,Polyphenolphthalein 2,[Ce]C1=CC=C(C=C1)C1(OC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)C(=O)OC1=CC=C(C=C1)C1=CC=C(C=C1)OC(=O)[Th],580,721.3,17.8,,1.208,0.005,162.0,11.5,587.9,92.9
+294,Polyquinoline 7,[Ce]C1=CC(C2=CC=CC=C2)=C2C=C(OC3=CC4=C(C=C(N=C4C=C3)C3=CC=C(C=C3)C3=CC=C([Th])C=C3)C3=CC=CC=C3)C=CC2=N1,581,680.8,24.3,,1.107,0.006,156.3,6.4,676.1,103.2
+295,Polyphenolphthalein 3,[Ce]C1=CC=C(C=C1)C1(OC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)C(=O)OC1=CC=C(C=C1)C1(OC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)OC(=O)[Th],583,767.8,35.6,,1.215,0.006,160.1,6.1,540.9,88.9
+296,Polyimide 4F,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))C(C(F)(F)F)(C(F)(F)F)C1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=C(C=C1)C(=O)C1=CC=C(C=C1)[Th],584,799.5,20.5,,1.342,0.004,123.6,8.1,405.8,67.0
+297,"Poly(quinoxaline-2,7-diylcarbonylquinoxaline-7,2-diyl-1,4-phenylene)",[Ce]C1=CN=C2C=CC(=CC2=N1)C(=O)C1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)[Th],591,770.8,21.4,,1.219,0.003,121.2,5.2,439.6,75.4
+298,Polyphenolphthalein 1,[Ce]C1=CC=C(C=C1)C1(OC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)C(=O)NC1=CC=C(C=C1)OC1=CC=C(C=C1)NC(=O)[Th],593,711.2,9.8,,1.220,0.004,142.2,7.2,568.7,74.7
+299,Polyquinoline 3,[Ce]C1=NC2=C(C=CC=C2)C(=C1)C1=CC=C(OC2=CC=C(C=C2)C2=CC(=NC3=C2C=CC=C3)C2=CC=C(OC3=CC=C([Th])C=C3)C=C2)C=C1,599,664.0,10.7,,1.144,0.004,159.4,4.7,694.5,85.5
+300,Poly(p-phenylene terephthalamide) ,[Ce]C(=O)C1=CC=C(C=C1)C(=O)NC1=CC=C(C=C1)N[Th],600,676.0,63.6,,1.319,0.005,125.4,6.6,438.1,62.8
+301,Polyimide 11,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))C(=O)C1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=C(C=C1)[Th],606,838.3,51.9,,1.288,0.006,104.3,3.6,309.0,57.8
+302,"Poly(quinoxaline-2,7-diylsulfonylquinoxaline-7,2-diyl-1,4-phenylene)",[Ce]C1=CN=C2C=CC(=CC2=N1)S(=O)C1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)[Th],615,848.6,13.2,,1.251,0.003,119.5,5.0,344.9,47.5
+303,Polyetherimide 12,[Ce]N1C(=O)C2=CC=C(C=C2C1(=O))OC1=CC=C2C(=O)N(C(=O)C2=C1)C1=CC=C(C=C1)[Th],615,811.2,16.8,,1.298,0.004,114.1,2.9,369.4,69.8
+304,Polyquinoline 10,[Ce]C1=C(C2=CC=CC=C2)C(C2=CC=CC=C2)=C2C=C(OC3=CC4=C(C5=CC=CC=C5)C(C5=CC=CC=C5)=C(N=C4C=C3)C3=CC=C([Th])C=C3)C=CC2=N1,618,646.8,8.1,,1.095,0.005,174.3,8.8,696.7,64.9
+305,Polyquinoline 4,[Ce]C1=NC2=C(C=CC=C2)C(C2=CC=C(OC3=CC=C(C=C3)C3=C(C4=CC=CC=C4)C(=NC4=C3C=CC=C4)C3=CC=C(OC4=CC=C([Th])C=C4)C=C3)C=C2)=C1C1=CC=CC=C1,618,703.5,18.5,,1.053,0.005,176.6,10.5,608.4,74.7
+306,Polyquinoline 8,[Ce]C1=C(C2=CC=CC=C2)C(C2=CC=CC=C2)=C2C=C(OC3=CC4=C(C5=CC=CC=C5)C(C5=CC=CC=C5)=C(N=C4C=C3)C3=CC=C(C=C3)C3=CC=C([Th])C=C3)C=CC2=N1,624,713.1,15.1,,1.043,0.007,161.1,10.0,683.4,107.1
+307,Polytricyclic 1,[Ce]C1=CN=C2C=C3N=CC(=NC3=CC2=N1)C1=CC=C(C=C1)OC1=CC=C(C=C1)[Th],626,788.9,33.9,,1.223,0.005,138.9,6.5,408.8,74.6
+308,"Poly(3-phenylquinoxaline-2,7-diyl-3-phenylquinoxaline-7,2-diyl-1,4-phenylene) ",[Ce]C1=C(N=C2C=CC(=CC2=N1)C1=CC=C2N=C(C3=CC=CC=C3)C(=NC2=C1)C1=CC=C([Th])C=C1)C1=CC=CC=C1,645,812.8,42.9,,1.085,0.006,149.5,5.6,371.4,13.7
+309,"Poly(quinoxaline-2,7-diylquinoxaline-7,2-diyl-1,4-phenylene)",[Ce]C1=CN=C2C=CC(=CC2=N1)C1=CC=C2N=CC(=NC2=C1)C1=CC=C(C=C1)[Th],649,850.6,34.1,,1.178,0.005,126.2,4.1,354.6,45.2
+310,Polyphenolphthalein 4,[Ce]C1=CC=C(C=C1)C1(OC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)C(=O)NC1=CC=C(C=C1)C1(OC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)NC(=O)[Th],658,850.1,27.1,,1.198,0.006,132.8,5.6,429.7,70.0
+311,Polytricyclic 2,[Ce]C3=C(N=C2C=C1N=C(C(=NC1=CC2=N3)C4=CC=C(C=C4)[Th])C5=CC=CC=C5)C6=CC=CC=C6,668,951.1,48.6,,1.100,0.005,159.7,8.9,404.4,64.0
+312,Polytricyclic 3,[Ce]C3=C(N=C2C=C1N=C(C(=NC1=CC2=N3)C4=CC(=CC=C4)[Th])C5=CC=CC=C5)C6=CC=CC=C6,668,693.4,37.1,,1.077,0.008,154.5,12.8,387.6,47.5
+313,"Poly[N,N'-(p,p'-oxydiphenylene)pyromellitimide] ",[Ce]C1=CC=C(C=C1)N5C(=O)C4=CC2=C(C(N(C2=O)C3=CC=C(C=C3)O[Th])=O)C=C4C5=O,672,817.2,39.0,,1.285,0.008,126.4,6.0,300.7,30.9
+314,Polyphenolphthalein 5,[Ce]C1=CC=C(C=C1)C1(OC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)C(=O)NC1=CC=C(C=C1)C1(NC(=O)C2=CC=CC=C12)C1=CC=C(C=C1)NC(=O)[Th],673,842.1,38.1,,1.190,0.005,130.7,8.2,438.4,92.4
+315,"Poly[N,N'-(p,p'-carbonyldiphenylene)pyromellitimide] ",[Ce]C1=CC=C(C=C1)N5C(=O)C4=CC2=C(C(N(C2=O)C3=CC=C(C=C3)C([Th])=O)=O)C=C4C5=O,685,783.0,11.8,,1.268,0.007,111.5,5.7,268.2,22.2

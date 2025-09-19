@@ -14,6 +14,21 @@ from polymon.model.kan.fast_kan import FastKAN
 
 @register_init_params
 class GraphGPS(BaseModel):
+    """GraphGPS model.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        edge_dim (int): The number of edge dimensions.
+        heads (int): The number of heads. Default to :obj:`4`.
+        hidden_dim (int): The number of hidden dimensions. Default to :obj:`64`.
+        num_layers (int): The number of layers. Default to :obj:`6`.
+        walk_length (int): The length of the walk. Default to :obj:`20`.
+        pe_dim (int): The dimension of the positional encoding. Default to :obj:`8`.
+        attn_type (Literal['performer', 'multihead']): The type of attention. 
+            Default to :obj:`'multihead'`.
+        attn_kwargs (Dict[str, Any]): The keyword arguments for the attention.
+        grid_size (int): The size of the grid. Default to :obj:`3`.
+    """
     def __init__(
         self, 
         in_channels: int,
@@ -58,6 +73,14 @@ class GraphGPS(BaseModel):
             redraw_interval=1000 if attn_type == 'performer' else None)
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have :obj:`pe` attribute.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         x_pe = self.pe_norm(batch.pe)
         x = torch.cat((self.node_emb(batch.x.squeeze(-1)), self.pe_lin(x_pe)), 1)
         edge_attr = self.edge_emb(batch.edge_attr.float())
@@ -70,6 +93,21 @@ class GraphGPS(BaseModel):
 
 @register_init_params
 class KAN_GPS(BaseModel):
+    """KAN-augmented GraphGPS model.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        edge_dim (int): The number of edge dimensions.
+        heads (int): The number of heads. Default to :obj:`4`.
+        hidden_dim (int): The number of hidden dimensions. Default to :obj:`64`.
+        num_layers (int): The number of layers. Default to :obj:`6`.
+        walk_length (int): The length of the walk. Default to :obj:`20`.
+        pe_dim (int): The dimension of the positional encoding. Default to :obj:`8`.
+        attn_type (Literal['performer', 'multihead', 'fastkan']): The type of attention. 
+            Default to :obj:`'fastkan'`.
+        attn_kwargs (Dict[str, Any]): The keyword arguments for the attention.
+        grid_size (int): The size of the grid. Default to :obj:`3`.
+    """
     def __init__(
         self, 
         in_channels: int,
@@ -104,6 +142,14 @@ class KAN_GPS(BaseModel):
             redraw_interval=1000 if attn_type == 'performer' else None)
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have :obj:`pe` attribute.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         x_pe = self.pe_norm(batch.pe)
         x = torch.cat((self.node_emb(batch.x.squeeze(-1)), self.pe_lin(x_pe)), 1)
         edge_attr = self.edge_emb(batch.edge_attr.float())

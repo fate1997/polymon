@@ -9,6 +9,26 @@ from polymon.model.utils import MLP, ReadoutPhase
 
 @register_init_params
 class GATv2SAGE(BaseModel):
+    """GATv2 with SAGEConv.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        pred_hidden_dim (int): The number of hidden dimensions for the prediction 
+            MLP. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.
+        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.
+        activation (str): The activation function. Default to :obj:`'prelu'`.
+        num_tasks (int): The number of tasks. Default to :obj:`1`.
+        bias (bool): Whether to use bias. Default to :obj:`True`.
+        dropout (float): The dropout rate. Default to :obj:`0.1`.
+        edge_dim (int): The number of edge dimensions.
+        sage_aggr (str): The aggregation function. Default to :obj:`'mean'`.
+        sage_normalize (bool): Whether to normalize the output. Default to :obj:`False`.
+        sage_project (bool): Whether to project the output. Default to :obj:`False`.
+    """
     def __init__(
         self, 
         num_atom_features: int, 
@@ -76,8 +96,15 @@ class GATv2SAGE(BaseModel):
             activation=activation
         )
 
-
     def forward(self, data: Data):
+        """Forward pass.
+        
+        Args:
+            data (Data): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         data = data.sort(sort_by_row=False)
         x = data.x
         

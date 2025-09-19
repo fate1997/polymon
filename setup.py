@@ -14,4 +14,9 @@ setup(
     package_data={'': ['*.yml', '*.txt', '*.csv', '*.json', '*.npy']},
     include_package_data=True,
     version=__version__,
+    entry_points={
+        'console_scripts': [
+            'polymon = polymon.cli.main:main',
+        ],
+    },
 )

@@ -56,6 +56,11 @@ class Trainer:
         )  
 
     def build_optimizer(self) -> torch.optim.Optimizer:
+        """Build the optimizer.
+        
+        Returns:
+            `torch.optim.Optimizer`: The optimizer.
+        """
         return torch.optim.AdamW(
             self.model.parameters(), 
             lr=self.lr,
@@ -178,7 +183,7 @@ class Trainer:
         # Evaluate the model
         y_trues = []
         y_preds = []
-        sources = []
+        # sources = []
         for i, batch in enumerate(loader):
             batch = batch.to(self.device)
             y_pred = self.model.model(batch)
@@ -187,19 +192,19 @@ class Trainer:
             y_true = batch.y.detach() + getattr(batch, 'estimated_y', 0)
             y_trues.extend(y_true.cpu().numpy())
             y_preds.extend(y_pred.detach().cpu().numpy())
-            if getattr(batch, 'source', None) is not None:
-                sources.extend(batch.source.cpu().numpy())
+            # if getattr(batch, 'source', None) is not None:
+            #     sources.extend(batch.source.cpu().numpy())
         
-        if len(sources) > 0:
-            internal_mask = np.array(sources) == 1
-        else:
-            internal_mask = np.ones(len(y_trues), dtype=bool)
+        # if len(sources) > 0:
+        #     internal_mask = np.array(sources) == 1
+        # else:
+        #     internal_mask = np.ones(len(y_trues), dtype=bool)
 
-        if internal_mask.sum() == 0:
-            return {'mae': np.nan, 'r2': np.nan, 'scaling_error': np.nan}
+        # if internal_mask.sum() == 0:
+        #     return {'mae': np.nan, 'r2': np.nan, 'scaling_error': np.nan}
 
-        y_trues = np.array(y_trues)[internal_mask]
-        y_preds = np.array(y_preds)[internal_mask]
+        y_trues = np.array(y_trues) # [internal_mask]
+        y_preds = np.array(y_preds) # [internal_mask]
         if np.isnan(y_trues).any() or np.isnan(y_preds).any():
             return {'mae': np.nan, 'r2': np.nan, 'scaling_error': np.nan}
         metrics = {}

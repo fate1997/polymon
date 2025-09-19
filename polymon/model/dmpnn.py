@@ -10,111 +10,58 @@ from polymon.model.base import BaseModel
 
 @register_init_params
 class DMPNN(BaseModel):
-    """Directed Message Passing Neural Network
+    """Directed Message Passing Neural Network. The implementation is adapted 
+    from `DeepChem <https://github.com/deepchem/deepchem/blob/master/deepchem/models/torch_models/layers.py>`_.
 
-    In this class, we define the various encoder layers and establish a sequential model for the Directed Message Passing Neural Network (D-MPNN) [1]_.
-    We also define the forward call of this model in the forward function.
-
-    Example
-    -------
-    >>> import deepchem as dc
-    >>> from torch_geometric.data import Data, Batch
-    >>> # Get data
-    >>> input_smile = "CC"
-    >>> feat = dc.feat.DMPNNFeaturizer(features_generators=['morgan'])
-    >>> graph = feat.featurize(input_smile)
-    >>> mapper = _MapperDMPNN(graph[0])
-    >>> atom_features, f_ini_atoms_bonds, atom_to_incoming_bonds, mapping, global_features = mapper.values
-    >>> atom_features = torch.from_numpy(atom_features).float()
-    >>> f_ini_atoms_bonds = torch.from_numpy(f_ini_atoms_bonds).float()
-    >>> atom_to_incoming_bonds = torch.from_numpy(atom_to_incoming_bonds)
-    >>> mapping = torch.from_numpy(mapping)
-    >>> global_features = torch.from_numpy(global_features).float()
-    >>> data = [Data(atom_features=atom_features,\
-    f_ini_atoms_bonds=f_ini_atoms_bonds,\
-    atom_to_incoming_bonds=atom_to_incoming_bonds,\
-    mapping=mapping, global_features=global_features)]
-    >>> # Prepare batch (size 1)
-    >>> pyg_batch = Batch()
-    >>> pyg_batch = pyg_batch.from_data_list(data)
-    >>> # Initialize the model
-    >>> model = DMPNN(mode='regression', global_features_size=2048, n_tasks=2)
-    >>> # Get the forward call of the model for this batch.
-    >>> output = model(pyg_batch)
-
-    References
-    ----------
-    .. [1] Analyzing Learned Molecular Representations for Property Prediction https://arxiv.org/pdf/1904.01561.pdf
+    Args:
+        mode (str): The mode of the model. Default to :obj:`regression`.
+        n_classes (int): The number of classes. Default to :obj:`3`.
+        n_tasks (int): The number of tasks. Default to :obj:`1`.
+        global_features_size (int): The size of the global features. Default to 
+            :obj:`0`.
+        atom_fdim (int): The number of atom features. Default to :obj:`133`.
+        bond_fdim (int): The number of bond features. Default to :obj:`14`.
+        hidden_dim (int): The number of hidden dimensions. Default to :obj:`300`.
+        num_layers (int): The number of layers. Default to :obj:`3`.
+        bias (bool): Whether to use bias. Default to :obj:`False`.
+        enc_activation (str): The activation function for the encoder. Default to 
+            :obj:`relu`.
+        enc_dropout_p (float): The dropout rate for the encoder. Default to 
+            :obj:`0.0`.
+        aggregation (str): The aggregation function. Default to :obj:`mean`.
+        aggregation_norm (Union[int, float]): The normalization factor for the 
+            aggregation. Default to :obj:`100`.
+        ffn_hidden (int): The number of hidden dimensions for the FFN. Default to 
+            :obj:`300`.
+        ffn_activation (str): The activation function for the FFN. Default to 
+            :obj:`relu`.
+        ffn_layers (int): The number of layers for the FFN. Default to :obj:`3`.
+        ffn_dropout_p (float): The dropout rate for the FFN. Default to :obj:`0.0`.
+        ffn_dropout_at_input_no_act (bool): Whether to apply dropout at the input 
+            without activation. Default to :obj:`True`.
     """
 
-    def __init__(self,
-                 mode: str = 'regression',
-                 n_classes: int = 3,
-                 n_tasks: int = 1,
-                 global_features_size: int = 0,
-                 atom_fdim: int = 133,
-                 bond_fdim: int = 14,
-                 hidden_dim: int = 300,
-                 num_layers: int = 3,
-                 bias: bool = False,
-                 enc_activation: str = 'relu',
-                 enc_dropout_p: float = 0.0,
-                 aggregation: str = 'mean',
-                 aggregation_norm: Union[int, float] = 100,
-                 ffn_hidden: int = 300,
-                 ffn_activation: str = 'relu',
-                 ffn_layers: int = 3,
-                 ffn_dropout_p: float = 0.0,
-                 ffn_dropout_at_input_no_act: bool = True):
-        """Initialize the DMPNN class.
-
-        Parameters
-        ----------
-        mode: str, default 'regression'
-            The model type - classification or regression.
-        n_classes: int, default 3
-            The number of classes to predict (used only in classification mode).
-        n_tasks: int, default 1
-            The number of tasks.
-        global_features_size: int, default 0
-            Size of the global features vector, based on the global featurizers used during featurization.
-        use_default_fdim: bool
-            If `True`, self.atom_fdim and self.bond_fdim are initialized using values from the GraphConvConstants class.
-            If `False`, self.atom_fdim and self.bond_fdim are initialized from the values provided.
-        atom_fdim: int
-            Dimension of atom feature vector.
-        bond_fdim: int
-            Dimension of bond feature vector.
-        enc_hidden: int
-            Size of hidden layer in the encoder layer.
-        depth: int
-            No of message passing steps.
-        bias: bool
-            If `True`, dense layers will use bias vectors.
-        enc_activation: str
-            Activation function to be used in the encoder layer.
-            Can choose between 'relu' for ReLU, 'leakyrelu' for LeakyReLU, 'prelu' for PReLU,
-            'tanh' for TanH, 'selu' for SELU, and 'elu' for ELU.
-        enc_dropout_p: float
-            Dropout probability for the encoder layer.
-        aggregation: str
-            Aggregation type to be used in the encoder layer.
-            Can choose between 'mean', 'sum', and 'norm'.
-        aggregation_norm: Union[int, float]
-            Value required if `aggregation` type is 'norm'.
-        ffn_hidden: int
-            Size of hidden layer in the feed-forward network layer.
-        ffn_activation: str
-            Activation function to be used in feed-forward network layer.
-            Can choose between 'relu' for ReLU, 'leakyrelu' for LeakyReLU, 'prelu' for PReLU,
-            'tanh' for TanH, 'selu' for SELU, and 'elu' for ELU.
-        ffn_layers: int
-            Number of layers in the feed-forward network layer.
-        ffn_dropout_p: float
-            Dropout probability for the feed-forward network layer.
-        ffn_dropout_at_input_no_act: bool
-            If true, dropout is applied on the input tensor. For single layer, it is not passed to an activation function.
-        """
+    def __init__(
+        self,
+        mode: str = 'regression',
+        n_classes: int = 3,
+        n_tasks: int = 1,
+        global_features_size: int = 0,
+        atom_fdim: int = 133,
+        bond_fdim: int = 14,
+        hidden_dim: int = 300,
+        num_layers: int = 3,
+        bias: bool = False,
+        enc_activation: str = 'relu',
+        enc_dropout_p: float = 0.0,
+        aggregation: str = 'mean',
+        aggregation_norm: Union[int, float] = 100,
+        ffn_hidden: int = 300,
+        ffn_activation: str = 'relu',
+        ffn_layers: int = 3,
+        ffn_dropout_p: float = 0.0,
+        ffn_dropout_at_input_no_act: bool = True
+):
         super(DMPNN, self).__init__()
         self.mode: str = mode
         self.n_classes: int = n_classes

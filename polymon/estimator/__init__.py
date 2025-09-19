@@ -1,13 +1,12 @@
+from polymon.estimator.atom_contrib import AtomContribEstimator
 from polymon.estimator.base import BaseEstimator
 from polymon.estimator.density import DensityEstimator
-from polymon.estimator.rg import RgEstimator
-from polymon.estimator.atom_contrib import AtomContribEstimator
-from polymon.estimator.low_fidelity import LowFidelityEstimator
-from polymon.estimator.density_ibm import DensityIBMEstimator
 from polymon.estimator.density_Fedors import DensityFedorsEstimator
+from polymon.estimator.density_ibm import DensityIBMEstimator
+from polymon.estimator.low_fidelity import LowFidelityEstimator
 from polymon.estimator.ml import MLEstimator
 from polymon.estimator.nx_rg import NxRgEstimator
-from polymon.estimator.nx_rg_improved import NxRgEstimatorImproved
+from polymon.estimator.rg import RgEstimator
 from polymon.setting import REPO_DIR
 
 
@@ -16,8 +15,6 @@ def get_estimator(label: str, **kwargs) -> BaseEstimator:
         return RgEstimator(**kwargs)
     elif label == 'NxRg':
         return NxRgEstimator(**kwargs)
-    elif label == 'NxRgImproved':
-        return NxRgEstimatorImproved(**kwargs)
     elif label == 'Density':
         return DensityEstimator(**kwargs)
     elif label == 'FFV':

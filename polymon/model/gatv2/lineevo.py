@@ -11,13 +11,31 @@ from torch import nn
 from torch_geometric.data import Data
 from torch_geometric.nn import global_add_pool
 
-from polymon.model.utils import MLP, ReadoutPhase
 from polymon.model.base import BaseModel
 from polymon.model.register import register_init_params
+from polymon.model.utils import MLP, ReadoutPhase
 
 
 @register_init_params
 class GATv2LineEvo(BaseModel):
+    """GATv2 with LineEvo.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        pred_hidden_dim (int): The number of hidden dimensions for the prediction 
+            MLP. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.
+        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.
+        activation (str): The activation function. Default to :obj:`'prelu'`.
+        num_tasks (int): The number of tasks. Default to :obj:`1`.
+        bias (bool): Whether to use bias. Default to :obj:`True`.
+        dropout (float): The dropout rate. Default to :obj:`0.1`.
+        edge_dim (int): The number of edge dimensions.
+        num_lineevo_layers (int): The number of LineEvo layers. Default to :obj:`2`.
+    """
     def __init__(
         self,
         num_atom_features: int, 
@@ -73,8 +91,15 @@ class GATv2LineEvo(BaseModel):
             activation=activation
         )
 
-
     def forward(self, data: Data):
+        """Forward pass.
+        
+        Args:
+            data (Data): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         x, edge_index, batch = data.x, data.edge_index, data.batch
         
         mol_repr_all = 0

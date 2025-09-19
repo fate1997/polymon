@@ -34,6 +34,18 @@ from polymon.data.polymer import Polymer
 
 @register_init_params
 class KAN_GCN(BaseModel):
+    """KAN-GCN wrapper.
+    
+    Args:
+        num_node_features (int): The number of node features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        grid_size (int): The number of grid points. Default to :obj:`10`.
+        pred_hidden_dim (int): The number of hidden dimensions for the prediction 
+            MLP. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.0`.
+        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.
+    """
     def __init__(
         self,
         num_node_features: int, 
@@ -75,6 +87,14 @@ class KAN_GCN(BaseModel):
         )
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         x = batch.x
         for layer in self.message_passing:
             x = layer(x, batch.edge_index)

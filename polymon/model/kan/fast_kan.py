@@ -214,6 +214,20 @@ class AttentionWithFastKANTransform(nn.Module):
 
 @register_init_params
 class FastKANWrapper(BaseModel):
+    """Fast KAN wrapper.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        grid_min (float): The minimum value of the grid. Default to :obj:`-2.0`.
+        grid_max (float): The maximum value of the grid. Default to :obj:`2.0`.
+        num_grids (int): The number of grids. Default to :obj:`8`.
+
+    .. note::
+        The implementation is adapted from `Fast KAN for descriptors 
+        <https://github.com/ZiyaoLi/fast-kan>`_.
+    """
     def __init__(
         self,
         in_channels: int,
@@ -233,6 +247,15 @@ class FastKANWrapper(BaseModel):
         )
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have :obj:`descriptors` 
+                attribute.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         desc = batch.descriptors
         y = self.fastkan(desc)
         return y

@@ -1,24 +1,42 @@
-from typing import Dict, Any, Literal
 import math
+from functools import partial
+from typing import Any, Dict, Literal
 
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import (AttentiveFP, BatchNorm, DimeNetPlusPlus,
-                                GATv2Conv, GINConv, PNAConv, TransformerConv,
-                                global_add_pool, global_max_pool)
+from torch_geometric.nn import GATv2Conv, global_add_pool, global_max_pool
 from torch_geometric.utils import degree
-from functools import partial
 
 from polymon.data.polymer import Polymer
 from polymon.model.base import BaseModel
-from polymon.model.utils import MLP, ReadoutPhase, init_weight
 from polymon.model.register import register_init_params
+from polymon.model.utils import MLP, ReadoutPhase, init_weight
 
 
 @register_init_params
 class GATv2_PE(BaseModel):
+    """GATv2 with position encoding.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        pred_hidden_dim (int): The number of hidden dimensions for the prediction 
+            MLP. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.
+        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.
+        activation (str): The activation function. Default to :obj:`'prelu'`.
+        num_tasks (int): The number of tasks. Default to :obj:`1`.
+        bias (bool): Whether to use bias. Default to :obj:`True`.
+        dropout (float): The dropout rate. Default to :obj:`0.1`.
+        edge_dim (int): The number of edge dimensions.
+        num_descriptors (int): The number of descriptors. Default to :obj:`0`.
+        position_encoding_type (Literal['sin', 'rope', 'learned']): The type of position encoding.
+            Default to :obj:`'sin'`.
+    """
     def __init__(
         self, 
         num_atom_features: int, 
@@ -87,6 +105,15 @@ class GATv2_PE(BaseModel):
         self.num_descriptors = num_descriptors
         
     def forward(self, batch: Polymer): 
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have :obj:`relative_position` 
+                attribute.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         x = batch.x.float()
         x = self.encoder(x)
         
