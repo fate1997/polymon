@@ -17,6 +17,30 @@ from polymon.model.register import register_init_params
 
 @register_init_params
 class GATv2(BaseModel):
+    r"""GATv2 model.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        pred_hidden_dim (int): The number of hidden dimensions in the prediction 
+            layer. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate in the prediction layer. Default to 
+            :obj:`0.2`.
+        pred_layers (int): The number of layers in the prediction layer. Default 
+            to :obj:`2`.
+        activation (str): The activation function. Default to :obj:`prelu`.
+        num_tasks (int): The number of tasks. Default to :obj:`1`.
+        bias (bool): Whether to use bias in the GATv2Conv layers. Default to 
+            :obj:`True`.
+        dropout (float): The dropout rate in the GATv2Conv layers. Default to 
+            :obj:`0.1`.
+        edge_dim (int): The number of edge features. Default to :obj:`None`.
+        num_descriptors (int): The number of descriptors. If not zero, the 
+            descriptors will be concatenated to the output of the model. Default 
+            to :obj:`0`.
+    """
     def __init__(
         self, 
         num_atom_features: int, 
@@ -71,6 +95,14 @@ class GATv2(BaseModel):
         self.num_descriptors = num_descriptors
         
     def forward(self, batch: Polymer): 
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         x = batch.x.float()
         # if self.num_descriptors > 0:
         #     x = torch.cat([x, batch.descriptors[batch.batch]], dim=1)
@@ -90,6 +122,14 @@ class GATv2(BaseModel):
         return self.predict(output)
     
     def get_embeddings(self, batch: Polymer):
+        """Get global graph embeddings.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The embeddings of the batch.
+        """
         x = batch.x.float()
         for layer in self.layers:
             x = layer(x, batch.edge_index, batch.edge_attr)
@@ -103,6 +143,16 @@ class GATv2(BaseModel):
 
 @register_init_params
 class AttentiveFPWrapper(BaseModel):
+    r"""AttentiveFP model wrapper.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        hidden_dim (int): The number of hidden dimensions.
+        edge_dim (int): The number of edge features.
+        num_layers (int): The number of layers.
+        out_channels (int): The number of output channels. Default to :obj:`1`.
+        num_timesteps (int): The number of timesteps. Default to :obj:`2`.
+    """
     def __init__(
         self,
         in_channels: int,
@@ -124,6 +174,14 @@ class AttentiveFPWrapper(BaseModel):
         )
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         return self.attentivefp(
             batch.x, 
             batch.edge_index, 
@@ -134,7 +192,36 @@ class AttentiveFPWrapper(BaseModel):
 
 @register_init_params
 class DimeNetPP(DimeNetPlusPlus, BaseModel):
-    """DimeNet++ model wrapper."""
+    r"""DimeNet++ model wrapper.
+    
+    :no-index:
+    
+    Args:
+        hidden_dim (int): The number of hidden dimensions. Default to :obj:`128`.
+        out_channels (int): The number of output channels. Default to :obj:`1`.
+        num_layers (int): The number of layers. Default to :obj:`3`.
+        int_emb_size (int): The number of embedding dimensions for the integer 
+            features. Default to :obj:`64`.
+        basis_emb_size (int): The number of embedding dimensions for the basis 
+            features. Default to :obj:`8`.
+        out_emb_channels (int): The number of output embedding channels. Default 
+            to :obj:`256`.
+        num_spherical (int): The number of spherical harmonics. Default to :obj:`7`.
+        num_radial (int): The number of radial basis functions. Default to :obj:`6`.
+        cutoff (float): The cutoff radius. Default to :obj:`5.0`.
+        max_num_neighbors (int): The maximum number of neighbors. Default to 
+            :obj:`32`.
+        envelope_exponent (int): The exponent of the envelope function. Default 
+            to :obj:`5`.
+        num_before_skip (int): The number of layers before skip connections. 
+            Default to :obj:`1`.
+        num_after_skip (int): The number of layers after skip connections. 
+            Default to :obj:`2`.
+        num_output_layers (int): The number of output layers. Default to :obj:`2`.
+        act (str): The activation function. Default to :obj:`swish`.
+        output_initializer (str): The initializer for the output layer. Default to 
+            :obj:`zeros`.
+    """
     def __init__(
         self, 
         hidden_dim: int=128,
@@ -174,12 +261,44 @@ class DimeNetPP(DimeNetPlusPlus, BaseModel):
         )
         
     def forward(self, data: Polymer):
+        """Forward pass.
+        
+        Args:
+            data (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         z, pos, batch = data.z, data.pos, data.batch
         return super().forward(z, pos, batch)
 
 
 @register_init_params
 class GATPort(BaseModel):
+    r"""GATPort model wrapper.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        pred_hidden_dim (int): The number of hidden dimensions in the prediction 
+            layer. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate in the prediction layer. Default to 
+            :obj:`0.2`.
+        pred_layers (int): The number of layers in the prediction layer. Default 
+            to :obj:`2`.
+        activation (str): The activation function. Default to :obj:`prelu`.
+        num_tasks (int): The number of tasks. Default to :obj:`1`.
+        bias (bool): Whether to use bias in the GATv2Conv layers. Default to 
+            :obj:`True`.
+        dropout (float): The dropout rate in the GATv2Conv layers. Default to 
+            :obj:`0.1`.
+        edge_dim (int): The number of edge features. Default to :obj:`None`.
+        num_descriptors (int): The number of descriptors. If not zero, the 
+            descriptors will be concatenated to the output of the model. Default 
+            to :obj:`0`.
+    """
     def __init__(
         self, 
         num_atom_features: int, 
@@ -318,6 +437,31 @@ class GATPort(BaseModel):
 
 @register_init_params
 class GATv2VirtualNode(BaseModel):
+    r"""GATv2VirtualNode model. Add virtual node as the graph node and use its
+    features as the graph embedding.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        pred_hidden_dim (int): The number of hidden dimensions in the prediction 
+            layer. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate in the prediction layer. Default to 
+            :obj:`0.2`.
+        pred_layers (int): The number of layers in the prediction layer. Default 
+            to :obj:`2`.
+        activation (str): The activation function. Default to :obj:`prelu`.
+        num_tasks (int): The number of tasks. Default to :obj:`1`.
+        bias (bool): Whether to use bias in the GATv2Conv layers. Default to 
+            :obj:`True`.
+        dropout (float): The dropout rate in the GATv2Conv layers. Default to 
+            :obj:`0.1`.
+        edge_dim (int): The number of edge features. Default to :obj:`None`.
+        num_descriptors (int): The number of descriptors. If not zero, the 
+            descriptors will be concatenated to the output of the model. Default 
+            to :obj:`0`.
+    """
     def __init__(
         self, 
         num_atom_features: int, 
@@ -364,6 +508,15 @@ class GATv2VirtualNode(BaseModel):
         )
         
     def forward(self, batch: Polymer): 
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have :obj:`descriptors`
+                attribute.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         virtual_features = self.project_vn(batch.descriptors)
         x = self.add_virtual_features(batch.x, batch.batch, virtual_features)
         
@@ -420,6 +573,21 @@ class GATv2VirtualNode(BaseModel):
 
 @register_init_params
 class GIN(BaseModel):
+    r"""GIN model wrapper.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        dropout (float): The dropout rate. Default to :obj:`0.2`.
+        n_mlp_layers (int): The number of layers in the MLP. Default to :obj:`2`.
+        pred_hidden_dim (int): The number of hidden dimensions in the prediction 
+            layer. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate in the prediction layer. Default to 
+            :obj:`0.2`.
+        pred_layers (int): The number of layers in the prediction layer. Default 
+            to :obj:`2`.
+    """
     def __init__(
         self,
         num_atom_features: int,
@@ -462,6 +630,14 @@ class GIN(BaseModel):
         )
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         x = batch.x
         for layer in self.layers:
             x = layer(x, batch.edge_index)
@@ -473,6 +649,22 @@ class GIN(BaseModel):
 
 @register_init_params
 class PNA(BaseModel):
+    r"""PNA model wrapper.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        deg (torch.Tensor): The degree tensor.
+        towers (int): The number of towers. Default to :obj:`1`.
+        edge_dim (int): The number of edge features. Default to :obj:`None`.
+        pred_hidden_dim (int): The number of hidden dimensions in the prediction 
+            layer. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate in the prediction layer. Default to 
+            :obj:`0.2`.
+        pred_layers (int): The number of layers in the prediction layer. Default 
+            to :obj:`2`.
+    """
     def __init__(
         self,
         in_channels: int,
@@ -520,6 +712,15 @@ class PNA(BaseModel):
         )
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have been preprocessed
+                by :class:`polymon.data.utils.AddRandomWalkPE`.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         x = batch.x
         for conv, batch_norm in zip(self.convs, self.batch_norms):
             x = F.relu(batch_norm(conv(x, batch.edge_index, batch.edge_attr.float())))
@@ -530,6 +731,14 @@ class PNA(BaseModel):
         cls,
         train_loader: DataLoader,
     ) -> torch.Tensor:
+        """Compute the degree tensor.
+        
+        Args:
+            train_loader (DataLoader): The training loader.
+        
+        Returns:
+            torch.Tensor: The degree tensor.
+        """
         max_degree = -1
         for data in train_loader:
             d = degree(data.edge_index[1], num_nodes=data.num_nodes, dtype=torch.long)
@@ -545,6 +754,21 @@ class PNA(BaseModel):
 
 @register_init_params
 class GraphTransformer(BaseModel):
+    r"""GraphTransformer model wrapper.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        dropout (float): The dropout rate. Default to :obj:`0.2`.
+        pred_hidden_dim (int): The number of hidden dimensions in the prediction 
+            layer. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate in the prediction layer. Default to 
+            :obj:`0.2`.
+        pred_layers (int): The number of layers in the prediction layer. Default 
+            to :obj:`2`.
+    """
     def __init__(
         self,
         in_channels: int,
@@ -580,6 +804,14 @@ class GraphTransformer(BaseModel):
         )
     
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         x = batch.x
         for layer in self.layers:
             x = layer(x, batch.edge_index)

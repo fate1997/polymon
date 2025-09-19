@@ -1,27 +1,29 @@
 import os
 from abc import ABC, abstractmethod
 from importlib import import_module
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, Tuple
-from functools import partial
-from torchensemble._base import BaseRegressor
+from typing import TYPE_CHECKING, Any, Dict, List
+
 import numpy as np
 import torch
 from rdkit import Chem
 from torch import nn
 from torch_geometric.data import Batch
 from torch_geometric.loader import DataLoader
-from sklearn.linear_model import LinearRegression
 
 from polymon.data.featurizer import ComposeFeaturizer
-from polymon.exp.score import scaling_error
 from polymon.data.polymer import Polymer
-from polymon.data.utils import Normalizer, LogNormalizer
+from polymon.data.utils import LogNormalizer, Normalizer
 
 if TYPE_CHECKING:
     from polymon.estimator.base import BaseEstimator
 
 
 class BaseModel(nn.Module, ABC):
+    """Base Model.
+
+    Args:
+        nn.Module (ABC): The base class of the model.
+    """
     @abstractmethod
     def forward(self, batch: Polymer) -> torch.Tensor:
         pass
@@ -32,6 +34,14 @@ class BaseModel(nn.Module, ABC):
 
 
 class KFoldModel(BaseModel):
+    """K-Fold Model. The output is the average of the predictions of the models
+    trained on the different folds.
+
+    Args:
+        model_cls (str): The class of the model.
+        model_init_params (Dict[str, Any]): The initial parameters of the model.
+        n_fold (int): The number of folds.
+    """
     def __init__(
         self,
         model_cls: str,
@@ -50,6 +60,14 @@ class KFoldModel(BaseModel):
     
     @classmethod
     def from_models(cls, models: List['ModelWrapper']) -> 'KFoldModel':
+        """Build a K-Fold Model from a list of models.
+
+        Args:
+            models (List['ModelWrapper']): The models.
+
+        Returns:
+            'KFoldModel': The K-Fold Model.
+        """
         model_cls = models[0].info['model_cls']
         model_init_params = models[0].info['model_init_params']
         n_fold = len(models)
@@ -59,6 +77,15 @@ class KFoldModel(BaseModel):
         return kfold_model
     
     def forward(self, batch: Polymer) -> torch.Tensor:
+        """Forward pass. The output is the average of the predictions of the 
+        models trained on the different folds.
+
+        Args:
+            batch (Polymer): The batch of polymers.
+
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         output = []
         for model in self.models:
             output.append(model(batch))
@@ -67,13 +94,30 @@ class KFoldModel(BaseModel):
 
     @property
     def init_params(self) -> Dict[str, Any]:
+        """Get the initial parameters of the model.
+
+        Returns:
+            Dict[str, Any]: The initial parameters of the model.
+        """
         return {
             'model_cls': self.model_cls,
             'model_init_params': self.model_init_params,
             'n_fold': self.n_fold,
         }
 
+
 class ModelWrapper(nn.Module):
+    """Model Wrapper. This wrapper is used to wrap the model, normalizer, 
+    featurizer, transform, and estimator, and make it easier to do inference.
+
+    Args:
+        model (BaseModel): The model.
+        normalizer (Normalizer): The normalizer.
+        featurizer (ComposeFeaturizer): The featurizer.
+        transform_cls (str): The class of the transform.
+        transform_kwargs (Dict[str, Any]): The initial parameters of the transform.
+        estimator (BaseEstimator): The estimator.
+    """
     def __init__(
         self, 
         model: BaseModel,
@@ -102,6 +146,16 @@ class ModelWrapper(nn.Module):
         loss_fn: nn.Module,
         device: str = 'cuda',
     ) -> torch.Tensor:
+        """Forward pass.
+
+        Args:
+            batch (Batch): The batch of polymers.
+            loss_fn (nn.Module): The loss function.
+            device (str): The device to use.
+
+        Returns:
+            torch.Tensor: The loss.
+        """
         self.model.train()
         self.model.to(device)
         batch = batch.to(device)
@@ -116,6 +170,15 @@ class ModelWrapper(nn.Module):
         batch: Batch,
         device: str = 'cuda',
     ) -> torch.Tensor:
+        """Predict the output of the model for a batch of polymers.
+
+        Args:
+            batch (Batch): The batch of polymers.
+            device (str): The device to use.
+
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         self.model.eval()
         self.model.to(device)
         batch = batch.to(device)
@@ -134,6 +197,19 @@ class ModelWrapper(nn.Module):
         device: str = 'cpu',
         backup_model: 'ModelWrapper' = None,
     ) -> torch.Tensor:
+        """Predict the output of the model for a list of polymer SMILES strings.
+
+        Args:
+            smiles_list (List[str]): The list of SMILES strings.
+            batch_size (int): The batch size.
+            device (str): The device to use.
+            backup_model (ModelWrapper): The backup model. If the model fails to 
+                predict the output for a polymer, the backup model will be used 
+                to predict the output.
+
+        Returns:
+            torch.Tensor: The output of the model.
+        """
         self.model.eval()
         self.model.to(device)
         if backup_model is not None:
@@ -180,6 +256,11 @@ class ModelWrapper(nn.Module):
     
     @property
     def info(self) -> Dict[str, Any]:
+        """Get the information of the model.
+
+        Returns:
+            Dict[str, Any]: The information of the model.
+        """
         output = {
             'model_cls': self.model.__class__.__name__,
             'model': self.model.state_dict(),
@@ -197,11 +278,27 @@ class ModelWrapper(nn.Module):
         return output
     
     def write(self, path: str) -> str:
+        """Write the model to a file.
+
+        Args:
+            path (str): The path to the file.
+
+        Returns:
+            str: The path to the file.
+        """
         torch.save(self.info, path)
         return os.path.abspath(path)
     
     @classmethod
     def from_dict(cls, model_info: Dict[str, Any]) -> 'ModelWrapper':
+        """Build a ModelWrapper from a dictionary.
+
+        Args:
+            model_info (Dict[str, Any]): The information of the model.
+
+        Returns:
+            'ModelWrapper': The ModelWrapper.
+        """
         model_cls = model_info['model_cls']
         if model_cls == 'KFoldModel':
             model_cls = KFoldModel
@@ -240,202 +337,21 @@ class ModelWrapper(nn.Module):
         map_location: str = 'cpu',
         weights_only: bool = False,
     ) -> 'ModelWrapper':
-        output = torch.load(path, map_location=map_location, weights_only=weights_only)
+        """Build a ModelWrapper from a file.
+
+        Args:
+            path (str): The path to the file.
+            map_location (str): The map location.
+            weights_only (bool): Whether to load only the weights.
+
+        Returns:
+            'ModelWrapper': The ModelWrapper.
+        """
+        output = torch.load(
+            path, 
+            map_location=map_location, 
+            weights_only=weights_only
+        )
         return cls.from_dict(output)
 
 
-class EnsembleModelWrapper(nn.Module):
-    def __init__(
-        self, 
-        model: BaseRegressor,
-        normalizer: 'Normalizer',
-        featurizer: ComposeFeaturizer,
-        transform_cls: str = None,
-        transform_kwargs: Dict[str, Any] = None,
-        estimator: 'BaseEstimator' = None,
-    ):
-        super().__init__()
-        self.model = model
-        self.normalizer = normalizer
-        self.featurizer = featurizer
-        self.transform_cls = transform_cls
-        self.transform_kwargs = transform_kwargs
-        if transform_cls is not None:
-            transform_cls = getattr(import_module('polymon.data.utils'), transform_cls)
-            self.transform = transform_cls(**transform_kwargs)
-        else:
-            self.transform = None
-        self.estimator = estimator
-
-    def fit(
-        self, 
-        epochs: int,
-        train_loader: DataLoader,
-        save_dir: str,
-        save_model: bool,
-        log_interval: int,
-        label: str,
-        val_loader: DataLoader = None,
-        test_loader: DataLoader = None,
-    ) -> torch.Tensor:
-        if self.model.__class__.__name__ != 'BaggingRegressor':
-            train_loader = self.loader_wrapper(train_loader)
-            test_loader = self.loader_wrapper(val_loader) if val_loader is not None else None
-        else:
-            train_loader_ = []
-            for data in train_loader.dataset:
-                data_copy = data.clone()
-                data_copy.y = self.normalizer(data_copy.y)
-                train_loader_.append(data_copy)
-                test_loader = None
-            train_loader = DataLoader(train_loader_, batch_size=128, shuffle=True)
-        
-        self.model.fit(
-            train_loader=train_loader,
-            epochs=epochs,
-            test_loader=test_loader,
-            save_dir=save_dir,
-            save_model=save_model,
-            log_interval=log_interval,
-        )
-        if test_loader is not None:
-            test_err = self.evaluate(test_loader, label, device='cuda')
-            return test_err
-        return None
-
-    def evaluate(
-        self, 
-        loader: DataLoader,
-        label: str,
-        device: str = 'cuda',
-    ) -> float:
-        self.model.eval()
-        self.model.to(device)
-        y_trues = []
-        y_preds = []
-        for i, batch in enumerate(loader):
-            batch = batch.to(device)
-            y_pred = self.model(batch)
-            y_pred = self.normalizer.inverse(y_pred)
-            y_pred = y_pred + getattr(batch, 'estimated_y', 0)
-            y_true = batch.y.detach() + getattr(batch, 'estimated_y', 0)
-            y_trues.extend(y_true.cpu().numpy())
-            y_preds.extend(y_pred.detach().cpu().numpy())
-        y_trues = np.array(y_trues)
-        y_preds = np.array(y_preds)
-        return scaling_error(y_trues, y_preds, label)
-
-    @torch.no_grad()
-    def predict(
-        self, 
-        smiles_list: List[str],
-        batch_size: int = 128,
-        device: str = 'cpu',
-    ) -> torch.Tensor:
-        self.model.eval()
-        self.model.to(device)
-        
-        polymers = []
-        for i, smiles in enumerate(smiles_list):
-            rdmol = Chem.MolFromSmiles(smiles)
-            mol_dict = self.featurizer(rdmol)
-            mol_dict['smiles'] = smiles
-            polymer = Polymer(**mol_dict)
-            if self.transform is not None:
-                polymer = self.transform(polymer)
-            if self.estimator is not None:
-                polymer = self.estimator.forward(polymer, device=device)
-            polymers.append(polymer)
-        loader = DataLoader(polymers, batch_size=batch_size)
-        
-        y_pred_list = []
-        for i, batch in enumerate(loader):
-            batch.to(device)
-            output = self.model(batch)
-            output = self.normalizer.inverse(output)
-            output = output.squeeze(0).squeeze(0)
-            if hasattr(batch, 'estimated_y'):
-                output = output + batch.estimated_y.squeeze(0).squeeze(0)
-            y_pred_list.append(output)
-        if len(y_pred_list) == 1:
-            return y_pred_list[0].detach().cpu()
-        if batch_size == 1:
-            return torch.stack(y_pred_list, dim=0).detach().cpu().unsqueeze(-1)
-        return torch.cat(y_pred_list, dim=0).detach().cpu()
-    
-    @property
-    def info(self) -> Dict[str, Any]:
-        output = {
-            'model_cls': self.model.__class__.__name__,
-            'model': self.model.state_dict(),
-            'normalizer': self.normalizer.init_params,
-            'model_init_params': self.model.estimator_args,
-            'estimator_cls': self.model.base_estimator_.__name__,
-            'n_estimators': self.model.n_estimators,
-            'featurizer_names': self.featurizer.names,
-            'featurizer_config': self.featurizer.config,
-            'featurizer_add_hydrogens': self.featurizer.add_hydrogens,
-            'transform_cls': self.transform_cls,
-            'transform_kwargs': self.transform_kwargs,
-        }
-        if self.estimator is not None:
-            output['base_estimator_cls'] = self.estimator.__class__.__name__
-            output['base_estimator_init_params'] = self.estimator.init_params
-        return output
-    
-    def write(self, path: str) -> str:
-        torch.save(self.info, path)
-        return os.path.abspath(path)
-    
-    @classmethod
-    def from_dict(cls, model_info: Dict[str, Any], device: str = 'cpu') -> 'EnsembleModelWrapper':
-        model_cls = model_info['model_cls']
-        model_cls = getattr(import_module('torchensemble'), model_cls)
-        model = model_cls(
-            estimator=getattr(import_module('polymon.model'), model_info['estimator_cls']),
-            estimator_args=model_info['model_init_params'],
-            n_estimators=model_info['n_estimators'],
-        )
-        model.device = device
-        for _ in range(model_info['n_estimators']):
-            model.estimators_.append(model._make_estimator())
-        model.load_state_dict(model_info['model'])
-        if 'mean' in model_info['normalizer']:
-            normalizer = Normalizer(
-                mean=model_info['normalizer']['mean'],
-                std=model_info['normalizer']['std'],
-            )
-        else:
-            normalizer = LogNormalizer(eps=model_info['normalizer']['eps'])
-        featurizer = ComposeFeaturizer(
-            names=model_info['featurizer_names'],
-            config=model_info['featurizer_config'],
-            add_hydrogens=model_info['featurizer_add_hydrogens'],
-        )
-        transform_cls = model_info.get('transform_cls', None)
-        transform_kwargs = model_info.get('transform_kwargs', None)
-        
-        base_estimator_cls = model_info.get('base_estimator_cls', None)
-        base_estimator_kwargs = model_info.get('base_estimator_init_params', None)
-        if base_estimator_cls is not None:
-            base_estimator_cls = getattr(import_module('polymon.estimator'), base_estimator_cls)
-            base_estimator = base_estimator_cls(**base_estimator_kwargs)
-        else:
-            base_estimator = None
-        return cls(model, normalizer, featurizer, transform_cls, transform_kwargs, base_estimator)
-    
-    @classmethod
-    def from_file(
-        cls, 
-        path: str,
-        map_location: str = 'cpu',
-        weights_only: bool = False,
-    ) -> 'ModelWrapper':
-        output = torch.load(path, map_location=map_location, weights_only=weights_only)
-        return cls.from_dict(output, device=map_location)
-    
-    def loader_wrapper(self, loader: DataLoader) -> List[Tuple[Polymer, torch.Tensor]]:
-        data = []
-        for batch in loader:
-            data.append((batch, self.normalizer(batch.y)))
-        return data

@@ -2,39 +2,69 @@ import json
 import logging
 import os
 from copy import deepcopy
-from functools import partial
+from importlib import import_module
 from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import loguru
 import numpy as np
 import optuna
-import torch
 import torch_geometric.transforms as T
 from pytorch_lightning import seed_everything
 from sklearn.model_selection import KFold
 from torch import nn
 from torch_geometric.loader import DataLoader
-from torchensemble import (AdversarialTrainingRegressor, BaggingRegressor,
-                           FastGeometricRegressor, GradientBoostingRegressor,
-                           NeuralForestRegressor, SnapshotEnsembleRegressor,
+from torchensemble import (BaggingRegressor, FastGeometricRegressor,
+                           GradientBoostingRegressor,
+                           SnapshotEnsembleRegressor,
                            SoftGradientBoostingRegressor, VotingRegressor)
 from torchensemble.utils import io
 
 from polymon.data.dataset import PolymerDataset
-from polymon.data._dmpnn_transform import DMPNNTransform
-from polymon.data.utils import (DescriptorSelector, LineEvoTransform,
-                                LogNormalizer, Normalizer, RgEstimator)
+from polymon.data.utils import LogNormalizer, Normalizer, DescriptorSelector
 from polymon.estimator import get_estimator
 from polymon.estimator.ml import MLEstimator
 from polymon.exp.score import scaling_error
 from polymon.exp.train import Trainer
 from polymon.hparams import get_hparams
 from polymon.model import PNA, build_model
-from polymon.model.base import EnsembleModelWrapper, KFoldModel, ModelWrapper
+from polymon.model.base import KFoldModel, ModelWrapper
+from polymon.model.ensemble import EnsembleModelWrapper
 from polymon.setting import DEFAULT_ATOM_FEATURES, REPO_DIR
 
 
 class Pipeline:
+    """Pipeline for training, cross-validation, production run, ensemble, and 
+    hyperparameter optimization.
+    
+    Args:
+        tag (str): The tag of the pipeline.
+        out_dir (str): The output directory.
+        batch_size (int): The batch size.
+        raw_csv (str): The path to the raw CSV file.
+        sources (List[str]): The sources of the dataset.
+        label (str): The label of the dataset.
+        model_type (str): The type of the model.
+        hidden_dim (int): The hidden dimension of the model.
+        num_layers (int): The number of layers of the model.
+        descriptors (Optional[List[str]]): The descriptors of the model.
+        num_epochs (int): The number of epochs.
+        lr (float): The learning rate.
+        early_stopping_patience (int): The patience of the early stopping.
+        device (str): The device to use.
+        n_trials (int): The number of trials.
+        seed (int): The seed.
+        split_mode (Literal['source', 'random', 'scaffold']): The split mode.
+        train_residual (bool): Whether to train the residual.
+        additional_features (Optional[List[str]]): The additional features.
+        low_fidelity_model (Optional[str]): The path to the low fidelity model.
+        normalizer_type (Literal['normalizer', 'log_normalizer', 'none']): The
+            type of the normalizer. The normalizer is used to normalize the labels.
+        estimator_name (Optional[str]): The name of the estimator.
+        remove_hydrogens (bool): Whether to remove hydrogens.
+        augmentation (bool): Whether to use augmentation.
+        emb_model (Optional[str]): The path to the embedding model.
+        ensemble_type (str): The type of the ensemble.
+    """
     def __init__(
         self,
         tag: str,
@@ -115,13 +145,23 @@ class Pipeline:
             else:
                 self.estimator = get_estimator(self.estimator_name)
 
+        self.transform_cls, self.transform_kwargs = self._init_transform()
+        
         self.logger.info(f'Building dataset for {label}...')
         self.dataset = self._build_dataset(sources)
         if self.descriptors is not None:
             self.num_descriptors = self.dataset[0].descriptors.shape[1]
         else:
             self.num_descriptors = 0
-        loaders = self.dataset.get_loaders(self.batch_size, 0.8, 0.1, self.split_mode, augmentation=self.augmentation)
+        self.logger.info(f'Number of descriptors used: {self.num_descriptors}')
+        
+        loaders = self.dataset.get_loaders(
+            self.batch_size, 
+            n_train=0.8,
+            n_val=0.1,
+            mode=self.split_mode,
+            augmentation=self.augmentation,
+        )
         self.train_loader, self.val_loader, self.test_loader = loaders
         
         self.logger.info(f'Using {self.normalizer_type} normalizer')
@@ -135,9 +175,6 @@ class Pipeline:
             self.normalizer = LogNormalizer(eps=eps)
         else:
             raise ValueError(f'Invalid normalizer type: {self.normalizer_type}')
-        
-        self.logger.info(f'Number of descriptors used: {self.num_descriptors}')
-        self.transform_cls, self.transform_kwargs = self._init_transform()
     
     def train(
         self,
@@ -146,7 +183,25 @@ class Pipeline:
         out_dir: Optional[str] = None,
         loaders: Optional[Tuple[DataLoader, DataLoader, DataLoader]] = None,
         model: Optional[ModelWrapper] = None,
-    ):
+    ) -> Tuple[float, ModelWrapper]:
+        """Train a model for a given label.
+
+        Args:
+            lr (Optional[float]): The learning rate. If None, the learning rate
+                in the pipeline will be used.
+            model_hparams (Optional[Dict[str, Any]]): The hyper-parameters of 
+                the model. If None, the hyper-parameters in the pipeline will be 
+                used.
+            out_dir (Optional[str]): The output directory. If None, the output 
+                directory in the pipeline will be used.
+            loaders (Optional[Tuple[DataLoader, DataLoader, DataLoader]]): The 
+                loaders. If None, the loaders in the pipeline will be used.
+            model (Optional[ModelWrapper]): The model. If None, the model will 
+                be built from the hyper-parameters.
+
+        Returns:
+            Tuple[float, ModelWrapper]: The test error and the trained model.
+        """
         self.logger.info(f'Training {self.model_type} model for {self.label}...')
         if lr is None:
             lr = self.lr
@@ -184,6 +239,22 @@ class Pipeline:
         current_trial: Optional[int] = None,
         lr: Optional[float] = None,
     ) -> List[float]:
+        """Run K-Fold cross-validation.
+
+        Args:
+            n_fold (int): The number of folds.
+            model_hparams (Optional[Dict[str, Any]]): The hyper-parameters of 
+                the model. If None, the hyper-parameters in the pipeline will be 
+                used.
+            model (Optional[ModelWrapper]): The model. If None, the model will 
+                be built from the hyper-parameters.
+            current_trial (Optional[int]): The current trial.
+            lr (Optional[float]): The learning rate. If None, the learning rate
+                in the pipeline will be used.
+
+        Returns:
+            List[float]: The validation errors.
+        """
         kfold = KFold(n_splits=n_fold, shuffle=True)
         val_errors = []
         models = []
@@ -205,21 +276,6 @@ class Pipeline:
                         for key, value in mol_dict.items():
                             setattr(aug_data, key, value)
                         train_set_aug.append(aug_data)
-                    # from rdkit import Chem
-                    # from rdkit.Chem.MolStandardize import rdMolStandardize
-                    # ps = rdMolStandardize.CleanupParameters()
-                    # ps.maxTransforms = 5000
-                    # te = rdMolStandardize.TautomerEnumerator(ps)
-                    # rdmol = Chem.MolFromSmiles(data.smiles)
-                    # tautomers = te.Enumerate(rdmol)
-                    # for tautomer in tautomers:
-                    #     if Chem.MolToSmiles(tautomer) == Chem.MolToSmiles(rdmol):
-                    #         continue
-                    #     mol_dict = self.dataset.featurizer(tautomer)
-                    #     aug_data = data.clone()
-                    #     for key, value in mol_dict.items():
-                    #         setattr(aug_data, key, value)
-                    #     train_set_aug.append(aug_data)
                 self.logger.info(f'Train set augmented from {len(train_set)} to {len(train_set_aug)}')
             else:
                 train_set_aug = train_set
@@ -251,6 +307,16 @@ class Pipeline:
         return val_errors
     
     def optimize_hparams(self, n_fold: int = 1) -> Tuple[float, Dict[str, Any]]:
+        """Optimize the hyperparameters for a given model.
+
+        Args:
+            n_fold (int): The number of folds. If 1, the cross-validation will 
+                not be run.
+
+        Returns:
+            Tuple[float, Dict[str, Any]]: The best test error and the best 
+            hyper-parameters.
+        """
         self.logger.info(f'Optimizing hyperparameters for {self.model_type}...')
         
         out_dir = os.path.join(self.out_dir, 'hparams_opt')
@@ -259,7 +325,6 @@ class Pipeline:
             model_hparams = get_hparams(trial, self.model_type)
             hparams = {
                 'lr': trial.suggest_float("lr", 1e-4, 2e-3, log=True),
-                'batch_size': trial.suggest_categorical('batch_size', [32, 64, 128, 256]),
                 **model_hparams,
             }
             self.logger.info(f'Number of trials: {trial.number+1}/{self.n_trials}')
@@ -296,7 +361,21 @@ class Pipeline:
         production_run: bool = False,
         freeze_repr_layers: bool = True,
         n_fold: int = 1,
-    ):
+    ) -> float:
+        """Finetune a model for a given label.
+
+        Args:
+            lr (float): The learning rate.
+            pretrained_model_path (str): The path to the pretrained model.
+            csv_path (Optional[str]): The path to the CSV file.
+            production_run (bool): Whether to run the production run.
+            freeze_repr_layers (bool): Whether to freeze the representation layers.
+            n_fold (int): The number of folds. If 1, the cross-validation will 
+                not be run.
+
+        Returns:
+            float: The test error.
+        """
         out_dir = os.path.join(self.out_dir, 'finetune')
         os.makedirs(out_dir, exist_ok=True)
         self.logger.info(f'Finetuning {self.model_type} model for {self.label}...')
@@ -305,7 +384,10 @@ class Pipeline:
             self.dataset = self._build_dataset(self.sources)
         
         pretrained_model = ModelWrapper.from_file(pretrained_model_path, self.device)
-        pretrained_dict = {k: v for k, v in pretrained_model.info['model'].items() if not k.startswith('predict')}
+        pretrained_dict = {
+            k: v for k, v in pretrained_model.info['model'].items() \
+                if not k.startswith('predict')
+        }
         model = self._build_model(pretrained_model.info['model_init_params'])
         model_dict = model.info['model']
         model_dict.update(pretrained_dict)
@@ -341,12 +423,30 @@ class Pipeline:
         self, 
         model_hparams: Optional[Dict[str, Any]] = None,
         model: Optional[ModelWrapper] = None,
-    ):
+    ) -> float:
+        """Run the production run.
+
+        Args:
+            model_hparams (Optional[Dict[str, Any]]): The hyper-parameters of 
+                the model. If None, the hyper-parameters in the pipeline will be 
+                used.
+            model (Optional[ModelWrapper]): The model. If None, the model will 
+                be built from the hyper-parameters.
+
+        Returns:
+            float: The test error.
+        """
         self.logger.info(f'Running production run for {self.model_type}...')
         out_dir = os.path.join(self.out_dir, 'production')
         os.makedirs(out_dir, exist_ok=True)
 
-        loaders = self.dataset.get_loaders(self.batch_size, 0.95, 0.05, production_run=True, augmentation=self.augmentation)
+        loaders = self.dataset.get_loaders(
+            self.batch_size,
+            n_train=0.95,
+            n_val=0.05,
+            production_run=True,
+            augmentation=self.augmentation,
+        )
         self.train(None, model_hparams, out_dir, loaders, model)
         self.logger.info(f'Production run complete.')
     
@@ -356,7 +456,20 @@ class Pipeline:
         model_hparams: Optional[Dict[str, Any]] = None,
         run_production: bool = False,
         skip_train: bool = False,
-    ):
+    ) -> float:
+        """Run the ensemble.
+
+        Args:
+            n_estimator (int): The number of estimators.
+            model_hparams (Optional[Dict[str, Any]]): The hyper-parameters of 
+                the model. If None, the hyper-parameters in the pipeline will be 
+                used.
+            run_production (bool): Whether to run the production run.
+            skip_train (bool): Whether to skip the training.
+
+        Returns:
+            float: The test error.
+        """
         self.logger.info(f'Running ensemble for {self.model_type}...')
         out_dir = os.path.join(self.out_dir, 'ensemble', 'train')
         os.makedirs(out_dir, exist_ok=True)
@@ -375,8 +488,6 @@ class Pipeline:
                 'snapshot': SnapshotEnsembleRegressor,
                 'soft_gradient_boosting': SoftGradientBoostingRegressor,
                 'FastGeometricRegressor': FastGeometricRegressor,
-                # 'AdversarialTrainingRegressor': AdversarialTrainingRegressor,
-                # 'NeuralForestRegressor': NeuralForestRegressor,
             }
             
             model = ensemble_dict[self.ensemble_type](
@@ -469,12 +580,11 @@ class Pipeline:
         
         # Set pre-transforms
         pre_transform = None
-        if self.model_type.lower() in ['gps', 'kan_gps']:
-            pre_transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
-        if self.model_type.lower() in ['gatv2_lineevo']:
-            pre_transform = LineEvoTransform(depth=2)
-        if self.model_type.lower() in ['dmpnn', 'kan_dmpnn']:
-            pre_transform = DMPNNTransform()
+        if self.transform_cls is not None:
+            pre_transform = getattr(
+                import_module('polymon.data.utils'),
+                self.transform_cls,
+            )(**self.transform_kwargs)
 
         dataset = PolymerDataset(
             raw_csv_path=self.raw_csv,

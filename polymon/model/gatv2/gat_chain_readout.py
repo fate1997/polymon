@@ -11,6 +11,25 @@ from polymon.model.register import register_init_params
 
 @register_init_params
 class GATv2ChainReadout(BaseModel):
+    """GATv2 with chain readout.
+    
+    Args:
+        num_atom_features (int): The number of atom features.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        num_heads (int): The number of heads. Default to :obj:`8`.
+        pred_hidden_dim (int): The number of hidden dimensions for the prediction 
+            MLP. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.
+        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.
+        activation (str): The activation function. Default to :obj:`'prelu'`.
+        num_tasks (int): The number of tasks. Default to :obj:`1`.
+        bias (bool): Whether to use bias. Default to :obj:`True`.
+        dropout (float): The dropout rate. Default to :obj:`0.1`.
+        edge_dim (int): The number of edge dimensions.
+        num_descriptors (int): The number of descriptors. Default to :obj:`0`.
+        chain_length (int): The length of the chain. Default to :obj:`10`.
+    """
     def __init__(
         self, 
         num_atom_features: int, 
@@ -68,6 +87,14 @@ class GATv2ChainReadout(BaseModel):
         self.num_descriptors = num_descriptors
         
     def forward(self, batch: Polymer): 
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         x = batch.x.float()
         if self.num_descriptors > 0:
             x = torch.cat([x, batch.descriptors[batch.batch]], dim=1)

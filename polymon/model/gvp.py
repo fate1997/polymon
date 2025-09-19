@@ -365,6 +365,24 @@ class GVPNetwork(nn.Module):
 
 @register_init_params
 class GVPModel(BaseModel):
+    r"""GVP model wrapper.
+    
+    Args:
+        in_node_nf (int): The number of input node features.
+        hidden_dim (int): The number of hidden dimensions. Default to :obj:`64`.
+        num_layers (int): The number of layers. Default to :obj:`4`.
+        attention (bool): Whether to use attention. Default to :obj:`False`.
+        drop_rate (float): The dropout rate. Default to :obj:`0.0`.
+        normalization_factor (float): The normalization factor. Default to 
+            :obj:`100`.
+        pred_hidden_dim (int): The number of hidden dimensions in the prediction 
+            layer. Default to :obj:`128`.
+        pred_dropout (float): The dropout rate in the prediction layer. Default to 
+            :obj:`0.2`.
+        pred_layers (int): The number of layers in the prediction layer. Default 
+            to :obj:`2`.
+        cutoff (float): The cutoff radius. Default to :obj:`5.0`.
+    """
     def __init__(
         self, 
         in_node_nf: int, 
@@ -406,14 +424,14 @@ class GVPModel(BaseModel):
         self, 
         batch: Polymer,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Forward pass of the EGNNDenoiser model.
+        """Forward pass.
+        
         Args:
-            t: Time. [batch_size, 1]
-            x: Positions. [n_nodes, 3]
-            h: Features. [n_nodes, h_dims]
-            edge_index: [2, n_edges]
-            context: [batch_size, context_node_nf]
-            batch: [n_nodes]
+            batch (Polymer): The batch of data. It should have :obj:`pos` 
+                attribute.
+        
+        Returns:
+            torch.Tensor: The output of the model.
         """
         x = batch.pos
         h = batch.x

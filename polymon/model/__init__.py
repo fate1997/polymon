@@ -1,31 +1,31 @@
 import typing
 from typing import Any, Dict
 
+from polymon.model.dmpnn import DMPNN
+from polymon.model.gatv2.embed_residual import GATv2EmbedResidual
 from polymon.model.gatv2.fastkan_gatv2 import FastKAN_GATv2
-from polymon.model.gatv2.gat_chain import GATChain
 from polymon.model.gatv2.gat_chain_readout import GATv2ChainReadout
+from polymon.model.gatv2.gatv2_sage import GATv2SAGE
 from polymon.model.gatv2.kan_gatv2 import KAN_GATv2
+from polymon.model.gatv2.lineevo import GATv2LineEvo
+from polymon.model.gatv2.multi_fidelity import GATv2_Source
+from polymon.model.gatv2.position_encoding import GATv2_PE
 from polymon.model.gnn import (GIN, PNA, AttentiveFPWrapper, DimeNetPP,
                                GATPort, GATv2, GATv2VirtualNode,
                                GraphTransformer)
 from polymon.model.gps.gps import KAN_GPS, GraphGPS
 from polymon.model.gvp import GVPModel
+from polymon.model.kan.dmpnn import KAN_DMPNN
 from polymon.model.kan.efficient_kan import EfficientKANWrapper
 from polymon.model.kan.fast_kan import FastKANWrapper
 # from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
-from polymon.model.gatv2.lineevo import GATv2LineEvo
-from polymon.model.gatv2.gatv2_sage import GATv2SAGE
-from polymon.model.gatv2.multi_fidelity import GATv2_Source
-from polymon.model.gatv2.position_encoding import GATv2_PE
-from polymon.model.gatv2.embed_residual import GATv2EmbedResidual
-from polymon.model.kan.gin import KAN_GIN, FastKAN_GIN
 from polymon.model.kan.gcn import KAN_GCN
-from polymon.model.dmpnn import DMPNN
-from polymon.model.kan.dmpnn import KAN_DMPNN
+from polymon.model.kan.gin import KAN_GIN, FastKAN_GIN
 
 if typing.TYPE_CHECKING:
     from polymon.model.base import BaseModel
+
 
 def build_model(
     model_type: str, 
@@ -34,6 +34,26 @@ def build_model(
     num_descriptors: int,
     hparams: Dict[str, Any]
 ) -> 'BaseModel':
+    """Build a model from a model type and input arguments. Currently, the 
+    following models are supported: :obj:`gatv2`, :obj:`attentivefp`, 
+    :obj:`dimenetpp`, :obj:`gatport`, :obj:`gatv2vn`, :obj:`gin`, 
+    :obj:`pna`, :obj:`gvp`, :obj:`gatv2chainreadout`, :obj:`gt`, 
+    :obj:`kan_gatv2`, :obj:`gps`, :obj:`kan_gps`, :obj:`fastkan`, 
+    :obj:`efficientkan`, :obj:`fourierkan`, :obj:`fastkan_gatv2`, 
+    :obj:`gatv2_lineevo`, :obj:`gatv2_sage`, :obj:`gatv2_source`, 
+    :obj:`gatv2_pe`, :obj:`gatv2_embed_residual`, :obj:`kan_gin`, 
+    :obj:`fastkan_gin`, :obj:`kan_gcn`, :obj:`dmpnn`, :obj:`kan_dmpnn`.
+
+    Args:
+        model_type (str): The type of model to build.
+        num_node_features (int): The number of node features.
+        num_edge_features (int): The number of edge features.
+        num_descriptors (int): The number of descriptors.
+        hparams (dict): The other hyperparameters for the model.
+
+    Returns:
+        BaseModel: The built model.
+    """
     if model_type == 'gatv2':
         input_args = {
             'num_atom_features': num_node_features,
@@ -91,12 +111,6 @@ def build_model(
         }
         hparams.update(input_args)
         model = GVPModel(**hparams)
-    elif model_type == 'gatchain':
-        input_args = {
-            'num_atom_features': num_node_features,
-        }
-        hparams.update(input_args)
-        model = GATChain(**hparams)
     elif model_type == 'gatv2chainreadout':
         input_args = {
             'num_atom_features': num_node_features,

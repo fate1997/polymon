@@ -1,9 +1,10 @@
 from typing import Optional
 
 import torch
-from torch_geometric.data import Data
 from rdkit import Chem
 from rdkit.Chem import rdChemReactions
+from torch_geometric.data import Data
+
 
 class Polymer(Data):
     """Data object for multi-modal representation of polymers.
@@ -69,14 +70,17 @@ class Polymer(Data):
     
     @property
     def num_atoms(self) -> int:
+        """The number of atoms in the polymer."""
         return self.x.shape[0]
     
     @property
     def num_bonds(self) -> int:
+        """The number of bonds in the polymer."""
         return self.edge_index.shape[1]
     
     @property
     def num_descriptors(self) -> int:
+        """The number of descriptors in the polymer."""
         return self.descriptors.shape[0]
     
     def __inc__(self, key, value, *args, **kwargs):
@@ -87,6 +91,18 @@ class Polymer(Data):
     
     
 class OligomerBuilder:
+    """Builder for oligomers. We use the following reactions to build the 
+    oligomers:
+    
+    - [*:1][Au].[*:2][Cu]>>[*:1][*:2]
+    - [*:1]=[Au].[*:2]=[Cu]>>[*:1]=[*:2]
+    
+    .. note::
+        The builder only supports for the polymer with two attachment points.
+
+    Returns:
+        Chem.Mol: The oligomer molecule
+    """
     def __init__(self):
         self._rxn_smarts = [
             '[*:1][Au].[*:2][Cu]>>[*:1][*:2]',
@@ -128,5 +144,14 @@ class OligomerBuilder:
     
     @staticmethod
     def get_oligomer(smiles: str, n_oligomer: int) -> Chem.Mol:
+        """Get the oligomer molecule from the smiles string.
+        
+        Args:
+            smiles: The smiles string of the polymer
+            n_oligomer: The number of oligomers
+        
+        Returns:
+            Chem.Mol: The oligomer molecule
+        """
         return OligomerBuilder()._build(smiles, n_oligomer)
                 

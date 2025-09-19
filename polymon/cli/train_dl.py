@@ -20,14 +20,10 @@ def parse_args():
     # Dataset
     parser.add_argument('--batch-size', type=int, default=128)
     parser.add_argument('--raw-csv', type=str, default=str(REPO_DIR / 'database' / 'database.csv'))
-    ## Internal data is `must_keep`
     parser.add_argument('--sources', type=str, nargs='+', default=['official_external'])
     parser.add_argument('--labels', choices=TARGETS, nargs='+', default=None)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--split-mode', type=str, default='random')
-    parser.add_argument('--train-residual', action='store_true')
-    parser.add_argument('--normalizer-type', type=str, default='normalizer', 
-                        choices=['normalizer', 'log_normalizer', 'none'])
     parser.add_argument('--augmentation', action='store_true')
 
     # Model
@@ -61,12 +57,14 @@ def parse_args():
     parser.add_argument('--remove-hydrogens', action='store_true')
     parser.add_argument('--emb-model', type=str, default=None)
     parser.add_argument('--ensemble-type', type=str, default='voting')
+    parser.add_argument('--train-residual', action='store_true')
+    parser.add_argument('--normalizer-type', type=str, default='normalizer', 
+                        choices=['normalizer', 'log_normalizer', 'none'])
 
     return parser.parse_args()
 
 
-def main():
-    args = parse_args()
+def main(args: argparse.Namespace):
     out_dir = os.path.join(args.out_dir, args.model)
     if args.n_estimator > 1:
         args.tag += f'-ensemble'
@@ -109,7 +107,7 @@ def main():
             yaml.dump(args.__dict__, f)
         
         # CHOICE 1: Optimize hyperparameters OR train model on default parameters
-        if args.optimize_hparams:
+        if args.n_trials is not None:
             test_err, hparams = pipeline.optimize_hparams(n_fold=args.n_fold)
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
             if 'lr' in hparams:
@@ -178,8 +176,8 @@ def main():
     performance['extra_info'] = f'{args.tag}'
     if args.n_fold > 1:
         performance['extra_info'] += f' (K-Fold)'
-    if args.optimize_hparams:
-        performance['extra_info'] += f' (Optuna)'
+    if args.n_trials is not None:
+        performance['extra_info'] += f' (hparams opt)'
     if args.split_mode != 'random':
         performance['extra_info'] += f' ({args.split_mode})'
     new_df = pd.DataFrame(performance, index=[0]).round(4)
@@ -189,4 +187,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+    main(args)

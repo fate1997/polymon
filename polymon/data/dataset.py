@@ -14,12 +14,40 @@ from tqdm import tqdm
 
 from polymon.data.dedup import Dedup
 from polymon.data.featurizer import ComposeFeaturizer
-from polymon.data.polymer import Polymer
-from polymon.setting import (PRETRAINED_MODELS, REPO_DIR, TARGETS,
-                             UNIQUE_ATOM_NUMS)
+from polymon.data.polymer import OligomerBuilder, Polymer
+from polymon.setting import PRETRAINED_MODELS, UNIQUE_ATOM_NUMS
 
 
 class PolymerDataset(Dataset):
+    r"""A dataset that contains the polymers. During the initialization, the 
+    SMILES strings will be featurized to the corresponding features and converted
+    to the :class:`Polymer` object. If :obj:`pre_transform` is provided, it will
+    be used to update the :class:`Polymer` object. If :obj:`estimator` is provided,
+    it will be used to estimate the labels of the :class:`Polymer` object, and
+    make the prediction task be the residual between the ground truth and the
+    estimated labels.
+    
+    Args:
+        raw_csv_path (str): The path to the raw csv file. Typically, it should 
+            have at least three columns: :obj:`SMILES`, :obj:`label` (e.g., 
+            :obj:`Rg`), and :obj:`Source` (e.g., :obj:`PI1070`).
+        feature_names (List[str]): The names of the features to use. The 
+            available features are in :obj:`AVAIL_FEATURES` from 
+            :mod:`polymon.data.featurizer`.
+        label_column (str): Label column name.
+        sources (List[str]): The names of the sources.
+        smiles_column (str): SMILES column name.
+        identifier_column (str): Identifier column name.
+        save_processed (bool): Whether to save the processed dataset.
+        force_reload (bool): Whether to force reload the processed dataset.
+        add_hydrogens (bool): Whether to add hydrogens to the molecules.
+        pre_transform (Callable): The pre-transform to apply to the data. It 
+            should be a function that takes a :class:`Polymer` object and returns
+            a :class:`Polymer` object.
+        estimator (Callable): The estimator to apply to the data. It is used to 
+            provide the estimated labels for the :class:`Polymer` object. It 
+            should be the object of :class:`polymon.estimator.BaseEstimator`.
+    """
     
     def __init__(
         self,
@@ -32,9 +60,9 @@ class PolymerDataset(Dataset):
         save_processed: bool = True,
         force_reload: bool = False,
         add_hydrogens: bool = False,
-        fitting_source: List[str] = None,
         pre_transform: Optional[Callable] = None,
         estimator: Optional[Callable] = None,
+        must_keep: List[str] = None,
     ):
         super().__init__()
         
@@ -42,13 +70,14 @@ class PolymerDataset(Dataset):
         self.label_column = label_column
         self.feature_names = feature_names
         self.sources = sources
-        assert self.label_column in TARGETS
         self.pre_transform = pre_transform
         self.estimator = estimator
+        self.must_keep = must_keep
         
+        # Create processed path in the current directory
         processed_name = f'{label_column}_{"_".join(sources)}.pt'
-        os.makedirs(str(REPO_DIR / 'database' / 'processed'), exist_ok=True)
-        processed_path = str(REPO_DIR / 'database' / 'processed' / processed_name)
+        os.makedirs(os.path.join('.', 'database', 'processed'), exist_ok=True)
+        processed_path = os.path.join('.', 'database', 'processed', processed_name)
         
         if osp.exists(processed_path) and not force_reload:
             data = torch.load(processed_path)
@@ -57,36 +86,26 @@ class PolymerDataset(Dataset):
         else:
             if self.pre_transform is not None:
                 logger.info(f'Applying pre-transform: {self.pre_transform}')
+            
             df_nonan = pd.read_csv(raw_csv_path).dropna(subset=[label_column])
-            if 'Uncertainty' in df_nonan.columns:
-                dedup = Dedup(df_nonan, label_column)
-                if fitting_source is not None:
-                    for source in fitting_source:
-                        dedup.compare('internal', source, fitting=True)
-                        sources.remove(source)
-                        sources.append(f'{source}_fitted')
-                df_nonan = dedup.run(sources=sources)
+            dedup = Dedup(df_nonan, label_column, must_keep=self.must_keep)
+            df_nonan = dedup.run(sources=sources)
             feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
             
+            # Initialize the featurizer
             if 'pos' in feature_names:
                 add_hydrogens = True
-            
             config = {}
             if 'x' in feature_names:
                 config['x'] = {'unique_atom_nums': UNIQUE_ATOM_NUMS}
-            if 'source' in feature_names:
-                config['x']['unique_sources'] = self.sources + ['internal']
-                
             featurizer = ComposeFeaturizer(feature_names, config, add_hydrogens)
             self.featurizer = featurizer
         
             data_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
                 row = df_nonan.iloc[i]
-                # if row[smiles_column].count('*') != 2:
-                #     logger.warning(f'Skipping {row[smiles_column]} because of not 2 attachments')
-                #     continue
-                rdmol = Chem.MolFromSmiles(row[smiles_column])
+                smiles = row[smiles_column]
+                rdmol = Chem.MolFromSmiles(smiles)
                 if 'source' in feature_names:
                     rdmol.SetProp('Source', row['Source'])
                 label = row[self.label_column]
@@ -98,11 +117,17 @@ class PolymerDataset(Dataset):
                 if 'Source' in df_nonan.columns:
                     mol_dict['source'] = int(row['Source'] == 'internal')
                 if None in mol_dict.values():
-                    logger.warning(f'Skipping {row[smiles_column]} because of None in featurization')
+                    logger.warning(
+                        f'Skipping {smiles} because of None in featurization'
+                    )
                     continue
                 data = Polymer(**mol_dict)
+                
+                # Apply pre-transform
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
+                
+                # Apply estimator
                 if self.estimator is not None:
                     data = self.estimator(data)
                 data_list.append(data)
@@ -110,12 +135,9 @@ class PolymerDataset(Dataset):
             # Add pretrained embeddings
             if len(self.feature_names) != len(feature_names):
                 logger.info(f'Building pretrained embeddings...')
-                from polymon.data.pretrained import (
-                    assign_pretrained_embeddings,
-                    get_gaff2_features,
-                    get_polybert_embeddings,
-                    get_polycl_embeddings,
-                )
+                from polymon.data._pretrained import (
+                    assign_pretrained_embeddings, get_gaff2_features,
+                    get_polybert_embeddings, get_polycl_embeddings)
             if 'polycl' in self.feature_names:
                 pretrained_embeddings = get_polycl_embeddings(
                     df_nonan[smiles_column].tolist(),
@@ -146,21 +168,22 @@ class PolymerDataset(Dataset):
                 }, processed_path)
     
     def get(self, idx: int) -> Polymer:
+        """Get the :class:`Polymer` object at the given index.
+        """
         data = self.data_list[idx]
-        if getattr(data, 'bridge_index', None) is not None:
-            import random
-            direction = random.randint(0, 1)
-            if direction == 0:
-                data.bridge_index = data.bridge_index[[1, 0], :]
         return data
     
     def len(self) -> int:
+        """Get the number of :class:`Polymer` objects in the dataset.
+        """
         return len(self.data_list)
 
     def sample_batch(
         self,
         batch_size: int = 64,
     ) -> Batch:
+        """Sample a batch of :class:`Polymer` objects.
+        """
         loader = DataLoader(self, batch_size, shuffle=True)
         return next(iter(loader))
     
@@ -169,12 +192,27 @@ class PolymerDataset(Dataset):
         batch_size: int,
         n_train: Union[int, float],
         n_val: Union[int, float],
-        mode: Literal['source', 'random', 'scaffold'] = 'random',
-        production_run: bool = False,
+        mode: Literal['random', 'scaffold'] = 'random',
         num_workers: int = 0,
         augmentation: bool = False,
     ) -> Tuple[DataLoader, DataLoader, DataLoader]:
-        
+        """Get the data loaders for the training, validation, and test sets.
+
+        Args:
+            batch_size (int): The batch size.
+            n_train (Union[int, float]): The number of training samples. If it
+                is a float, it will be converted to an integer by multiplying
+                the length of the dataset.
+            n_val (Union[int, float]): The number of validation samples. If it
+                is a float, it will be converted to an integer by multiplying
+                the length of the dataset.
+            mode (Literal['random', 'scaffold']): The split mode. :obj:`random`: 
+                Split the dataset randomly. :obj:`scaffold`: Split the dataset 
+                by scaffold.
+            num_workers (int): The number of workers for the data loaders.
+            augmentation (bool): Whether to augment the training set. Currently,
+                it only supports the augmentation of oligomers.
+        """
         if isinstance(n_train, float):
             train_ratio = n_train
             n_train = int(train_ratio * len(self))
@@ -187,22 +225,14 @@ class PolymerDataset(Dataset):
         assert n_test >= 0
         logger.info(f'Split: {n_train} train, {n_val} val, {n_test} test')
         
-        if mode == 'source':
-            train_set, val_set, test_set = self._get_source_splits(n_train, n_val, production_run)
-        elif mode == 'random':
+        if mode == 'random':
             train_set, val_set, test_set = self._get_random_splits(n_train, n_val)
         elif mode == 'scaffold':
             train_set, val_set, test_set = self._get_scaffold_splits(n_train, n_val)
         else:
             raise ValueError(f'Invalid split mode: {mode}')
-        
-        # train_sampler=torch.utils.data.WeightedRandomSampler(
-        #     weights=torch.tensor([0.8 if data.source == 'internal' else 0.2 for data in train_set]),
-        #     num_samples=len(train_set),
-        #     replacement=True,
-        # )
+
         if augmentation:
-            from polymon.data.polymer import OligomerBuilder
             train_set_aug = []
             for data in train_set:
                 train_set_aug.append(data)
@@ -213,21 +243,6 @@ class PolymerDataset(Dataset):
                     for key, value in mol_dict.items():
                         setattr(aug_data, key, value)
                     train_set_aug.append(aug_data)
-                # from rdkit import Chem
-                # from rdkit.Chem.MolStandardize import rdMolStandardize
-                # ps = rdMolStandardize.CleanupParameters()
-                # ps.maxTransforms = 5000
-                # te = rdMolStandardize.TautomerEnumerator(ps)
-                # rdmol = Chem.MolFromSmiles(data.smiles)
-                # tautomers = te.Enumerate(rdmol)
-                # for tautomer in tautomers:
-                #     if Chem.MolToSmiles(tautomer) == Chem.MolToSmiles(rdmol):
-                #         continue
-                #     mol_dict = self.featurizer(tautomer)
-                #     aug_data = data.clone()
-                #     for key, value in mol_dict.items():
-                #         setattr(aug_data, key, value)
-                #     train_set_aug.append(aug_data)
             logger.info(f'Train set augmented from {len(train_set)} to {len(train_set_aug)}')
         else:
             train_set_aug = train_set
@@ -245,35 +260,6 @@ class PolymerDataset(Dataset):
         else:
             test_loader = None
         return train_loader, val_loader, test_loader
-    
-    def _get_source_splits(
-        self,
-        n_train: int,
-        n_val: int,
-        production_run: bool = False,
-    ) -> Tuple[Dataset, Dataset, Dataset]:
-        logger.info('Splitting dataset by source...')
-        
-        n_test = len(self) - n_train - n_val
-        assert n_test >= 0
-        
-        internal = [data for data in self.data_list if data.source == 'internal']
-        external = [data for data in self.data_list if data.source != 'internal']
-        random.shuffle(internal)
-        random.shuffle(external)
-        if production_run:
-            test_set = external[:n_test]
-            val_set = internal[:n_val]
-            train_set = internal[n_val:] + external[n_test:]
-        else:
-            test_set = internal[:n_test]
-            val_set = internal[n_test:n_test+n_val]
-            train_set = internal[n_test+n_val:] + external[n_val:]
-            if len(val_set) == 0:
-                val_set = external[:n_val]
-                train_set = internal[n_test:] + external[n_val:]
-                logger.warning('No val set, using external as val')
-        return train_set, val_set, test_set
 
     def _get_random_splits(
         self,

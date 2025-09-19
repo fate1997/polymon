@@ -9,6 +9,20 @@ from polymon.model.utils import KANLinear
 
 @register_init_params
 class FourierKANWrapper(BaseModel):
+    """Fourier KAN wrapper.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        grid_size (int): The number of grid points. Default to :obj:`5`.
+        add_bias (bool): Whether to add bias. Default to :obj:`True`.
+        add_act (bool): Whether to add activation. Default to :obj:`False`.
+
+    .. note::
+        The implementation is adapted from `Fourier KAN for descriptors 
+        <https://github.com/GistNoesis/FourierKAN>`_.
+    """
     def __init__(
         self,
         in_channels: int,
@@ -37,6 +51,15 @@ class FourierKANWrapper(BaseModel):
         ))
         
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have :obj:`descriptors` 
+                attribute.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         desc = batch.descriptors
         for layer in self.layers:
             desc = layer(desc)

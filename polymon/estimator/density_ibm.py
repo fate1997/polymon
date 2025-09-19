@@ -12,6 +12,10 @@ from polymon.model.register import register_init_params
 
 @register_init_params
 class DensityIBMEstimator(BaseEstimator):
+    """Density estimator using the IBM method. This is a group contribution
+    method that assigns a contribution to each group of atoms in the molecule.
+    The original implementation is from https://github.com/IBM/polymer_property_prediction.
+    """
     def __init__(self):
         pass
 

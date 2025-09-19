@@ -30,6 +30,9 @@ DEFAULT_SOLVENT = "theta"
 
 @register_init_params
 class NxRgEstimator(BaseEstimator):
+    """Radius of gyration estimator using NetworkX. This is a simple estimator
+    that uses NetworkX to estimate the radius of gyration of a polymer.
+    """
     def __init__(
         self, 
         N: int = DEFAULT_N, 
@@ -41,6 +44,14 @@ class NxRgEstimator(BaseEstimator):
         self.solvent = solvent
 
     def estimated_y(self, smiles: str) -> float:
+        """Estimate the radius of gyration of a polymer based on the NetworkX method.
+
+        Args:
+            smiles (str): The SMILES of the polymer.
+
+        Returns:
+            float: The estimated radius of gyration of the polymer.
+        """
         return self.radius_of_gyration(smiles)
     
     def mol_to_nx(self, mol):

@@ -1,10 +1,13 @@
-import torch
-import torch.nn.functional as F
 import math
 from typing import List
+
+import torch
+import torch.nn.functional as F
+
+from polymon.data.polymer import Polymer
 from polymon.model.base import BaseModel
 from polymon.model.register import register_init_params
-from polymon.data.polymer import Polymer
+
 
 class KANLinear(torch.nn.Module):
     def __init__(
@@ -154,6 +157,14 @@ class KANLinear(torch.nn.Module):
         )
 
     def forward(self, x: torch.Tensor):
+        """Forward pass.
+        
+        Args:
+            x (torch.Tensor): The input tensor.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         assert x.size(-1) == self.in_features
         original_shape = x.shape
         x = x.reshape(-1, self.in_features)
@@ -290,6 +301,26 @@ class KAN(torch.nn.Module):
 
 @register_init_params
 class EfficientKANWrapper(BaseModel):
+    """Efficient KAN wrapper.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        hidden_dim (int): The number of hidden dimensions.
+        num_layers (int): The number of layers.
+        grid_size (int): The number of grid points. Default to :obj:`5`.
+        spline_order (int): The order of the spline. Default to :obj:`3`.
+        scale_noise (float): The scale of the noise. Default to :obj:`0.1`.
+        scale_base (float): The scale of the base. Default to :obj:`1.0`.
+        scale_spline (float): The scale of the spline. Default to :obj:`1.0`.
+        base_activation (torch.nn.Module): The activation function for the base. 
+            Default to :obj:`torch.nn.SiLU`.
+        grid_eps (float): The epsilon for the grid. Default to :obj:`0.02`.
+        grid_range (List[float]): The range of the grid. Default to :obj:`[-1, 1]`.
+
+    .. note::
+        The implementation is adapted from `Fast KAN for descriptors 
+        <https://github.com/Blealtan/efficient-kan>`_.
+    """
     def __init__(
         self,
         in_channels: int,
@@ -318,6 +349,15 @@ class EfficientKANWrapper(BaseModel):
         )
 
     def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data. It should have :obj:`descriptors` 
+                attribute.
+        
+        Returns:
+            torch.Tensor: The output tensor.
+        """
         desc = batch.descriptors
         y = self.efficientkan(desc)
         return y
