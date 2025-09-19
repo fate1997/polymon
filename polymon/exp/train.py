@@ -4,6 +4,7 @@ from glob import glob
 from time import perf_counter
 from typing import Dict, Optional
 
+import optuna
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -113,6 +114,7 @@ class Trainer:
         val_loader: DataLoader,
         test_loader: Optional[DataLoader] = None,
         label: str = 'Rg',
+        trial: Optional[optuna.Trial] = None,
     ):
         """Train the model.
         
@@ -120,6 +122,10 @@ class Trainer:
             train_loader (DataLoader): The training data loader.
             val_loader (DataLoader): The validation data loader.
             test_loader (DataLoader): The test data loader.
+            label (str): The label to train on.
+            trial (optuna.Trial): The trial object. If provided, the model will
+                be stopped training when the pruning is triggered.
+            n_fold (int): The number of folds. This is used to report the 
         """
         start_time = perf_counter()
         optimizer = self.build_optimizer()
@@ -131,6 +137,12 @@ class Trainer:
                 optimizer,
                 label,
             )
+            
+            if trial is not None:
+                trial.report(val_mae, ith_epoch)
+                if trial.should_prune():
+                    self.logger.info('Trial pruned')
+                    raise optuna.TrialPruned()
 
             # Early stopping
             self.early_stopping(-val_mae, self.model, ith_epoch)

@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath('../..'))  # so Sphinx finds polymon/
 # Project info
 project = 'polymon'
 author = 'PolyMon\'s Team'
-release = '0.1.0'
+release = '0.3.0'
 
 # Extensions
 extensions = [

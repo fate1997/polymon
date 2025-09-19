@@ -183,6 +183,7 @@ class Pipeline:
         out_dir: Optional[str] = None,
         loaders: Optional[Tuple[DataLoader, DataLoader, DataLoader]] = None,
         model: Optional[ModelWrapper] = None,
+        trial: Optional[optuna.Trial] = None,
     ) -> Tuple[float, ModelWrapper]:
         """Train a model for a given label.
 
@@ -198,6 +199,8 @@ class Pipeline:
                 loaders. If None, the loaders in the pipeline will be used.
             model (Optional[ModelWrapper]): The model. If None, the model will 
                 be built from the hyper-parameters.
+            trial (Optional[optuna.Trial]): The trial object. If provided, the 
+                model will be stopped training when the pruning is triggered.
 
         Returns:
             Tuple[float, ModelWrapper]: The test error and the trained model.
@@ -227,7 +230,7 @@ class Pipeline:
         )
         if loaders is None:
             loaders = (self.train_loader, self.val_loader, self.test_loader)
-        test_err = trainer.train(loaders[0], loaders[1], loaders[2], self.label)
+        test_err = trainer.train(loaders[0], loaders[1], loaders[2], self.label, trial)
         trainer.model.write(os.path.join(out_dir, f'{self.model_name}.pt'))
         return test_err, model
     
@@ -238,6 +241,7 @@ class Pipeline:
         model: Optional[ModelWrapper] = None,
         current_trial: Optional[int] = None,
         lr: Optional[float] = None,
+        trial: Optional[optuna.Trial] = None,
     ) -> List[float]:
         """Run K-Fold cross-validation.
 
@@ -251,6 +255,8 @@ class Pipeline:
             current_trial (Optional[int]): The current trial.
             lr (Optional[float]): The learning rate. If None, the learning rate
                 in the pipeline will be used.
+            trial (Optional[optuna.Trial]): The trial object. If provided, the 
+                model will be stopped training when the pruning is triggered.
 
         Returns:
             List[float]: The validation errors.
@@ -296,6 +302,13 @@ class Pipeline:
                 model=deepcopy(model) if model is not None else None,
             )
             self.logger.info(f'{fold+1}/{n_fold} val error: {val_error}')
+            
+            if trial is not None:
+                trial.report(val_error, fold)
+                if trial.should_prune():
+                    self.logger.info('Trial pruned')
+                    raise optuna.TrialPruned()
+            
             models.append(trained_model)
             val_errors.append(val_error)
         mean, std = np.mean(val_errors), np.std(val_errors)
@@ -335,12 +348,20 @@ class Pipeline:
                     model_hparams=model_hparams, 
                     current_trial=trial.number+1,
                     lr=hparams['lr'],
+                    trial=trial,
                 )
                 return np.mean(val_errors)
             else:
-                return self.train(self.lr, model_hparams, out_dir)[0]
+                return self.train(self.lr, model_hparams, out_dir, trial)[0]
 
-        study = optuna.create_study(direction='minimize')
+        study = optuna.create_study(
+            direction='minimize',
+            pruner=optuna.pruners.MedianPruner(
+                n_startup_trials=5,
+                n_warmup_steps=0 if n_fold > 1 else 500,
+                interval_steps=1 if n_fold > 1 else 100,
+            )
+        )
         study.optimize(objective, n_trials = self.n_trials)
         self.logger.info(f'--------------------------------')
         self.logger.info(f'{self.model_type}')
