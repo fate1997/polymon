@@ -69,8 +69,9 @@ def train(
     os.makedirs(os.path.join(out_dir, tag), exist_ok=True)
     out_dir = os.path.join(out_dir, tag)
     name = f'{model}-{label}-{"-".join(feature_names)}-{tag}'
-    logger.add(os.path.join(out_dir, f'{name}.log'))
-    model_type = model
+    sink_id = logger.add(os.path.join(out_dir, f'{name}.log'))
+    model_name = model
+    model_type = model_name
 
     # 1. Load data
     logger.info(f'Training {label}...')
@@ -121,7 +122,7 @@ def train(
                 hparams = pickle.load(f)
         else:
             hparams = {}
-        model = MODELS[model](**hparams)
+        model = MODELS[model_name](**hparams)
         if model_type == 'tabpfn':
             model = TabPFNRegressor(
                 n_estimators=32,
@@ -140,6 +141,7 @@ def train(
             y_pred_test = []
             for fold, (train_idx, val_idx) in enumerate(kf.split(x_train)):
                 logger.info(f'Training fold {fold+1}/{n_fold}...')
+                model = MODELS[model_name](**hparams)
                 x_train_fold, x_val_fold = x_train[train_idx], x_train[val_idx]
                 y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx] 
                 model.fit(x_train_fold, y_train_fold)
@@ -164,8 +166,8 @@ def train(
         x_train = np.concatenate([x_train, x_val, x_test], axis=0)
         y_train = np.concatenate([y_train, y_val, y_test], axis=0)
         logger.info(f'Concatenating train and val data..., train size: {x_train.shape[0]}')
-        def objective(trial: optuna.Trial, model: str = model) -> float:
-            hparams = get_hparams(trial, model)
+        def objective(trial: optuna.Trial, model_name: str = model_name) -> float:
+            hparams = get_hparams(trial, model_name)
             if model_type == 'tabpfn':
                 hparams.update({
                     'ignore_pretraining_limits': True,
@@ -173,13 +175,14 @@ def train(
                         "SUBSAMPLE_SAMPLES": 10000,
                     },
                 })
-            model = MODELS[model](**hparams)
+            model = MODELS[model_name](**hparams)
             if n_fold is not None:
                 kf = KFold(n_splits=n_fold, shuffle=True, random_state=42)
                 maes = []
                 for fold, (train_idx, val_idx) in enumerate(kf.split(x_train)):
                     logger.info(f'Training fold {fold+1}/{n_fold}...')
                     logger.info(f'trial {trial.number+1}/{n_trials}')
+                    model = MODELS[model_name](**hparams)
                     x_train_fold, x_val_fold = x_train[train_idx], x_train[val_idx]
                     y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx]
                     model.fit(x_train_fold, y_train_fold)
@@ -196,9 +199,9 @@ def train(
         logger.info(f'--------------------------------')
         logger.info(f'{name}')
         logger.info(f'Best hyper-parameters: {study.best_params}')
-        hparams = get_hparams(study.best_trial, model)
+        hparams = get_hparams(study.best_trial, model_name)
         hparams.update(study.best_params)
-        model = MODELS[model](**hparams)
+        model = MODELS[model_name](**hparams)
         model.fit(x_train, y_train)
         y_pred = predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE)
         
@@ -227,6 +230,8 @@ def train(
         'y_true': y_test,
         'y_pred': y_pred,
     }).to_csv(results_path, index=False)
+
+    logger.remove(sink_id)
     
     return scaling_error(y_test, y_pred, label), x_test.shape[0]
 

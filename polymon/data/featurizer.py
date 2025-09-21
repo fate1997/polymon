@@ -21,8 +21,7 @@ from torch_geometric.utils import to_undirected
 from polymon.data.polymer import OligomerBuilder
 from polymon.setting import (CGCNN_ELEMENT_INFO, DEFAULT_ATOM_FEATURES,
                              GEOMETRY_VOCAB, MAX_SEQ_LEN, MORDRED_UNSTABLE_IDS,
-                             SMILES_VOCAB, MORDRED_VOCAB, XENONPY_VOCAB,
-                             MORDRED_3D_VOCAB, MORDRED_DIMER_VOCAB)
+                             SMILES_VOCAB, MORDRED_3D_VOCAB)
 
 FEATURIZER_REGISTRY: Dict[str, 'Featurizer'] = {}
 
@@ -767,28 +766,29 @@ class DescFeaturizer(Featurizer):
         from mordred import Calculator, descriptors
         rdmol = deepcopy(rdmol)
         smiles = Chem.MolToSmiles(rdmol)
-        mordred_file = MORDRED_VOCAB 
-        cache: Dict[str, Any]
-        if mordred_file.exists():
-            cache = torch.load(
-                mordred_file, 
-                map_location='cpu', 
-                weights_only=False)
-        else:
-            cache = {}
-        if smiles in cache:
-            descs = cache[smiles]
-            return descs
+        # mordred_file = MORDRED_VOCAB 
+        # cache: Dict[str, Any]
+        # if mordred_file.exists():
+        #     #print(f'Loading mordred cache from {mordred_file}')
+        #     cache = torch.load(
+        #         mordred_file, 
+        #         map_location='cpu', 
+        #         weights_only=False)
+        # else:
+        #     cache = {}
+        # if smiles in cache:
+        #     descs = cache[smiles]
+        #     return descs
     
         calc = Calculator(descriptors, ignore_3D=True)
         descs = calc(rdmol)
         descs = [x for i, x in enumerate(descs) if i not in MORDRED_UNSTABLE_IDS]
         descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
-        cache[smiles] = descs
+        # cache[smiles] = descs
 
-        temp_path = mordred_file.with_suffix(mordred_file.suffix + '.tmp')
-        torch.save(cache, temp_path)
-        temp_path.replace(mordred_file)
+        # temp_path = mordred_file.with_suffix(mordred_file.suffix + '.tmp')
+        # torch.save(cache, temp_path)
+        # temp_path.replace(mordred_file)
         
         return descs
     
@@ -854,7 +854,10 @@ class DescFeaturizer(Featurizer):
         rdmol: Chem.Mol,
     ) -> torch.Tensor:
         rdmol_smiles = Chem.MolToSmiles(rdmol)
-        oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
+        try:
+            oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
+        except:
+            oligomer = rdmol
         return self.rdkit2d(oligomer)
     
     def fedors_density(
@@ -869,35 +872,50 @@ class DescFeaturizer(Featurizer):
         self,
         rdmol: Chem.Mol,
     ) -> torch.Tensor:
-        
-        from mordred import Calculator, descriptors
-        rdmol_smiles = Chem.MolToSmiles(rdmol)
-        oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
-        oligomer = deepcopy(oligomer)
-        smiles = Chem.MolToSmiles(oligomer)
-        mordred_file = MORDRED_DIMER_VOCAB
-        cache: Dict[str, Any]
-        if mordred_file.exists():
-            cache = torch.load(
-                mordred_file,
-                map_location='cpu',
-                weights_only=False)
-        else:
-            cache = {}
-        if smiles in cache:
-            descs = cache[smiles]
-            return descs
-        
-        calc = Calculator(descriptors, ignore_3D=True)
-        descs = calc(oligomer)
-        descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
-        cache[smiles] = descs
-        
-        temp_path = mordred_file.with_suffix(mordred_file.suffix + '.tmp')
-        torch.save(cache, temp_path)
-        temp_path.replace(mordred_file)
 
-        return descs
+        rdmol_smiles = Chem.MolToSmiles(rdmol)
+        try:
+            oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
+            oligomer = deepcopy(oligomer)
+        except:
+            oligomer = rdmol
+        return self.mordred(oligomer)
+        # smiles = Chem.MolToSmiles(oligomer)
+        # mordred_file = MORDRED_DIMER_VOCAB
+        # cache: Dict[str, Any]
+        # if mordred_file.exists():
+        #     cache = torch.load(
+        #         mordred_file,
+        #         map_location='cpu',
+        #         weights_only=False)
+        # else:
+        #     cache = {}
+        # if smiles in cache:
+        #     descs = cache[smiles]
+        #     return descs
+        
+        # calc = Calculator(descriptors, ignore_3D=True)
+        # descs = calc(oligomer)
+        # descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
+        
+        # cache[smiles] = descs
+        # temp_path = mordred_file.with_suffix(mordred_file.suffix + '.tmp')
+        # torch.save(cache, temp_path)
+        # temp_path.replace(mordred_file)
+
+        #return descs
+    
+    def oligomer_ecfp4(
+        self,
+        rdmol: Chem.Mol,
+    ) -> torch.Tensor:
+        rdmol_smiles = Chem.MolToSmiles(rdmol)
+        try:
+            oligomer = OligomerBuilder.get_oligomer(rdmol_smiles, 2)
+            oligomer = deepcopy(oligomer)
+        except:
+            oligomer = rdmol
+        return self.ecfp4(oligomer)
     
     def xenonpy_desc(
         self,

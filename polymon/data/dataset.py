@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 import random
-from typing import Callable, List, Literal, Optional, Tuple, Union
+from typing import Callable, List, Literal, Optional, Tuple, Union, Dict, Any
 
 import pandas as pd
 import torch
@@ -15,7 +15,7 @@ from tqdm import tqdm
 from polymon.data.dedup import Dedup
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import OligomerBuilder, Polymer
-from polymon.setting import PRETRAINED_MODELS, UNIQUE_ATOM_NUMS
+from polymon.setting import PRETRAINED_MODELS, UNIQUE_ATOM_NUMS, MORDRED_VOCAB, MORDRED_DIMER_VOCAB
 
 from polymon.model.esa.esa_utils import get_max_node_edge_global
 
@@ -101,7 +101,28 @@ class PolymerDataset(Dataset):
                 config['x'] = {'unique_atom_nums': UNIQUE_ATOM_NUMS}
             featurizer = ComposeFeaturizer(feature_names, config, add_hydrogens)
             self.featurizer = featurizer
-        
+
+            if 'mordred' in feature_names:
+                mordred_file = MORDRED_VOCAB 
+                cache: Dict[str, Any]
+                if mordred_file.exists():
+                    cache = torch.load(
+                        mordred_file, 
+                        map_location='cpu', 
+                    )
+                else:
+                    cache = {}
+            elif 'oligomer_mordred' in feature_names:
+                mordred_file = MORDRED_DIMER_VOCAB
+                cache: Dict[str, Any]
+                if mordred_file.exists():
+                    cache = torch.load(
+                        mordred_file, 
+                        map_location='cpu', 
+                    )
+                else:
+                    cache = {}
+            
             data_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
                 row = df_nonan.iloc[i]
@@ -110,7 +131,15 @@ class PolymerDataset(Dataset):
                 if 'source' in feature_names:
                     rdmol.SetProp('Source', row['Source'])
                 label = row[self.label_column]
-                mol_dict = self.featurizer(rdmol)
+                if 'mordred' in feature_names or 'oligomer_mordred' in feature_names:
+                    if smiles in cache:
+                        mol_dict = {'descriptors': cache[smiles]}
+                    else:
+                        mol_dict = self.featurizer(rdmol)
+                        cache[smiles] = mol_dict['descriptors']
+                else:
+                    mol_dict = self.featurizer(rdmol)
+                #mol_dict = self.featurizer(rdmol)
                 mol_dict['y'] = torch.tensor(label).unsqueeze(0).unsqueeze(0).float()
                 if identifier_column is not None and identifier_column in df_nonan.columns:
                     mol_dict['identifier'] = torch.tensor(row[identifier_column])
@@ -164,8 +193,8 @@ class PolymerDataset(Dataset):
             # for g in self.data_list:
             #     g.max_node_global = self.max_node_global
             #     g.max_edge_global = self.max_edge_global
-
-            
+            if 'mordred' in feature_names or 'oligomer_mordred' in feature_names:
+                torch.save(cache, mordred_file)
             if save_processed:
                 os.makedirs(osp.dirname(processed_path), exist_ok=True)
                 logger.info(f'Saving processed dataset to {processed_path}')
