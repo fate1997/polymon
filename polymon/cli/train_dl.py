@@ -169,7 +169,10 @@ def main(args: argparse.Namespace):
         n_tests.append(len(pipeline.test_loader.dataset))
 
     results_path = os.path.join(REPO_DIR, 'performance.csv')
-    df = pd.read_csv(results_path)
+    if os.path.exists(results_path):
+        df = pd.read_csv(results_path)
+    else:
+        df = pd.DataFrame()
     property_weight = normalize_property_weight(n_tests)
     performance['score'] = np.average(list(performance.values()), weights=property_weight)
     performance['model'] = args.model
