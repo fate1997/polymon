@@ -170,7 +170,7 @@ class Trainer:
         self.logger.info(f'Time taken: {end_time - start_time:.2f} seconds')
         self.logger.info(f'--------------------------------')
         
-        test_err = test_metrics['scaling_error']
+        test_err = test_metrics['mae']
         return test_err
 
     @torch.no_grad()
