@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 from copy import deepcopy
 from importlib import import_module
 from typing import Any, Dict, List, Literal, Optional, Tuple
@@ -124,7 +125,9 @@ class Pipeline:
         self.ensemble_type = ensemble_type
         
         logger = loguru.logger
+        logger.remove()
         log_path = os.path.join(out_dir, 'pipeline.log')
+        logger.add(sys.stdout, level='INFO')
         logger.add(log_path)
         handler = logging.FileHandler(log_path)
         optuna.logging.get_logger('optuna').addHandler(handler)
@@ -352,7 +355,7 @@ class Pipeline:
                 )
                 return np.mean(val_errors)
             else:
-                return self.train(self.lr, model_hparams, out_dir, trial)[0]
+                return self.train(self.lr, model_hparams, out_dir, trial=trial)[0]
 
         study = optuna.create_study(
             direction='minimize',
