@@ -102,26 +102,40 @@ class PolymerDataset(Dataset):
             featurizer = ComposeFeaturizer(feature_names, config, add_hydrogens)
             self.featurizer = featurizer
 
+            cache_path = None
             if 'mordred' in feature_names:
-                mordred_file = MORDRED_VOCAB 
+                cache_path = MORDRED_VOCAB 
                 cache: Dict[str, Any]
-                if mordred_file.exists():
+                if cache_path.exists():
+                    logger.info(f'Loading mordred cache from {cache_path}')
                     cache = torch.load(
-                        mordred_file, 
+                        cache_path, 
                         map_location='cpu', 
                     )
                 else:
                     cache = {}
             elif 'oligomer_mordred' in feature_names:
-                mordred_file = MORDRED_DIMER_VOCAB
+                cache_path = MORDRED_DIMER_VOCAB
                 cache: Dict[str, Any]
-                if mordred_file.exists():
+                if cache_path.exists():
+                    logger.info(f'Loading mordred cache from {cache_path}')
                     cache = torch.load(
-                        mordred_file, 
+                        cache_path, 
                         map_location='cpu', 
                     )
                 else:
                     cache = {}
+            
+            def _save_cache(cache: Dict[str, Any], path: str):
+                import os.path as osp
+                import tempfile
+                d = osp.dirname(path)
+                os.makedirs(d, exist_ok=True)
+                with tempfile.NamedTemporaryFile(dir = d, delete=False) as tmp:
+                    tmp_name = tmp.name
+                    torch.save(cache, tmp_name)
+                os.replace(tmp_name, path)
+
             
             data_list = []
             for i in tqdm(range(len(df_nonan)), desc='Featurizing'):
@@ -137,6 +151,7 @@ class PolymerDataset(Dataset):
                     else:
                         mol_dict = self.featurizer(rdmol)
                         cache[smiles] = mol_dict['descriptors']
+                        _save_cache(cache, cache_path)
                 else:
                     mol_dict = self.featurizer(rdmol)
                 #mol_dict = self.featurizer(rdmol)
@@ -194,7 +209,8 @@ class PolymerDataset(Dataset):
             #     g.max_node_global = self.max_node_global
             #     g.max_edge_global = self.max_edge_global
             if 'mordred' in feature_names or 'oligomer_mordred' in feature_names:
-                torch.save(cache, mordred_file)
+                _save_cache(cache, cache_path)
+                
             if save_processed:
                 os.makedirs(osp.dirname(processed_path), exist_ok=True)
                 logger.info(f'Saving processed dataset to {processed_path}')

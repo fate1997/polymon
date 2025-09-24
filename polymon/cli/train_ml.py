@@ -113,6 +113,11 @@ def train(
         f'Val size: {x_val.shape[0]}, '
         f'Test size: {x_test.shape[0]}'
     )
+
+    df_all = pd.read_csv(raw_csv_path)
+    if 'Source' in df_all.columns:
+        df_all = df_all[df_all['Source'].isin(sources)]
+    minmax_dict = {label: [df_all[label].min(), df_all[label].max()] for label in TARGETS if label in df_all.columns}
     
     # 2. Train model
     if not optimize_hparams:
@@ -147,7 +152,7 @@ def train(
                 model.fit(x_train_fold, y_train_fold)
                 y_hat = predict_batch(model, x_val_fold, batch_size=PREDICT_BATCH_SIZE)
                 maes.append(mean_absolute_error(y_val_fold, y_hat))
-                scaled_maes.append(scaling_error(y_val_fold, y_hat, label))
+                scaled_maes.append(scaling_error(y_val_fold, y_hat, label, minmax_dict))
                 r2s.append(r2_score(y_val_fold, y_hat))
                 y_pred_test.append(predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE))
             y_pred = np.mean(np.stack(y_pred_test, axis=0), axis=0)
@@ -157,15 +162,19 @@ def train(
         else:
             model.fit(x_train, y_train)
             y_pred = predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE)
-            logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
+            logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label, minmax_dict): .4f}')
             logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
             logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
 
     elif optimize_hparams:
         logger.info(f'Optimizing hyper-parameters for {model}...')
-        x_train = np.concatenate([x_train, x_val, x_test], axis=0)
-        y_train = np.concatenate([y_train, y_val, y_test], axis=0)
-        logger.info(f'Concatenating train and val data..., train size: {x_train.shape[0]}')
+        # x_train = np.concatenate([x_train, x_val, x_test], axis=0)
+        # y_train = np.concatenate([y_train, y_val, y_test], axis=0)
+        # logger.info(f'Concatenating train and val data..., train size: {x_train.shape[0]}')
+        if n_fold > 1:
+            x_train = np.concatenate([x_train, x_val, x_test], axis=0)
+            y_train = np.concatenate([y_train, y_val, y_test], axis=0)
+            logger.info(f'Concatenating train and val data..., train size: {x_train.shape[0]}')
         def objective(trial: optuna.Trial, model_name: str = model_name) -> float:
             hparams = get_hparams(trial, model_name)
             if model_type == 'tabpfn':
@@ -176,7 +185,7 @@ def train(
                     },
                 })
             model = MODELS[model_name](**hparams)
-            if n_fold is not None:
+            if n_fold > 1:
                 kf = KFold(n_splits=n_fold, shuffle=True, random_state=42)
                 maes = []
                 for fold, (train_idx, val_idx) in enumerate(kf.split(x_train)):
@@ -202,12 +211,40 @@ def train(
         hparams = get_hparams(study.best_trial, model_name)
         hparams.update(study.best_params)
         model = MODELS[model_name](**hparams)
-        model.fit(x_train, y_train)
-        y_pred = predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE)
+        if n_fold > 1:
+            logger.info('KFold for final performance evaluation using the best hyper-parameters')
+            x_train = np.concatenate([x_train, x_val, x_test], axis=0)
+            y_train = np.concatenate([y_train, y_val, y_test], axis=0)
+            maes, scaled_maes, r2s = [], [], []
+            y_pred_fold = []
+            kf = KFold(n_splits=n_fold, shuffle=True, random_state=42)
+            for fold, (train_idx, val_idx) in enumerate(kf.split(x_train)):
+                logger.info(f'Training fold {fold+1}/{n_fold}...')
+                model = MODELS[model_name](**hparams)
+                x_train_fold, x_val_fold = x_train[train_idx], x_train[val_idx]
+                y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx]
+                model.fit(x_train_fold, y_train_fold)
+                y_hat = predict_batch(model, x_val_fold, batch_size=PREDICT_BATCH_SIZE)
+                maes.append(mean_absolute_error(y_val_fold, y_hat))
+                scaled_maes.append(scaling_error(y_val_fold, y_hat, label, minmax_dict))
+                r2s.append(r2_score(y_val_fold, y_hat))
+                y_pred_fold.append(predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE))
+            y_pred = np.mean(np.stack(y_pred_fold, axis=0), axis=0)
+            logger.info(f'Scaled MAE: {np.mean(scaled_maes): .4f} ± {np.std(scaled_maes): .4f}')
+            logger.info(f'MAE: {np.mean(maes): .4f} ± {np.std(maes): .4f}')
+            logger.info(f'R2: {np.mean(r2s): .4f} ± {np.std(r2s): .4f}')
+        else:
+            model.fit(x_train, y_train)
+            y_pred = predict_batch(model, x_val, batch_size=PREDICT_BATCH_SIZE)
+            logger.info(f'Scaled MAE: {scaling_error(y_val, y_pred, label, minmax_dict): .4f}')
+            logger.info(f'MAE: {mean_absolute_error(y_val, y_pred): .4f}')
+            logger.info(f'R2: {r2_score(y_val, y_pred): .4f}')
+        # model.fit(x_train, y_train)
+        # y_pred = predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE)
         
-        logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
-        logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
-        logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
+        # logger.info(f'Scaled MAE: {scaling_error(y_test, y_pred, label): .4f}')
+        # logger.info(f'MAE: {mean_absolute_error(y_test, y_pred): .4f}')
+        # logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     
     # 3. Train production model
     logger.info(f'Training production model...')
@@ -232,8 +269,10 @@ def train(
     }).to_csv(results_path, index=False)
 
     logger.remove(sink_id)
-    
-    return scaling_error(y_test, y_pred, label), x_test.shape[0]
+    if n_fold > 1:
+        return np.mean(scaled_maes), x_test.shape[0]
+    else:
+        return scaling_error(y_test, y_pred, label, minmax_dict), x_test.shape[0]
 
 
 def main(args: argparse.Namespace):

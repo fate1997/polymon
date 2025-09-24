@@ -64,6 +64,10 @@ def get_lgbm_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     https://www.kaggle.com/code/hamzaghanmi/lgbm-hyperparameter-tuning-using-optuna
     """
     
+    max_depth = trial.suggest_int("max_depth", 1, 12)
+
+    # Set a cap for num_leaves depending on max_depth
+    max_leaves_cap = (2 ** max_depth) if max_depth > 0 else 512
     param = {
         'verbose': -1,
         'metric': 'mae', 
@@ -74,8 +78,10 @@ def get_lgbm_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         'colsample_bytree': trial.suggest_categorical('colsample_bytree', [0.3,0.4,0.5,0.6,0.7,0.8,0.9, 1.0]),
         'subsample': trial.suggest_categorical('subsample', [0.4,0.5,0.6,0.7,0.8,1.0]),
         'learning_rate': trial.suggest_categorical('learning_rate', [0.006,0.008,0.01,0.014,0.017,0.02]),
-        'max_depth': trial.suggest_categorical('max_depth', [10,20,100]),
-        'num_leaves' : trial.suggest_int('num_leaves', 1, 1000),
+        # 'max_depth': trial.suggest_categorical('max_depth', [10,20,100]),
+        # 'num_leaves' : trial.suggest_int('num_leaves', 1, 1000),
+        'max_depth': max_depth,
+        'num_leaves': trial.suggest_int("num_leaves", 2, max(2, max_leaves_cap)),
         'min_child_samples': trial.suggest_int('min_child_samples', 1, 300),
         'cat_smooth' : trial.suggest_int('min_data_per_groups', 1, 100)
     }
@@ -100,6 +106,7 @@ def get_catboost_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     param['loss_function'] = 'MAE'
     param['random_state'] = 2025
     param['logging_level'] = 'Silent'
+    param['allow_writing_files'] = False
     param['colsample_bylevel'] = trial.suggest_float('colsample_bylevel', 0.01, 0.90)
     param['border_count'] = trial.suggest_int('border_count', 30, 250)
     param['bootstrap_type'] = trial.suggest_categorical('bootstrap_type', ['Bayesian', 'Bernoulli', 'MVS'])
@@ -319,6 +326,28 @@ def get_fastkan_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     }
     return param
 
+@register_hparams('fourierkan')
+def get_fourierkan_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get FourierKAN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 32, 512, step=32),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+        "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
+    }
+    return param
+
+@register_hparams('efficientkan')
+def get_efficientkan_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get EfficientKAN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 32, 512, step=32),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+    }
+    return param
 
 @register_hparams('gatport')
 def get_gatport_hparams(trial: optuna.Trial) -> Dict[str, Any]:

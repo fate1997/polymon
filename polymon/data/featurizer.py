@@ -823,6 +823,10 @@ class DescFeaturizer(Featurizer):
             rdmol = PosFeaturizer().get_embeded_rdmol(rdmol, sanitize=True)
 
         from mordred import Calculator, descriptors
+        calc = Calculator(descriptors, ignore_3D=False)
+        if rdmol is None:
+            return torch.full((1, len(Descriptors3D.descList)), float('inf'))
+        
         rdmol = deepcopy(rdmol)
         smiles = Chem.MolToSmiles(rdmol)
         mordred_file = MORDRED_3D_VOCAB
@@ -837,8 +841,6 @@ class DescFeaturizer(Featurizer):
         if smiles in cache:
             descs = cache[smiles]
             return descs
-        
-        calc = Calculator(descriptors, ignore_3D=False)
         descs = calc(rdmol)
         descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
         cache[smiles] = descs
