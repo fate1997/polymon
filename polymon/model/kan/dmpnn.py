@@ -60,7 +60,8 @@ class KAN_DMPNN(BaseModel):
         ffn_activation: str = 'relu',
         ffn_layers: int = 3,
         ffn_dropout_p: float = 0.0,
-        ffn_dropout_at_input_no_act: bool = True
+        ffn_dropout_at_input_no_act: bool = True,
+        grid_size: int = 3,
     ):
         super().__init__()
         self.mode: str = mode
@@ -77,7 +78,9 @@ class KAN_DMPNN(BaseModel):
             activation=enc_activation,
             dropout_p=enc_dropout_p,
             aggregation=aggregation,
-            aggregation_norm=aggregation_norm)
+            aggregation_norm=aggregation_norm,
+            grid_size=grid_size,
+        )
 
         # get input size for ffn
         ffn_input: int = hidden_dim + global_features_size
