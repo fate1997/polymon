@@ -462,3 +462,36 @@ def get_kan_dmpnn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "grid_size": trial.suggest_int("grid_size", 2, 5, step=1),
     }
     return param
+
+
+@register_hparams('gatv2vn')
+def get_gatv2vn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GATv2-VirtualNode parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 8, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5, step=0.1),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+    }
+    return param
+
+
+@register_hparams('gatv2chainreadout')
+def get_gatv2chainreadout_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GATv2-ChainReadout parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 64, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 8, step=1),
+        "num_heads": trial.suggest_int("num_heads", 4, 8, step=4),
+        "pred_hidden_dim": trial.suggest_int("pred_hidden_dim", 16, 256, step=16),
+        "pred_dropout": trial.suggest_float("pred_dropout", 0.0, 0.5, step=0.1),
+        "pred_layers": trial.suggest_int("pred_layers", 1, 3, step=1),
+        "chain_length": trial.suggest_categorical("chain_length", [2**i for i in range(1, 10)]),
+    }
+    return param
