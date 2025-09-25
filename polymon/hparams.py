@@ -495,3 +495,17 @@ def get_gatv2chainreadout_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "chain_length": trial.suggest_categorical("chain_length", [2**i for i in range(1, 10)]),
     }
     return param
+
+
+@register_hparams('gcn')
+def get_gcn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get GCN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "in_channels": trial.suggest_int("in_channels", 16, 256, step=16),
+        "hidden_dim": trial.suggest_int("hidden_dim", 16, 256, step=16),
+        "num_layers": trial.suggest_int("num_layers", 2, 4, step=1),
+        "dropout": trial.suggest_float("dropout", 0.0, 0.5, step=0.1),
+    }
+    return param

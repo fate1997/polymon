@@ -10,7 +10,7 @@ from polymon.model.gatv2.kan_gatv2 import KAN_GATv2
 from polymon.model.gatv2.lineevo import GATv2LineEvo
 from polymon.model.gatv2.multi_fidelity import GATv2_Source
 from polymon.model.gatv2.position_encoding import GATv2_PE
-from polymon.model.gnn import (GIN, PNA, AttentiveFPWrapper, DimeNetPP,
+from polymon.model.gnn import (GCNWrapper, GIN, PNA, AttentiveFPWrapper, DimeNetPP,
                                GATPort, GATv2, GATv2VirtualNode,
                                GraphTransformer)
 from polymon.model.gps.gps import KAN_GPS, GraphGPS
@@ -247,6 +247,12 @@ def build_model(
         }
         hparams.update(input_args)
         model = KAN_DMPNN(**hparams)
+    elif model_type == 'gcn':
+        input_args = {
+            'in_channels': num_node_features,
+        }
+        hparams.update(input_args)
+        model = GCNWrapper(**hparams)
     else:
         raise ValueError(f"Model type {model_type} not implemented")
     

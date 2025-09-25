@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import (AttentiveFP, BatchNorm, DimeNetPlusPlus,
                                 GATv2Conv, GINConv, PNAConv, TransformerConv,
-                                global_add_pool, global_max_pool)
+                                global_add_pool, global_max_pool, GCN)
 from torch_geometric.utils import degree
 
 from polymon.data.polymer import Polymer
@@ -188,6 +188,66 @@ class AttentiveFPWrapper(BaseModel):
             batch.edge_attr, 
             batch.batch
         )
+        
+
+@register_init_params
+class GCNWrapper(BaseModel):
+    r"""GCN model wrapper.
+    
+    Args:
+        in_channels (int): The number of input channels.
+        hidden_dim (int): The number of hidden dimensions.
+        edge_dim (int): The number of edge features.
+        num_layers (int): The number of layers.
+        out_channels (int): The number of output channels. Default to :obj:`1`.
+        num_timesteps (int): The number of timesteps. Default to :obj:`2`.
+    """
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_dim: int,
+        num_layers: int,
+        dropout: float = 0.0,
+        pred_hidden_dim: int = 128,
+        pred_dropout: float = 0.2,
+        pred_layers: int = 2,
+        activation: str = 'prelu',
+    ):
+        super(GCNWrapper, self).__init__()
+
+        self.gcn = GCN(
+            in_channels=in_channels,
+            hidden_channels=hidden_dim,
+            out_channels=hidden_dim,
+            num_layers=num_layers,
+            dropout=dropout,
+        )
+        self.readout = ReadoutPhase(hidden_dim)
+        self.predict = MLP(
+            input_dim=2*hidden_dim,
+            hidden_dim=pred_hidden_dim,
+            output_dim=1,
+            n_layers=pred_layers,
+            dropout=pred_dropout,
+            activation=activation
+        )
+
+    def forward(self, batch: Polymer):
+        """Forward pass.
+        
+        Args:
+            batch (Polymer): The batch of data.
+        
+        Returns:
+            torch.Tensor: The output of the model.
+        """
+        x = self.gcn(
+            x=batch.x, 
+            edge_index=batch.edge_index, 
+            edge_attr=batch.edge_attr, 
+            batch=batch.batch
+        )
+        return self.predict(self.readout(x, batch.batch))
 
 
 @register_init_params
