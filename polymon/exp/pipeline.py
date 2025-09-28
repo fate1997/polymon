@@ -646,6 +646,8 @@ class Pipeline:
             nan_smiles = [
                 '*Nc1cc2c3cccc(-c4ccc(C)cc4)c3c3c(-c4ccc(C)cc4)c(N*)c4ccccc4c3c2c2ccccc12',
                 '*C(=Cc1cc(OCCCCCCCC)c(C=C(c2ccccc2)c2ccc3c(c2)Sc2ccc(*)cc2S3)cc1OCCCCCCCC)c1ccccc1',
+                '*c1ccc2c(c1)C(=O)N(c1ccc(-c3ccc(N4C(=O)c5ccc(C(*)(C(F)(F)F)C(F)(F)F)cc5C4=O)c(OCCCCCCOc4ccc(/C=C/c5ccc(F)cc5)cc4)c3)cc1OCCCCCCOc1ccc(/C=C/c3ccc(F)cc3)cc1)C2=O',
+                
             ]
             dataset.data_list = [
                 data for data in dataset.data_list if data.smiles not in nan_smiles
