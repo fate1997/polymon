@@ -468,7 +468,6 @@ class Pipeline:
             self.batch_size,
             n_train=0.95,
             n_val=0.05,
-            production_run=True,
             augmentation=self.augmentation,
         )
         self.train(None, model_hparams, out_dir, loaders, model)
@@ -642,6 +641,15 @@ class Pipeline:
                 pre_transform=selector,
                 estimator=self.estimator,
             )
+        
+        if self.model_type.lower() in ['dimenetpp']:
+            nan_smiles = [
+                '*Nc1cc2c3cccc(-c4ccc(C)cc4)c3c3c(-c4ccc(C)cc4)c(N*)c4ccccc4c3c2c2ccccc12',
+                '*C(=Cc1cc(OCCCCCCCC)c(C=C(c2ccccc2)c2ccc3c(c2)Sc2ccc(*)cc2S3)cc1OCCCCCCCC)c1ccccc1',
+            ]
+            dataset.data_list = [
+                data for data in dataset.data_list if data.smiles not in nan_smiles
+            ]
         
         self.logger.info(f'Atom features: {dataset.num_node_features}')
         self.logger.info(f'Bond features: {dataset.num_edge_features}')
