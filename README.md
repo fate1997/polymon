@@ -27,13 +27,13 @@ To be updated.
 
 ## Progress
 GNNs
-- [ ] GATv2
-- [ ] GIN
+- [x] GATv2
+- [x] GIN
 - [ ] DMPNN
-- [ ] AttentiveFP
+- [x] AttentiveFP
 - [ ] GPS
-- [ ] PNA
-- [ ] GT
+- [x] PNA
+- [x] GT
 - [ ] GCN
 
 Density Multi-fidelity
@@ -44,12 +44,12 @@ Density Multi-fidelity
 
 Residual
 - [ ] graph embeddings from other properties (4 x 5)
-- [ ] Rg-residual
+- [x] Rg-residual
 - [x] Density-residual vdw
 - [x] Density-residual fedors
 - [ ] Density-residual ibm
 - [ ] Tg-residual
-- [ ] Atom-contribution (re-implement with training set to train atom contribution)
+- [ ] Atom-contribution (re-implement with training set to train atom contribution) It's a little bit hard to implement.
 
 Actively learning
 - [ ] Rg + 1st round
@@ -59,11 +59,12 @@ Actively learning
 Representation
 - [ ] GATv2-vn
 - [x] GATv2 periodic
-- [ ] KAN-GATv2
+- [x] KAN-GATv2
 - [ ] KAN-GPS
-- [ ] KAN-GIN
+- [x] KAN-GIN
 - [ ] KAN-DMPNN
 - [ ] FastKAN-GATv2
 - [ ] GATv2-chain-readout
-- [ ] GATv2-lineevo-readout
+- [x] GATv2-lineevo-readout
 - [x] GATv2_PE
+- [ ] GATv2_PE_periodic
