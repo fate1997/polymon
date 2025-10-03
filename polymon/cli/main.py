@@ -100,6 +100,13 @@ def parse_args():
         default='rf',
         help='Model to use for training'
     )
+
+    train_parser.add_argument(
+        '--split', 
+        type=str, 
+        default='random',
+        help='Mode to split the data into training, validation, and test sets'
+    )
     
     # If not model in `MODELS.keys()`, add more arguments for DL models
     train_parser.add_argument(

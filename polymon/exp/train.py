@@ -2,7 +2,7 @@ import logging
 import os
 from glob import glob
 from time import perf_counter
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -38,6 +38,7 @@ class Trainer:
         lr: float,
         num_epochs: int,
         logger: logging.Logger,
+        minmax_dict: Dict[str, Tuple[float, float]],
         device: torch.device = 'cuda',
         early_stopping_patience: int = 10,
     ):
@@ -54,6 +55,8 @@ class Trainer:
             patience=early_stopping_patience,
             save_dir=os.path.join(self.out_dir, 'ckpt'),
         )  
+
+        self.minmax_dict = minmax_dict
 
     def build_optimizer(self) -> torch.optim.Optimizer:
         """Build the optimizer.
@@ -74,6 +77,7 @@ class Trainer:
         val_loader: DataLoader,
         optimizer: torch.optim.Optimizer,
         label: str,
+        minmax_dict: Dict[str, Tuple[float, float]] = None,
     ) -> float:
         """Train the model for one epoch.
         
@@ -95,8 +99,8 @@ class Trainer:
             optimizer.step()
 
         # Report progress
-        val_metrics = self.eval(val_loader, label)
-        train_metrics = self.eval(train_loader, label)
+        val_metrics = self.eval(val_loader, label, self.minmax_dict)
+        train_metrics = self.eval(train_loader, label, self.minmax_dict)
         self.logger.info(
             f'[{str(ith_epoch).zfill(epoch_digits)}/{self.num_epochs}]'
             f'[Loss: {loss.item():.2f}]'
@@ -113,6 +117,7 @@ class Trainer:
         val_loader: DataLoader,
         test_loader: Optional[DataLoader] = None,
         label: str = 'Rg',
+        minmax_dict: Dict[str, Tuple[float, float]] = None,
     ):
         """Train the model.
         
@@ -130,6 +135,7 @@ class Trainer:
                 val_loader, 
                 optimizer,
                 label,
+                self.minmax_dict,
             )
 
             # Early stopping
@@ -150,7 +156,7 @@ class Trainer:
             test_loader = val_loader
             self.logger.info('No test set provided, using validation set as test set')
             
-        test_metrics = self.eval(test_loader, label)
+        test_metrics = self.eval(test_loader, label, self.minmax_dict)
         for metric_name, metric_value in test_metrics.items():
             self.logger.info(f'{metric_name}: {metric_value:.4f}')
 
@@ -159,13 +165,15 @@ class Trainer:
         self.logger.info(f'--------------------------------')
         
         test_err = test_metrics['scaling_error']
-        return test_err
+        test_mae_error = test_metrics['mae']
+        return test_err, test_mae_error
 
     @torch.no_grad()
     def eval(
         self,
         loader: DataLoader,
         label: str,
+        minmax_dict: Dict[str, Tuple[float, float]] = None,
     ) -> Dict[str, float]:
         """Evaluate the model on the given data loader.
         
@@ -210,5 +218,5 @@ class Trainer:
         metrics = {}
         metrics['mae'] = mean_absolute_error(y_trues, y_preds)
         metrics['r2'] = r2_score(y_trues, y_preds)
-        metrics['scaling_error'] = scaling_error(y_trues, y_preds, label)
+        metrics['scaling_error'] = scaling_error(y_trues, y_preds, label, self.minmax_dict)
         return metrics

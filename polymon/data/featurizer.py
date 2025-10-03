@@ -827,27 +827,27 @@ class DescFeaturizer(Featurizer):
         if rdmol is None:
             return torch.full((1, len(Descriptors3D.descList)), float('inf'))
         
-        rdmol = deepcopy(rdmol)
-        smiles = Chem.MolToSmiles(rdmol)
-        mordred_file = MORDRED_3D_VOCAB
-        cache: Dict[str, Any]
-        if mordred_file.exists():
-            cache = torch.load(
-                mordred_file, 
-                map_location='cpu', 
-                weights_only=False)
-        else:
-            cache = {}
-        if smiles in cache:
-            descs = cache[smiles]
-            return descs
+        # rdmol = deepcopy(rdmol)
+        # smiles = Chem.MolToSmiles(rdmol)
+        # mordred_file = MORDRED_3D_VOCAB
+        # cache: Dict[str, Any]
+        # if mordred_file.exists():
+        #     cache = torch.load(
+        #         mordred_file, 
+        #         map_location='cpu', 
+        #         weights_only=False)
+        # else:
+        #     cache = {}
+        # if smiles in cache:
+        #     descs = cache[smiles]
+        #     return descs
         descs = calc(rdmol)
         descs = torch.tensor(descs, dtype=torch.float).unsqueeze(0)
-        cache[smiles] = descs
-
-        temp_path = mordred_file.with_suffix(mordred_file.suffix + '.tmp')
-        torch.save(cache, temp_path)
-        temp_path.replace(mordred_file)
+        
+        # cache[smiles] = descs
+        # temp_path = mordred_file.with_suffix(mordred_file.suffix + '.tmp')
+        # torch.save(cache, temp_path)
+        # temp_path.replace(mordred_file)
         
         return descs
     

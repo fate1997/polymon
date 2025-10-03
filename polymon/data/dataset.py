@@ -3,6 +3,7 @@ import os.path as osp
 import random
 from typing import Callable, List, Literal, Optional, Tuple, Union, Dict, Any
 
+import numpy as np
 import pandas as pd
 import torch
 from loguru import logger
@@ -15,7 +16,7 @@ from tqdm import tqdm
 from polymon.data.dedup import Dedup
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import OligomerBuilder, Polymer
-from polymon.setting import PRETRAINED_MODELS, UNIQUE_ATOM_NUMS, MORDRED_VOCAB, MORDRED_DIMER_VOCAB
+from polymon.setting import PRETRAINED_MODELS, UNIQUE_ATOM_NUMS, MORDRED_VOCAB, MORDRED_DIMER_VOCAB, MORDRED_3D_VOCAB
 
 from polymon.model.esa.esa_utils import get_max_node_edge_global
 
@@ -125,6 +126,17 @@ class PolymerDataset(Dataset):
                     )
                 else:
                     cache = {}
+            elif 'mordred3d' in feature_names:
+                cache_path = MORDRED_3D_VOCAB
+                cache: Dict[str, Any]
+                if cache_path.exists():
+                    logger.info(f'Loading mordred cache from {cache_path}')
+                    cache = torch.load(
+                        cache_path, 
+                        map_location='cpu', 
+                    )
+                else:
+                    cache = {}
             
             def _save_cache(cache: Dict[str, Any], path: str):
                 import os.path as osp
@@ -145,7 +157,7 @@ class PolymerDataset(Dataset):
                 if 'source' in feature_names:
                     rdmol.SetProp('Source', row['Source'])
                 label = row[self.label_column]
-                if 'mordred' in feature_names or 'oligomer_mordred' in feature_names:
+                if 'mordred' in feature_names or 'oligomer_mordred' in feature_names or 'mordred3d' in feature_names:
                     if smiles in cache:
                         mol_dict = {'descriptors': cache[smiles]}
                     else:
@@ -161,6 +173,7 @@ class PolymerDataset(Dataset):
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
                 if 'Source' in df_nonan.columns:
                     mol_dict['source'] = int(row['Source'] == 'internal')
+                    mol_dict['source_name'] = row['Source']
                 if None in mol_dict.values():
                     logger.warning(
                         f'Skipping {smiles} because of None in featurization'
@@ -208,7 +221,7 @@ class PolymerDataset(Dataset):
             # for g in self.data_list:
             #     g.max_node_global = self.max_node_global
             #     g.max_edge_global = self.max_edge_global
-            if 'mordred' in feature_names or 'oligomer_mordred' in feature_names:
+            if 'mordred' in feature_names or 'oligomer_mordred' in feature_names or 'mordred3d' in feature_names:
                 _save_cache(cache, cache_path)
                 
             if save_processed:
@@ -244,7 +257,7 @@ class PolymerDataset(Dataset):
         batch_size: int,
         n_train: Union[int, float],
         n_val: Union[int, float],
-        mode: Literal['random', 'scaffold'] = 'random',
+        mode: Literal['random', 'scaffold', 'similarity'] = 'random',
         num_workers: int = 0,
         augmentation: bool = False,
     ) -> Tuple[DataLoader, DataLoader, DataLoader]:
@@ -281,6 +294,8 @@ class PolymerDataset(Dataset):
             train_set, val_set, test_set = self._get_random_splits(n_train, n_val)
         elif mode == 'scaffold':
             train_set, val_set, test_set = self._get_scaffold_splits(n_train, n_val)
+        elif mode == 'similarity':
+            train_set, val_set, test_set, indices = self._get_similarity_splits(n_train, n_val)
         else:
             raise ValueError(f'Invalid split mode: {mode}')
 
@@ -311,6 +326,8 @@ class PolymerDataset(Dataset):
             )
         else:
             test_loader = None
+        if mode == 'similarity':
+            return train_loader, val_loader, test_loader, indices
         return train_loader, val_loader, test_loader
 
     def _get_random_splits(
@@ -366,3 +383,76 @@ class PolymerDataset(Dataset):
         val_set = self[valid_inds]
         test_set = self[test_inds]
         return train_set, val_set, test_set
+    
+    def _get_similarity_splits(
+        self,
+        n_train: int,
+        n_val: int,
+    ) -> Tuple[Dataset, Dataset, Dataset]:
+        logger.info('Splitting dataset by similarity...')
+        from rdkit.Chem import rdFingerprintGenerator
+        from rdkit.DataStructs import BulkTanimotoSimilarity, ConvertToNumpyArray
+        fps, valid_indices = [], []
+        for idx, data in enumerate(self.data_list):
+            smiles = data.smiles
+            mol = Chem.MolFromSmiles(smiles)
+            if mol:
+                mfgen = rdFingerprintGenerator.GetMorganGenerator(4, fpSize=2048)
+                fps.append(mfgen.GetFingerprint(mol))
+                valid_indices.append(idx)
+
+        n = len(valid_indices)
+        if n_train + n_val > n:
+            raise ValueError(f'Sum of n_train and n_val exceeds dataset size: {n_train + n_val} > {n}')
+        
+        scores = np.array([sum(BulkTanimotoSimilarity(fp, fps)) for fp in tqdm(fps, desc='Calculating similarity scores')])
+        order = np.argsort(scores)  # ascending => most dissimilar first
+
+        test_count = n - n_train - n_val
+        def is_initial(local_idx: int) -> bool:
+            # local_idx is an index into fps/valid_indices
+            orig_idx = valid_indices[local_idx]
+            return getattr(self.data_list[orig_idx], "source_name", None) == "initial"
+
+        order_initial = [i for i in order if is_initial(i)]
+
+        if len(order_initial) < test_count:
+            have = len(order_initial)
+            raise ValueError(
+                f'Not enough samples from source_name="initial" to form test set of size {test_count}: only {have} available.'
+            )
+
+        # Take the most dissimilar 'initial' samples for the test set
+        test_local = np.array(order_initial[:test_count], dtype=int)
+
+        # Remaining local indices (for train/val) are all others
+        remaining = np.array([i for i in order if i not in set(test_local)], dtype=int)
+
+        # Random split remaining into train/val
+        perm = np.random.permutation(remaining)
+        if len(perm) < (n_train + n_val):
+            # This should not happen if counts sum correctly, but guard anyway
+            raise RuntimeError(
+                f"Internal error: remaining({len(perm)}) < n_train + n_val ({n_train + n_val})."
+            )
+        train_local = perm[:n_train]
+        val_local = perm[n_train:n_train + n_val]
+
+        # Map back to original indices
+        test_inds  = [valid_indices[i] for i in test_local.tolist()]
+        train_inds = [valid_indices[i] for i in train_local.tolist()]
+        val_inds   = [valid_indices[i] for i in val_local.tolist()]
+
+        # Slice datasets
+        train_set = self[train_inds]
+        val_set   = self[val_inds]
+        test_set  = self[test_inds]
+
+        return train_set, val_set, test_set, {
+            'train': np.asarray(train_inds, dtype=int),
+            'val': np.asarray(val_inds, dtype=int),
+            'test': np.asarray(test_inds, dtype=int),
+        }
+
+        
+        

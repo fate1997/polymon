@@ -45,6 +45,7 @@ class Polymer(Data):
         smiles: Optional[str] = None,
         identifier: Optional[str] = None,
         source: Optional[str] = None,
+        source_name: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(x, edge_index, edge_attr, y, pos, **kwargs)
@@ -62,6 +63,7 @@ class Polymer(Data):
         self.smiles = smiles
         self.identifier = identifier
         self.source = source
+        self.source_name = source_name
         
     def __repr__(self) -> str:
         if getattr(self, 'identifier', None) is None:

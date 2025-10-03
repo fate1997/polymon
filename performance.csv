@@ -28,3 +28,39 @@ rf,0.0251,,0.0288,,,0.0276,oligomer_mordred-debug INCORRECT
 rf,0.0278,,,,,0.0278,rdkit2d-debug INCORRECT
 rf,0.0161,0.0043,0.0265,0.0058,0.0169,0.0146,oligomer_mordred-formal INCORRECT
 rf,0.0256,,,,,0.0256,rdkit2d-debug INCORRECT
+rf,0.0250,0.0072,0.0372,0.0156,0.0146,0.0207,ecfp4-formal INCORRECT
+xgb,0.0141,0.0043,0.0463,0.0134,0.0165,0.0213,ecfp4-formal INCORRECT
+rf,0.0144,0.0032,0.0144,0.0059,0.0145,0.0108,oligomer_rdkit2d-formal INCORRECT
+rf,0.0360,0.0110,0.0495,0.0198,0.0273,0.0297,oligomer_rdkit2d-formal
+xgb,0.0324,0.0084,0.0450,0.0142,0.0251,0.0258,oligomer_rdkit2d-formal
+rf,0.0394,0.0136,0.0547,0.0298,0.0261,0.0342,ecfp4-formal
+xgb,0.0306,0.0115,0.0507,0.0244,0.0233,0.0298,ecfp4-formal
+lgbm,0.0295,0.0089,0.0497,0.0128,0.0224,0.0256,oligomer_rdkit2d-formal
+lgbm,0.0289,0.0099,0.0486,0.0222,0.0224,0.0280,ecfp4-formal
+rf,0.0393,0.0139,0.0601,0.0253,0.0295,0.0351,maccs-formal
+xgb,0.0388,0.0123,0.0581,0.0225,0.0301,0.0338,maccs-formal
+lgbm,0.0375,0.0139,0.0557,0.0280,0.0271,0.0340,maccs-formal
+rf,0.0963,0.0328,0.0753,0.0789,0.0420,0.0654,rdkit3d-formal
+xgb,0.0965,0.0333,0.0716,0.0820,0.0448,0.0662,rdkit3d-formal
+lgbm,0.1014,0.0347,0.0761,0.0712,0.0457,0.0651,rdkit3d-formal
+rf,0.0374,0.0108,0.0503,0.0192,0.0275,0.0300,rdkit2d-formal
+xgb,0.0362,0.0087,0.0466,0.0133,0.0262,0.0267,rdkit2d-formal
+lgbm,0.0307,0.0092,0.0474,0.0135,0.0226,0.0255,rdkit2d-formal
+rf,0.0352,0.0107,0.0510,0.0145,0.0262,0.0282,mordred-formal
+rf,0.0342,0.0107,0.0471,0.0143,0.0250,0.0268,oligomer_mordred-formal
+xgb,0.0290,0.0092,0.0398,0.0107,0.0241,0.0230,mordred-formal
+xgb,0.0296,0.0080,0.0412,0.0108,0.0232,0.0231,oligomer_mordred-formal
+rf,0.0390,0.0138,0.0561,0.0306,0.0269,0.0350,oligomer_ecfp4-formal
+xgb,0.0369,0.0108,0.0465,0.0228,0.0241,0.0291,oligomer_ecfp4-formal
+lgbm,0.0287,0.0138,0.0480,0.0247,0.0238,0.0294,oligomer_ecfp4-formal
+lgbm,0.0271,0.0076,0.0449,0.0103,0.0205,0.0229,oligomer_mordred-formal
+catboost,0.0323,0.0119,0.0478,0.0254,0.0223,0.0293,ecfp4-formal
+catboost,0.0370,0.0121,0.0578,0.0211,0.0266,0.0322,maccs-formal
+gatv2,,,,,0.0305,0.0305,debug (K-Fold) (hparams opt)
+gatv2,,,,,0.0314,0.0314,debug (K-Fold) (hparams opt)
+gatv2,,,,,0.0308,0.0308,debug (K-Fold) (hparams opt)
+catboost,0.0287,0.0082,0.0408,0.0102,0.0218,0.0224,oligomer_mordred-formal
+catboost,0.0966,0.0325,0.0256,0.0706,0.0382,0.0499,rdkit3d-formal
+catboost,0.0308,0.0086,0.0150,0.0131,0.0250,0.0180,rdkit2d-formal
+lgbm,0.0276,0.0080,0.0147,0.0131,0.0212,0.0165,mordred-formal
+catboost,0.0295,0.0081,0.0142,0.0109,0.0231,0.0165,mordred-formal

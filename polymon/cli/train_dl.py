@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import pathlib
 
 import numpy as np
 import pandas as pd
@@ -132,14 +133,40 @@ def main(args: argparse.Namespace):
             # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
             if not args.skip_train:
                 if args.n_fold == 1 and args.n_estimator == 1:
-                    test_err, _ = pipeline.train(lr=args.lr, model_hparams=hparams)
-                if args.n_fold > 1 and args.n_estimator == 1:
-                    test_err = pipeline.cross_validation(
+                    test_err, _, model = pipeline.train(lr=args.lr, model_hparams=hparams)
+                    test_smiles = [pipeline.test_loader.dataset[i].smiles for i in range(len(pipeline.test_loader.dataset))]
+                    y_pred = model.predict(test_smiles).detach().cpu().numpy()
+                    y_true = np.concatenate([pipeline.test_loader.dataset[i].y.detach().cpu().numpy() for i in range(len(pipeline.test_loader.dataset))])
+                    results_path = os.path.join(out_dir, 'eval.csv')
+                    pd.DataFrame({
+                        'SMILES': test_smiles,
+                        'y_true': y_true.squeeze(),
+                        'y_pred': y_pred.squeeze(),
+                    }).to_csv(results_path, index=False)
+                    
+                if args.n_fold > 1 and args.n_estimator == 1 and args.split_mode != 'similarity':
+                    test_err, _, _ = pipeline.cross_validation(
                         n_fold=args.n_fold,
                         model_hparams=hparams,
                         lr=args.lr,
                     )
                     test_err = np.mean(test_err)
+                else:
+                    test_err, _, models = pipeline.cross_validation(
+                        n_fold=args.n_fold,
+                        model_hparams=hparams,
+                        lr=args.lr,
+                    )
+                    test_err = np.mean(test_err)
+                    test_smiles = [pipeline.test_loader.dataset[i].smiles for i in range(len(pipeline.test_loader.dataset))]
+                    y_pred = np.mean([model.predict(test_smiles).detach().cpu().numpy() for model in models], axis=0)
+                    y_true = np.concatenate([pipeline.test_loader.dataset[i].y.detach().cpu().numpy() for i in range(len(pipeline.test_loader.dataset))])
+                    results_path = os.path.join(out_dir, 'eval.csv')
+                    pd.DataFrame({
+                        'SMILES': test_smiles,
+                        'y_true': y_true.squeeze(),
+                        'y_pred': y_pred.squeeze(),
+                    }).to_csv(results_path, index=False)
                 model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
             else:
                 test_err = np.nan
@@ -167,8 +194,9 @@ def main(args: argparse.Namespace):
         
         performance[label] = test_err
         n_tests.append(len(pipeline.test_loader.dataset))
-
-    results_path = os.path.join(REPO_DIR, 'performance.csv')
+    
+    CWD = pathlib.Path.cwd()
+    results_path = os.path.join(CWD, 'performance.csv')
     df = pd.read_csv(results_path)
     property_weight = normalize_property_weight(n_tests)
     performance['score'] = np.average(list(performance.values()), weights=property_weight)
