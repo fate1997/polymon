@@ -14,10 +14,10 @@ from polymon.model.base import BaseModel
 from polymon.model.utils import MLP, ReadoutPhase, init_weight
 from polymon.model.register import register_init_params
 
-from polymon.model.esa.esa_model import ESA
-from polymon.model.esa.esa_module import GatedMLPMulti
-from polymon.model.esa.esa_utils import BN, LN, nearest_multiple_of_8
-from torch_geometric.utils import to_dense_batch
+# from polymon.model.esa.esa_model import ESA
+# from polymon.model.esa.esa_module import GatedMLPMulti
+# from polymon.model.esa.esa_utils import BN, LN, nearest_multiple_of_8
+# from torch_geometric.utils import to_dense_batch
 
 import math
 from typing import List

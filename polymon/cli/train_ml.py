@@ -122,6 +122,7 @@ def train(
     if 'Source' in df_all.columns:
         df_all = df_all[df_all['Source'].isin(sources)]
     minmax_dict = {label: [df_all[label].min(), df_all[label].max()] for label in TARGETS if label in df_all.columns}
+    logger.info(f'Data range: {minmax_dict}')
     
     # 2. Train model
     if not optimize_hparams:
