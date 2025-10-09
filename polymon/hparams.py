@@ -311,6 +311,17 @@ def get_fastkan_gatv2_hparams(trial: optuna.Trial) -> Dict[str, Any]:
     }
     return param
 
+@register_hparams('kan')
+def get_kan_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get KAN parameters for hyper-parameter tuning.
+    """
+    
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 32, 512, step=32),
+        "num_layers": trial.suggest_int("num_layers", 2, 5, step=1),
+    }
+    return param
+
 
 @register_hparams('fastkan')
 def get_fastkan_hparams(trial: optuna.Trial) -> Dict[str, Any]:

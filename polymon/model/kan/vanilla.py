@@ -14,7 +14,7 @@ class KANWrapper(BaseModel):
         num_layers: int,
         grid: int = 5,
         k: int = 3,
-        device: str = 'cpu',
+        device: str = 'cuda',
     ):
         super(KANWrapper, self).__init__()
         self.kan = KAN(

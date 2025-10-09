@@ -18,7 +18,7 @@ from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import OligomerBuilder, Polymer
 from polymon.setting import PRETRAINED_MODELS, UNIQUE_ATOM_NUMS, MORDRED_VOCAB, MORDRED_DIMER_VOCAB, MORDRED_3D_VOCAB
 
-from polymon.model.esa.esa_utils import get_max_node_edge_global
+# from polymon.model.esa.esa_utils import get_max_node_edge_global
 
 class PolymerDataset(Dataset):
     r"""A dataset that contains the polymers. During the initialization, the 
