@@ -39,7 +39,7 @@ class GraphGPS(BaseModel):
         walk_length: int = 20,
         pe_dim: int = 8, 
         attn_type: Literal['performer', 'multihead'] = 'multihead', 
-        attn_kwargs: Dict[str, Any]=None,
+        attn_dropout: float = 0.0,
     ):
         super().__init__()
 
@@ -56,7 +56,7 @@ class GraphGPS(BaseModel):
                 nn.Linear(hidden_dim, hidden_dim),
             )
             conv = GPSConv(hidden_dim, GINEConv(network), heads=heads,
-                           attn_type=attn_type, attn_kwargs=attn_kwargs)
+                           attn_type=attn_type, attn_kwargs={'dropout': attn_dropout})
             self.convs.append(conv)
 
         self.readout = ReadoutPhase(hidden_dim)
@@ -118,7 +118,7 @@ class KAN_GPS(BaseModel):
         walk_length: int = 20,
         pe_dim: int = 8, 
         attn_type: Literal['performer', 'multihead', 'fastkan'] = 'fastkan', 
-        attn_kwargs: Dict[str, Any]=None,
+        attn_dropout: float = 0.0,
         grid_size: int = 3,
     ):
         super().__init__()
@@ -132,7 +132,7 @@ class KAN_GPS(BaseModel):
         for _ in range(num_layers):
             network = FastKAN(layers_hidden=[hidden_dim] * 2)
             conv = GPSConv(hidden_dim, GINEConv(network), heads=heads,
-                           attn_type=attn_type, attn_kwargs=attn_kwargs)
+                           attn_type=attn_type, attn_kwargs={'dropout': attn_dropout})
             self.convs.append(conv)
         self.readout = ReadoutPhase(hidden_dim)
 

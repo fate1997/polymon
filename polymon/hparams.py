@@ -261,9 +261,7 @@ def get_gps_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "pe_dim": trial.suggest_int("pe_dim", 4, 8, step=1),
         "heads": trial.suggest_int("heads", 4, 8, step=4),
         "attn_type": trial.suggest_categorical("attn_type", ["performer", "multihead"]),
-        "attn_kwargs": {
-            "dropout": trial.suggest_float("dropout", 0.0, 0.5, step=0.1),
-        },
+        "attn_dropout": trial.suggest_float("attn_dropout", 0.0, 0.5, step=0.1),
     }
     return param
 
