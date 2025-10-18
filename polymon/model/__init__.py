@@ -32,6 +32,7 @@ def build_model(
     num_node_features: int,
     num_edge_features: int,
     num_descriptors: int,
+    num_tasks: int,
     hparams: Dict[str, Any]
 ) -> 'BaseModel':
     """Build a model from a model type and input arguments. Currently, the 
@@ -59,6 +60,7 @@ def build_model(
             'num_atom_features': num_node_features,
             'edge_dim': num_edge_features,
             'num_descriptors': num_descriptors,
+            'num_tasks': num_tasks,
         }
         hparams.update(input_args)
         model = GATv2(**hparams)

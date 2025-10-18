@@ -16,7 +16,7 @@ from polymon.setting import DEFAULT_TOPK_DESCRIPTORS
 
 
 class Normalizer:
-    def __init__(self, mean: float, std: float, eps: float = 1e-6):
+    def __init__(self, mean: torch.Tensor, std: torch.Tensor, eps: float = 1e-6):
         self.mean = mean
         self.std = std + eps
     
@@ -31,17 +31,19 @@ class Normalizer:
     def from_loader(cls, loader: DataLoader) -> 'Normalizer':
         x = []
         for batch in loader:
-            x.append(batch.y.cpu().numpy().ravel())
+            x.append(batch.y.cpu().numpy())
         x = np.concatenate(x, 0)
         mean = x.mean(axis=0)
         std = x.std(axis=0)
+        mean = torch.from_numpy(mean)
+        std = torch.from_numpy(std)
         return cls(mean, std)
 
     def __call__(self, x: torch.Tensor) -> torch.Tensor:
-        return (x - self.mean) / self.std
+        return (x - self.mean.to(x.device)) / self.std.to(x.device)
     
     def inverse(self, x: torch.Tensor) -> torch.Tensor:
-        return x * self.std + self.mean
+        return x * self.std.to(x.device) + self.mean.to(x.device)
 
 
 class LogNormalizer:

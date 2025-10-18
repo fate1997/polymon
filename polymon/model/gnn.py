@@ -53,12 +53,13 @@ class GATv2(BaseModel):
         num_atom_features: int, 
         hidden_dim: int, 
         num_layers: int, 
+        num_tasks: int,
         num_heads: int=8, 
         pred_hidden_dim: int=128, 
         pred_dropout: float=0.2, 
         pred_layers:int=2,
         activation: str='prelu', 
-        num_tasks: int = 1,
+        #num_tasks: int = 1,
         bias: bool = True, 
         dropout: float = 0.1, 
         edge_dim: int = None,
@@ -125,7 +126,6 @@ class GATv2(BaseModel):
         
         if self.num_descriptors > 0:
             output = torch.cat([output, batch.descriptors], dim=1)
-
         return self.predict(output)
     
     def get_embeddings(self, batch: Polymer):

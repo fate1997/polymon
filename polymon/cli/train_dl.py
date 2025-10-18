@@ -7,9 +7,10 @@ import numpy as np
 import pandas as pd
 import torch
 import yaml
+from sklearn.metrics import mean_absolute_error, r2_score
 
 from polymon.exp.pipeline import Pipeline
-from polymon.exp.score import normalize_property_weight
+from polymon.exp.score import normalize_property_weight, scaling_error
 from polymon.setting import REPO_DIR, TARGETS
 
 
@@ -61,28 +62,30 @@ def parse_args():
     parser.add_argument('--train-residual', action='store_true')
     parser.add_argument('--normalizer-type', type=str, default='normalizer', 
                         choices=['normalizer', 'log_normalizer', 'none'])
+    parser.add_argument('--mt-train', action='store_true')
 
     return parser.parse_args()
 
 
-def main(args: argparse.Namespace):
-    out_dir = os.path.join(args.out_dir, args.model)
+def main(args: argparse.Namespace):  
     if args.n_estimator > 1:
         args.tag += f'-ensemble'
-    os.makedirs(out_dir, exist_ok=True)
+    
     performance = {}
     n_tests = []
     if args.labels is None:
         args.labels = TARGETS
-    for label in args.labels:
-        out_dir = os.path.join(args.out_dir, args.model, label, args.tag)
+
+    if args.mt_train:
+        out_dir = os.path.join(args.out_dir, args.model, 'mt_train', args.tag)
+        os.makedirs(out_dir, exist_ok=True)
         pipeline = Pipeline(
             tag=args.tag,
             out_dir=out_dir,
             batch_size=args.batch_size,
             raw_csv=args.raw_csv,
             sources=args.sources,
-            label=label,
+            label=args.labels,
             model_type=args.model,
             hidden_dim=args.hidden_dim,
             num_layers=args.num_layers,
@@ -103,11 +106,11 @@ def main(args: argparse.Namespace):
             augmentation=args.augmentation,
             emb_model=args.emb_model,
             ensemble_type=args.ensemble_type,
+            mt_train=args.mt_train,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
         
-        # CHOICE 1: Optimize hyperparameters OR train model on default parameters
         if args.n_trials is not None:
             test_err, hparams = pipeline.optimize_hparams(n_fold=args.n_fold)
             model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
@@ -129,8 +132,6 @@ def main(args: argparse.Namespace):
                 if 'lr' in hparams:
                     args.lr = hparams['lr']
                     hparams.pop('lr')
-            
-            # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
             if not args.skip_train:
                 if args.n_fold == 1 and args.n_estimator == 1:
                     test_err, _, model = pipeline.train(lr=args.lr, model_hparams=hparams)
@@ -143,7 +144,6 @@ def main(args: argparse.Namespace):
                         'y_true': y_true.squeeze(),
                         'y_pred': y_pred.squeeze(),
                     }).to_csv(results_path, index=False)
-                    
                 if args.n_fold > 1 and args.n_estimator == 1 and args.split_mode != 'similarity':
                     test_err, _, _ = pipeline.cross_validation(
                         n_fold=args.n_fold,
@@ -152,21 +152,40 @@ def main(args: argparse.Namespace):
                     )
                     test_err = np.mean(test_err)
                 else:
-                    test_err, _, models = pipeline.cross_validation(
+                    val_err, _, models = pipeline.cross_validation(
                         n_fold=args.n_fold,
                         model_hparams=hparams,
                         lr=args.lr,
                     )
-                    test_err = np.mean(test_err)
+                    val_err = np.mean(val_err)
                     test_smiles = [pipeline.test_loader.dataset[i].smiles for i in range(len(pipeline.test_loader.dataset))]
                     y_pred = np.mean([model.predict(test_smiles).detach().cpu().numpy() for model in models], axis=0)
                     y_true = np.concatenate([pipeline.test_loader.dataset[i].y.detach().cpu().numpy() for i in range(len(pipeline.test_loader.dataset))])
                     results_path = os.path.join(out_dir, 'eval.csv')
-                    pd.DataFrame({
-                        'SMILES': test_smiles,
-                        'y_true': y_true.squeeze(),
-                        'y_pred': y_pred.squeeze(),
-                    }).to_csv(results_path, index=False)
+                    # Assume order is [Rg, Density, Bulk_modulus]
+                    df_dict = {'SMILES': test_smiles}
+                    # Columns: Rg_true, Rg_pred, Density_true, Density_pred, Bulk_modulus_true, Bulk_modulus_pred
+                    for i, name in enumerate(args.labels):
+                        df_dict[f'{name}_true'] = y_true[:, i].squeeze()
+                        df_dict[f'{name}_pred'] = y_pred[:, i].squeeze()
+                    pd.DataFrame(df_dict).to_csv(results_path, index=False)
+                    test_errs = []
+                    test_maes = []
+                    test_r2s = []
+                    for i, name in enumerate(args.labels):
+                        test_err_per_task = scaling_error(y_true[:, i], y_pred[:, i], name, pipeline.minmax_dict)
+                        test_mae_err_per_task = mean_absolute_error(y_true[:, i], y_pred[:, i])
+                        test_r2_err_per_task = r2_score(y_true[:, i], y_pred[:, i])
+                        test_errs.append(test_err_per_task)
+                        test_maes.append(test_mae_err_per_task)
+                        test_r2s.append(test_r2_err_per_task)
+                        pipeline.logger.info(f'Test {name} raw MAE: {test_mae_err_per_task:.4f}')
+                        pipeline.logger.info(f'Test {name} R2: {test_r2_err_per_task:.4f}')
+                    test_err = np.mean(test_errs)
+                    test_mae_err = np.mean(test_maes)
+                    r2_err = np.mean(test_r2s)
+                    pipeline.logger.info(f'Test average error: {test_err:.4f}')
+                    pipeline.logger.info(f'Test average R2: {r2_err:.4f}')
                 model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
             else:
                 test_err = np.nan
@@ -178,8 +197,6 @@ def main(args: argparse.Namespace):
                     run_production=args.run_production,
                     skip_train=args.skip_train,
                 )
-        
-        # CHOICE 3: Finetune model OR run production
         if args.finetune:
             test_err = pipeline.finetune(
                 0.0005, 
@@ -191,9 +208,144 @@ def main(args: argparse.Namespace):
             )
         elif args.run_production and args.n_estimator == 1:
             pipeline.production_run(hparams)
-        
-        performance[label] = test_err
+
+        performance['Multi-task'] = test_err
         n_tests.append(len(pipeline.test_loader.dataset))
+    
+    else:
+        os.makedirs(args.out_dir, exist_ok=True)
+        for label in args.labels:
+            out_dir = os.path.join(args.out_dir, args.model, label, args.tag)
+            if args.n_estimator > 1:
+                args.tag += f'-ensemble'
+            os.makedirs(out_dir, exist_ok=True)
+            performance = {}
+            n_tests = []
+            if args.labels is None:
+                args.labels = TARGETS
+            pipeline = Pipeline(
+                tag=args.tag,
+                out_dir=out_dir,
+                batch_size=args.batch_size,
+                raw_csv=args.raw_csv,
+                sources=args.sources,
+                label=label,
+                model_type=args.model,
+                hidden_dim=args.hidden_dim,
+                num_layers=args.num_layers,
+                descriptors=args.descriptors,
+                num_epochs=args.num_epochs,
+                lr=args.lr,
+                early_stopping_patience=args.early_stopping_patience,
+                device=args.device,
+                n_trials=args.n_trials,
+                seed=args.seed,
+                split_mode=args.split_mode,
+                train_residual=args.train_residual,
+                additional_features=args.additional_features,
+                low_fidelity_model=args.low_fidelity_model,
+                normalizer_type=args.normalizer_type,
+                estimator_name=args.estimator_name,
+                remove_hydrogens=args.remove_hydrogens,
+                augmentation=args.augmentation,
+                emb_model=args.emb_model,
+                ensemble_type=args.ensemble_type,
+            )
+            with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
+                yaml.dump(args.__dict__, f)
+            
+            # CHOICE 1: Optimize hyperparameters OR train model on default parameters
+            if args.n_trials is not None:
+                test_err, hparams = pipeline.optimize_hparams(n_fold=args.n_fold)
+                model_path = os.path.join(out_dir, 'hparams_opt', f'{pipeline.model_name}.pt')
+                if 'lr' in hparams:
+                    args.lr = hparams['lr']
+                    hparams.pop('lr')
+            elif not args.finetune:
+                hparams = {
+                    'hidden_dim': args.hidden_dim,
+                    'num_layers': args.num_layers}
+                if args.hparams_from is not None:
+                    if args.hparams_from.endswith('.pt'):
+                        hparams_loaded = torch.load(args.hparams_from)['model_init_params']
+                    else:
+                        with open(args.hparams_from, 'r') as f:
+                            hparams_loaded = json.load(f)
+                    pipeline.logger.info(f'Loading hparams from {args.hparams_from}')
+                    hparams.update(hparams_loaded)
+                    if 'lr' in hparams:
+                        args.lr = hparams['lr']
+                        hparams.pop('lr')
+                
+                # CHOICE 2: Train model on pre-defined split OR run K-Fold cross-validation
+                if not args.skip_train:
+                    if args.n_fold == 1 and args.n_estimator == 1:
+                        test_err, _, model = pipeline.train(lr=args.lr, model_hparams=hparams)
+                        test_smiles = [pipeline.test_loader.dataset[i].smiles for i in range(len(pipeline.test_loader.dataset))]
+                        y_pred = model.predict(test_smiles).detach().cpu().numpy()
+                        y_true = np.concatenate([pipeline.test_loader.dataset[i].y.detach().cpu().numpy() for i in range(len(pipeline.test_loader.dataset))])
+                        results_path = os.path.join(out_dir, 'eval.csv')
+                        pd.DataFrame({
+                            'SMILES': test_smiles,
+                            'y_true': y_true.squeeze(),
+                            'y_pred': y_pred.squeeze(),
+                        }).to_csv(results_path, index=False)
+                        
+                    if args.n_fold > 1 and args.n_estimator == 1 and args.split_mode != 'similarity':
+                        test_err, _ = pipeline.cross_validation(
+                            n_fold=args.n_fold,
+                            model_hparams=hparams,
+                            lr=args.lr,
+                        )
+                        test_err = np.mean(test_err)
+                    else:
+                        val_err, _, models = pipeline.cross_validation(
+                            n_fold=args.n_fold,
+                            model_hparams=hparams,
+                            lr=args.lr,
+                        )
+                        val_err = np.mean(val_err)
+                        test_smiles = [pipeline.test_loader.dataset[i].smiles for i in range(len(pipeline.test_loader.dataset))]
+                        y_pred = np.mean([model.predict(test_smiles).detach().cpu().numpy() for model in models], axis=0)
+                        y_true = np.concatenate([pipeline.test_loader.dataset[i].y.detach().cpu().numpy() for i in range(len(pipeline.test_loader.dataset))])
+                        results_path = os.path.join(out_dir, 'eval.csv')
+                        pd.DataFrame({
+                            'SMILES': test_smiles,
+                            'y_true': y_true.squeeze(),
+                            'y_pred': y_pred.squeeze(),
+                        }).to_csv(results_path, index=False)
+                        test_err = scaling_error(y_true, y_pred, label, pipeline.minmax_dict)
+                        test_mae_err = mean_absolute_error(y_true, y_pred)
+                        r2_err = r2_score(y_true, y_pred)
+                        pipeline.logger.info(f'Test raw MAE: {test_mae_err:.4f}')
+                        pipeline.logger.info(f'Test R2: {r2_err:.4f}')
+                    model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
+                else:
+                    test_err = np.nan
+
+                if args.n_estimator > 1:
+                    test_err = pipeline.run_ensemble(
+                        n_estimator=args.n_estimator,
+                        model_hparams=hparams,
+                        run_production=args.run_production,
+                        skip_train=args.skip_train,
+                    )
+            
+            # CHOICE 3: Finetune model OR run production
+            if args.finetune:
+                test_err = pipeline.finetune(
+                    0.0005, 
+                    args.pretrained_model or model_path, 
+                    args.finetune_csv_path, 
+                    args.run_production,
+                    freeze_repr_layers=False,
+                    n_fold=args.n_fold
+                )
+            elif args.run_production and args.n_estimator == 1:
+                pipeline.production_run(hparams)
+            
+            performance[label] = test_err
+            n_tests.append(len(pipeline.test_loader.dataset))
     
     CWD = pathlib.Path.cwd()
     results_path = os.path.join(CWD, 'performance.csv')

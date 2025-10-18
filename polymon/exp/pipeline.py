@@ -4,7 +4,7 @@ import os
 import sys
 from copy import deepcopy
 from importlib import import_module
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 import loguru
 import numpy as np
@@ -74,7 +74,7 @@ class Pipeline:
         batch_size: int,
         raw_csv: str,
         sources: List[str],
-        label: str,
+        label: Union[str, List[str]],
         model_type: str,
         hidden_dim: int,
         num_layers: int,
@@ -95,6 +95,7 @@ class Pipeline:
         augmentation: bool = False,
         emb_model: Optional[str] = None,
         ensemble_type: str = 'voting',
+        mt_train: bool = False,
     ):
         seed_everything(seed)
         
@@ -113,7 +114,11 @@ class Pipeline:
         self.early_stopping_patience = early_stopping_patience
         self.device = device
         self.n_trials = n_trials
-        self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
+        if isinstance(self.label, list):
+            self.model_name = f'{self.model_type}_{"_".join(self.label)}_{self.tag}'
+        else:
+            self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
+        #self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
         self.split_mode = split_mode
         self.train_residual = train_residual
         self.additional_features = additional_features
@@ -124,7 +129,8 @@ class Pipeline:
         self.augmentation = augmentation
         self.emb_model = emb_model
         self.ensemble_type = ensemble_type
-        
+        self.mt_train = mt_train
+
         logger = loguru.logger
         logger.remove()
         log_path = os.path.join(out_dir, 'pipeline.log')
@@ -156,7 +162,13 @@ class Pipeline:
         df_all = pd.read_csv(self.dataset.raw_csv_path)
         if 'Source' in df_all.columns:
             df_all = df_all[df_all['Source'].isin(sources)]
-        self.minmax_dict = {label: [df_all[label].min(), df_all[label].max()] for label in TARGETS if label in df_all.columns}
+        if isinstance(self.label, list):
+            self.minmax_dict = {
+                label: [float(df_all[label].min()), float(df_all[label].max())]
+                for label in TARGETS if label in df_all.columns and label in self.label
+            }
+        else:
+            self.minmax_dict = {self.label: [float(df_all[self.label].min()), float(df_all[self.label].max())]}
         if self.descriptors is not None:
             self.num_descriptors = self.dataset[0].descriptors.shape[1]
         else:
@@ -174,9 +186,9 @@ class Pipeline:
             self.train_indices, self.val_indices, self.test_indices = loaders[3]['train'], loaders[3]['val'], loaders[3]['test']
             train_datalist = [self.dataset.data_list[i] for i in self.train_indices]
             val_datalist = [self.dataset.data_list[i] for i in self.val_indices]
-            test_datalist = [self.dataset.data_list[i] for i in self.test_indices]
+            #test_datalist = [self.dataset.data_list[i] for i in self.test_indices]
             self.dataset.data_list = train_datalist + val_datalist
-            self.logger.info(f'Concatenated train and val datasets for similarity split')
+            self.logger.info(f'Concatenated train and val datasets for similarity split, length: {len(self.dataset)}')
             self.train_loader, self.val_loader, self.test_loader, _ = loaders
         else:
             loaders = self.dataset.get_loaders(
@@ -201,6 +213,7 @@ class Pipeline:
             raise ValueError(f'Invalid normalizer type: {self.normalizer_type}')
         
         self.logger.info(f'Data range: {self.minmax_dict}')
+        self.logger.info(f'Normalizer parameters: {self.normalizer.init_params}')
     
     def train(
         self,
@@ -254,7 +267,11 @@ class Pipeline:
         )
         if loaders is None:
             loaders = (self.train_loader, self.val_loader, self.test_loader)
-        test_err, test_mae_error = trainer.train(loaders[0], loaders[1], loaders[2], self.label)
+        if self.mt_train:
+            test_err, test_mae_error = trainer.train_mt(loaders[0], loaders[1], loaders[2], self.label)
+        else:
+            test_err, test_mae_error = trainer.train(loaders[0], loaders[1], loaders[2], self.label)
+        #test_err, test_mae_error = trainer.train(loaders[0], loaders[1], loaders[2], self.label)
         trainer.model.write(os.path.join(out_dir, f'{self.model_name}.pt'))
         return test_err, test_mae_error, model
     
@@ -283,93 +300,96 @@ class Pipeline:
             List[float]: The validation errors.
         """
         kfold = KFold(n_splits=n_fold, shuffle=True)
-        if self.split_mode != 'similarity':
-            val_errors = []
-            val_mae_errors = []
-            models = []
-            for fold, (train_idx, val_idx) in enumerate(kfold.split(self.dataset)):
-                print_str = f'Running fold {fold+1}/{n_fold}'
-                if current_trial is not None:
-                    print_str += f' (trial {current_trial}/{self.n_trials})'
-                self.logger.info(print_str)
-                train_set = self.dataset[train_idx]
-                if self.augmentation:
-                    from polymon.data.polymer import OligomerBuilder
-                    train_set_aug = []
-                    for data in train_set:
-                        train_set_aug.append(data)
-                        for i in range(1):
-                            oligomer = OligomerBuilder.get_oligomer(data.smiles, i+2)
-                            mol_dict = self.dataset.featurizer(oligomer)
-                            aug_data = data.clone()
-                            for key, value in mol_dict.items():
-                                setattr(aug_data, key, value)
-                            train_set_aug.append(aug_data)
-                    self.logger.info(f'Train set augmented from {len(train_set)} to {len(train_set_aug)}')
-                else:
-                    train_set_aug = train_set
-                
-                train_loader = DataLoader(
-                    train_set_aug, batch_size=self.batch_size, shuffle=True
-                )
-                val_loader = DataLoader(
-                    self.dataset[val_idx], batch_size=self.batch_size, shuffle=False
-                )
-                out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
-                os.makedirs(out_dir, exist_ok=True)
-                val_error, val_mae_error, trained_model = self.train(
-                    lr=lr,
-                    model_hparams=model_hparams,
-                    out_dir=out_dir,
-                    loaders=(train_loader, val_loader, None),
-                    model=deepcopy(model) if model is not None else None,
-                )
-                self.logger.info(f'{fold+1}/{n_fold} val error: {val_error}')
-                models.append(trained_model)
-                val_errors.append(val_error)
-                val_mae_errors.append(val_mae_error)
-            mean, std = np.mean(val_errors), np.std(val_errors)
-            mean_mae, std_mae = np.mean(val_mae_errors), np.std(val_mae_errors)
-            self.logger.info(f'K-Fold validation error: {mean:.4f} ± {std:.4f}')
-            self.logger.info(f'K-Fold validation MAE error: {mean_mae:.4f} ± {std_mae:.4f}')
-            kfold_model = KFoldModel.from_models(models)
-            kfold_model_wrapper = models[0]
-            kfold_model_wrapper.model = kfold_model
-            kfold_model_wrapper.write(os.path.join(self.out_dir, f'{self.model_name}-KFold.pt'))
+        #if self.split_mode != 'similarity':
+        val_errors = []
+        val_mae_errors = []
+        models = []
+        for fold, (train_idx, val_idx) in enumerate(kfold.split(self.dataset)):
+            print_str = f'Running fold {fold+1}/{n_fold}'
+            if current_trial is not None:
+                print_str += f' (trial {current_trial}/{self.n_trials})'
+            self.logger.info(print_str)
+            train_set = self.dataset[train_idx]
+            if self.augmentation:
+                from polymon.data.polymer import OligomerBuilder
+                train_set_aug = []
+                for data in train_set:
+                    train_set_aug.append(data)
+                    for i in range(1):
+                        oligomer = OligomerBuilder.get_oligomer(data.smiles, i+2)
+                        mol_dict = self.dataset.featurizer(oligomer)
+                        aug_data = data.clone()
+                        for key, value in mol_dict.items():
+                            setattr(aug_data, key, value)
+                        train_set_aug.append(aug_data)
+                self.logger.info(f'Train set augmented from {len(train_set)} to {len(train_set_aug)}')
+            else:
+                train_set_aug = train_set
+            
+            train_loader = DataLoader(
+                train_set_aug, batch_size=self.batch_size, shuffle=True
+            )
+            val_loader = DataLoader(
+                self.dataset[val_idx], batch_size=self.batch_size, shuffle=False
+            )
+            out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
+            os.makedirs(out_dir, exist_ok=True)
+            val_error, val_mae_error, trained_model = self.train(
+                lr=lr,
+                model_hparams=model_hparams,
+                out_dir=out_dir,
+                loaders=(train_loader, val_loader, None),
+                model=deepcopy(model) if model is not None else None,
+            )
+            self.logger.info(f'{fold+1}/{n_fold} val error: {val_error}')
+            models.append(trained_model)
+            val_errors.append(val_error)
+            val_mae_errors.append(val_mae_error)
+        mean, std = np.mean(val_errors), np.std(val_errors)
+        mean_mae, std_mae = np.mean(val_mae_errors), np.std(val_mae_errors)
+        self.logger.info(f'K-Fold validation error: {mean:.4f} ± {std:.4f}')
+        self.logger.info(f'K-Fold validation MAE error: {mean_mae:.4f} ± {std_mae:.4f}')
+        kfold_model = KFoldModel.from_models(models)
+        kfold_model_wrapper = models[0]
+        kfold_model_wrapper.model = kfold_model
+        kfold_model_wrapper.write(os.path.join(self.out_dir, f'{self.model_name}-KFold.pt'))
+        if self.split_mode == 'similarity':
+            return val_errors, val_mae_errors, models
+        else:
             return val_errors, val_mae_errors
-        elif self.split_mode == 'similarity':
-            test_errors = []
-            test_mae_errors = []
-            models = []
-            for fold, (train_idx, val_idx) in enumerate(kfold.split(self.dataset)):
-                print_str = f'Running fold {fold+1}/{n_fold}'
-                if current_trial is not None:
-                    print_str += f' (trial {current_trial}/{self.n_trials})'
-                self.logger.info(print_str)
-                train_set = self.dataset[train_idx]
-                val_set = self.dataset[val_idx]
-                test_set = self.dataset[self.test_indices]
-                train_loader = DataLoader(train_set, batch_size=self.batch_size, shuffle=True)
-                val_loader = DataLoader(val_set, batch_size=self.batch_size, shuffle=False)
-                test_loader = DataLoader(test_set, batch_size=self.batch_size, shuffle=False)
-                out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
-                os.makedirs(out_dir, exist_ok=True)
-                test_error, test_mae_error, trained_model = self.train(
-                    lr=lr,
-                    model_hparams=model_hparams,
-                    out_dir=out_dir,
-                    loaders=(train_loader, val_loader, test_loader),
-                    model=deepcopy(model) if model is not None else None,
-                )
-                self.logger.info(f'{fold+1}/{n_fold} test error: {test_error}')
-                test_errors.append(test_error)
-                test_mae_errors.append(test_mae_error)
-                models.append(trained_model)
-            mean, std = np.mean(test_errors), np.std(test_errors)
-            mean_mae, std_mae = np.mean(test_mae_errors), np.std(test_mae_errors)
-            self.logger.info(f'K-Fold test error: {mean:.4f} ± {std:.4f}')
-            self.logger.info(f'K-Fold test MAE error: {mean_mae:.4f} ± {std_mae:.4f}')
-            return test_errors, test_mae_errors, models
+        # elif self.split_mode == 'similarity':
+        #     val_errors = []
+        #     val_mae_errors = []
+        #     models = []
+        #     for fold, (train_idx, val_idx) in enumerate(kfold.split(self.dataset)):
+        #         print_str = f'Running fold {fold+1}/{n_fold}'
+        #         if current_trial is not None:
+        #             print_str += f' (trial {current_trial}/{self.n_trials})'
+        #         self.logger.info(print_str)
+        #         train_set = self.dataset[train_idx]
+        #         val_set = self.dataset[val_idx]
+        #         #test_set = self.dataset[self.test_indices]
+        #         train_loader = DataLoader(train_set, batch_size=self.batch_size, shuffle=True)
+        #         val_loader = DataLoader(val_set, batch_size=self.batch_size, shuffle=False)
+        #         #test_loader = DataLoader(test_set, batch_size=self.batch_size, shuffle=False)
+        #         out_dir = os.path.join(self.out_dir, f'fold_{fold+1}')
+        #         os.makedirs(out_dir, exist_ok=True)
+        #         val_error, val_mae_error, trained_model = self.train(
+        #             lr=lr,
+        #             model_hparams=model_hparams,
+        #             out_dir=out_dir,
+        #             loaders=(train_loader, val_loader, None), # CV only on train and val, test_loader is set to None
+        #             model=deepcopy(model) if model is not None else None,
+        #         )
+        #         self.logger.info(f'{fold+1}/{n_fold} val error: {val_error}')
+        #         val_errors.append(val_error)
+        #         val_mae_errors.append(val_mae_error)
+        #         models.append(trained_model)
+        #     mean_val, std_val = np.mean(val_errors), np.std(val_errors)
+        #     mean_val_mae, std_val_mae = np.mean(val_mae_errors), np.std(val_mae_errors)
+        #     self.logger.info(f'K-Fold val error: {mean_val:.4f} ± {std_val:.4f}')
+        #     self.logger.info(f'K-Fold val MAE error: {mean_val_mae:.4f} ± {std_val_mae:.4f}')
+        #     return val_errors, val_mae_errors, models
     
     def optimize_hparams(self, n_fold: int = 1) -> Tuple[float, Dict[str, Any]]:
         """Optimize the hyperparameters for a given model.
@@ -709,6 +729,7 @@ class Pipeline:
             num_node_features=self.dataset.num_node_features,
             num_edge_features=self.dataset.num_edge_features,
             num_descriptors=self.num_descriptors,
+            num_tasks=len(self.label) if isinstance(self.label, list) else 1,
             hparams=model_hparams,
         )
         num_params = sum(p.numel() for p in model.parameters())

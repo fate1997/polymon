@@ -55,7 +55,7 @@ class PolymerDataset(Dataset):
         self,
         raw_csv_path: str,
         feature_names: List[str],
-        label_column: str,
+        label_column: Union[str, List[str]],
         sources: List[str],
         smiles_column: str = 'SMILES',
         identifier_column: str = 'id',
@@ -89,7 +89,9 @@ class PolymerDataset(Dataset):
             if self.pre_transform is not None:
                 logger.info(f'Applying pre-transform: {self.pre_transform}')
             
-            df_nonan = pd.read_csv(raw_csv_path).dropna(subset=[label_column])
+            # Allow label_column to be either a string or a list of strings
+            label_cols = [label_column] if isinstance(label_column, str) else list(label_column)
+            df_nonan = pd.read_csv(raw_csv_path).dropna(subset=label_cols)
             dedup = Dedup(df_nonan, label_column, must_keep=self.must_keep)
             df_nonan = dedup.run(sources=sources)
             feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
@@ -156,7 +158,13 @@ class PolymerDataset(Dataset):
                 rdmol = Chem.MolFromSmiles(smiles)
                 if 'source' in feature_names:
                     rdmol.SetProp('Source', row['Source'])
-                label = row[self.label_column]
+                
+                # Support for label_column as str or list of str
+                if isinstance(self.label_column, (list, tuple)):
+                    label = row[self.label_column].values.astype(float)
+                else:
+                    label = row[self.label_column]
+                
                 if 'mordred' in feature_names or 'oligomer_mordred' in feature_names or 'mordred3d' in feature_names:
                     if smiles in cache:
                         mol_dict = {'descriptors': cache[smiles]}
@@ -166,8 +174,16 @@ class PolymerDataset(Dataset):
                         _save_cache(cache, cache_path)
                 else:
                     mol_dict = self.featurizer(rdmol)
-                #mol_dict = self.featurizer(rdmol)
-                mol_dict['y'] = torch.tensor(label).unsqueeze(0).unsqueeze(0).float()
+                
+                # Set 'y' as tensor with correct dimensions for single- or multi-label task
+                y_tensor = torch.tensor(label, dtype=torch.float)
+                if y_tensor.dim() == 0:
+                    # scalar, make shape (1,1)
+                    y_tensor = y_tensor.unsqueeze(0).unsqueeze(0)
+                elif y_tensor.dim() == 1:
+                    # vector, make shape (1, num_labels)
+                    y_tensor = y_tensor.unsqueeze(0)
+                mol_dict['y'] = y_tensor
                 if identifier_column is not None and identifier_column in df_nonan.columns:
                     mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
@@ -260,7 +276,8 @@ class PolymerDataset(Dataset):
         mode: Literal['random', 'scaffold', 'similarity'] = 'random',
         num_workers: int = 0,
         augmentation: bool = False,
-    ) -> Tuple[DataLoader, DataLoader, DataLoader]:
+        must_keep: str = "initial",
+    ) -> Tuple[DataLoader, DataLoader, DataLoader, Dict[str, np.ndarray]]:
         """Get the data loaders for the training, validation, and test sets.
 
         Args:
@@ -295,7 +312,7 @@ class PolymerDataset(Dataset):
         elif mode == 'scaffold':
             train_set, val_set, test_set = self._get_scaffold_splits(n_train, n_val)
         elif mode == 'similarity':
-            train_set, val_set, test_set, indices = self._get_similarity_splits(n_train, n_val)
+            train_set, val_set, test_set, indices = self._get_similarity_splits(n_train, n_val, must_keep)
         else:
             raise ValueError(f'Invalid split mode: {mode}')
 
@@ -388,6 +405,7 @@ class PolymerDataset(Dataset):
         self,
         n_train: int,
         n_val: int,
+        must_keep: str = "initial",
     ) -> Tuple[Dataset, Dataset, Dataset]:
         logger.info('Splitting dataset by similarity...')
         from rdkit.Chem import rdFingerprintGenerator
@@ -412,7 +430,7 @@ class PolymerDataset(Dataset):
         def is_initial(local_idx: int) -> bool:
             # local_idx is an index into fps/valid_indices
             orig_idx = valid_indices[local_idx]
-            return getattr(self.data_list[orig_idx], "source_name", None) == "initial"
+            return getattr(self.data_list[orig_idx], "source_name", None) == must_keep
 
         order_initial = [i for i in order if is_initial(i)]
 
