@@ -121,7 +121,7 @@ def train(
     df_all = pd.read_csv(raw_csv_path)
     if 'Source' in df_all.columns:
         df_all = df_all[df_all['Source'].isin(sources)]
-    minmax_dict = {label: [df_all[label].min(), df_all[label].max()] for label in TARGETS if label in df_all.columns}
+    minmax_dict = {label: [float(df_all[label].min()), float(df_all[label].max())] for label in TARGETS if label in df_all.columns}
     logger.info(f'Data range: {minmax_dict}')
     
     # 2. Train model
@@ -132,7 +132,10 @@ def train(
                 hparams = pickle.load(f)
         else:
             hparams = {}
-        model = MODELS[model_name](**hparams)
+        try:
+            model = MODELS[model_name](**hparams)
+        except:
+            model = MODELS[model_name]()
         if model_type == 'tabpfn':
             model = TabPFNRegressor(
                 n_estimators=32,
@@ -151,7 +154,10 @@ def train(
             y_pred_test = []
             for fold, (train_idx, val_idx) in enumerate(kf.split(x_train)):
                 logger.info(f'Training fold {fold+1}/{n_fold}...')
-                model = MODELS[model_name](**hparams)
+                try:
+                    model = MODELS[model_name](**hparams)
+                except:
+                    model = MODELS[model_name]()
                 x_train_fold, x_val_fold = x_train[train_idx], x_train[val_idx]
                 y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx] 
                 model.fit(x_train_fold, y_train_fold)
@@ -283,7 +289,10 @@ def train(
     
     # 3. Train production model
     logger.info(f'Training production model...')
-    model = MODELS[model_type](**hparams)
+    try:
+        model = MODELS[model_type](**hparams)
+    except:
+        model = MODELS[model_type]()
     X_total = np.concatenate([x_train, x_val, x_test], axis=0)
     y_total = np.concatenate([y_train, y_val, y_test], axis=0)
     model.fit(X_total, y_total)

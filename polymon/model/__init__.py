@@ -18,7 +18,7 @@ from polymon.model.gvp import GVPModel
 from polymon.model.kan.dmpnn import KAN_DMPNN
 from polymon.model.kan.efficient_kan import EfficientKANWrapper
 from polymon.model.kan.fast_kan import FastKANWrapper
-from polymon.model.kan.vanilla import KANWrapper
+#from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
 from polymon.model.kan.gcn import KAN_GCN
 from polymon.model.kan.gin import KAN_GIN, FastKAN_GIN
@@ -32,6 +32,7 @@ def build_model(
     num_node_features: int,
     num_edge_features: int,
     num_descriptors: int,
+    num_tasks: int,
     hparams: Dict[str, Any]
 ) -> 'BaseModel':
     """Build a model from a model type and input arguments. Currently, the 
@@ -59,6 +60,7 @@ def build_model(
             'num_atom_features': num_node_features,
             'edge_dim': num_edge_features,
             'num_descriptors': num_descriptors,
+            'num_tasks': num_tasks,
         }
         hparams.update(input_args)
         model = GATv2(**hparams)

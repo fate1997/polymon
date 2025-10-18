@@ -13,7 +13,7 @@ BOND_LENGTHS = {
     (8, 8, Chem.BondType.SINGLE): 0.143,   # O-O
 }
 
-DEFAULT_N = 1000
+DEFAULT_N = 600
 DEFAULT_C_INF = 6.7
 DEFAULT_SOLVENT = "theta"
 

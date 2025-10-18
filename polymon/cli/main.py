@@ -237,6 +237,11 @@ def parse_args():
         action='store_true',
         help='Whether to use data augmentation'
     )
+    train_parser.add_argument(
+        '--mt-train', 
+        action='store_true',
+        help='Whether to train the model on multiple tasks'
+    )
     
     # Merge
     merge_parser = subparsers.add_parser('merge', help='Merge two datasets')
@@ -272,12 +277,12 @@ def parse_args():
         default=20,
         help='Sample size to use for merging'
     )
-    merge_parser.add_argument(
-        '--uncertainty-threshold', 
-        type=float, 
-        default=0.1,
-        help='Uncertainty threshold to use for merging'
-    )
+    # merge_parser.add_argument(
+    #     '--uncertainty-threshold', 
+    #     type=float, 
+    #     default=0.1,
+    #     help='Uncertainty threshold to use for merging'
+    # )
     merge_parser.add_argument(
         '--difference-threshold', 
         type=float, 
@@ -296,7 +301,18 @@ def parse_args():
         default=None,
         help='Path to the base csv file'
     )
-    
+    merge_parser.add_argument(
+        '--prev-hits', 
+        type=str, 
+        default=None,
+        help='Path to the prev hits csv file'
+    )
+    merge_parser.add_argument(
+        '--tag', 
+        type=str, 
+        default=None,
+        help='Tag to use for merging'
+    )
     # Predict
     predict_parser = subparsers.add_parser('predict', help='Predict labels')
     predict_parser.add_argument(
@@ -324,6 +340,7 @@ def main():
     args = parse_args()
     if args.mode == 'train':
         if args.model in MODELS.keys():
+            print(args.model)
             main_ml(args)
         else:
             main_dl(args)

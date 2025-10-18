@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -14,24 +14,28 @@ class Dedup:
     def __init__(
         self, 
         df: pd.DataFrame,
-        label: str, 
+        label: Union[str, List[str]],  # accept both str and list
         must_keep: List[str] = None,
         rtol: float = 0.05,
     ):
         """Deduplicate the dataframe. The input dataframe should have the 
-        following columns: SMILES, Source, label, id.
+        following columns: SMILES, Source, label(s), id.
 
         Args:
             df (pd.DataFrame): The dataframe to deduplicate.
-            label (str): The label column name.
+            label (str or List[str]): The label column name(s).
             must_keep (List[str]): The sources to keep.
             rtol (float): The relative tolerance for deduplication.
         """
         self.label = label
         self.rtol = rtol
-        # Remove other columns
-        df = df[['SMILES', 'Source', label, 'id']]
-        self.df = df.dropna(subset=[label])
+        # Support label as a single column or list of columns
+        if isinstance(label, str):
+            label_cols = [label]
+        else:
+            label_cols = list(label)
+        df = df[['SMILES', 'Source', 'id'] + label_cols]
+        self.df = df.dropna(subset=label_cols)
         self.must_keep = must_keep or []
     
     def add_df(
@@ -129,12 +133,26 @@ class Dedup:
             
             # 1. Remove rows with higher relative difference.
             if len(rows) > 1:
-                v = rows[self.label]
-                if np.abs(v.max() - v.min()) / (v.max() + 1e-6) > self.rtol:
-                    drop_indices.extend(rows.index)
+                if isinstance(self.label, list):
+                    to_drop = False
+                    for col in self.label:
+                        v = rows[col]
+                        if np.abs(v.max() - v.min()) / (v.max() + 1e-6) > self.rtol:
+                            to_drop = True
+                            break
+                    if to_drop:
+                        drop_indices.extend(rows.index)
+                    else:
+                        for col in self.label:
+                            df.loc[rows.index[0], col] = rows[col].mean()
+                        drop_indices.extend(rows.index[1:])
                 else:
-                    df.loc[rows.index[0], self.label] = v.mean()
-                    drop_indices.extend(rows.index[1:])
+                    v = rows[self.label]
+                    if np.abs(v.max() - v.min()) / (v.max() + 1e-6) > self.rtol:
+                        drop_indices.extend(rows.index)
+                    else:
+                        df.loc[rows.index[0], self.label] = v.mean()
+                        drop_indices.extend(rows.index[1:])
         
         # 2. Keep indices if the source is in must_keep
         if self.must_keep is not None:

@@ -3,6 +3,7 @@ import logging
 import math
 import pickle
 from typing import List
+import os
 
 import numpy as np
 import pandas as pd
@@ -259,24 +260,34 @@ def merge(
     hparams_from: str,
     acquisition: str,
     sample_size: int = 20,
-    uncertainty_threshold: float = 0.1,
+    # uncertainty_threshold: float = 0.1,
     difference_threshold: float = 0.1,
     target_size: int = 1000,
-    internal_path: str = str(REPO_DIR / 'database' / 'database.csv'),
+    internal_path: str = str(REPO_DIR / 'database' / 'database_formal.csv'),
     base_csv: str = None,
+    prev_hits: str = None,
+    tag: str = None,
 ):
     
     df = pd.read_csv(internal_path)
-    dedup = Dedup(df, label)
+    dedup = Dedup(df, label, must_keep=['Kaggle', 'PI1070'])
     df = dedup.run(sources)
 
     df_external = df[df['Source'].isin(sources)]
+    if prev_hits is not None:
+        df_prev_hits = pd.read_csv(prev_hits)[['SMILES', label, 'Source']]
+        df_prev_hits = df_prev_hits[df_prev_hits['Source'] == 'MD-Add']
+        prev_hits_smiles = df_prev_hits['SMILES'].tolist()
+        df_external = df_external[~df_external['SMILES'].isin(prev_hits_smiles)]
+        print(f'Removed {len(prev_hits_smiles)} prev hits from {len(df_external)} external samples')
     smiles_list = df_external['SMILES'].tolist()
     props_dict = dict(zip(smiles_list, df_external[label].tolist()))
     source_dict = dict(zip(smiles_list, df_external['Source'].tolist()))
+    if tag is not None:
+        source_dict = {k: f'{tag}' for k, _ in source_dict.items()}
     def featurize_mols(smiles_list):
         features = []
-        for smiles in tqdm(smiles_list):
+        for smiles in tqdm(smiles_list, desc='Featurizing...'):
             rdmol = Chem.MolFromSmiles(smiles)
             mol_dict = ComposeFeaturizer(['rdkit2d'])(rdmol)
             features.append(mol_dict['descriptors'])
@@ -293,16 +304,15 @@ def merge(
         probs_pool = model._get_prob_distribution(features_pool)
         probs_target = model._get_prob_distribution(features_target)
         scores = model._estimate_epig(probs_pool, probs_target)
-        query_idx = np.argsort(scores.numpy())[::-1][:sample_size] # select top 10 highest EPIG scores
+        query_idx = np.argsort(scores.numpy())[::-1][:sample_size+100] # select top 10 highest EPIG scores
         query_smiles = [smiles_list[i] for i in query_idx]
     elif acquisition == 'uncertainty':
         uncertainty = model._uncertainty(features_pool)
-        eligible_idx = np.where(uncertainty < uncertainty_threshold)[0]
-        if len(eligible_idx) <= sample_size:
-            query_idx = eligible_idx
+        # Get indices of the top sample_size highest uncertainty values
+        if len(uncertainty) <= sample_size:
+            query_idx = np.arange(len(uncertainty))
         else:
-            sorted_idx = eligible_idx[np.argsort(uncertainty[eligible_idx])]
-            query_idx = sorted_idx[:sample_size]
+            query_idx = np.argsort(uncertainty)[::-1][:sample_size+100]
         query_smiles = [smiles_list[i] for i in query_idx]
     elif acquisition == 'difference':
         predictions = model._predict(features_pool)
@@ -313,27 +323,36 @@ def merge(
             query_idx = eligible_idx
         else:
             sorted_idx = eligible_idx[np.argsort(relative_difference[eligible_idx])]
-            query_idx = sorted_idx[:sample_size]
+            query_idx = sorted_idx[:sample_size+100]
         query_smiles = [smiles_list[i] for i in query_idx]
     else:
         raise ValueError(f'Invalid acquisition method: {acquisition}')
     
     
-    df_internal = df[df['Source'] == 'internal']
+    df_internal = df[df['Source'].isin(['Kaggle', 'PI1070'])]
     df_internal = df_internal[df_internal[label].notna()]
     df_internal = df_internal[['SMILES', label, 'Source']]
     query_smiles = [smiles for smiles in query_smiles if smiles not in df_internal['SMILES'].tolist()]
-    ref_props = [props_dict[smiles] for smiles in query_smiles]
-    ref_sources = [source_dict[smiles] for smiles in query_smiles]
-    df_add = pd.DataFrame(zip(query_smiles, ref_props, ref_sources), columns=['SMILES', label, 'Source'])
+    query_smiles_unique = []
+    for smiles in query_smiles:
+        if smiles not in df_internal['SMILES'].tolist():
+            query_smiles_unique.append(smiles)
+    ref_props = [props_dict[smiles] for smiles in query_smiles_unique[:sample_size]]
+    ref_sources = [source_dict[smiles] for smiles in query_smiles_unique[:sample_size]]
+    df_add = pd.DataFrame(zip(query_smiles_unique[:sample_size], ref_props, ref_sources), columns=['SMILES', label, 'Source'])
     
     if base_csv is not None:
         df_base = pd.read_csv(base_csv)[['SMILES', label, 'Source']]
     else:
         df_base = df_internal
+
+    if prev_hits is not None:
+        df_base = pd.read_csv(prev_hits)[['SMILES', label, 'Source']]
         
     df_merged = pd.concat([df_base, df_add], ignore_index=True)
-    merge_path = str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}_{sample_size}.csv')
+    df_merged['id'] = np.arange(len(df_merged))
+    merge_path = str(REPO_DIR / 'database' / 'merged' / f'{label}_{"_".join(sources)}_{acquisition}_{sample_size}_{tag}.csv')
+    os.makedirs(os.path.dirname(str(REPO_DIR / 'database' / 'merged')), exist_ok=True)
     df_merged.to_csv(merge_path, index=False)
     print(f'Merged {len(df_add)} samples from {sources} to internal {len(df_base)}: {len(df_merged)}')
 
@@ -344,10 +363,12 @@ def arg_parser():
     parser.add_argument('--hparams-from', type=str, required=True)
     parser.add_argument('--acquisition', type=str, required=True, choices=['epig', 'uncertainty', 'difference'])
     parser.add_argument('--sample-size', type=int, default=20)
-    parser.add_argument('--uncertainty-threshold', type=float, default=0.1)
+    # parser.add_argument('--uncertainty-threshold', type=float, default=0.1)
     parser.add_argument('--difference-threshold', type=float, default=0.1)
     parser.add_argument('--target-size', type=int, default=1000)
     parser.add_argument('--base-csv', type=str, default=None)
+    parser.add_argument('--prev-hits', type=str, default=None)
+    parser.add_argument('--tag', type=str, default=None)
     return parser.parse_args()
 
 def main(args: argparse.Namespace):
@@ -357,10 +378,12 @@ def main(args: argparse.Namespace):
         hparams_from=args.hparams_from,
         acquisition=args.acquisition,
         sample_size=args.sample_size,
-        uncertainty_threshold=args.uncertainty_threshold,
+        # uncertainty_threshold=args.uncertainty_threshold,
         difference_threshold=args.difference_threshold,
         target_size=args.target_size,
         base_csv=args.base_csv,
+        prev_hits=args.prev_hits,
+        tag=args.tag,
     )
 
 if __name__ == '__main__':

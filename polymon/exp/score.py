@@ -33,11 +33,19 @@ def normalize_property_weight(property_weight: List[int]) -> np.ndarray:
     return property_weight
 
 def scaling_error(labels, preds, property, minmax_dict=MINMAX_DICT):
-    error = np.abs(labels - preds)
-    #min_val, max_val = MINMAX_DICT[property]
-    min_val, max_val = minmax_dict[property]
-    label_range = max_val - min_val
-    return np.mean(error / label_range)
+    if isinstance(property, list):
+        errors = []
+        for prop in property:
+            error = np.abs(labels[prop] - preds[prop])
+            min_val, max_val = minmax_dict[prop]
+            label_range = max_val - min_val
+            errors.append(error / label_range)
+        return np.mean(errors)
+    else:
+        error = np.abs(labels - preds)
+        min_val, max_val = minmax_dict[property]
+        label_range = max_val - min_val
+        return np.mean(error / label_range)
 
 
 def get_property_weights(labels):
