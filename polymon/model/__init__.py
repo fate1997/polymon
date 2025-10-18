@@ -18,7 +18,7 @@ from polymon.model.gvp import GVPModel
 from polymon.model.kan.dmpnn import KAN_DMPNN
 from polymon.model.kan.efficient_kan import EfficientKANWrapper
 from polymon.model.kan.fast_kan import FastKANWrapper
-from polymon.model.kan.vanilla import KANWrapper
+#from polymon.model.kan.vanilla import KANWrapper
 from polymon.model.kan.fourier_kan import FourierKANWrapper
 from polymon.model.kan.gcn import KAN_GCN
 from polymon.model.kan.gin import KAN_GIN, FastKAN_GIN
