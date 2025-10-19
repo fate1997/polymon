@@ -1,4 +1,4 @@
-# A unified framework for polymer property prediction
+# <img src="polymon.png" width="194" height="150" alt="Polymon Icon">A unified framework for polymer property prediction
 We provide a unified framework for polymer property prediction. This framework is designed to be flexible and easy to use.
 
 ## Installation
