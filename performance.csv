@@ -96,3 +96,11 @@ xgb,,,0.0342,,,0.0342,oligomer_ecfp4-tc-formal
 lgbm,,,0.0351,,,0.0351,oligomer_ecfp4-tc-formal
 catboost,,,0.0298,,,0.0298,oligomer_ecfp4-tc-formal
 catboost,,,0.0280,,,0.0280,mordred-tc-formal
+rf,,,0.0385,,,0.0385,polybert-debug-polybert
+rf,,,0.0408,,,0.0408,polycl-debug-polycl
+rf,0.0435,0.0147,0.0390,0.0332,0.0274,0.0325,polybert-formal
+xgb,0.0343,0.0110,0.0316,0.0249,0.0234,0.0259,polybert-formal
+lgbm,0.0319,0.0113,0.0304,0.0232,0.0225,0.0246,polybert-formal
+rf,0.0418,0.0137,0.0413,0.0329,0.0281,0.0329,polycl-formal
+xgb,0.0386,0.0109,0.0317,0.0216,0.0236,0.0255,polycl-formal
+lgbm,0.0330,0.0103,0.0290,0.0214,0.0234,0.0240,polycl-formal

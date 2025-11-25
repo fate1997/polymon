@@ -63,7 +63,7 @@ class polyCL(nn.Module):
         return rep, out
 
     def from_pretrained(self, model_file):
-        self.load_state_dict(torch.load(model_file, map_location = 'cpu'))
+        self.load_state_dict(torch.load(model_file, map_location = 'cpu'), strict=False)
 
     def save_model(self, path = None):
         
