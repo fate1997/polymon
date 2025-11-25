@@ -104,6 +104,7 @@ def build_model(
         input_args = {
             'in_channels': num_node_features,
             'edge_dim': num_edge_features,
+            'num_tasks': num_tasks,
         }
         hparams.update(input_args)
         model = PNA(**hparams)

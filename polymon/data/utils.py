@@ -1,6 +1,6 @@
 from collections import OrderedDict, defaultdict
 from itertools import chain, combinations
-from typing import Dict
+from typing import Dict, Optional
 
 import networkx as nx
 import numpy as np
@@ -15,36 +15,140 @@ from polymon.data.polymer import Polymer
 from polymon.setting import DEFAULT_TOPK_DESCRIPTORS
 
 
+# class Normalizer:
+#     def __init__(self, mean: torch.Tensor, std: torch.Tensor, eps: float = 1e-6):
+#         self.mean = mean
+#         self.std = std + eps
+    
+#     @property
+#     def init_params(self) -> Dict[str, float]:
+#         return {
+#             'mean': self.mean,
+#             'std': self.std,
+#         }
+    
+#     @classmethod
+#     def from_loader(cls, loader: DataLoader) -> 'Normalizer':
+#         x = []
+#         for batch in loader:
+#             x.append(batch.y.cpu().numpy())
+#         x = np.concatenate(x, 0)
+#         mean = x.mean(axis=0)
+#         std = x.std(axis=0)
+#         mean = torch.from_numpy(mean)
+#         std = torch.from_numpy(std)
+#         return cls(mean, std)
+
+#     def __call__(self, x: torch.Tensor) -> torch.Tensor:
+#         return (x - self.mean.to(x.device)) / self.std.to(x.device)
+    
+#     def inverse(self, x: torch.Tensor) -> torch.Tensor:
+#         return x * self.std.to(x.device) + self.mean.to(x.device)
+
 class Normalizer:
-    def __init__(self, mean: torch.Tensor, std: torch.Tensor, eps: float = 1e-6):
+    def __init__(
+        self,
+        mean: torch.Tensor,
+        std: torch.Tensor,
+        eps: float = 1e-6,
+        dtype: torch.dtype = torch.float32,
+        device: Optional[torch.device] = None,
+    ):
+        # sanitize inputs: replace non-finite with safe defaults
+        mean = mean.to(dtype=dtype, device=device)
+        std  = std.to(dtype=dtype, device=device)
+
+        # if any mean/std are NaN/Inf, fix them
+        bad_mean = ~torch.isfinite(mean)
+        if bad_mean.any():
+            mean = mean.clone()
+            mean[bad_mean] = 0.0
+
+        bad_std = (~torch.isfinite(std)) | (std <= 0)
+        if bad_std.any():
+            std = std.clone()
+            std[bad_std] = 1.0  # identity scaling
+
+        # also clamp extremely small std (numerical stability)
+        std = torch.clamp(std, min=max(eps, 1e-12))
+
         self.mean = mean
-        self.std = std + eps
-    
+        self.std  = std
+        self.eps  = eps
+
     @property
-    def init_params(self) -> Dict[str, float]:
+    def init_params(self) -> Dict[str, list]:
+        # make it serializable & human-readable
         return {
-            'mean': self.mean,
-            'std': self.std,
+            'mean': self.mean.detach().cpu(),
+            'std':  self.std.detach().cpu(),
         }
-    
+
     @classmethod
-    def from_loader(cls, loader: DataLoader) -> 'Normalizer':
-        x = []
+    def from_loader(cls, loader: DataLoader, eps: float = 1e-6,
+                    dtype: torch.dtype = torch.float32,
+                    device: Optional[torch.device] = None) -> 'Normalizer':
+        xs = []
         for batch in loader:
-            x.append(batch.y.cpu().numpy())
-        x = np.concatenate(x, 0)
-        mean = x.mean(axis=0)
-        std = x.std(axis=0)
-        mean = torch.from_numpy(mean)
-        std = torch.from_numpy(std)
-        return cls(mean, std)
+            # batch.y may contain NaNs for missing labels
+            y = batch.y.detach().cpu().numpy()
+            xs.append(y)
+        if not xs:
+            # no data at all -> trivial normalizer
+            return cls(torch.tensor([0.0], dtype=dtype, device=device),
+                       torch.tensor([1.0], dtype=dtype, device=device),
+                       eps=eps, dtype=dtype, device=device)
+
+        X = np.concatenate(xs, axis=0)  # shape [N, T]
+        # compute per-task counts of finite entries
+        finite = np.isfinite(X)
+        counts = finite.sum(axis=0)  # [T]
+
+        # use nan-aware stats (ignore missing)
+        # if a column is all-NaN, nanmean/nanstd -> NaN; we’ll fix below
+        mean = np.nanmean(X, axis=0)
+        std  = np.nanstd(X, axis=0, ddof=0)
+
+        # fallback for columns with no data or invalid stats
+        no_data = counts == 0
+        if np.any(no_data):
+            mean = mean.copy(); std = std.copy()
+            mean[no_data] = 0.0
+            std[no_data]  = 1.0
+
+        # sanitize remaining invalid stds (zeros, negatives, NaN/Inf)
+        bad_std = ~np.isfinite(std) | (std <= 0)
+        if np.any(bad_std):
+            std = std.copy()
+            std[bad_std] = 1.0
+
+        # clamp tiny stds
+        std = np.maximum(std, max(eps, 1e-12))
+
+        mean_t = torch.as_tensor(mean, dtype=dtype, device=device)
+        std_t  = torch.as_tensor(std,  dtype=dtype, device=device)
+        return cls(mean_t, std_t, eps=eps, dtype=dtype, device=device)
+
+    def to(self, device=None, dtype=None):
+        if device is not None:
+            self.mean = self.mean.to(device)
+            self.std  = self.std.to(device)
+        if dtype is not None:
+            self.mean = self.mean.to(dtype)
+            self.std  = self.std.to(dtype)
+        return self
 
     def __call__(self, x: torch.Tensor) -> torch.Tensor:
-        return (x - self.mean.to(x.device)) / self.std.to(x.device)
-    
-    def inverse(self, x: torch.Tensor) -> torch.Tensor:
-        return x * self.std.to(x.device) + self.mean.to(x.device)
+        # x: [..., T]
+        mean = self.mean.to(device=x.device, dtype=x.dtype)
+        std  = self.std.to(device=x.device, dtype=x.dtype)
+        return (x - mean) / std
 
+    def inverse(self, x: torch.Tensor) -> torch.Tensor:
+        # x: [..., T] in normalized space
+        mean = self.mean.to(device=x.device, dtype=x.dtype)
+        std  = self.std.to(device=x.device, dtype=x.dtype)
+        return x * std + mean
 
 class LogNormalizer:
     def __init__(

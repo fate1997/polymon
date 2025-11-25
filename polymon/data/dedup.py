@@ -17,6 +17,7 @@ class Dedup:
         label: Union[str, List[str]],  # accept both str and list
         must_keep: List[str] = None,
         rtol: float = 0.05,
+        mt_train: bool = False,
     ):
         """Deduplicate the dataframe. The input dataframe should have the 
         following columns: SMILES, Source, label(s), id.
@@ -35,7 +36,10 @@ class Dedup:
         else:
             label_cols = list(label)
         df = df[['SMILES', 'Source', 'id'] + label_cols]
-        self.df = df.dropna(subset=label_cols)
+        if not mt_train:
+            self.df = df.dropna(subset=label_cols)
+        else:
+            self.df = df
         self.must_keep = must_keep or []
     
     def add_df(

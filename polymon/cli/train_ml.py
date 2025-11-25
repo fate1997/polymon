@@ -3,6 +3,7 @@ import os
 import pickle
 from typing import List, Tuple
 
+import json
 import pathlib
 import numpy as np
 import optuna
@@ -48,6 +49,7 @@ def parse_args():
     parser.add_argument('--hparams-from', type=str, default=None)
     parser.add_argument('--n-fold', type=int, default=1)
     parser.add_argument('--split-mode', choices=['random', 'scaffold', 'similarity'], default='random')
+    parser.add_argument('--run-production', action='store_true')
     return parser.parse_args()
 
 PREDICT_BATCH_SIZE = 128
@@ -129,7 +131,8 @@ def train(
         logger.info(f'Training {model}...')
         if hparams_from is not None:
             with open(hparams_from, 'rb') as f:
-                hparams = pickle.load(f)
+                #hparams = pickle.load(f)
+                hparams = json.load(f)
         else:
             hparams = {}
         try:
@@ -229,8 +232,8 @@ def train(
         model = MODELS[model_name](**hparams)
         if n_fold > 1 and split_mode != 'similarity':
             logger.info('KFold for final performance evaluation using the best hyper-parameters')
-            x_train = np.concatenate([x_train, x_val, x_test], axis=0)
-            y_train = np.concatenate([y_train, y_val, y_test], axis=0)
+            # x_train = np.concatenate([x_train, x_val, x_test], axis=0)
+            # y_train = np.concatenate([y_train, y_val, y_test], axis=0)
             maes, scaled_maes, r2s = [], [], []
             y_pred_fold = []
             kf = KFold(n_splits=n_fold, shuffle=True, random_state=42)
@@ -250,8 +253,8 @@ def train(
             logger.info(f'MAE: {np.mean(maes): .4f} ± {np.std(maes): .4f}')
             logger.info(f'R2: {np.mean(r2s): .4f} ± {np.std(r2s): .4f}')
         elif n_fold > 1 and split_mode == 'similarity':
-            x_train = np.concatenate([x_train, x_val], axis=0)
-            y_train = np.concatenate([y_train, y_val], axis=0)
+            # x_train = np.concatenate([x_train, x_val], axis=0)
+            # y_train = np.concatenate([y_train, y_val], axis=0)
             logger.info('Similarity mode: KFold for final performance evaluation using the best hyper-parameters')
             maes, scaled_maes, r2s = [], [], []
             y_pred_fold = []
@@ -266,7 +269,7 @@ def train(
                 maes.append(mean_absolute_error(y_val_fold, y_hat))
                 scaled_maes.append(scaling_error(y_val_fold, y_hat, label, minmax_dict))
                 r2s.append(r2_score(y_val_fold, y_hat))
-                y_pred_fold.append(predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE))
+                y_pred_fold.append(predict_batch(model, x_val_fold, batch_size=PREDICT_BATCH_SIZE))
             y_pred = np.mean(np.stack(y_pred_fold, axis=0), axis=0)
             # logger.info(f'Scaled MAE: {np.mean(scaled_maes): .4f} ± {np.std(scaled_maes): .4f}')
             # logger.info(f'MAE: {np.mean(maes): .4f} ± {np.std(maes): .4f}')
@@ -288,24 +291,27 @@ def train(
         # logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     
     # 3. Train production model
-    logger.info(f'Training production model...')
-    try:
-        model = MODELS[model_type](**hparams)
-    except:
-        model = MODELS[model_type]()
-    X_total = np.concatenate([x_train, x_val, x_test], axis=0)
-    y_total = np.concatenate([y_train, y_val, y_test], axis=0)
-    model.fit(X_total, y_total)
-    model.feature_names = feature_names
-    
-    # 4. Save model and results
-    if model_type == 'tabpfn':
-        model.model_path = '/kaggle/input/tabpfn-models/tabpfn-v2-regressor.ckpt'
-        save_fitted_tabpfn_model(model, os.path.join(out_dir, f'{name}.tabpfn_fit'))
+    if args.run_production:
+        logger.info(f'Training production model...')
+        try:
+            model = MODELS[model_type](**hparams)
+        except:
+            model = MODELS[model_type]()
+        X_total = np.concatenate([x_train, x_val, x_test], axis=0)
+        y_total = np.concatenate([y_train, y_val, y_test], axis=0)
+        model.fit(X_total, y_total)
+        model.feature_names = feature_names
+        
+        # 4. Save model and results
+        if model_type == 'tabpfn':
+            model.model_path = '/kaggle/input/tabpfn-models/tabpfn-v2-regressor.ckpt'
+            save_fitted_tabpfn_model(model, os.path.join(out_dir, f'{name}.tabpfn_fit'))
+        else:
+            model_path = os.path.join(out_dir, f'{name}.pkl')
+            with open(model_path, 'wb') as f:
+                pickle.dump(model, f)
     else:
-        model_path = os.path.join(out_dir, f'{name}.pkl')
-        with open(model_path, 'wb') as f:
-            pickle.dump(model, f)
+        logger.info('Skipping production model training...')
     results_path = os.path.join(out_dir, f'{name}.csv')
     pd.DataFrame({
         'y_true': y_test,

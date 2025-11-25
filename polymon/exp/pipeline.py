@@ -163,6 +163,7 @@ class Pipeline:
         if 'Source' in df_all.columns:
             df_all = df_all[df_all['Source'].isin(sources)]
         if isinstance(self.label, list):
+            TARGETS = self.label
             self.minmax_dict = {
                 label: [float(df_all[label].min()), float(df_all[label].max())]
                 for label in TARGETS if label in df_all.columns and label in self.label
@@ -350,7 +351,8 @@ class Pipeline:
         self.logger.info(f'K-Fold validation error: {mean:.4f} ± {std:.4f}')
         self.logger.info(f'K-Fold validation MAE error: {mean_mae:.4f} ± {std_mae:.4f}')
         kfold_model = KFoldModel.from_models(models)
-        kfold_model_wrapper = models[0]
+        from copy import deepcopy
+        kfold_model_wrapper = deepcopy(models[0])
         kfold_model_wrapper.model = kfold_model
         kfold_model_wrapper.write(os.path.join(self.out_dir, f'{self.model_name}-KFold.pt'))
         if self.split_mode == 'similarity':
@@ -588,7 +590,9 @@ class Pipeline:
                 n_estimators=n_estimator,
             )
             model.logger = self.logger
-            model.set_criterion(nn.L1Loss())
+            from polymon.exp.train import HeteroGaussianNLLCriterion
+            model.set_criterion(HeteroGaussianNLLCriterion())
+            #model.set_criterion(nn.L1Loss())
             model.set_optimizer('AdamW', lr=self.lr, weight_decay=1e-12)
             return model
 
@@ -687,6 +691,7 @@ class Pipeline:
             add_hydrogens=not self.remove_hydrogens,
             pre_transform=pre_transform,
             estimator=self.estimator,
+            mt_train=self.mt_train,
         )
         
         # Post-transforms after creating dataset

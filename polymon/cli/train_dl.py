@@ -151,6 +151,15 @@ def main(args: argparse.Namespace):
                         lr=args.lr,
                     )
                     test_err = np.mean(test_err)
+                    test_smiles = [pipeline.test_loader.dataset[i].smiles for i in range(len(pipeline.test_loader.dataset))]
+                    y_pred = model.predict(test_smiles).detach().cpu().numpy()
+                    y_true = np.concatenate([pipeline.test_loader.dataset[i].y.detach().cpu().numpy() for i in range(len(pipeline.test_loader.dataset))])
+                    results_path = os.path.join(out_dir, 'eval.csv')
+                    pd.DataFrame({
+                        'SMILES': test_smiles,
+                        'y_true': y_true.squeeze(),
+                        'y_pred': y_pred.squeeze(),
+                    }).to_csv(results_path, index=False)
                 else:
                     val_err, _, models = pipeline.cross_validation(
                         n_fold=args.n_fold,
@@ -173,17 +182,28 @@ def main(args: argparse.Namespace):
                     test_maes = []
                     test_r2s = []
                     for i, name in enumerate(args.labels):
-                        test_err_per_task = scaling_error(y_true[:, i], y_pred[:, i], name, pipeline.minmax_dict)
-                        test_mae_err_per_task = mean_absolute_error(y_true[:, i], y_pred[:, i])
-                        test_r2_err_per_task = r2_score(y_true[:, i], y_pred[:, i])
+                        y_true_i = y_true[:, i]
+                        y_pred_i = y_pred[:, i]
+                        mask = ~np.isnan(y_true_i)
+                        if np.sum(mask) == 0:
+                            #pipeline.logger.warning(f'All values for {name} are NaN in y_true. Skipping metric computation for this task.')
+                            test_errs.append(np.nan)
+                            test_maes.append(np.nan)
+                            test_r2s.append(np.nan)
+                            continue
+                        y_true_valid = y_true_i[mask]
+                        y_pred_valid = y_pred_i[mask]
+                        test_err_per_task = scaling_error(y_true_valid, y_pred_valid, name, pipeline.minmax_dict)
+                        test_mae_err_per_task = mean_absolute_error(y_true_valid, y_pred_valid)
+                        test_r2_err_per_task = r2_score(y_true_valid, y_pred_valid)
                         test_errs.append(test_err_per_task)
                         test_maes.append(test_mae_err_per_task)
                         test_r2s.append(test_r2_err_per_task)
                         pipeline.logger.info(f'Test {name} raw MAE: {test_mae_err_per_task:.4f}')
                         pipeline.logger.info(f'Test {name} R2: {test_r2_err_per_task:.4f}')
-                    test_err = np.mean(test_errs)
-                    test_mae_err = np.mean(test_maes)
-                    r2_err = np.mean(test_r2s)
+                    test_err = np.nanmean(test_errs)
+                    test_mae_err = np.nanmean(test_maes)
+                    r2_err = np.nanmean(test_r2s)
                     pipeline.logger.info(f'Test average error: {test_err:.4f}')
                     pipeline.logger.info(f'Test average R2: {r2_err:.4f}')
                 model_path = os.path.join(out_dir, 'train', f'{pipeline.model_name}.pt')
