@@ -64,9 +64,11 @@ class GATv2(BaseModel):
         dropout: float = 0.1, 
         edge_dim: int = None,
         num_descriptors: int = 0,
+        predict_logvar: bool = True,
     ):
         super().__init__()
         self.hidden_dim = hidden_dim
+        self.predict_logvar = predict_logvar
 
         # update phase
         feature_per_layer = [num_atom_features] + [hidden_dim] * num_layers
@@ -92,10 +94,11 @@ class GATv2(BaseModel):
         self.atom_weighting.apply(init_weight)
 
         # prediction phase
+        output_dim = num_tasks if not self.predict_logvar else 2*num_tasks
         self.predict = MLP(
             input_dim=feature_per_layer[-1] * 2 + num_descriptors,
             hidden_dim=pred_hidden_dim,
-            output_dim=num_tasks,
+            output_dim=output_dim,
             n_layers=pred_layers,
             dropout=pred_dropout,
             activation=activation
@@ -678,6 +681,7 @@ class PNA(BaseModel):
         hidden_dim: int,
         num_layers: int,
         deg: torch.Tensor,
+        num_tasks: int,
         towers: int = 1,
         edge_dim: int = None,
         pred_hidden_dim: int=128,
@@ -712,7 +716,7 @@ class PNA(BaseModel):
         self.predict = MLP(
             input_dim=2*hidden_dim,
             hidden_dim=pred_hidden_dim,
-            output_dim=1,
+            output_dim=num_tasks,
             n_layers=pred_layers,
             dropout=pred_dropout,
             activation='prelu'

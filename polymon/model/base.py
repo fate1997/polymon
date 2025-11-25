@@ -2,11 +2,13 @@ import os
 from abc import ABC, abstractmethod
 from importlib import import_module
 from typing import TYPE_CHECKING, Any, Dict, List
+import math
 
 import numpy as np
 import torch
 from rdkit import Chem
 from torch import nn
+import torch.nn.functional as F
 from torch_geometric.data import Batch
 from torch_geometric.loader import DataLoader
 
@@ -169,6 +171,7 @@ class ModelWrapper(nn.Module):
         self, 
         batch: Batch,
         device: str = 'cuda',
+        return_var: bool = False,
     ) -> torch.Tensor:
         """Predict the output of the model for a batch of polymers.
 
@@ -183,10 +186,39 @@ class ModelWrapper(nn.Module):
         self.model.to(device)
         batch = batch.to(device)
         y_pred = self.model(batch)
+        num_task = self.normalizer.init_params['mean'].shape[0]
+        predict_logvar = getattr(self.model, 'predict_logvar', False)
+        if predict_logvar:
+            y_pred, raw_var = torch.split(y_pred, [num_task, num_task], dim=1)
+            raw_var = torch.where(
+                torch.isfinite(raw_var), raw_var, torch.zeros_like(raw_var)
+            )
+            y_var_norm = F.softplus(raw_var) + 1e-3
+            y_var_norm = torch.clamp(y_var_norm, max=1e3)
+            y_logvar_norm = torch.log(y_var_norm)
+            if hasattr(self, 'task_log_sigma') and self.task_log_sigma is not None:
+                s = self.task_log_sigma.view(1, -1).to(device)
+            else:
+                s = torch.zeros(1, num_task, device=device)
+            total_log_var = (y_logvar_norm + s).clamp_(math.log(1e-3), math.log(1e3))
+            var_norm = torch.exp(total_log_var)
+        else:
+            y_pred = y_pred
+            var_norm = None
         y_pred = self.normalizer.inverse(y_pred)
         y_pred = y_pred.squeeze(0).squeeze(0)
+        if var_norm is not None:
+            std = self.normalizer.init_params['std'].to(device).view(1, -1)
+            y_var = var_norm * std.pow(2)
+        else:
+            y_var = None
+
         if hasattr(batch, 'estimated_y'):
             y_pred = y_pred + batch.estimated_y.squeeze(0).squeeze(0)
+        if y_var is not None:
+            y_var = y_var.squeeze(0).squeeze(0)
+        if return_var:
+            return y_pred, y_var
         return y_pred
 
     @torch.no_grad()
@@ -196,6 +228,7 @@ class ModelWrapper(nn.Module):
         batch_size: int = 128,
         device: str = 'cpu',
         backup_model: 'ModelWrapper' = None,
+        return_var: bool = False,
     ) -> torch.Tensor:
         """Predict the output of the model for a list of polymer SMILES strings.
 
@@ -238,18 +271,32 @@ class ModelWrapper(nn.Module):
         loader = DataLoader(polymers, batch_size=batch_size)
         
         y_pred_list = []
+        y_var_list = [] if return_var else None
         for i, batch in enumerate(loader):
             batch = batch.to(device)
             if i not in backup_ids:
                 try:
-                    y_pred = self.predict_batch(batch, device)
+                    if return_var:
+                        y_pred, y_var = self.predict_batch(batch, device, return_var=True)
+                    else:
+                        y_pred = self.predict_batch(batch, device, return_var=False)
+                        y_var = None
                 except Exception as e:
                     y_pred = backup_model.predict([smiles_list[i]], device=device)
             else:
                 y_pred = backup_model.predict([smiles_list[i]], device=device)
             y_pred_list.append(y_pred)
+            if return_var:
+                if y_var is None:
+                    y_var = torch.full_like(y_pred, float('nan'))
+                y_var_list.append(y_var)
         if len(y_pred_list) == 1:
-            return y_pred_list[0].detach().cpu()
+            y_pred_out = y_pred_list[0].detach().cpu()
+            if return_var:
+                y_var_out = y_var_list[0].detach().cpu()
+                return y_pred_out, y_var_out
+            else:
+                return y_pred_out
         if batch_size == 1:
             return torch.stack(y_pred_list, dim=0).detach().cpu().unsqueeze(-1)
         return torch.cat(y_pred_list, dim=0).detach().cpu()

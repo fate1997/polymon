@@ -65,6 +65,7 @@ class PolymerDataset(Dataset):
         pre_transform: Optional[Callable] = None,
         estimator: Optional[Callable] = None,
         must_keep: List[str] = None,
+        mt_train: bool = False,
     ):
         super().__init__()
         
@@ -75,9 +76,12 @@ class PolymerDataset(Dataset):
         self.pre_transform = pre_transform
         self.estimator = estimator
         self.must_keep = must_keep
-        
+        self.mt_train = mt_train
         # Create processed path in the current directory
-        processed_name = f'{label_column}_{"_".join(sources)}.pt'
+        if isinstance(label_column, str):
+            processed_name = f'{label_column}_{"_".join(sources)}.pt'
+        else:
+            processed_name = f'{"_".join(label_column)}_{"_".join(sources)}.pt'
         os.makedirs(os.path.join('.', 'database', 'processed'), exist_ok=True)
         processed_path = os.path.join('.', 'database', 'processed', processed_name)
         
@@ -91,8 +95,11 @@ class PolymerDataset(Dataset):
             
             # Allow label_column to be either a string or a list of strings
             label_cols = [label_column] if isinstance(label_column, str) else list(label_column)
-            df_nonan = pd.read_csv(raw_csv_path).dropna(subset=label_cols)
-            dedup = Dedup(df_nonan, label_column, must_keep=self.must_keep)
+            if not self.mt_train:
+                df_nonan = pd.read_csv(raw_csv_path).dropna(subset=label_cols)
+            else:
+                df_nonan = pd.read_csv(raw_csv_path)
+            dedup = Dedup(df_nonan, label_column, must_keep=self.must_keep, mt_train=self.mt_train)
             df_nonan = dedup.run(sources=sources)
             feature_names = list(set(self.feature_names) - set(PRETRAINED_MODELS))
             
@@ -351,12 +358,27 @@ class PolymerDataset(Dataset):
         self,
         n_train: int,
         n_val: int,
+        must_keep: str = "initial",
     ) -> Tuple[Dataset, Dataset, Dataset]:
+    
+        import random
         logger.info('Splitting dataset randomly...')
         dataset = self.shuffle()
         train_set = dataset[:n_train]
         val_set = dataset[n_train:n_train+n_val]
-        test_set = dataset[n_train+n_val:]
+        n_test = len(dataset) - n_train - n_val
+        rng = random.Random(42)
+        all_indices = list(range(len(dataset)))
+        rng.shuffle(all_indices)
+        must_idxs = [i for i in all_indices if getattr(dataset[i], "source_name", None) == must_keep]
+        test_idxs = set(rng.sample(must_idxs, n_test))
+        remaining = [i for i in all_indices if i not in test_idxs]
+        train_idxs = remaining[:n_train]
+        val_idxs = remaining[n_train:n_train+n_val]
+        
+        train_set = [dataset[i] for i in train_idxs]
+        val_set = [dataset[i] for i in val_idxs]
+        test_set = [dataset[i] for i in test_idxs]
         return train_set, val_set, test_set
     
     def _get_scaffold_splits(
