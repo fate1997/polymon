@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.model &mdash; polymon 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="polymon.estimator" href="estimator.html" />
+    <link rel="prev" title="polymon.data" href="data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="data.html">polymon.data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">polymon.model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#modelwrapper">ModelWrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#kfoldmodel">KFoldModel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linearensembleregressor">LinearEnsembleRegressor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ensemblemodelwrapper">EnsembleModelWrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#models">Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2">gatv2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-attentivefp">attentivefp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dimenetpp">dimenetpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2vn">gatv2vn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gin">gin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pna">pna</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gvp">gvp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2chainreadout">gatv2chainreadout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gt">gt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kan-gatv2">kan_gatv2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gps">gps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kan-gps">kan_gps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fastkan">fastkan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#efficientkan">efficientkan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fourierkan">fourierkan</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fastkan-gatv2">fastkan_gatv2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2-lineevo">gatv2_lineevo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2-sage">gatv2_sage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2-source">gatv2_source</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2-pe">gatv2_pe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gatv2-embed-residual">gatv2_embed_residual</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kan-gin">kan_gin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fastkan-gin">fastkan_gin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kan-gcn">kan_gcn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dmpnn">dmpnn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kan-dmpnn">kan_dmpnn</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html#merge">Merge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html#predict">Predict</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">polymon.model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="polymon-model">
+<h1>polymon.model<a class="headerlink" href="#polymon-model" title="Link to this heading"></a></h1>
+<section id="modelwrapper">
+<h2>ModelWrapper<a class="headerlink" href="#modelwrapper" title="Link to this heading"></a></h2>
+</section>
+<section id="kfoldmodel">
+<h2>KFoldModel<a class="headerlink" href="#kfoldmodel" title="Link to this heading"></a></h2>
+</section>
+<section id="linearensembleregressor">
+<h2>LinearEnsembleRegressor<a class="headerlink" href="#linearensembleregressor" title="Link to this heading"></a></h2>
+</section>
+<section id="ensemblemodelwrapper">
+<h2>EnsembleModelWrapper<a class="headerlink" href="#ensemblemodelwrapper" title="Link to this heading"></a></h2>
+</section>
+<section id="models">
+<h2>Models<a class="headerlink" href="#models" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Available Models in <code class="docutils literal notranslate"><span class="pre">polymon.model</span></code></span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model Type</p></th>
+<th class="head"><p>Class Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2"><span class="std std-ref">GATv2</span></a></p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2105.14491">Graph Attention Network v2</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">attentivefp</span></code></p></td>
+<td><p><a class="reference internal" href="#model-attentivefp"><span class="std std-ref">AttentiveFPWrapper</span></a></p></td>
+<td><p><a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.jmedchem.9b00959">AttentiveFP</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dimenetpp</span></code></p></td>
+<td><p><a class="reference internal" href="#model-dimenetpp"><span class="std std-ref">DimeNetPP</span></a></p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2011.14115">DimeNet++</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2vn</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2vn"><span class="std std-ref">GATv2VirtualNode</span></a></p></td>
+<td><p>GATv2 with virtual node</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gin</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gin"><span class="std std-ref">GIN</span></a></p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/1810.00826">Graph Isomorphism Network</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pna</span></code></p></td>
+<td><p><a class="reference internal" href="#model-pna"><span class="std std-ref">PNA</span></a></p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2004.05718">Principal Neighbourhood Aggregation</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gvp</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gvp"><span class="std std-ref">GVPModel</span></a></p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2009.01411">Geometric Vector Perceptron</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2chainreadout</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2chainreadout"><span class="std std-ref">GATv2ChainReadout</span></a></p></td>
+<td><p>GATv2 with chain readout</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gt</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gt"><span class="std std-ref">GraphTransformer</span></a></p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2009.03509">Graph Transformer</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kan_gatv2</span></code></p></td>
+<td><p><a class="reference internal" href="#model-kan-gatv2"><span class="std std-ref">KAN_GATv2</span></a></p></td>
+<td><p>KAN-augmented GATv2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gps</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gps"><span class="std std-ref">GraphGPS</span></a></p></td>
+<td><p><a class="reference external" href="https://arxiv.org/abs/2205.12454">Graph GPS</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kan_gps</span></code></p></td>
+<td><p><a class="reference internal" href="#model-kan-gps"><span class="std std-ref">KAN_GPS</span></a></p></td>
+<td><p>KAN-augmented GraphGPS</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fastkan</span></code></p></td>
+<td><p><a class="reference internal" href="#model-fastkan"><span class="std std-ref">FastKANWrapper</span></a></p></td>
+<td><p><a class="reference external" href="https://github.com/ZiyaoLi/fast-kan">Fast KAN for descriptors</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">efficientkan</span></code></p></td>
+<td><p><a class="reference internal" href="#model-efficientkan"><span class="std std-ref">EfficientKANWrapper</span></a></p></td>
+<td><p><a class="reference external" href="https://github.com/Blealtan/efficient-kan">Efficient KAN for descriptors</a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fourierkan</span></code></p></td>
+<td><p><a class="reference internal" href="#model-fourierkan"><span class="std std-ref">FourierKANWrapper</span></a></p></td>
+<td><p><a class="reference external" href="https://github.com/GistNoesis/FourierKAN">Fourier KAN for descriptors</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fastkan_gatv2</span></code></p></td>
+<td><p><a class="reference internal" href="#model-fastkan-gatv2"><span class="std std-ref">FastKAN_GATv2</span></a></p></td>
+<td><p>FastKAN-augmented GATv2</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2_lineevo</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2-lineevo"><span class="std std-ref">GATv2LineEvo</span></a></p></td>
+<td><p><a class="reference external" href="https://pubs.acs.org/doi/10.1021/acs.jcim.3c00059">GATv2 with line evolution</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2_sage</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2-sage"><span class="std std-ref">GATv2SAGE</span></a></p></td>
+<td><p>GATv2 with SAGE aggregation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2_source</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2-source"><span class="std std-ref">GATv2_Source</span></a></p></td>
+<td><p>GATv2 for multi-fidelity/source</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2_pe</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2-pe"><span class="std std-ref">GATv2_PE</span></a></p></td>
+<td><p>GATv2 with position encoding</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gatv2_embed_residual</span></code></p></td>
+<td><p><a class="reference internal" href="#model-gatv2-embed-residual"><span class="std std-ref">GATv2EmbedResidual</span></a></p></td>
+<td><p>GATv2 with embedding residuals</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kan_gin</span></code></p></td>
+<td><p><a class="reference internal" href="#model-kan-gin"><span class="std std-ref">KAN_GIN</span></a></p></td>
+<td><p>KAN-augmented GIN</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fastkan_gin</span></code></p></td>
+<td><p><a class="reference internal" href="#model-fastkan-gin"><span class="std std-ref">FastKAN_GIN</span></a></p></td>
+<td><p>FastKAN-augmented GIN</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kan_gcn</span></code></p></td>
+<td><p><a class="reference internal" href="#model-kan-gcn"><span class="std std-ref">KAN_GCN</span></a></p></td>
+<td><p>KAN-augmented GCN</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dmpnn</span></code></p></td>
+<td><p><a class="reference internal" href="#model-dmpnn"><span class="std std-ref">DMPNN</span></a></p></td>
+<td><p><a class="reference external" href="https://pubs.acs.org/doi/full/10.1021/acs.jcim.9b00237">Directed Message Passing Neural Network</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kan_dmpnn</span></code></p></td>
+<td><p><a class="reference internal" href="#model-kan-dmpnn"><span class="std std-ref">KAN_DMPNN</span></a></p></td>
+<td><p>KAN-augmented DMPNN</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">model_type</span></code> string is used as the key in configuration and when calling <code class="xref py py-func docutils literal notranslate"><span class="pre">polymon.model.build_model()</span></code>.</p>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<section id="gatv2">
+<span id="model-gatv2"></span><h3>gatv2<a class="headerlink" href="#gatv2" title="Link to this heading"></a></h3>
+</section>
+<section id="model-attentivefp">
+<span id="id1"></span><h3>attentivefp<a class="headerlink" href="#model-attentivefp" title="Link to this heading"></a></h3>
+</section>
+<section id="dimenetpp">
+<span id="model-dimenetpp"></span><h3>dimenetpp<a class="headerlink" href="#dimenetpp" title="Link to this heading"></a></h3>
+</section>
+<section id="gatv2vn">
+<span id="model-gatv2vn"></span><h3>gatv2vn<a class="headerlink" href="#gatv2vn" title="Link to this heading"></a></h3>
+</section>
+<section id="gin">
+<span id="model-gin"></span><h3>gin<a class="headerlink" href="#gin" title="Link to this heading"></a></h3>
+</section>
+<section id="pna">
+<span id="model-pna"></span><h3>pna<a class="headerlink" href="#pna" title="Link to this heading"></a></h3>
+</section>
+<section id="gvp">
+<span id="model-gvp"></span><h3>gvp<a class="headerlink" href="#gvp" title="Link to this heading"></a></h3>
+</section>
+<section id="gatv2chainreadout">
+<span id="model-gatv2chainreadout"></span><h3>gatv2chainreadout<a class="headerlink" href="#gatv2chainreadout" title="Link to this heading"></a></h3>
+</section>
+<section id="gt">
+<span id="model-gt"></span><h3>gt<a class="headerlink" href="#gt" title="Link to this heading"></a></h3>
+</section>
+<section id="kan-gatv2">
+<span id="model-kan-gatv2"></span><h3>kan_gatv2<a class="headerlink" href="#kan-gatv2" title="Link to this heading"></a></h3>
+</section>
+<section id="gps">
+<span id="model-gps"></span><h3>gps<a class="headerlink" href="#gps" title="Link to this heading"></a></h3>
+</section>
+<section id="kan-gps">
+<span id="model-kan-gps"></span><h3>kan_gps<a class="headerlink" href="#kan-gps" title="Link to this heading"></a></h3>
+</section>
+<section id="fastkan">
+<span id="model-fastkan"></span><h3>fastkan<a class="headerlink" href="#fastkan" title="Link to this heading"></a></h3>
+</section>
+<section id="efficientkan">
+<span id="model-efficientkan"></span><h3>efficientkan<a class="headerlink" href="#efficientkan" title="Link to this heading"></a></h3>
+</section>
+<section id="fourierkan">
+<span id="model-fourierkan"></span><h3>fourierkan<a class="headerlink" href="#fourierkan" title="Link to this heading"></a></h3>
+</section>
+<section id="fastkan-gatv2">
+<span id="model-fastkan-gatv2"></span><h3>fastkan_gatv2<a class="headerlink" href="#fastkan-gatv2" title="Link to this heading"></a></h3>
+</section>
+<section id="gatv2-lineevo">
+<span id="model-gatv2-lineevo"></span><h3>gatv2_lineevo<a class="headerlink" href="#gatv2-lineevo" title="Link to this heading"></a></h3>
+</section>
+<section id="gatv2-sage">
+<span id="model-gatv2-sage"></span><h3>gatv2_sage<a class="headerlink" href="#gatv2-sage" title="Link to this heading"></a></h3>
+</section>
+<section id="gatv2-source">
+<span id="model-gatv2-source"></span><h3>gatv2_source<a class="headerlink" href="#gatv2-source" title="Link to this heading"></a></h3>
+</section>
+<section id="gatv2-pe">
+<span id="model-gatv2-pe"></span><h3>gatv2_pe<a class="headerlink" href="#gatv2-pe" title="Link to this heading"></a></h3>
+</section>
+<section id="gatv2-embed-residual">
+<span id="model-gatv2-embed-residual"></span><h3>gatv2_embed_residual<a class="headerlink" href="#gatv2-embed-residual" title="Link to this heading"></a></h3>
+</section>
+<section id="kan-gin">
+<span id="model-kan-gin"></span><h3>kan_gin<a class="headerlink" href="#kan-gin" title="Link to this heading"></a></h3>
+</section>
+<section id="fastkan-gin">
+<span id="model-fastkan-gin"></span><h3>fastkan_gin<a class="headerlink" href="#fastkan-gin" title="Link to this heading"></a></h3>
+</section>
+<section id="kan-gcn">
+<span id="model-kan-gcn"></span><h3>kan_gcn<a class="headerlink" href="#kan-gcn" title="Link to this heading"></a></h3>
+</section>
+<section id="dmpnn">
+<span id="model-dmpnn"></span><h3>dmpnn<a class="headerlink" href="#dmpnn" title="Link to this heading"></a></h3>
+</section>
+<section id="kan-dmpnn">
+<span id="model-kan-dmpnn"></span><h3>kan_dmpnn<a class="headerlink" href="#kan-dmpnn" title="Link to this heading"></a></h3>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="data.html" class="btn btn-neutral float-left" title="polymon.data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="estimator.html" class="btn btn-neutral float-right" title="polymon.estimator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
