@@ -507,3 +507,28 @@ def get_gcn_hparams(trial: optuna.Trial) -> Dict[str, Any]:
         "dropout": trial.suggest_float("dropout", 0.0, 0.5, step=0.1),
     }
     return param
+
+
+@register_hparams('kan')
+def get_kan_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get KAN parameters for hyper-parameter tuning.
+    """
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 5, 50, step=5),
+        "grid": trial.suggest_int("grid", 2, 10, step=1),
+        "num_layers": trial.suggest_int("num_layers", 1, 2, step=1),
+        "k": trial.suggest_int("k", 3, 5, step=1),
+    }
+    return param
+
+
+@register_hparams('mlp')
+def get_mlp_hparams(trial: optuna.Trial) -> Dict[str, Any]:
+    """Get MLP parameters for hyper-parameter tuning.
+    """
+    param = {
+        "hidden_dim": trial.suggest_int("hidden_dim", 5, 50, step=5),
+        "num_layers": trial.suggest_int("num_layers", 1, 2, step=1),
+        "dropout": trial.suggest_float("dropout", 0.0, 0.5, step=0.1),
+    }
+    return param
