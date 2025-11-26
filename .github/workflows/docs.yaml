@@ -1,39 +1,33 @@
-name: docs
+name: Deploy Sphinx docs (source/build layout)
+
 on:
   push:
     branches:
-    - main
+      - main  # or master
 
 jobs:
-  docs:
-    name: Docs
+  build:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    - name: Install Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.11
+      - name: Install dependencies
+        run: |
+          pip install -r docs/requirements.txt
 
-    - name: Install requirements
-      run: |
-        pip install -r docs/requirements.txt
+      - name: Build Sphinx HTML
+        run: |
+          sphinx-build -b html docs/source docs/build/html
 
-    
-    - name: Build docs
-      run: |
-        pip3 install .
-        cd docs
-        sphinx-apidoc -o . ../polymon
-        make clean html
-        make html
-    # https://github.com/peaceiris/actions-gh-pages
-    - name: Deploy
-      if: success()
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        publish_branch: gh-pages
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_build/html/
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build/html
