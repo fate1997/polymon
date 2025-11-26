@@ -1,6 +1,8 @@
 import argparse
 import os
 import pickle
+import json
+import copy
 from typing import List, Tuple
 
 import numpy as np
@@ -117,8 +119,12 @@ def train(
     if not optimize_hparams:
         logger.info(f'Training {model}...')
         if hparams_from is not None:
-            with open(hparams_from, 'rb') as f:
-                hparams = pickle.load(f)
+            if hparams_from.endswith('.pkl') or hparams_from.endswith('.pickle'):
+                with open(hparams_from, 'rb') as f:
+                    hparams = pickle.load(f)
+            elif hparams_from.endswith('.json'):
+                with open(hparams_from, 'r') as f:
+                    hparams = json.load(f)
         else:
             hparams = {}
         model = MODELS[model](**hparams)
@@ -142,12 +148,13 @@ def train(
                 logger.info(f'Training fold {fold+1}/{n_fold}...')
                 x_train_fold, x_val_fold = x_train[train_idx], x_train[val_idx]
                 y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx] 
-                model.fit(x_train_fold, y_train_fold)
-                y_hat = predict_batch(model, x_val_fold, batch_size=PREDICT_BATCH_SIZE)
+                model_fold = MODELS[model_type](**hparams)
+                model_fold.fit(x_train_fold, y_train_fold)
+                y_hat = predict_batch(model_fold, x_val_fold, batch_size=PREDICT_BATCH_SIZE)
                 maes.append(mean_absolute_error(y_val_fold, y_hat))
                 scaled_maes.append(scaling_error(y_val_fold, y_hat, label))
                 r2s.append(r2_score(y_val_fold, y_hat))
-                y_pred_test.append(predict_batch(model, x_test, batch_size=PREDICT_BATCH_SIZE))
+                y_pred_test.append(predict_batch(model_fold, x_test, batch_size=PREDICT_BATCH_SIZE))
             y_pred = np.mean(np.stack(y_pred_test, axis=0), axis=0)
             logger.info(f'Scaled MAE: {np.mean(scaled_maes): .4f} ± {np.std(scaled_maes): .4f}')
             logger.info(f'MAE: {np.mean(maes): .4f} ± {np.std(maes): .4f}')

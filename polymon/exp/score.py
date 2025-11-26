@@ -18,6 +18,15 @@ MINMAX_DICT =  {
         'Density': [0.742359, 1.914482],
         'Rg': [9.728355, 85.684019],
     }
+
+NUM_LABELS_DICT = {
+    'Tg': 7367,
+    'FFV': 7012,
+    'Tc': 1070,
+    'Density': 1077,
+    'Rg': 1328,
+}
+
 NULL_FOR_SUBMISSION = -9999
 
 
@@ -35,10 +44,11 @@ def scaling_error(labels, preds, property):
 
 
 def get_property_weights(labels):
-    property_weight = []
-    for property in MINMAX_DICT.keys():
-        valid_num = np.sum(labels[property] != NULL_FOR_SUBMISSION)
-        property_weight.append(valid_num)
+    # property_weight = []
+    # for property in MINMAX_DICT.keys():
+    #     valid_num = np.sum(labels[property] != NULL_FOR_SUBMISSION)
+    #     property_weight.append(valid_num)
+    property_weight = [NUM_LABELS_DICT[property] for property in MINMAX_DICT.keys()]
     return normalize_property_weight(property_weight)
 
 

@@ -40,7 +40,8 @@ class GATv2_Source(BaseModel):
         bias: bool = True, 
         dropout: float = 0.1, 
         edge_dim: int = None,
-        source_names: List[str] = ['internal'],
+        source_names: List[int] = [1],
+        **kwargs,
     ):
         super().__init__()
 
@@ -98,8 +99,8 @@ class GATv2_Source(BaseModel):
         output = torch.cat([output1, output2], dim=1)
         
         batch_size = batch.batch.max() + 1
-        source = getattr(batch, 'source', ['internal'] * batch_size)
-        indices = (np.array(source)[:, None] == np.array(self.source_names)[None, :]).argmax(axis=1)
+        source = getattr(batch, 'source', [1] * batch_size)
+        indices = (source.detach().cpu().numpy()[:, None] == np.array(self.source_names)[None, :]).argmax(axis=1)
         indices = torch.from_numpy(indices).to(batch.x.device)
         return self.source_specific_head(output, indices)
 

@@ -71,7 +71,8 @@ class GATv2(BaseModel):
                 concat=True if i < len(feature_per_layer) - 2 else False,
                 edge_dim=edge_dim,
                 dropout=dropout,
-                bias=bias
+                bias=bias,
+                add_self_loops=False
             )
             layers.append(layer)
         self.layers = nn.ModuleList(layers)

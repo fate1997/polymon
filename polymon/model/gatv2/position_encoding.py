@@ -61,7 +61,7 @@ class GATv2_PE(BaseModel):
         elif position_encoding_type == 'rope':
             self.position_encoding = partial(rope_encoding, dim=hidden_dim)
         elif position_encoding_type == 'learned':
-            self.position_encoding = nn.Embedding(250, hidden_dim)
+            self.position_encoding = nn.Embedding(500, hidden_dim)
             nn.init.normal_(self.position_encoding.weight, std=0.02)
         else:
             raise ValueError(f'Invalid position encoding type: {position_encoding_type}')

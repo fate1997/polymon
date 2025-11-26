@@ -11,10 +11,10 @@ class KANWrapper(BaseModel):
         self,
         in_channels: int,
         hidden_dim: int,
-        num_layers: int,
+        num_layers: int = 1,
         grid: int = 5,
         k: int = 3,
-        device: str = 'cpu',
+        device: str = 'cuda',
     ):
         super(KANWrapper, self).__init__()
         self.kan = KAN(

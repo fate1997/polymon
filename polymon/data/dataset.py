@@ -115,7 +115,7 @@ class PolymerDataset(Dataset):
                     mol_dict['identifier'] = torch.tensor(row[identifier_column])
                 mol_dict['smiles'] = Chem.MolToSmiles(rdmol)
                 if 'Source' in df_nonan.columns:
-                    mol_dict['source'] = int(row['Source'] == 'internal')
+                    mol_dict['source'] = int(row['Source'] == 'HT-exp')
                 if None in mol_dict.values():
                     logger.warning(
                         f'Skipping {smiles} because of None in featurization'
