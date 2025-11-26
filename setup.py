@@ -19,4 +19,21 @@ setup(
             'polymon = polymon.cli.main:main',
         ],
     },
+    install_requires=[
+        "mordredcommunity",
+        "mordred==1.2.0",
+        "rdkit==2023.09.6",
+        "xenonpy",
+        "xgboost",
+        "catboost",
+        "lightgbm",
+        "loguru",
+        "scikit-learn",
+        "tabpfn",
+        "torchensemble",
+        "optuna",
+        "lightning",
+        "torch_geometric",
+        "pykan"
+    ],
 )

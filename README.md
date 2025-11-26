@@ -1,72 +1,42 @@
-<img src="polymon.png" width="194" height="150" alt="Polymon Icon">
+<img src="assets/polymon.png" alt="Polymon Icon">
 
-# A unified framework for polymer property prediction
-We provide a unified framework for polymer property prediction. This framework is designed to be flexible and easy to use.
+`PolyMon` is a unified framework for polymer property prediction. It is designed to be flexible and easy to use. The framework include various models, featurizers, and different training strategies.
+
+<p align="center">
+  <img src="assets/framework.png" alt="framework" width="400">
+</p>
+
 
 ## Installation
+This package requires `torch>=2.2.2` and `torch_geometric>=2.5.3`. We recommend installing these packages manually before installing this package.
+
 ```bash
+conda install -y pytorch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 \
+                 pytorch-cuda=11.8 -c pytorch -c nvidia
+pip install torch_geometric
+pip install torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-2.3.0+cu118.html
+
 pip install polymon
 ```
 
 ## Usage
 ### Train
+Train a tabular model or a GNN model for polymer property prediction.
 ```bash
 polymon train --help
 ```
 
 ### Merge
+Merge two datasets into one based on different acquisition functions.
 ```bash
 polymon merge --help
 ```
 
 ### Predict
+Predict labels for a given dataset.
 ```bash
 polymon predict --help
 ```
 
 ## Citation
 To be updated.
-
-## Progress
-GNNs
-- [x] GATv2
-- [x] GIN
-- [ ] DMPNN
-- [x] AttentiveFP
-- [ ] GPS
-- [x] PNA
-- [x] GT
-- [ ] GCN
-
-Density Multi-fidelity
-- [ ] finetune
-- [ ] label residual
-- [ ] emb residual
-- [ ] multi-head
-
-Residual
-- [ ] graph embeddings from other properties (4 x 5)
-- [x] Rg-residual
-- [x] Density-residual vdw
-- [x] Density-residual fedors
-- [ ] Density-residual ibm
-- [ ] Tg-residual
-- [ ] Atom-contribution (re-implement with training set to train atom contribution) It's a little bit hard to implement.
-
-Actively learning
-- [ ] Rg + 1st round
-- [ ] Rg + 2nd round
-- [ ] Rg + 3rd round
-
-Representation
-- [ ] GATv2-vn
-- [x] GATv2 periodic
-- [x] KAN-GATv2
-- [ ] KAN-GPS
-- [x] KAN-GIN
-- [ ] KAN-DMPNN
-- [ ] FastKAN-GATv2
-- [ ] GATv2-chain-readout
-- [x] GATv2-lineevo-readout
-- [x] GATv2_PE
-- [ ] GATv2_PE_periodic
