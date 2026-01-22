@@ -107,9 +107,9 @@ class GATv2(BaseModel):
         x = batch.x.float()
         # if self.num_descriptors > 0:
         #     x = torch.cat([x, batch.descriptors[batch.batch]], dim=1)
-        
+
         for layer in self.layers:
-            x = layer(x, batch.edge_index, batch.edge_attr)
+            x = layer(x, batch.edge_index, batch.edge_attr.float())
         
         batch_index = batch.batch
         weighted = self.atom_weighting(x)

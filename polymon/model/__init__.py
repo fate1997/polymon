@@ -2,6 +2,7 @@ import typing
 from typing import Any, Dict
 
 from polymon.model.dmpnn import DMPNN
+from polymon.model.mlp import MLPWrapper
 from polymon.model.gatv2.embed_residual import GATv2EmbedResidual
 from polymon.model.gatv2.fastkan_gatv2 import FastKAN_GATv2
 from polymon.model.gatv2.gat_chain_readout import GATv2ChainReadout
@@ -151,6 +152,12 @@ def build_model(
         }
         hparams.update(input_args)
         model = FastKANWrapper(**hparams)
+    elif model_type == 'mlp':
+        input_args = {
+            'in_channels': num_descriptors,
+        }
+        hparams.update(input_args)
+        model = MLPWrapper(**hparams)
     elif model_type == 'efficientkan':
         input_args = {
             'in_channels': num_descriptors,
