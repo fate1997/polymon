@@ -96,6 +96,7 @@ class Pipeline:
         emb_model: Optional[str] = None,
         ensemble_type: str = 'voting',
         mt_train: bool = False,
+        train_loss: Literal['l1', 'evidential'] = 'l1',
     ):
         seed_everything(seed)
         
@@ -114,10 +115,7 @@ class Pipeline:
         self.early_stopping_patience = early_stopping_patience
         self.device = device
         self.n_trials = n_trials
-        if isinstance(self.label, list):
-            self.model_name = f'{self.model_type}_{"_".join(self.label)}_{self.tag}'
-        else:
-            self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
+
         #self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
         self.split_mode = split_mode
         self.train_residual = train_residual
@@ -130,6 +128,12 @@ class Pipeline:
         self.emb_model = emb_model
         self.ensemble_type = ensemble_type
         self.mt_train = mt_train
+        self.train_loss = train_loss
+        #if isinstance(self.label, list):
+        if self.mt_train:
+            self.model_name = f'{self.model_type}_mt_{self.tag}'
+        else:
+            self.model_name = f'{self.model_type}_{self.label}_{self.tag}'
 
         logger = loguru.logger
         logger.remove()
@@ -590,9 +594,17 @@ class Pipeline:
                 n_estimators=n_estimator,
             )
             model.logger = self.logger
-            from polymon.exp.train import HeteroGaussianNLLCriterion
-            model.set_criterion(HeteroGaussianNLLCriterion())
-            #model.set_criterion(nn.L1Loss())
+            if self.mt_train:
+                from polymon.exp.train import NIGCriterion, HuberLoss
+                if model_wrapper.info['model_init_params']['train_loss'] == 'evidential':
+                    model.set_criterion(NIGCriterion(coeff=1.0, include_const=True))
+                elif model_wrapper.info['model_init_params']['train_loss'] == 'l1':
+                    model.set_criterion(HuberLoss(delta=1.0))
+                else:
+                    raise ValueError(f'Invalid train loss: {self.train_loss}')
+            #model.set_criterion(NIGCriterion(coeff=1.0, include_const=True))
+            else:
+                model.set_criterion(nn.L1Loss())
             model.set_optimizer('AdamW', lr=self.lr, weight_decay=1e-12)
             return model
 
@@ -736,6 +748,7 @@ class Pipeline:
             num_descriptors=self.num_descriptors,
             num_tasks=len(self.label) if isinstance(self.label, list) else 1,
             hparams=model_hparams,
+            train_loss=self.train_loss,
         )
         num_params = sum(p.numel() for p in model.parameters())
         self.logger.info(f'Model Parameters: {num_params / 1e6:.4f}M')

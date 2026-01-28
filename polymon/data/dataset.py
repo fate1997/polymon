@@ -80,8 +80,9 @@ class PolymerDataset(Dataset):
         # Create processed path in the current directory
         if isinstance(label_column, str):
             processed_name = f'{label_column}_{"_".join(sources)}.pt'
-        else:
-            processed_name = f'{"_".join(label_column)}_{"_".join(sources)}.pt'
+        #else:
+        if self.mt_train:
+            processed_name = f'mt_{"_".join(sources)}.pt'
         os.makedirs(os.path.join('.', 'database', 'processed'), exist_ok=True)
         processed_path = os.path.join('.', 'database', 'processed', processed_name)
         

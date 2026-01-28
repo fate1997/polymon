@@ -1,4 +1,4 @@
-from typing import Dict, Any, Literal
+from typing import Dict, Any, Literal, Optional
 
 import torch
 from torch import nn
@@ -59,17 +59,16 @@ class GATv2(BaseModel):
         pred_dropout: float=0.2, 
         pred_layers:int=2,
         activation: str='prelu', 
-        #num_tasks: int = 1,
         bias: bool = True, 
         dropout: float = 0.1, 
         edge_dim: int = None,
         num_descriptors: int = 0,
-        predict_logvar: bool = True,
+        train_loss: Literal['l1', 'evidential'] = 'l1',
     ):
         super().__init__()
         self.hidden_dim = hidden_dim
-        self.predict_logvar = predict_logvar
-
+        self.train_loss = train_loss
+        self.num_tasks = num_tasks
         # update phase
         feature_per_layer = [num_atom_features] + [hidden_dim] * num_layers
         layers = []
@@ -94,7 +93,18 @@ class GATv2(BaseModel):
         self.atom_weighting.apply(init_weight)
 
         # prediction phase
-        output_dim = num_tasks if not self.predict_logvar else 2*num_tasks
+        # if self.predict_logvar:
+        #     output_dim = 2*num_tasks
+        if self.train_loss == 'evidential':
+            output_dim = 4*num_tasks
+        # elif self.predict_niw:
+        #     p = num_tasks
+        #     num_tri = p * (p + 1) // 2
+        #     output_dim = p + 1 + num_tri + 1
+        elif self.train_loss == 'l1':
+            output_dim = num_tasks
+
+        #output_dim = num_tasks if not self.predict_logvar else 2*num_tasks
         self.predict = MLP(
             input_dim=feature_per_layer[-1] * 2 + num_descriptors,
             hidden_dim=pred_hidden_dim,
@@ -129,7 +139,53 @@ class GATv2(BaseModel):
         
         if self.num_descriptors > 0:
             output = torch.cat([output, batch.descriptors], dim=1)
-        return self.predict(output)
+
+        pred = self.predict(output)
+        # if self.predict_logvar:
+        #     T = pred.shape[1] // 2
+        #     mean = pred[:, :T]
+        #     raw_log_var = pred[:, T:]
+
+        #     # ✔️ numerically stable variance
+        #     var = F.softplus(raw_log_var) + 1e-3
+        #     var = torch.clamp(var, max=1e3)
+        #     log_var = torch.log(var)
+
+        #     return torch.cat([mean, log_var], dim=1)
+        if self.train_loss == 'evidential':
+            T = pred.shape[1] // 4
+            mu, loglam, logalpha, logbeta = torch.split(pred, T, dim=-1)
+            lam = F.softplus(loglam)
+            alpha = F.softplus(logalpha) + 1
+            beta = F.softplus(logbeta)
+            return torch.stack((mu, lam, alpha, beta), dim=2)
+            #return torch.cat([mu, loglam, logalpha, logbeta], dim=1)
+        elif self.train_loss == 'l1':
+            return pred
+        # elif self.predict_niw:
+        #     p = self.num_tasks
+        #     idx = 0
+
+        #     # ---- mean vector ----
+        #     mu = pred[:, idx:idx+p]  # [B, p]
+        #     idx += p
+
+        #     # ---- kappa ----
+        #     log_kappa = pred[:, idx:idx+1]  # [B, 1]
+        #     idx += 1
+
+        #     # ---- Cholesky elements ----
+        #     num_tri = p * (p + 1) // 2
+        #     L_elements = pred[:, idx:idx + num_tri]  # [B, num_tri]
+        #     idx += num_tri
+
+        #     # ---- nu parameter ----
+        #     log_nu_offset = pred[:, idx:idx+1]  # [B, 1]
+
+        #     # now all parts are [B, …] and can be concatenated
+        #     return torch.cat([mu, log_kappa, L_elements, log_nu_offset], dim=-1)
+
+        # return pred
     
     def get_embeddings(self, batch: Polymer):
         """Get global graph embeddings.

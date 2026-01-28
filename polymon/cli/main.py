@@ -5,6 +5,7 @@ from polymon.cli.train_dl import main as main_dl
 from polymon.cli.train_ml import MODELS
 from polymon.cli.train_ml import main as main_ml
 from polymon.cli.predict import main as main_predict
+from polymon.cli.sample import main as main_sample
 
 
 
@@ -242,6 +243,13 @@ def parse_args():
         action='store_true',
         help='Whether to train the model on multiple tasks'
     )
+    train_parser.add_argument(
+        '--train-loss', 
+        type=str, 
+        default='l1',
+        choices=['l1', 'evidential'],
+        help='Loss function to use for training'
+    )
     
     # Merge
     merge_parser = subparsers.add_parser('merge', help='Merge two datasets')
@@ -333,6 +341,83 @@ def parse_args():
         required=True,
         help='Name of the smiles column'
     )    
+    
+    # Sample
+    sample_parser = subparsers.add_parser('sample', help='Sample molecules')
+    sample_parser.add_argument(
+        '--smiles-cluster-file', 
+        type=str, 
+        required=True,
+        help='Path to the smiles dataframe file'
+    )
+    sample_parser.add_argument(
+        '--train-file', 
+        type=str, 
+        required=True,
+        help='Path to the train dataframe file'
+    )
+    sample_parser.add_argument(
+        '--model-file', 
+        type=str, 
+        required=True,
+        help='Path to the model file'
+    )
+    sample_parser.add_argument(
+        '--model-type', 
+        type=str, 
+        required=False,
+        help='Model type',
+        default='ensemble'
+    )
+    sample_parser.add_argument(
+        '--device', 
+        type=str, 
+        required=False,
+        help='Device',
+        default='cuda'
+    )
+    sample_parser.add_argument(
+        '--ordered-tasks', 
+        type=str, 
+        required=False,
+        help='Ordered tasks',
+        default=['Rg', 'Density', 'Bulk_modulus', 'FFV', 'PLD', 'CLD']
+    )
+    sample_parser.add_argument(
+        '--acquisition-function', 
+        type=str, 
+        required=False,
+        help='Acquisition function',
+        default='uncertainty'
+    )
+    sample_parser.add_argument(
+        '--output-file', 
+        type=str, 
+        required=False,
+        help='Output file',
+        default='smiles_scores.csv'
+    )
+    sample_parser.add_argument(
+        '--all-clusters-file', 
+        type=str, 
+        required=False,
+        help='All clusters file',
+        default='all_clusters.npy'
+    )
+    sample_parser.add_argument(
+        '--n-sample', 
+        type=int, 
+        required=False,
+        help='Number of samples to take from each cluster',
+        default=50
+    )
+    sample_parser.add_argument(
+        '--sample-tag', 
+        type=str, 
+        required=False,
+        help='Sample tag',
+        default='AL1-Uncertainty'
+    )
     return parser.parse_args()
 
 
@@ -348,7 +433,8 @@ def main():
         main_merge(args)
     elif args.mode == 'predict':
         main_predict(args)
-
+    elif args.mode == 'sample':
+        main_sample(args)
 
 if __name__ == '__main__':
     main()

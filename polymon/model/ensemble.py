@@ -289,13 +289,24 @@ class EnsembleModelWrapper(nn.Module):
             train_loader = self._loader_wrapper(train_loader)
             test_loader = self._loader_wrapper(val_loader) if val_loader is not None else None
         else:
-            train_loader_ = []
-            for data in train_loader.dataset:
-                data_copy = data.clone()
-                data_copy.y = self.normalizer(data_copy.y)
-                train_loader_.append(data_copy)
-                test_loader = None
-            train_loader = DataLoader(train_loader_, batch_size=128, shuffle=True)
+            # train_loader_ = []
+            # for data in train_loader.dataset:
+            #     data_copy = data.clone()
+            #     data_copy.y = self.normalizer(data_copy.y)
+            #     train_loader_.append(data_copy)
+            #     test_loader = None
+            # train_loader = DataLoader(train_loader_, batch_size=128, shuffle=True)
+            wrapped_dataset = TorchEnsembleDataset(
+                train_loader.dataset,
+                normalizer=self.normalizer
+            )
+
+            train_loader = DataLoader(
+                wrapped_dataset,
+                batch_size=128,
+                shuffle=True
+            )
+            test_loader = None
         
         self.model.fit(
             train_loader=train_loader,
@@ -446,6 +457,13 @@ class EnsembleModelWrapper(nn.Module):
         model.device = device
         for _ in range(model_info['n_estimators']):
             model.estimators_.append(model._make_estimator())
+        
+        criterion_info = model_info.get('criterion', None)
+        if criterion_info is not None:
+            from polymon.exp.train import HeteroGaussianNLLCriterion
+            criterion = HeteroGaussianNLLCriterion()
+            model.set_criterion(criterion)
+
         model.load_state_dict(model_info['model'])
         if 'mean' in model_info['normalizer']:
             normalizer = Normalizer(
@@ -493,3 +511,21 @@ class EnsembleModelWrapper(nn.Module):
         for batch in loader:
             data.append((batch, self.normalizer(batch.y)))
         return data
+
+class TorchEnsembleDataset(torch.utils.data.Dataset):
+    def __init__(self, pyg_dataset, normalizer=None):
+        self.dataset = pyg_dataset
+        self.normalizer = normalizer
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        data = self.dataset[idx].clone()
+
+        y = data.y
+        if self.normalizer is not None:
+            y = self.normalizer(y)
+
+        data.y = None  # important!
+        return data, y
