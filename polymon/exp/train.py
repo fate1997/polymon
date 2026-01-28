@@ -66,13 +66,7 @@ class Trainer:
             ))
         
         # for different weighting strategies
-        self.mt_strategy = 'none'
-        self.dwa_T = 2.0
-        self.gradnorm_alpha = 0.5
-        self.gradnorm_lr = 0.025
-        self._K = None
-        self._task_weights = None
-        self._loss_hist = []
+        self.mt_strategy = 'uncertainty'
 
     def build_optimizer(self) -> torch.optim.Optimizer:
         """Build the optimizer.
@@ -236,133 +230,166 @@ class Trainer:
         metrics['r2'] = r2_score(y_trues, y_preds)
         metrics['scaling_error'] = scaling_error(y_trues, y_preds, label, self.minmax_dict)
         return metrics
-    
-    # @staticmethod
-    # def masked_huber_loss(
-    #     pred: torch.Tensor,
-    #     target: torch.Tensor,
-    #     delta: float = 1.0,
-    #     mask: Optional[torch.Tensor] = None,
-    #     task_weights: Optional[torch.Tensor] = None,
-    # ) -> torch.Tensor:
-    #     """Masked Huber loss.
+
+    @staticmethod
+    def masked_nig_nll(
+        pred: torch.Tensor,
+        target: torch.Tensor,
+        mask: Optional[torch.Tensor] = None,
+        coeff: float = 2.0,
+        include_const: bool = True,
+    ):
+
+        # B, fourT = pred.shape
+        # T = target.shape[-1]
+
+        #mu, loglam, logalpha, logbeta = torch.split(pred, T, dim=-1)
+        mu, lam, alpha, beta = torch.unbind(pred, dim=-1)
+        # lam = torch.exp(loglam)
+        # alpha = torch.exp(logalpha) + 1.0
+        # beta = torch.exp(logbeta)
+        # lam = F.softplus(loglam) + 1e-6
+        # alpha = F.softplus(logalpha) + 1.0 + 1e-6
+        # beta = F.softplus(logbeta) + 1e-6
         
-    #     Args:
-    #         pred (torch.Tensor): The predicted values.
-    #         target (torch.Tensor): The target values.
-    #         mask (torch.Tensor | None): The mask.
-    #         delta (float | torch.Tensor): The delta.
-    #         task_weights (torch.Tensor | None): The task weights.
-    #     """
-    #     if mask is None:
-    #         mask = ~torch.isnan(target)
-            
-    #     target_filled = torch.where(mask, target, pred.detach())
-        
-    #     # if isinstance(delta, torch.Tensor) and delta.ndim == 1:
-    #     #     delta = delta.view(-1, 1).to(pred.device)
-            
-    #     loss_per_task = F.huber_loss(
-    #         pred, 
-    #         target_filled, 
-    #         delta = delta,
-    #         reduction='none'
-    #     )
-    #     loss_per_task = loss_per_task * mask.float()
-        
-    #     if task_weights is not None:
-    #         loss_per_task = loss_per_task * task_weights.view(1, -1).to(pred.device)
-            
-    #     denom = mask.float()
-    #     if task_weights is not None:
-    #         denom = denom * task_weights.view(1, -1).to(pred.device)
-            
-    #     denom = denom.sum(dim=0).clamp_min(1)
-    #     losses = loss_per_task.sum(dim=0) / denom
-    #     # losses[2] /= 10
-    #     return losses
+        if mask is None:
+            mask = ~torch.isnan(target)
+        mask = mask.bool()
+
+        target_filled = torch.where(mask, target, mu.detach())
+        twoBlambda = 2 * beta * (1 + lam)
+        resid = (target_filled - mu)
+        nll = (
+            0.5 * (torch.pi / lam).log()
+            - alpha * twoBlambda.log()
+            + (alpha + 0.5) * torch.log(lam * resid**2 + twoBlambda)
+            + torch.lgamma(alpha)
+            - torch.lgamma(alpha + 0.5)
+        )
+
+        # if include_const is False:
+        #     nll = nll - 0.5 * (torch.pi).log()
+ 
+        evidence = 2 * lam + alpha
+        reg = resid.abs() * evidence
+
+        loss = nll + (reg - 1e-8) * coeff
+
+        # ---- Apply mask ----
+        loss = loss * mask.float()
+        denom = mask.float().sum(dim=0).clamp_min(1.0)
+
+        per_task_loss = loss.sum(dim=0) / denom
+        return per_task_loss
+
+    @staticmethod
+    def masked_niw_nll(
+        pred: torch.Tensor,
+        target: torch.Tensor,
+        mask: Optional[torch.Tensor] = None,
+        coeff: float = 1.0,
+        eps: float = 1e-6,
+    ):
+        B, p = target.shape
+
+        # ---- unpack ----
+        idx = 0
+        mu = pred[:, idx:idx+p]; idx += p
+        log_kappa = pred[:, idx:idx+1]; idx += 1
+        num_tri = p*(p+1)//2
+        L_elements = pred[:, idx:idx+num_tri]; idx += num_tri
+        log_nu = pred[:, idx:idx+1]
+
+        # ---- constraints ----
+        kappa = F.softplus(log_kappa) + 1e-3
+        nu = F.softplus(log_nu) + p + 2.0   # IMPORTANT: > p+1
+
+        # ---- build Cholesky of Psi safely ----
+        L = torch.zeros(B, p, p, device=pred.device)
+        tril = torch.tril_indices(p, p)
+
+        L[:, tril[0], tril[1]] = L_elements
+
+        # enforce positive diagonal
+        diag_idx = torch.arange(p)
+        L[:, diag_idx, diag_idx] = F.softplus(L[:, diag_idx, diag_idx]) + 1e-3
+
+        Psi = L @ L.transpose(-1, -2)
+        Psi = Psi + eps * torch.eye(p, device=pred.device)
+
+        # ---- masking ----
+        if mask is None:
+            mask = ~torch.isnan(target)
+        target_filled = torch.where(mask, target, mu.detach())
+        diff = target_filled - mu
+
+        # ---- predictive covariance ----
+        scale = (1.0 + 1.0/kappa) / (nu - p + 1.0)
+        pred_cov = Psi * scale.unsqueeze(-1)
+
+        # ---- Cholesky for stability ----
+        chol = torch.linalg.cholesky(pred_cov)
+
+        # ---- Mahalanobis distance (CORRECT) ----
+        # solve (L Lᵀ)⁻¹ diff
+        solve = torch.cholesky_solve(diff.unsqueeze(-1), chol)
+        mahal = torch.sum(diff.unsqueeze(-1) * solve, dim=(-2, -1))
+
+        # ---- log determinant ----
+        logdet = 2.0 * torch.sum(torch.log(torch.diagonal(chol, dim1=-2, dim2=-1)), dim=-1)
+
+        # ---- Student-t NLL ----
+        nll = 0.5 * (
+            logdet
+            + (nu.squeeze(-1) + p) * torch.log1p(mahal)
+        )
+
+        # ---- evidence regularizer ----
+        reg = coeff * kappa.squeeze(-1) * (diff**2).sum(-1)
+
+        #loss = nll + reg
+        #print(nll, reg)
+        loss = nll
+        return loss.mean()
+
+
 
     @staticmethod
     def heteroscedastic_gaussian_nll_masked(
         pred: torch.Tensor,
         target: torch.Tensor,
         mask: Optional[torch.Tensor] = None,
-        task_weights: Optional[torch.Tensor] = None,
-        eps: float = 1e-6,
-        task_log_sigma: Optional[torch.Tensor] = None,
         include_const: bool = True,
-    ) -> torch.Tensor:
-        """
-        Masked heteroscedastic Gaussian NLL.
-        pred: (B, 2T) packed as [mean | log_var]
-        target: (B, T)
-        Returns: per-task losses (T,)
-        """
+    ):
         import math
-        pred = pred.float()
-        target = target.float()
-        device = pred.device
 
         B, twoT = pred.shape
         T = target.shape[-1]
-        assert twoT == 2 * T, f"Predictions should have shape (B, 2*T) but got {pred.shape}, T = {T}"
 
         mean = pred[:, :T]
         log_var = pred[:, T:]
 
         if mask is None:
             mask = ~torch.isnan(target)
-        mask = mask.to(device=device, dtype=torch.bool)
+        mask = mask.bool()
 
-        mean = torch.where(torch.isfinite(mean), mean, torch.zeros_like(mean))
-        raw_log_var = torch.where(torch.isfinite(log_var), log_var, torch.zeros_like(log_var))
-        # log_var = raw_log_var.clamp_(math.log(1e-3), math.log(1e3))
-        var = F.softplus(raw_log_var)+1e-3
-        var = torch.clamp(var, max=1e3)
-        log_var = torch.log(var)
-        if task_log_sigma is not None:
-            s = task_log_sigma.view(1, -1).to(device)  # unconstrained parameter
-        else:
-            s = torch.zeros(1, T, device=device)
-        total_log_var = (log_var + s).clamp_(math.log(1e-3), math.log(1e3))
-
-        inv_total_var = torch.exp(-total_log_var)
+        # 🔑 fill NaNs BEFORE residuals
         target_filled = torch.where(mask, target, mean.detach())
-        resid2 = (target_filled - mean) ** 2
 
-        nll = 0.5 * (resid2 * inv_total_var + total_log_var)
+        log_var = torch.clamp(log_var, min=math.log(1e-3), max=math.log(1e3))
+        inv_var = torch.exp(-log_var)
+
+        resid2 = (target_filled - mean) ** 2
+        nll = 0.5 * (resid2 * inv_var + log_var)
+
         if include_const:
             nll = nll + 0.5 * math.log(2 * math.pi)
+
         nll = nll * mask.float()
-
         denom = mask.float().sum(dim=0).clamp_min(1.0)
+
         per_task = nll.sum(dim=0) / denom
-        per_task = torch.where(torch.isfinite(per_task), per_task, torch.zeros_like(per_task))
-        per_task = per_task + 1e-3 * torch.exp(total_log_var).mean(0)
         return per_task
-        
-        #return torch.where(torch.isfinite(per_task), per_task, torch.zeros_like(per_task))
-        # s = task_log_sigma.view(1, -1).to(device)
-        # target_filled = torch.where(mask, target, mean.detach())
-        
-        # var = torch.exp(log_var).clamp_min(eps)
-        # inv_var = 1.0 / var
-
-        # loss_per_elem = 0.5 * ((target_filled - mean) ** 2 * inv_var + log_var)
-        # loss_per_elem = loss_per_elem * mask.float()
-
-        # if task_weights is not None:
-        #     tw = task_weights.view(1, -1).to(device).float()
-        #     loss_per_elem = loss_per_elem * tw
-
-        # denom = mask.float()
-        # if task_weights is not None:
-        #     denom = denom * tw
-        # denom = denom.sum(dim=0).clamp_min(1.0)
-
-        # losses = loss_per_elem.sum(dim=0) / denom
-        # losses = torch.where(torch.isfinite(losses), losses, torch.zeros_like(losses))
-        # return losses
     
     @staticmethod
     def masked_huber_loss(
@@ -379,7 +406,7 @@ class Trainer:
         """
         # dtypes/devices
         pred = pred.float()
-        target = target.float()
+        target = target.view_as(pred).float()
         device = pred.device
         
         # B, twoT = pred.shape
@@ -392,6 +419,7 @@ class Trainer:
         if mask is None:
             mask = ~torch.isnan(target)
         mask = mask.to(device=device, dtype=torch.bool)
+        mask = mask.view_as(pred)
 
         # mean = torch.where(torch.isfinite(mean), mean, torch.zeros_like(mean))
         # log_var = torch.where(torch.isfinite(log_var), log_var, torch.zeros_like(log_var))
@@ -448,38 +476,48 @@ class Trainer:
         """
         epoch_digits = len(str(self.num_epochs))
         
-        first_batch = True
-        running_epoch_loss = None
-        init_losses = None
-        if self.mt_strategy == 'gradnorm':
-            self._ensure_task_state(len(labels), self.device)
-        
         self.model.train()
         for i, batch in enumerate(train_loader):
             optimizer.zero_grad()
             batch = batch.to(self.device)
-            losses = self.model(
-                batch, 
-                loss_fn = lambda pred, target: self.heteroscedastic_gaussian_nll_masked(
-                    pred, 
-                    target, 
-                    task_log_sigma = self.log_sigma,
-                    include_const = True,
-                    #delta = 1.0, 
-                    mask = ~torch.isnan(target),
-                    #task_weights = None,
-                ),
-                device=self.device,
-            )
-            
-            if first_batch:
-                K = losses.numel()
-                self._ensure_task_state(K, self.device)
-                if self.mt_strategy == 'gradnorm':
-                    init_losses = losses.detach().clone()
-                first_batch = False
-            
-            running_epoch_loss = losses.detach() if running_epoch_loss is None else running_epoch_loss + losses.detach()
+            if self.model.info['model_init_params']['train_loss'] == 'evidential':
+                losses = self.model(
+                    batch, 
+                    loss_fn = lambda pred, target: self.masked_nig_nll(
+                        pred, 
+                        target, 
+                        mask = ~torch.isnan(target),
+                        coeff = 1.0,
+                        include_const = True,
+                    ),
+                )
+            else:
+                losses = self.model(
+                    batch, 
+                    # loss_fn = lambda pred, target: self.heteroscedastic_gaussian_nll_masked(
+                    #     pred, 
+                    #     target, 
+                    #     # task_log_sigma = self.log_sigma,
+                    #     # include_const = True,
+                    #     #delta = 1.0, 
+                    #     mask = ~torch.isnan(target),
+                    #     #task_weights = None,
+                    # ),
+                    # loss_fn = lambda pred, target: self.masked_nig_nll(
+                    #     pred, 
+                    #     target, 
+                    #     mask = ~torch.isnan(target),
+                    #     coeff = 0.01,
+                    #     include_const = True,
+                    # ),
+                    loss_fn = lambda pred, target: self.masked_huber_loss(
+                        pred, 
+                        target, 
+                        mask = ~torch.isnan(target),
+                        delta = 1.0,
+                    ),
+                    device=self.device,
+                )
             
             if self.mt_strategy == 'uncertainty':
                 inv_var = torch.exp(-2 * self.log_sigma).to(self.device)
@@ -491,31 +529,11 @@ class Trainer:
                     continue
                 loss.backward()
                 optimizer.step()
-                
-            elif self.mt_strategy == 'pcgrad':
-                per_task_scalars = [losses[k] for k in range(len(losses))]
-                self._pcgrad_step(per_task_scalars, optimizer)
-                loss = torch.sum(losses)
-                
-            elif self.mt_strategy == 'gradnorm':
-                loss = self._gradnorm_update_and_step(losses, init_losses, optimizer)
-                
-            elif self.mt_strategy == 'dwa':
-                alpha = self._dwa_weights().to(self.device)
-                total = (alpha * losses).sum()
-                total.backward()
-                optimizer.step()
-                self._task_weights = alpha.detach()
-                loss = total
-            
+
             else:
                 loss = losses.mean()
                 loss.backward()
                 optimizer.step()
-                
-        if self.mt_strategy == 'dwa':
-            epoch_avg = (running_epoch_loss / max(1, len(train_loader))).detach()
-            self._loss_hist.append(epoch_avg)
             
         val_metrics = self.eval_mt(val_loader, labels, self.minmax_dict)
         train_metrics = self.eval_mt(train_loader, labels, self.minmax_dict)
@@ -617,12 +635,24 @@ class Trainer:
             y_raw = self.model.model(batch)  # <<< changed name
             y_raw = torch.where(torch.isfinite(y_raw), y_raw, torch.zeros_like(y_raw))
             # figure out number of tasks from targets
-            num_tasks = batch.y.shape[-1]
+            #num_tasks = batch.y.shape[-1]
             # If heteroscedastic head: take only mean part
-            if y_raw.shape[-1] == 2 * num_tasks:      # <<< handle [mean | log_var]
-                y_pred = y_raw[:, :num_tasks]         # (B, T) means
-                # Optional: if you want to inspect variances/logvars:
-                # y_log_var = y_raw[:, num_tasks:]
+            # if y_raw.shape[-1] == 2 * num_tasks:      # <<< handle [mean | log_var]
+            #     y_pred = y_raw[:, :num_tasks]         # (B, T) means
+            #     # Optional: if you want to inspect variances/logvars:
+            #     # y_log_var = y_raw[:, num_tasks:]        # (B, T) means
+            # elif y_raw.ndim == 3 and y_raw.shape[-1] == 4:
+            #     y_pred = y_raw[:, :, 0]   # mean μ, shape (B, T)
+            #     # Optional: extract uncertainties if needed
+            #     # lam   = y_raw[:, :, 1]
+            #     # alpha = y_raw[:, :, 2]
+            #     # beta  = y_raw[:, :, 3]
+            if self.model.info['model_init_params']['train_loss'] == 'evidential':
+                y_pred = y_raw[:, :, 0]   # mean μ, shape (B, T)
+                # Optional: extract uncertainties if needed
+                # lam   = y_raw[:, :, 1]
+                # alpha = y_raw[:, :, 2]
+                # beta  = y_raw[:, :, 3]
             else:
                 y_pred = y_raw                        # (B, T) classic case
             # y_pred = self.model.model(batch)
@@ -645,13 +675,14 @@ class Trainer:
         
         label_mask = ~np.isnan(y_trues)
         pred_finite_mask = np.isfinite(y_preds_denorm) & np.isfinite(y_trues)
+        # print(y_trues.shape, y_preds_denorm.shape)
+        # print(label_mask.shape, pred_finite_mask.shape)
         mask = label_mask & pred_finite_mask
         
         maes, r2s, scaling_errors = [], [], []
         maes_denorm, r2s_denorm, scaling_errors_denorm = [], [], []
         if mask.sum() == 0:
             return {'mae_mt': np.nan, 'r2_mt': np.nan, 'scaling_error_mt': np.nan}
-
         for i, name in enumerate(labels):
             m = mask[:, i]
             if m.sum() == 0:
@@ -689,28 +720,7 @@ class Trainer:
             else:
                 scaling_errors.append(np.nan)
                 scaling_errors_denorm.append(np.nan)
-            # if m_norm.sum() == 0 or m_denorm.sum() == 0:
-            #     maes.append(np.nan), r2s.append(np.nan), scaling_errors.append(np.nan); continue
 
-            # # normalized metrics    
-            # y_true_i = y_trues_norm[m, i]
-            # y_pred_i = y_preds[m, i]
-            # # denormalized metrics
-            # y_true_i_denorm = y_trues[m, i]
-            # y_pred_i_denorm = y_preds_denorm[m, i]
-            # maes.append(mean_absolute_error(y_true_i, y_pred_i))
-            # maes_denorm.append(mean_absolute_error(y_true_i_denorm, y_pred_i_denorm))
-            # try:
-            #     #r2s.append(r2_score(y_true_i, y_pred_i))
-            #     r2s_denorm.append(r2_score(y_true_i_denorm, y_pred_i_denorm))
-            # except ValueError:
-            #     r2s_denorm.append(np.nan)
-            # if self.minmax_dict is not None and name in self.minmax_dict:
-            #     scaling_errors.append(scaling_error(y_true_i, y_pred_i, name, self.minmax_dict))
-            #     scaling_errors_denorm.append(scaling_error(y_true_i_denorm, y_pred_i_denorm, name, self.minmax_dict))
-            # else:
-            #     scaling_errors.append(np.nan)
-            #     scaling_errors_denorm.append(np.nan)
                 
         mae_mt = np.nanmean(maes) if len(maes) else np.nan
         #r2_mt = np.nanmean(r2s) if len(r2s) else np.nan
@@ -729,160 +739,55 @@ class Trainer:
             t_true_norm = torch.from_numpy(np.where(np.isfinite(y_trues_norm), y_trues_norm, 0.0)).float()
             t_mask = torch.from_numpy(mask).bool()
             # Put on CPU; returns per-task tensor
-            losses = self.masked_huber_loss(t_pred, t_true_norm, mask=t_mask)
+            #losses = self.masked_huber_loss(t_pred, t_true_norm, mask=t_mask)
+            # losses = self.masked_nig_nll(t_pred, t_true_norm, mask=t_mask)
             # Convert to plain floats for logging
-            metrics['losses'] = losses.detach().cpu().numpy()
+            # metrics['losses'] = losses.detach().cpu().numpy()
         return metrics
-        
-    # helper functions for different weighting strategies
-    def _ensure_task_state(self, K: int, device: torch.device):
-        """Ensure the task state is initialized.
-        """
-        if self._K is None:
-            self._K = K
-            self._task_weights = torch.ones(K, device=device) / K
-            
-    def _compute_per_task_losses(self, batch: Batch, labels: List[str]):
-        batch = batch.to(self.device)
-        losses = self.model(
-            batch,
-            loss_fn = lambda pred, target: self.masked_huber_loss(
-                pred,
-                target,
-                delta = 1.0,
-                mask = ~torch.isnan(target),
-                task_weights = None,
-            ),
-            device = self.device,
-        )
-        return losses
-    
-    def _pcgrad_step(self, per_task_losses, optimizer):
-        shared_params = [p for p in self.model.parameters() if p.requires_grad]
-        grads = []
-        for Lk in per_task_losses:
-            optimizer.zero_grad(set_to_none=True)
-            Lk.backward(retain_graph=True)
-            gk = []
-            for p in shared_params:
-                gk.append(torch.zeros_like(p) if p.grad is None else p.grad.detach().clone())
-            grads.append(gk)
-            
-        K = len(grads)
-        for i in range(K):
-            gi = grads[i]
-            for j in range(K):
-                if i == j:
-                    continue
-                gj = grads[j]
-                dot = torch.tensor(0.0, device = gi[0].device)
-                norm_gj_sq = torch.tensor(0.0, device = gi[0].device)
-                for p_i, p_j in zip(gi, gj):
-                    dot += (p_i * p_j).sum()
-                    norm_gj_sq += (p_j * p_j).sum()
-                if dot < 0 and norm_gj_sq > 0:
-                    coeff = dot / norm_gj_sq
-                    for idx in range(len(gi)):
-                        gi[idx] = gi[idx] - coeff * gj[idx]
-            grads[i] = gi
-            
-        optimizer.zero_grad(set_to_none=True)
-        for params_idx, p in enumerate(shared_params):
-            agg = torch.zeros_like(p)
-            for k in range(K):
-                agg = agg + grads[k][params_idx]
-            p.grad = agg
-        optimizer.step()
-        
-    def _gradnorm_update_and_step(self, per_task_losses, init_losses, optimizer):
-        """
-        per_task_losses: Tensor (K,) with differentiable per-task losses L_k
-        init_losses:     Tensor (K,) snapshot at the start (no grad needed)
-        Updates self._task_weights (w_k) and does one optimizer step on model params.
-        """
-        device = per_task_losses.device
-        K = per_task_losses.numel()
 
-        # ---- 1) define a single w that requires grad and use it everywhere below ----
-        # normalize to sum K (GradNorm convention) for stability
-        w = self._task_weights.to(device)
-        w = K * w / (w.sum() + 1e-12)
-        w = w.clone().detach().requires_grad_(True)   # this w is the ONLY one used below
 
-        # ---- 2) compute gradient norms G_k = ||∂(w_k L_k)/∂θ_shared|| with graph ----
-        shared = [p for p in self.model.parameters() if p.requires_grad]
-        Gk_list = []
-        for k in range(K):
-            # grads wrt shared parameters, keep graph so we can backprop into w
-            gk = torch.autograd.grad(
-                w[k] * per_task_losses[k],
-                shared,
-                create_graph=True,   # <- critical: enables grad flow back to w
-                retain_graph=True
-            )
-            # L2 norm over all shared params
-            gnorm_sq = torch.zeros([], device=device)
-            for g in gk:
-                if g is not None:
-                    gnorm_sq = gnorm_sq + (g.reshape(-1) @ g.reshape(-1))
-            Gk_list.append(torch.sqrt(gnorm_sq + 1e-12))
-        Gk = torch.stack(Gk_list)                 # (K,)
-        G_avg = Gk.mean().detach()                # detach target stats
-
-        # ---- 3) relative inverse training rate r_k (detached target) ----
-        r = (per_task_losses.detach() / (init_losses + 1e-12))
-        r = (r / r.mean()).detach()
-        target = G_avg * (r ** self.gradnorm_alpha)   # (K,)
-
-        # ---- 4) GradNorm objective and gradient wrt w ----
-        gradnorm_obj = torch.sum(torch.abs(Gk - target))   # scalar
-        grad_w = torch.autograd.grad(gradnorm_obj, w, retain_graph=True)[0]  # (K,)
-
-        # ---- 5) update w (manual small step) and renormalize ----
-        with torch.no_grad():
-            new_w = w - self.gradnorm_lr * grad_w
-            new_w = torch.clamp(new_w, min=1e-6)
-            new_w = K * new_w / (new_w.sum() + 1e-12)
-            self._task_weights = new_w.detach()
-
-        # ---- 6) finally update model params using the NEW weights ----
-        optimizer.zero_grad(set_to_none=True)
-        final_loss = torch.sum(self._task_weights.to(device) * per_task_losses)
-        final_loss.backward()
-        optimizer.step()
-
-        return final_loss
-
-    
-    def _dwa_weights(self):
-        if len(self._loss_hist) < 2:
-            return torch.ones(self._K, device=self.device) / self._K
-        
-        L_t1 = self._loss_hist[-1]
-        L_t2 = self._loss_hist[-2]
-        ratio = L_t1 / (L_t2 + 1e-12)
-        
-        logits = ratio / self.dwa_T
-        w = torch.exp(logits)
-        w = self._K * w / (w.sum() + 1e-12)
-        return w
-    
-    
 class HeteroGaussianNLLCriterion(torch.nn.Module):
-    def __init__(self, task_log_sigma: Optional[torch.Tensor] = None, include_const: bool = True):
+    def forward(self, pred, target):
+        return Trainer.heteroscedastic_gaussian_nll_masked(pred, target).mean()
+
+class NIGCriterion(torch.nn.Module):
+    def __init__(self, coeff: float = 1.0, include_const: bool = True):
         super().__init__()
-        if task_log_sigma is not None:
-            self.register_buffer('task_log_sigma', task_log_sigma.clone().detach())
-        else:
-            self.task_log_sigma = None
+        self.coeff = coeff
         self.include_const = include_const
 
-    def forward(self, pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        per_task = Trainer.heteroscedastic_gaussian_nll_masked(
-            pred,
-            target,
-            task_log_sigma = self.task_log_sigma,
+    def forward(self, pred, target, mask: Optional[torch.Tensor] = None):
+        return Trainer.masked_nig_nll(
+            pred, 
+            target, 
+            mask = ~torch.isnan(target),
+            coeff = self.coeff,
             include_const = self.include_const,
-        )
-        return per_task.mean()
+        ).mean()
+
+class NIWCriterion(torch.nn.Module):
+    def __init__(self, coeff: float = 1.0):
+        super().__init__()
+        self.coeff = coeff
+
+    def forward(self, pred, target, mask: Optional[torch.Tensor] = None):
+        return Trainer.masked_niw_nll(
+            pred, 
+            target, 
+            mask = ~torch.isnan(target),
+            coeff = self.coeff,
+        ).mean()
+
+class HuberLoss(torch.nn.Module):
+    def __init__(self, delta: float = 1.0):
+        super().__init__()
+        self.delta = delta
+
+    def forward(self, pred, target, mask: Optional[torch.Tensor] = None):
+        return Trainer.masked_huber_loss(
+            pred, 
+            target, 
+            mask = ~torch.isnan(target),
+            delta = self.delta,
+        ).mean()
         

@@ -1,5 +1,5 @@
 import typing
-from typing import Any, Dict
+from typing import Any, Dict, Literal
 
 from polymon.model.dmpnn import DMPNN
 from polymon.model.gatv2.embed_residual import GATv2EmbedResidual
@@ -33,7 +33,8 @@ def build_model(
     num_edge_features: int,
     num_descriptors: int,
     num_tasks: int,
-    hparams: Dict[str, Any]
+    hparams: Dict[str, Any],
+    train_loss: Literal['l1', 'evidential'] = 'l1',
 ) -> 'BaseModel':
     """Build a model from a model type and input arguments. Currently, the 
     following models are supported: :obj:`gatv2`, :obj:`attentivefp`, 
@@ -61,6 +62,7 @@ def build_model(
             'edge_dim': num_edge_features,
             'num_descriptors': num_descriptors,
             'num_tasks': num_tasks,
+            'train_loss': train_loss,
         }
         hparams.update(input_args)
         model = GATv2(**hparams)

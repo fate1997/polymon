@@ -63,6 +63,7 @@ def parse_args():
     parser.add_argument('--normalizer-type', type=str, default='normalizer', 
                         choices=['normalizer', 'log_normalizer', 'none'])
     parser.add_argument('--mt-train', action='store_true')
+    parser.add_argument('--train-loss', type=str, default='l1', choices=['l1', 'evidential'])
 
     return parser.parse_args()
 
@@ -107,6 +108,7 @@ def main(args: argparse.Namespace):
             emb_model=args.emb_model,
             ensemble_type=args.ensemble_type,
             mt_train=args.mt_train,
+            train_loss=args.train_loss,
         )
         with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
             yaml.dump(args.__dict__, f)
@@ -236,8 +238,8 @@ def main(args: argparse.Namespace):
         os.makedirs(args.out_dir, exist_ok=True)
         for label in args.labels:
             out_dir = os.path.join(args.out_dir, args.model, label, args.tag)
-            if args.n_estimator > 1:
-                args.tag += f'-ensemble'
+            # if args.n_estimator > 1:
+            #     args.tag += f'-ensemble'
             os.makedirs(out_dir, exist_ok=True)
             performance = {}
             n_tests = []
@@ -270,6 +272,8 @@ def main(args: argparse.Namespace):
                 augmentation=args.augmentation,
                 emb_model=args.emb_model,
                 ensemble_type=args.ensemble_type,
+                mt_train=args.mt_train,
+                train_loss=args.train_loss
             )
             with open(os.path.join(out_dir, 'args.yaml'), 'w') as f:
                 yaml.dump(args.__dict__, f)
