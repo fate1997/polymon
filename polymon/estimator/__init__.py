@@ -7,6 +7,7 @@ from polymon.estimator.low_fidelity import LowFidelityEstimator
 from polymon.estimator.ml import MLEstimator
 from polymon.estimator.nx_rg import NxRgEstimator
 from polymon.estimator.rg import RgEstimator
+from polymon.estimator.tg import TgEstimator
 from polymon.setting import REPO_DIR
 
 
@@ -28,6 +29,10 @@ def get_estimator(label: str, **kwargs) -> BaseEstimator:
     elif label == 'Tc':
         return AtomContribEstimator.from_npy(
             REPO_DIR / 'polymon' / 'estimator' / 'Tc_atom_contrib.npy'
+        )
+    elif label == 'Tg':
+        return AtomContribEstimator.from_npy(
+            REPO_DIR / 'polymon' / 'estimator' / 'Tg_atom_contrib.npy'
         )
     elif label == 'LowFidelity':
         return LowFidelityEstimator(**kwargs)
