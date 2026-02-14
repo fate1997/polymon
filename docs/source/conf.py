@@ -18,5 +18,22 @@ extensions = [
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
 
+# Mock heavy/optional imports so docs build without torch, rdkit, etc. (e.g. on GitHub Pages CI)
+autodoc_mock_imports = [
+    "torch",
+    "torch_geometric",
+    "torch_scatter",
+    "torch_sparse",
+    "rdkit",
+    "lightning",
+    "mordred",
+    "xenonpy",
+    "pykan",
+    "kan",
+    "optuna",
+    "tabpfn",
+    "torchensemble",
+]
+
 # Theme
 html_theme = 'sphinx_rtd_theme'
