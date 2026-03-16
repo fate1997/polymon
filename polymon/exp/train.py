@@ -546,9 +546,6 @@ class Trainer:
         self.logger.info(
             f'[{str(ith_epoch).zfill(epoch_digits)}/{self.num_epochs}]'
             f'[Loss: {loss.item():.2f}] '
-            # f'[Loss1: {train_metrics["losses"][0]:.3f}] '
-            # f'[Loss2: {train_metrics["losses"][1]:.3f}] '
-            # f'[Loss3: {train_metrics["losses"][2]:.3f}] '
             f'[Train MAE: {train_metrics["mae_mt"]:.3f}] '
             f'[Val MAE: {val_metrics["mae_mt"]:.3f}] '
             f'| [{tasks}]'

@@ -109,8 +109,8 @@ def conditional_epig_from_values(
         values_pool_batch = values_pool[i : i + batch_size]
 
         # Estimate the joint predictive distribution.
-        joint_mean_batch = torch.matmul(values_pool_batch, values_targ.unsqueeze(2))
-
+        #joint_mean_batch = torch.matmul(values_pool_batch, values_targ.unsqueeze(2))
+        joint_mean_batch = torch.matmul(values_pool_batch, values_targ.T) 
         # Estimate the marginal predictive distributions.
         pool_mean_batch = torch.mean(values_pool_batch, dim=1)
 
@@ -121,17 +121,25 @@ def conditional_epig_from_values(
 
         # Estimate the conditional expected predictive information gain for each pair of examples.
         # This is the KL divergence between the joint predictive distribution and the product of the marginal predictive distributions.
-        scores_list.append(
-            torch.sum(
-                joint_mean_batch
-                * (torch.log(joint_mean_batch) - torch.log(indep_mean)),
-                dim=1,
-            )
-        )
+        batch_scores = joint_mean_batch * (
+            torch.log(joint_mean_batch) - torch.log(indep_mean)
+        )                                                       # [b, N_t]
 
-    scores = torch.cat(scores_list, dim=0)
+        scores_list.append(batch_scores)
 
+    scores = torch.cat(scores_list, dim=0)  # [N_p, N_t]
     return scores
+    #     scores_list.append(
+    #         torch.sum(
+    #             joint_mean_batch
+    #             * (torch.log(joint_mean_batch) - torch.log(indep_mean)),
+    #             dim=1,
+    #         )
+    #     )
+
+    # scores = torch.cat(scores_list, dim=0)
+
+    # return scores
 
 
 def conditional_epig_from_continuous(

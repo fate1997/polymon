@@ -1,6 +1,8 @@
 import argparse
+import json
 import os
 import pathlib
+from collections import defaultdict
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -11,7 +13,7 @@ from rdkit.Chem import AllChem, rdFingerprintGenerator
 from rdkit.DataStructs import BulkTanimotoSimilarity, ConvertToNumpyArray
 from sklearn.cluster import DBSCAN, KMeans
 from tqdm import tqdm
-from collections import defaultdict
+
 from polymon.exp.acquisition import Acquisition
 
 
@@ -22,12 +24,13 @@ def parse_args():
     parser.add_argument('--model-file', type=str, default=None)
     parser.add_argument('--model-type', type=str, default='ensemble')
     parser.add_argument('--device', type=str, default='cuda')
-    parser.add_argument('--ordered-tasks', type=str, default=['Rg', 'Density', 'Bulk_modulus', 'FFV', 'PLD', 'CLD'])
+    parser.add_argument('--ordered-tasks', type=str, nargs='+', default=['Rg', 'Density', 'Bulk_modulus', 'FFV', 'PLD', 'CLD'])
     parser.add_argument('--acquisition-function', type=str, default='uncertainty')
     parser.add_argument('--output-file', type=str, default='smiles_scores.csv')
     parser.add_argument('--all-clusters-file', type=str, default='all_clusters.npy')
     parser.add_argument('--n-sample', type=int, default=50)
     parser.add_argument('--sample-tag', type=str, default='AL1-Uncertainty')
+    parser.add_argument('--write-json', type=str, default=None)
     return parser.parse_args()
 
 INITIAL_SOURCES = ['initial', 'PI1070', 'FFV-Active']
@@ -266,6 +269,40 @@ def sample_smiles(
     if return_all:
         np.save('all_smiles.npy', all_smiles)
     return sampled_smiles
+
+def fps_select(smiles_list, k, radius=2, n_bits=2048, start_idx=0):
+    """Max-min FPS using Tanimoto distance on Morgan fingerprints."""
+    if len(smiles_list) == 0:
+        return []
+
+    fpgen = rdFingerprintGenerator.GetMorganGenerator(radius=radius, fpSize=n_bits)
+
+    mols = [Chem.MolFromSmiles(s) for s in smiles_list]
+    valid = [(i, m) for i, m in enumerate(mols) if m is not None]
+    if not valid:
+        return []
+
+    valid_idx = [i for i, _ in valid]
+    fps = [fpgen.GetFingerprint(mols[i]) for i in valid_idx]
+    valid_smiles = [smiles_list[i] for i in valid_idx]
+
+    n = len(valid_smiles)
+    k = min(k, n)
+
+    start_idx = min(max(start_idx, 0), n - 1)
+    selected = [start_idx]
+    min_dist = np.ones(n, dtype=float)
+
+    for _ in range(1, k):
+        last_fp = fps[selected[-1]]
+        sims = np.array(BulkTanimotoSimilarity(last_fp, fps))
+        dists = 1.0 - sims
+        min_dist = np.minimum(min_dist, dists)
+
+        next_idx = int(np.argmax(min_dist))
+        selected.append(next_idx)
+
+    return [valid_smiles[i] for i in selected]
     
 def score(
     train_file: str, 
@@ -323,12 +360,46 @@ def score(
     cluster_smiles = all_clusters.item()[best_cluster]
     cluster_scores = scorer.score(cluster_smiles, train_smiles)
     cluster_scores = cluster_scores.detach().cpu()
-    topk = min(n_sample, len(cluster_scores))
-    print(f"Top {topk} scores:", cluster_scores.topk(topk).values.tolist())
+    # topk = min(n_sample, len(cluster_scores))
+    # print(f"Top {topk} scores:", cluster_scores.topk(topk).values.tolist())
     
-    top_n_sample = torch.topk(cluster_scores, n_sample).indices.tolist()
-    top_n_smiles = [cluster_smiles[i] for i in top_n_sample]
-    return dict(zip(top_n_smiles, cluster_scores[top_n_sample]))
+    # top_n_sample = torch.topk(cluster_scores, n_sample).indices.tolist()
+    # top_n_smiles = [cluster_smiles[i] for i in top_n_sample]
+    # return dict(zip(top_n_smiles, cluster_scores[top_n_sample]))
+# ---- Diversity-constrained selection, SAME output format as before ----
+    n = len(cluster_scores)
+    K = min(n_sample, n)
+
+    # 1) take a larger high-scoring candidate pool
+    candidate_multiplier = 10  # tune: 5–20
+    M = min(n, K * candidate_multiplier)
+
+    topM_idx = torch.topk(cluster_scores, M).indices.tolist()
+    topM_smiles = [cluster_smiles[i] for i in topM_idx]
+
+    # 2) run FPS on the candidates to pick K diverse smiles
+    diverse_smiles = fps_select(
+        topM_smiles,
+        k=K,
+        radius=2,
+        n_bits=2048,
+        start_idx=0,  # 0 means start from best-scoring candidate (since topM is sorted by score)
+    )
+
+    # 3) map selected smiles back to indices in cluster_scores
+    # (handle potential duplicate SMILES safely by taking the first occurrence in topM_smiles)
+    smiles_to_topMpos = {}
+    for pos, smi in enumerate(topM_smiles):
+        if smi not in smiles_to_topMpos:
+            smiles_to_topMpos[smi] = pos
+
+    selected_cluster_idx = [topM_idx[smiles_to_topMpos[smi]] for smi in diverse_smiles if smi in smiles_to_topMpos]
+    top_n_smiles = [cluster_smiles[i] for i in selected_cluster_idx]
+
+    # return EXACTLY like original: dict(zip(smiles, tensor_scores))
+    return dict(zip(top_n_smiles, cluster_scores[selected_cluster_idx]))
+
+
     # import random
     # random.seed(42)
     # subsample_smiles = random.sample(smiles_list, min(subsample_size, len(smiles_list)))
@@ -365,11 +436,16 @@ def main(args: argparse.Namespace):
     df_train = pd.read_csv(args.train_file)
     df = pd.concat([df_train, df_sampled], ignore_index=True)
     #print(smiles_scores)
-    df.to_csv(output_file, index=False)
+    #df_sampled.to_csv(output_file, index=False)
     # out_df = pd.DataFrame.from_dict({'SMILES': list(smiles_scores.keys()), 'score': list(smiles_scores.values())})
     # # sort by score descending
     # out_df = out_df.sort_values('score', ascending=False)
     # out_df.to_csv(output_file, index=False)
+    if args.write_json is not None:
+        smiles_dict = {f'{args.sample_tag}_{i}': smiles for i, smiles in enumerate(sampled_smiles)}
+        out_json = os.path.join(output_dir, args.write_json)
+        with open(out_json, 'w') as f:
+            json.dump(smiles_dict, f, indent=4, ensure_ascii=False)
     
 if __name__ == '__main__':
     args = parse_args()

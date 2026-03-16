@@ -635,7 +635,14 @@ class Pipeline:
         
         if run_production:
             self.logger.info(f'Running ensemble production run for {self.model_type}...')
-            train_loader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
+            loaders = self.dataset.get_loaders(
+                self.batch_size,
+                n_train=0.95,
+                n_val=0.05,
+                augmentation=self.augmentation,
+            )
+            train_loader, val_loader, test_loader = loaders
+            #train_loader = DataLoader(self.dataset, batch_size=self.batch_size, shuffle=True)
             prod_ensemble_model = build_ensemble(model_wrapper, n_estimator)
             prod_ensemble_wrapper = EnsembleModelWrapper(
                 model=prod_ensemble_model,
@@ -649,6 +656,8 @@ class Pipeline:
             prod_ensemble_wrapper.fit(
                 train_loader=train_loader,
                 epochs=self.num_epochs,
+                test_loader=None,
+                val_loader=val_loader,
                 save_dir=save_dir,
                 save_model=True,
                 log_interval=1,

@@ -381,6 +381,7 @@ def parse_args():
         type=str, 
         required=False,
         help='Ordered tasks',
+        nargs='+',
         default=['Rg', 'Density', 'Bulk_modulus', 'FFV', 'PLD', 'CLD']
     )
     sample_parser.add_argument(
@@ -417,6 +418,13 @@ def parse_args():
         required=False,
         help='Sample tag',
         default='AL1-Uncertainty'
+    )
+    sample_parser.add_argument(
+        '--write-json', 
+        type=str, 
+        required=False,
+        help='Path of the json file to write the sampled smiles',
+        default=None
     )
     return parser.parse_args()
 

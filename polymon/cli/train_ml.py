@@ -67,6 +67,7 @@ def train(
     tag: str,
     n_fold: int,
     split_mode: str,
+    run_production: bool,
 ) -> Tuple[float, float]:
     seed_everything(42)
     out_dir = os.path.join(out_dir, model)
@@ -123,7 +124,13 @@ def train(
     df_all = pd.read_csv(raw_csv_path)
     if 'Source' in df_all.columns:
         df_all = df_all[df_all['Source'].isin(sources)]
-    minmax_dict = {label: [float(df_all[label].min()), float(df_all[label].max())] for label in TARGETS if label in df_all.columns}
+    if isinstance(label, list):
+        minmax_dict = {
+            label: [float(df_all[label].min()), float(df_all[label].max())]
+            for label in TARGETS if label in df_all.columns and label in label
+        }
+    else:
+        minmax_dict = {label: [float(df_all[label].min()), float(df_all[label].max())]}
     logger.info(f'Data range: {minmax_dict}')
     
     # 2. Train model
@@ -229,6 +236,9 @@ def train(
         logger.info(f'Best hyper-parameters: {study.best_params}')
         hparams = get_hparams(study.best_trial, model_name)
         hparams.update(study.best_params)
+        hparams_path = os.path.join(out_dir, f'hparams_{model_name}_{tag}.json')
+        with open(hparams_path, 'w') as f:
+            json.dump(hparams, f)
         model = MODELS[model_name](**hparams)
         if n_fold > 1 and split_mode != 'similarity':
             logger.info('KFold for final performance evaluation using the best hyper-parameters')
@@ -291,7 +301,7 @@ def train(
         # logger.info(f'R2: {r2_score(y_test, y_pred): .4f}')
     
     # 3. Train production model
-    if args.run_production:
+    if run_production:
         logger.info(f'Training production model...')
         try:
             model = MODELS[model_type](**hparams)
@@ -347,6 +357,7 @@ def main(args: argparse.Namespace):
             tag=args.tag,
             n_fold=args.n_fold,
             split_mode=args.split_mode,
+            run_production=args.run_production,
         )    
         performance[label] = scaling_error
         n_tests.append(n_test)

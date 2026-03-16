@@ -186,24 +186,31 @@ class ModelWrapper(nn.Module):
         self.model.to(device)
         batch = batch.to(device)
         y_pred = self.model(batch)
+        y_pred = self.normalizer.inverse(y_pred)
+        y_pred = y_pred.squeeze(0).squeeze(0)
+        if hasattr(batch, 'estimated_y'):
+            y_pred = y_pred + batch.estimated_y.squeeze(0).squeeze(0)
+        if not return_uncertainty:
+            return y_pred
         # from polymon.exp.acquisition import get_evidential_stats
         # mu_norm, total_norm = get_evidential_stats(y_pred)
-        mu_norm, lam_norm, alpha_norm, beta_norm = torch.unbind(y_pred, dim=-1)
-        mu = self.normalizer.inverse(mu_norm)
-        std = self.normalizer.init_params['std'].to(device).view(1, -1)
-        beta = beta_norm * std.pow(2)
-        if hasattr(batch, 'estimated_y'):
-            mu = mu + batch.estimated_y.squeeze(0).squeeze(0)
+        if return_uncertainty:
+            mu_norm, lam_norm, alpha_norm, beta_norm = torch.unbind(y_pred, dim=-1)
+            mu = self.normalizer.inverse(mu_norm)
+            std = self.normalizer.init_params['std'].to(device).view(1, -1)
+            beta = beta_norm * std.pow(2)
+            if hasattr(batch, 'estimated_y'):
+                mu = mu + batch.estimated_y.squeeze(0).squeeze(0)
 
-        if not return_uncertainty:
-            return mu
+        # if not return_uncertainty:
+        #     return mu
         
         #
-        aleatoric_var = beta / (alpha_norm - 1)
-        epistemic_var = beta / (lam_norm * (alpha_norm - 1))
-        total_uncertainty = (beta / (alpha_norm - 1)) * (1 + 1 / lam_norm)
-        uncertainty = epistemic_var
-        return mu, uncertainty
+        # aleatoric_var = beta / (alpha_norm - 1)
+        # epistemic_var = beta / (lam_norm * (alpha_norm - 1))
+        # total_uncertainty = (beta / (alpha_norm - 1)) * (1 + 1 / lam_norm)
+        # uncertainty = epistemic_var
+        # return mu, uncertainty
         
         #predict_logvar = getattr(self.model, 'predict_logvar', False)
         # if predict_logvar:

@@ -7,7 +7,6 @@ from polymon.estimator.low_fidelity import LowFidelityEstimator
 from polymon.estimator.ml import MLEstimator
 from polymon.estimator.nx_rg import NxRgEstimator
 from polymon.estimator.rg import RgEstimator
-from polymon.estimator.tg import TgEstimator
 from polymon.setting import REPO_DIR
 
 

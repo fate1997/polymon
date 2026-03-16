@@ -316,9 +316,9 @@ class EnsembleModelWrapper(nn.Module):
             save_model=save_model,
             log_interval=log_interval,
         )
-        if test_loader is not None:
-            test_err = self.evaluate(test_loader, label, device='cuda')
-            return test_err
+        # if test_loader is not None:
+        #     test_err = self.evaluate(test_loader, label, device='cuda')
+        #     return test_err
         return None
 
     def evaluate(
