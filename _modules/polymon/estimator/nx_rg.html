@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.estimator.nx_rg &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.estimator.nx_rg</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.estimator.nx_rg</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.estimator.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_init_params</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+
+<span class="n">BOND_LENGTHS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.154</span><span class="p">,</span>   <span class="c1"># C-C single</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">):</span> <span class="mf">0.134</span><span class="p">,</span>   <span class="c1"># C=C double</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC</span><span class="p">):</span> <span class="mf">0.140</span><span class="p">,</span> <span class="c1"># Aromatic C-C</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.143</span><span class="p">,</span>   <span class="c1"># C-O</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.147</span><span class="p">,</span>   <span class="c1"># C-N</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.146</span><span class="p">,</span>   <span class="c1"># N-N</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.143</span><span class="p">,</span>   <span class="c1"># O-O</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">):</span> <span class="mf">0.120</span><span class="p">,</span>   <span class="c1"># C≡C triple</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.136</span><span class="p">,</span>   <span class="c1"># N-O</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.141</span><span class="p">,</span>   <span class="c1"># C-F</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.181</span><span class="p">,</span>   <span class="c1"># C-S</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.134</span><span class="p">,</span>   <span class="c1"># N-F</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">):</span> <span class="mf">0.127</span><span class="p">,</span>   <span class="c1"># C=N double</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">):</span> <span class="mf">0.115</span><span class="p">,</span>   <span class="c1"># C≡N triple</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">):</span> <span class="mf">0.121</span><span class="p">,</span>   <span class="c1"># C=O double</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">):</span> <span class="mf">0.265</span><span class="p">,</span>   <span class="c1"># O-S single</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">):</span> <span class="mf">0.133</span><span class="p">,</span>   <span class="c1"># O=O double</span>
+<span class="p">}</span>
+<span class="n">DEFAULT_N</span> <span class="o">=</span> <span class="mi">680</span>
+<span class="n">DEFAULT_C_INF</span> <span class="o">=</span> <span class="mf">6.7</span>
+<span class="n">DEFAULT_SOLVENT</span> <span class="o">=</span> <span class="s2">&quot;theta&quot;</span>
+
+
+<div class="viewcode-block" id="NxRgEstimator">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NxRgEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Radius of gyration estimator using NetworkX. This is a simple estimator</span>
+<span class="sd">    that uses NetworkX to estimate the radius of gyration of a polymer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">N</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_N</span><span class="p">,</span> 
+        <span class="n">C_inf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_C_INF</span><span class="p">,</span> 
+        <span class="n">solvent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_SOLVENT</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C_inf</span> <span class="o">=</span> <span class="n">C_inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solvent</span> <span class="o">=</span> <span class="n">solvent</span>
+
+<div class="viewcode-block" id="NxRgEstimator.estimated_y">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.estimated_y">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the radius of gyration of a polymer based on the NetworkX method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            smiles (str): The SMILES of the polymer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The estimated radius of gyration of the polymer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius_of_gyration</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="NxRgEstimator.mol_to_nx">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.mol_to_nx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mol_to_nx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert RDKit Mol to NetworkX weighted graph.&quot;&quot;&quot;</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+            <span class="n">a1</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtom</span><span class="p">()</span>
+            <span class="n">a2</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtom</span><span class="p">()</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">a1</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">(),</span> <span class="n">a2</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">a1</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">(),</span> <span class="n">a2</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()),</span>
+                <span class="n">bond</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">())</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">BOND_LENGTHS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mf">0.154</span><span class="p">)</span>  <span class="c1"># fallback to C-C</span>
+            <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">a1</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">(),</span> <span class="n">a2</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">(),</span> <span class="n">weight</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">G</span></div>
+
+
+<div class="viewcode-block" id="NxRgEstimator.longest_backbone_path_length">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.longest_backbone_path_length">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">longest_backbone_path_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Approximate the longest backbone path length using NetworkX.</span>
+<span class="sd">        Finds the longest shortest path (diameter in weighted sense).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_to_nx</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        
+        <span class="c1"># All-pairs shortest paths weighted by bond lengths</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">all_pairs_dijkstra_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;weight&quot;</span><span class="p">))</span>
+        
+        <span class="c1"># Find maximum among all shortest path lengths (graph diameter)</span>
+        <span class="n">best_len</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">lengths</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_len</span> <span class="o">&gt;</span> <span class="n">best_len</span><span class="p">:</span>
+                <span class="n">best_len</span> <span class="o">=</span> <span class="n">max_len</span>
+        
+        <span class="k">return</span> <span class="n">best_len</span></div>
+
+
+<div class="viewcode-block" id="NxRgEstimator.monomer_contour_length">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.monomer_contour_length">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">monomer_contour_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SMILES string&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">longest_backbone_path_length</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NxRgEstimator.kuhn_length">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.kuhn_length">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kuhn_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">char_ratio</span><span class="o">=</span><span class="mf">6.7</span><span class="p">,</span> <span class="n">bond_length</span><span class="o">=</span><span class="mf">0.154</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">char_ratio</span> <span class="o">*</span> <span class="n">bond_length</span></div>
+
+
+<div class="viewcode-block" id="NxRgEstimator.radius_of_gyration">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.radius_of_gyration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">radius_of_gyration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate Rg from a monomer SMILES without using conformers.</span>
+<span class="sd">        - N: degree of polymerization</span>
+<span class="sd">        - C_inf: characteristic ratio (defaults ~6.7 for flexible chains)</span>
+<span class="sd">        - solvent: &#39;theta&#39; or &#39;good&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+        <span class="n">C_inf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_inf</span>
+        <span class="n">solvent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solvent</span>
+        
+        <span class="n">l_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">monomer_contour_length</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kuhn_length</span><span class="p">(</span><span class="n">C_inf</span><span class="p">)</span>
+        <span class="n">L_c</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">l_m</span>
+        <span class="n">N_K</span> <span class="o">=</span> <span class="n">L_c</span> <span class="o">/</span> <span class="n">b</span>
+
+        <span class="k">if</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">&quot;theta&quot;</span><span class="p">:</span>
+            <span class="n">Rg</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_K</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">&quot;good&quot;</span><span class="p">:</span>
+            <span class="n">nu</span> <span class="o">=</span> <span class="mf">0.588</span>
+            <span class="n">Rg</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_K</span> <span class="o">**</span> <span class="n">nu</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;solvent must be &#39;theta&#39; or &#39;good&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Rg</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

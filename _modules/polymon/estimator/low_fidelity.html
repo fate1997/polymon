@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.estimator.low_fidelity &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.estimator.low_fidelity</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.estimator.low_fidelity</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.data.polymer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polymer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.estimator.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_init_params</span>
+
+
+<div class="viewcode-block" id="LowFidelityEstimator">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.low_fidelity.LowFidelityEstimator">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LowFidelityEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Low fidelity estimator. This is a simple estimator that uses a model</span>
+<span class="sd">    to estimate the label of a polymer. The model is a trained model on a low</span>
+<span class="sd">    fidelity dataset. The model should be an object of</span>
+<span class="sd">    :class:`polymon.model.base.ModelWrapper`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelWrapper</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">model_info</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LowFidelityEstimator.forward">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.low_fidelity.LowFidelityEstimator.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Polymer</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the label of a polymer based on the low fidelity model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (Polymer): The polymer data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Polymer: The polymer data with the estimated label.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">estimated_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimated_y</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">estimated_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">estimated_y</span><span class="p">]])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">estimated_y</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+    
+<div class="viewcode-block" id="LowFidelityEstimator.estimated_y">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.low_fidelity.LowFidelityEstimator.estimated_y">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the label of a polymer based on the low fidelity model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            smiles (str): The SMILES of the polymer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The estimated label of the polymer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">estimated_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">smiles</span><span class="p">])</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">estimated_y</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

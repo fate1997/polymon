@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>polymon.exp &mdash; polymon 0.3.0 documentation</title>
+  <title>polymon.exp &mdash; polymon 1.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/documentation_options.js?v=baaebd52"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -54,7 +54,16 @@
 <li class="toctree-l1"><a class="reference internal" href="estimator.html">polymon.estimator</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">polymon.exp</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pipeline">Pipeline</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#trainer">Trainer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-polymon.exp.train">Trainer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.exp.train.Trainer"><code class="docutils literal notranslate"><span class="pre">Trainer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.exp.train.Trainer.build_optimizer"><code class="docutils literal notranslate"><span class="pre">Trainer.build_optimizer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.exp.train.Trainer.eval"><code class="docutils literal notranslate"><span class="pre">Trainer.eval()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.exp.train.Trainer.train"><code class="docutils literal notranslate"><span class="pre">Trainer.train()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.exp.train.Trainer.train_step"><code class="docutils literal notranslate"><span class="pre">Trainer.train_step()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -92,8 +101,108 @@
 <section id="pipeline">
 <h2>Pipeline<a class="headerlink" href="#pipeline" title="Link to this heading"></a></h2>
 </section>
-<section id="trainer">
-<h2>Trainer<a class="headerlink" href="#trainer" title="Link to this heading"></a></h2>
+<section id="module-polymon.exp.train">
+<span id="trainer"></span><h2>Trainer<a class="headerlink" href="#module-polymon.exp.train" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.exp.train.Trainer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.exp.train.</span></span><span class="sig-name descname"><span class="pre">Trainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="model.html#polymon.model.base.ModelWrapper" title="polymon.model.base.ModelWrapper"><span class="pre">ModelWrapper</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">device</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cuda'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping_patience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/exp/train.html#Trainer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.exp.train.Trainer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Trainer for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_dir</strong> (<em>str</em>) – The directory to save the model and results.</p></li>
+<li><p><strong>model</strong> (<em>nn.Module</em>) – The model to train.</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – The learning rate.</p></li>
+<li><p><strong>num_epochs</strong> (<em>int</em>) – The number of epochs to train.</p></li>
+<li><p><strong>logger</strong> (<em>logging.Logger</em>) – The logger. If not provided, a logger will be
+created in the <cite>out_dir</cite>.</p></li>
+<li><p><strong>ema_decay</strong> (<em>float</em>) – The decay rate for the EMA. If 0, EMA will not be
+used. Default is 0.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – The device to train on. Default is <cite>cuda</cite>.</p></li>
+<li><p><strong>early_stopping_patience</strong> (<em>int</em>) – The number of epochs to wait before
+stopping the training. Default is 10.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.exp.train.Trainer.build_optimizer">
+<span class="sig-name descname"><span class="pre">build_optimizer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optimizer</span></span></span><a class="reference internal" href="../_modules/polymon/exp/train.html#Trainer.build_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.exp.train.Trainer.build_optimizer" title="Link to this definition"></a></dt>
+<dd><p>Build the optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The optimizer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><cite>torch.optim.Optimizer</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.exp.train.Trainer.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/exp/train.html#Trainer.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.exp.train.Trainer.eval" title="Link to this definition"></a></dt>
+<dd><p>Evaluate the model on the given data loader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loader</strong> (<em>DataLoader</em>) – The data loader.</p></li>
+<li><p><strong>metrics</strong> (<em>List</em><em>[</em><em>Literal</em><em>[</em><em>'mae'</em><em>, </em><em>'r2'</em><em>]</em><em>]</em>) – The metrics to evaluate. If
+<cite>None</cite>, all metrics will be evaluated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The metrics and their values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>Dict[str, float]</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.exp.train.Trainer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Rg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Trial</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/exp/train.html#Trainer.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.exp.train.Trainer.train" title="Link to this definition"></a></dt>
+<dd><p>Train the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train_loader</strong> (<em>DataLoader</em>) – The training data loader.</p></li>
+<li><p><strong>val_loader</strong> (<em>DataLoader</em>) – The validation data loader.</p></li>
+<li><p><strong>test_loader</strong> (<em>DataLoader</em>) – The test data loader.</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – The label to train on.</p></li>
+<li><p><strong>trial</strong> (<em>optuna.Trial</em>) – The trial object. If provided, the model will
+be stopped training when the pruning is triggered.</p></li>
+<li><p><strong>n_fold</strong> (<em>int</em>) – The number of folds. This is used to report the</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.exp.train.Trainer.train_step">
+<span class="sig-name descname"><span class="pre">train_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ith_epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/exp/train.html#Trainer.train_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.exp.train.Trainer.train_step" title="Link to this definition"></a></dt>
+<dd><p>Train the model for one epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ith_epoch</strong> (<em>int</em>) – The current epoch.</p></li>
+<li><p><strong>train_loader</strong> (<em>DataLoader</em>) – The training data loader.</p></li>
+<li><p><strong>val_loader</strong> (<em>DataLoader</em>) – The validation data loader.</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.Optimizer</em>) – The optimizer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The F1 score on the validation set.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>float</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 

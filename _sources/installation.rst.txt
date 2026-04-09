@@ -40,8 +40,6 @@ Install PolyMon
 
 .. code-block:: bash
 
-    # NumPy 2.x is not yet compatible with RDKit, so we install NumPy 1.x first
-    pip install 'numpy<2'
     pip install polymon
 
 **From source:**
@@ -50,7 +48,6 @@ Install PolyMon
 
     git clone https://github.com/fate1997/polymon.git
     cd polymon
-    pip install 'numpy<2'
     pip install -e .
 
 Verify Installation

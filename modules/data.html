@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>polymon.data &mdash; polymon 0.3.0 documentation</title>
+  <title>polymon.data &mdash; polymon 1.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/documentation_options.js?v=baaebd52"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -50,10 +50,74 @@
 <p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">polymon.data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#dataset">dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dedup">dedup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#featurizer">featurizer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#polymer">polymer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-polymon.data.dataset">dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.dataset.PolymerDataset"><code class="docutils literal notranslate"><span class="pre">PolymerDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dataset.PolymerDataset.get"><code class="docutils literal notranslate"><span class="pre">PolymerDataset.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dataset.PolymerDataset.get_loaders"><code class="docutils literal notranslate"><span class="pre">PolymerDataset.get_loaders()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dataset.PolymerDataset.len"><code class="docutils literal notranslate"><span class="pre">PolymerDataset.len()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dataset.PolymerDataset.sample_batch"><code class="docutils literal notranslate"><span class="pre">PolymerDataset.sample_batch()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-polymon.data.dedup">dedup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.dedup.Dedup"><code class="docutils literal notranslate"><span class="pre">Dedup</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dedup.Dedup.add_df"><code class="docutils literal notranslate"><span class="pre">Dedup.add_df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dedup.Dedup.compare"><code class="docutils literal notranslate"><span class="pre">Dedup.compare()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dedup.Dedup.run"><code class="docutils literal notranslate"><span class="pre">Dedup.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.dedup.Dedup.show_distribution"><code class="docutils literal notranslate"><span class="pre">Dedup.show_distribution()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#featurizer">featurizer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.AtomFeaturizer"><code class="docutils literal notranslate"><span class="pre">AtomFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.AtomFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">AtomFeaturizer.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.BondFeaturizer"><code class="docutils literal notranslate"><span class="pre">BondFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.BondFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">BondFeaturizer.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.PosFeaturizer"><code class="docutils literal notranslate"><span class="pre">PosFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.PosFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">PosFeaturizer.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.AtomNumFeaturizer"><code class="docutils literal notranslate"><span class="pre">AtomNumFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.AtomNumFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">AtomNumFeaturizer.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.RelativePositionFeaturizer"><code class="docutils literal notranslate"><span class="pre">RelativePositionFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.RelativePositionFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">RelativePositionFeaturizer.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.SeqFeaturizer"><code class="docutils literal notranslate"><span class="pre">SeqFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.SeqFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">SeqFeaturizer.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.DescFeaturizer"><code class="docutils literal notranslate"><span class="pre">DescFeaturizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.DescFeaturizer.__call__"><code class="docutils literal notranslate"><span class="pre">DescFeaturizer.__call__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.featurizer.RDMolPreprocessor"><code class="docutils literal notranslate"><span class="pre">RDMolPreprocessor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.featurizer.RDMolPreprocessor.monomer"><code class="docutils literal notranslate"><span class="pre">RDMolPreprocessor.monomer()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-polymon.data.polymer">polymer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.polymer.OligomerBuilder"><code class="docutils literal notranslate"><span class="pre">OligomerBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.polymer.OligomerBuilder.get_oligomer"><code class="docutils literal notranslate"><span class="pre">OligomerBuilder.get_oligomer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymon.data.polymer.Polymer"><code class="docutils literal notranslate"><span class="pre">Polymer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.polymer.Polymer.num_atoms"><code class="docutils literal notranslate"><span class="pre">Polymer.num_atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.polymer.Polymer.num_bonds"><code class="docutils literal notranslate"><span class="pre">Polymer.num_bonds</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.data.polymer.Polymer.num_descriptors"><code class="docutils literal notranslate"><span class="pre">Polymer.num_descriptors</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="model.html">polymon.model</a></li>
@@ -94,17 +158,172 @@
 <nav class="contents local" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#dataset" id="id3">dataset</a></p></li>
-<li><p><a class="reference internal" href="#dedup" id="id4">dedup</a></p></li>
+<li><p><a class="reference internal" href="#module-polymon.data.dataset" id="id3">dataset</a></p></li>
+<li><p><a class="reference internal" href="#module-polymon.data.dedup" id="id4">dedup</a></p></li>
 <li><p><a class="reference internal" href="#featurizer" id="id5">featurizer</a></p></li>
-<li><p><a class="reference internal" href="#polymer" id="id6">polymer</a></p></li>
+<li><p><a class="reference internal" href="#module-polymon.data.polymer" id="id6">polymer</a></p></li>
 </ul>
 </nav>
-<section id="dataset">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">dataset</a><a class="headerlink" href="#dataset" title="Link to this heading"></a></h2>
+<section id="module-polymon.data.dataset">
+<span id="dataset"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">dataset</a><a class="headerlink" href="#module-polymon.data.dataset" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.dataset.PolymerDataset">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.dataset.</span></span><span class="sig-name descname"><span class="pre">PolymerDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_csv_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'SMILES'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_processed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_reload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_hydrogens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">must_keep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/dataset.html#PolymerDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dataset.PolymerDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>A dataset that contains the polymers. During the initialization, the
+SMILES strings will be featurized to the corresponding features and converted
+to the <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> object. If <code class="xref py py-obj docutils literal notranslate"><span class="pre">pre_transform</span></code> is provided, it will
+be used to update the <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> object. If <code class="xref py py-obj docutils literal notranslate"><span class="pre">estimator</span></code> is provided,
+it will be used to estimate the labels of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> object, and
+make the prediction task be the residual between the ground truth and the
+estimated labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_csv_path</strong> (<em>str</em>) – The path to the raw csv file. Typically, it should
+have at least three columns: <code class="xref py py-obj docutils literal notranslate"><span class="pre">SMILES</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code> (e.g.,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Rg</span></code>), and <code class="xref py py-obj docutils literal notranslate"><span class="pre">Source</span></code> (e.g., <code class="xref py py-obj docutils literal notranslate"><span class="pre">PI1070</span></code>).</p></li>
+<li><p><strong>feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The names of the features to use. The
+available features are in <code class="xref py py-obj docutils literal notranslate"><span class="pre">AVAIL_FEATURES</span></code> from
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">polymon.data.featurizer</span></code>.</p></li>
+<li><p><strong>label_column</strong> (<em>str</em>) – Label column name.</p></li>
+<li><p><strong>sources</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The names of the sources.</p></li>
+<li><p><strong>smiles_column</strong> (<em>str</em>) – SMILES column name.</p></li>
+<li><p><strong>identifier_column</strong> (<em>str</em>) – Identifier column name.</p></li>
+<li><p><strong>save_processed</strong> (<em>bool</em>) – Whether to save the processed dataset.</p></li>
+<li><p><strong>force_reload</strong> (<em>bool</em>) – Whether to force reload the processed dataset.</p></li>
+<li><p><strong>add_hydrogens</strong> (<em>bool</em>) – Whether to add hydrogens to the molecules.</p></li>
+<li><p><strong>pre_transform</strong> (<em>Callable</em>) – The pre-transform to apply to the data. It
+should be a function that takes a <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> object and returns
+a <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> object.</p></li>
+<li><p><strong>estimator</strong> (<em>Callable</em>) – The estimator to apply to the data. It is used to
+provide the estimated labels for the <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> object. It
+should be the object of <code class="xref py py-class docutils literal notranslate"><span class="pre">polymon.estimator.BaseEstimator</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dataset.PolymerDataset.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polymon.data.polymer.Polymer" title="polymon.data.polymer.Polymer"><span class="pre">Polymer</span></a></span></span><a class="reference internal" href="../_modules/polymon/data/dataset.html#PolymerDataset.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dataset.PolymerDataset.get" title="Link to this definition"></a></dt>
+<dd><p>Get the <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> object at the given index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dataset.PolymerDataset.get_loaders">
+<span class="sig-name descname"><span class="pre">get_loaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'random'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'scaffold'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">augmentation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataLoader</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataLoader</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataLoader</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/dataset.html#PolymerDataset.get_loaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dataset.PolymerDataset.get_loaders" title="Link to this definition"></a></dt>
+<dd><p>Get the data loaders for the training, validation, and test sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size.</p></li>
+<li><p><strong>n_train</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – The number of training samples. If it
+is a float, it will be converted to an integer by multiplying
+the length of the dataset.</p></li>
+<li><p><strong>n_val</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – The number of validation samples. If it
+is a float, it will be converted to an integer by multiplying
+the length of the dataset.</p></li>
+<li><p><strong>mode</strong> (<em>Literal</em><em>[</em><em>'random'</em><em>, </em><em>'scaffold'</em><em>]</em>) – The split mode. <code class="xref py py-obj docutils literal notranslate"><span class="pre">random</span></code>:
+Split the dataset randomly. <code class="xref py py-obj docutils literal notranslate"><span class="pre">scaffold</span></code>: Split the dataset
+by scaffold.</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em>) – The number of workers for the data loaders.</p></li>
+<li><p><strong>augmentation</strong> (<em>bool</em>) – Whether to augment the training set. Currently,
+it only supports the augmentation of oligomers.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dataset.PolymerDataset.len">
+<span class="sig-name descname"><span class="pre">len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/polymon/data/dataset.html#PolymerDataset.len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dataset.PolymerDataset.len" title="Link to this definition"></a></dt>
+<dd><p>Get the number of <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> objects in the dataset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dataset.PolymerDataset.sample_batch">
+<span class="sig-name descname"><span class="pre">sample_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Batch</span></span></span><a class="reference internal" href="../_modules/polymon/data/dataset.html#PolymerDataset.sample_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dataset.PolymerDataset.sample_batch" title="Link to this definition"></a></dt>
+<dd><p>Sample a batch of <code class="xref py py-class docutils literal notranslate"><span class="pre">Polymer</span></code> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="dedup">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">dedup</a><a class="headerlink" href="#dedup" title="Link to this heading"></a></h2>
+<section id="module-polymon.data.dedup">
+<span id="dedup"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">dedup</a><a class="headerlink" href="#module-polymon.data.dedup" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.dedup.Dedup">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.dedup.</span></span><span class="sig-name descname"><span class="pre">Dedup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">must_keep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/dedup.html#Dedup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dedup.Dedup" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dedup.Dedup.add_df">
+<span class="sig-name descname"><span class="pre">add_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/dedup.html#Dedup.add_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dedup.Dedup.add_df" title="Link to this definition"></a></dt>
+<dd><p>Add a dataframe to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.df</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – The path to the dataframe.</p></li>
+<li><p><strong>smiles_col</strong> (<em>str</em>) – The column name of the SMILES.</p></li>
+<li><p><strong>label_col</strong> (<em>str</em>) – The column name of the label.</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – The source name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dedup.Dedup.compare">
+<span class="sig-name descname"><span class="pre">compare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitting</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/dedup.html#Dedup.compare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dedup.Dedup.compare" title="Link to this definition"></a></dt>
+<dd><p>Compare the label of the two sources with the same smiles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source1</strong> (<em>str</em>) – The first source name.</p></li>
+<li><p><strong>source2</strong> (<em>str</em>) – The second source name.</p></li>
+<li><p><strong>fitting</strong> (<em>bool</em>) – Whether to fit the data. If True, the function will
+fit the data with a linear regression and add the fitted points
+as a new source.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dedup.Dedup.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/dedup.html#Dedup.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dedup.Dedup.run" title="Link to this definition"></a></dt>
+<dd><p>Run the deduplication. The deduplication is performed by the
+following steps:</p>
+<ol class="arabic simple">
+<li><p>Remove rows with higher relative difference.</p></li>
+<li><p>Keep indices if the source is in <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.must_keep</span></code>.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sources</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – The sources to deduplicate.</p></li>
+<li><p><strong>save</strong> (<em>bool</em>) – Whether to save the deduplicated dataframe.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.dedup.Dedup.show_distribution">
+<span class="sig-name descname"><span class="pre">show_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/dedup.html#Dedup.show_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.dedup.Dedup.show_distribution" title="Link to this definition"></a></dt>
+<dd><p>Plot the distribution of the label for each source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sources</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The sources to plot.</p></li>
+<li><p><strong>bins</strong> (<em>int</em>) – The number of bins.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – The alpha of the histogram.</p></li>
+<li><p><strong>density</strong> (<em>bool</em>) – Whether to plot the density.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="featurizer">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">featurizer</a><a class="headerlink" href="#featurizer" title="Link to this heading"></a></h2>
@@ -278,9 +497,376 @@
 </tr>
 </tbody>
 </table>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.AtomFeaturizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">AtomFeaturizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_atom_nums</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#AtomFeaturizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.AtomFeaturizer" title="Link to this definition"></a></dt>
+<dd><p>Featurize atoms in a molecule. Default features can be found in
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_ATOM_FEATURES</span></code>. We provide the following features:</p>
+<ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">degree</span></code>: The degree of the atom.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_aromatic</span></code>: Whether the atom is aromatic.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">chiral_tag</span></code>: The chiral tag of the atom.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_hydrogens</span></code>: The number of implicit hydrogens.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">hybridization</span></code>: The hybridization of the atom.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass</span></code>: The mass of the atom.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">formal_charge</span></code>: The formal charge of the atom.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_attachment</span></code>: Whether the atom is an attachment point.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xenonpy_atom</span></code>: The xenonpy atom features.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cgcnn</span></code>: The cgcnn atom features.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code>: The source of the molecule.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The features to use.</p></li>
+<li><p><strong>unique_atom_nums</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – The unique atomic numbers. If <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> in
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">feature_names</span></code>, this parameter is required.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The features are assigned to <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> in the output dictionary.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.AtomFeaturizer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#AtomFeaturizer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.AtomFeaturizer.__call__" title="Link to this definition"></a></dt>
+<dd><p>Featurize the atoms in a molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to featurize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary containing the features. The
+key is <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> and the value is the concatenated features with the
+shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[num_atoms,</span> <span class="pre">num_features]</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.BondFeaturizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">BondFeaturizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#BondFeaturizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.BondFeaturizer" title="Link to this definition"></a></dt>
+<dd><p>Featurize bonds in a molecule. This featurizer is used to obtain the
+edge index and edge attributes. We provide the following features:</p>
+<ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fully_connected_edges</span></code>: The fully connected edges, which means all         atoms are connected to each other.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bond</span></code>: The chemical bond and their features.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">periodic_bond</span></code>: This feature is used to add bonds between attachment         points to the chemical bonds.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">virtual_bond</span></code>: This feature is used to add virtual bonds between         virtual node and each other node.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The features to use.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.BondFeaturizer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#BondFeaturizer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.BondFeaturizer.__call__" title="Link to this definition"></a></dt>
+<dd><p>Featurize the bonds in a molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to featurize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary containing the features.
+The key is <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_index</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_attr</span></code> with the shape
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">num_edges]</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">[num_edges,</span> <span class="pre">num_features]</span></code>
+respectively.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.PosFeaturizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">PosFeaturizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#PosFeaturizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.PosFeaturizer" title="Link to this definition"></a></dt>
+<dd><p>Featurize the positions of the atoms in a molecule. We first transform
+the polymer SMILES to a monomer SMILES and then embed the monomer SMILES with
+RDKit and conduct geometry optimization with MMFF94s. The positions are then
+normalized to the center of mass of the molecule.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This featurizer may fail to embed the molecule.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.PosFeaturizer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#PosFeaturizer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.PosFeaturizer.__call__" title="Link to this definition"></a></dt>
+<dd><p>Featurize the positions of the atoms in a molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to featurize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary containing the features.
+The key is <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos</span></code> with the shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[num_atoms,</span> <span class="pre">3]</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.AtomNumFeaturizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">AtomNumFeaturizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#AtomNumFeaturizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.AtomNumFeaturizer" title="Link to this definition"></a></dt>
+<dd><p>Featurize the atomic numbers of the atoms in a molecule. Although the
+atomic numbers are already included in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> feature, this featurizer
+is used to obtain the integer atomic numbers.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.AtomNumFeaturizer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#AtomNumFeaturizer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.AtomNumFeaturizer.__call__" title="Link to this definition"></a></dt>
+<dd><p>Featurize the atomic numbers of the atoms in a molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to featurize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary containing the features.
+The key is <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> with the shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[num_atoms]</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.RelativePositionFeaturizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">RelativePositionFeaturizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#RelativePositionFeaturizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.RelativePositionFeaturizer" title="Link to this definition"></a></dt>
+<dd><p>Featurize the relative positions of the atoms in a molecule. The relative
+position indicates the distance between the atom and the closest attachment
+point. The value is 200 if there is no attachment point.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.RelativePositionFeaturizer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#RelativePositionFeaturizer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.RelativePositionFeaturizer.__call__" title="Link to this definition"></a></dt>
+<dd><p>Featurize the relative positions of the atoms in a molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to featurize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary containing the features.
+The key is <code class="xref py py-obj docutils literal notranslate"><span class="pre">relative_position</span></code> with the shape
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">[num_atoms]</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.SeqFeaturizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">SeqFeaturizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#SeqFeaturizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.SeqFeaturizer" title="Link to this definition"></a></dt>
+<dd><p>Featurize the sequence of a molecule. We first replace the double letters
+with a single token. The sequence is then encoded with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">SMILES_VOCAB</span></code>.
+The sequence is then padded to the length of <code class="xref py py-obj docutils literal notranslate"><span class="pre">MAX_SEQ_LEN</span></code>. The SOS, EOS,
+and PAD tokens are added to the sequence.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.SeqFeaturizer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#SeqFeaturizer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.SeqFeaturizer.__call__" title="Link to this definition"></a></dt>
+<dd><p>Featurize the sequence of a molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to featurize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>The dictionary containing the features.</dt><dd><p>The key is <code class="xref py py-obj docutils literal notranslate"><span class="pre">seq</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">seq_len</span></code> with the shape
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">seq_len]</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">[1]</span></code> respectively.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.DescFeaturizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">DescFeaturizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#DescFeaturizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.DescFeaturizer" title="Link to this definition"></a></dt>
+<dd><p>Featurize descriptors of a molecule. Features shape should be
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">num_features]</span></code>. We provide the following features:</p>
+<ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdkit2d</span></code>: The RDKit 2D descriptors.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ecfp4</span></code>: The ECFP4 fingerprints.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rdkit3d</span></code>: The RDKit 3D descriptors.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mordred</span></code>: The Mordred descriptors.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">maccs</span></code>: The MACCS keys.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">oligomer_rdkit2d</span></code>: The RDKit 2D descriptors of the oligomer.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">oligomer_mordred</span></code>: The Mordred descriptors of the oligomer.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">oligomer_ecfp4</span></code>: The ECFP4 fingerprints of the oligomer.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xenonpy_desc</span></code>: The xenonpy descriptors.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mordred3d</span></code>: The Mordred 3D descriptors.</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fedors_density</span></code>: The Fedors density.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The features to use.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.DescFeaturizer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#DescFeaturizer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.DescFeaturizer.__call__" title="Link to this definition"></a></dt>
+<dd><p>Featurize descriptors of a molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to featurize.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dictionary containing the features.
+The key is <code class="xref py py-obj docutils literal notranslate"><span class="pre">descriptors</span></code> with the shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">num_features]</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.featurizer.RDMolPreprocessor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.featurizer.</span></span><span class="sig-name descname"><span class="pre">RDMolPreprocessor</span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#RDMolPreprocessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.RDMolPreprocessor" title="Link to this definition"></a></dt>
+<dd><p>Preprocess the molecule. We provide the following preprocessors:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#polymon.data.featurizer.RDMolPreprocessor.monomer" title="polymon.data.featurizer.RDMolPreprocessor.monomer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">monomer</span></code></a>: Remove the attachment points and set the attachment points</p></li>
+</ul>
+<p>to the neighbors of the attachment points.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.featurizer.RDMolPreprocessor.monomer">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">monomer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdmol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mol</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Mol</span></span></span><a class="reference internal" href="../_modules/polymon/data/featurizer.html#RDMolPreprocessor.monomer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.featurizer.RDMolPreprocessor.monomer" title="Link to this definition"></a></dt>
+<dd><p>Preprocess the molecule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rdmol</strong> (<em>Chem.Mol</em>) – The molecule to preprocess.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The preprocessed molecule.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Chem.Mol</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="polymer">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">polymer</a><a class="headerlink" href="#polymer" title="Link to this heading"></a></h2>
+<section id="module-polymon.data.polymer">
+<span id="polymer"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">polymer</a><a class="headerlink" href="#module-polymon.data.polymer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.polymer.OligomerBuilder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.polymer.</span></span><span class="sig-name descname"><span class="pre">OligomerBuilder</span></span><a class="reference internal" href="../_modules/polymon/data/polymer.html#OligomerBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.polymer.OligomerBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Builder for oligomers. We use the following reactions to build the
+oligomers:</p>
+<ul class="simple">
+<li><p>[<em>:1][Au].[</em>:2][Cu]&gt;&gt;[<em>:1][</em>:2]</p></li>
+<li><p>[<em>:1]=[Au].[</em>:2]=[Cu]&gt;&gt;[<em>:1]=[</em>:2]</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The builder only supports for the polymer with two attachment points.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The oligomer molecule</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Chem.Mol</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.data.polymer.OligomerBuilder.get_oligomer">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_oligomer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_oligomer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Mol</span></span></span><a class="reference internal" href="../_modules/polymon/data/polymer.html#OligomerBuilder.get_oligomer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.polymer.OligomerBuilder.get_oligomer" title="Link to this definition"></a></dt>
+<dd><p>Get the oligomer molecule from the smiles string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>smiles</strong> – The smiles string of the polymer</p></li>
+<li><p><strong>n_oligomer</strong> – The number of oligomers</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The oligomer molecule</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Chem.Mol</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.data.polymer.Polymer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.data.polymer.</span></span><span class="sig-name descname"><span class="pre">Polymer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_attr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">descriptors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/data/polymer.html#Polymer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.data.polymer.Polymer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></p>
+<p>Data object for multi-modal representation of polymers.</p>
+<dl class="simple">
+<dt>Graph (2D/3D) Attributes:</dt><dd><ul class="simple">
+<li><p>x: Node features (num_nodes, num_node_features)</p></li>
+<li><p>edge_index: Edge indices (2, num_edges)</p></li>
+<li><p>edge_attr: Edge features (num_edges, num_edge_features)</p></li>
+<li><p>attachments: Attachments (num_nodes, ) with 1 for attachment nodes</p></li>
+<li><p>z: Atomic numbers (num_nodes, )</p></li>
+<li><p>pos: Positions (num_nodes, 3)</p></li>
+</ul>
+</dd>
+<dt>Sequence Attributes:</dt><dd><ul class="simple">
+<li><p>seq: Sequence (1, max_seq_len)</p></li>
+<li><p>seq_len: Sequence length (1, )</p></li>
+</ul>
+</dd>
+<dt>Descriptor Attributes:</dt><dd><ul class="simple">
+<li><p>descriptors: Descriptors (1, num_descriptors)</p></li>
+</ul>
+</dd>
+<dt>Other Attributes:</dt><dd><ul class="simple">
+<li><p>y: Target (num_targets, )</p></li>
+<li><p>smiles: a SMILES string</p></li>
+<li><p>identifier: a unique identifier for the polymer</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="polymon.data.polymer.Polymer.num_atoms">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">num_atoms</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#polymon.data.polymer.Polymer.num_atoms" title="Link to this definition"></a></dt>
+<dd><p>The number of atoms in the polymer.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="polymon.data.polymer.Polymer.num_bonds">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">num_bonds</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#polymon.data.polymer.Polymer.num_bonds" title="Link to this definition"></a></dt>
+<dd><p>The number of bonds in the polymer.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="polymon.data.polymer.Polymer.num_descriptors">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">num_descriptors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#polymon.data.polymer.Polymer.num_descriptors" title="Link to this definition"></a></dt>
+<dd><p>The number of descriptors in the polymer.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 

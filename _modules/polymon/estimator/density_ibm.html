@@ -1,0 +1,515 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.estimator.density_ibm &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.estimator.density_ibm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.estimator.density_ibm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rdkit.Chem.Descriptors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rdcd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rdkit.Chem.rdMolDescriptors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rdcmd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fragments</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.estimator.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_init_params</span>
+
+
+<div class="viewcode-block" id="DensityIBMEstimator">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.density_ibm.DensityIBMEstimator">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DensityIBMEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Density estimator using the IBM method. This is a group contribution</span>
+<span class="sd">    method that assigns a contribution to each group of atoms in the molecule.</span>
+<span class="sd">    The original implementation is from https://github.com/IBM/polymer_property_prediction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="DensityIBMEstimator.estimated_y">
+<a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.density_ibm.DensityIBMEstimator.estimated_y">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">estimate_density</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">BetaFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1">#  calculating beta -&gt; beta_ij = delta_i*delta_j</span>
+    <span class="c1">#</span>
+
+    <span class="n">nbond</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+    <span class="n">betaf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbond</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">bondf</span> <span class="o">=</span> <span class="n">BondFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">deltaf</span> <span class="o">=</span> <span class="n">DeltaFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbond</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ii</span> <span class="o">=</span> <span class="n">bondf</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">jj</span> <span class="o">=</span> <span class="n">bondf</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">betaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltaf</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">*</span> <span class="n">deltaf</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">betaf</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">BetavFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1">#  calculating betav -&gt; betav_ij = deltav_i*deltav_j</span>
+    <span class="c1">#</span>
+
+    <span class="n">nbond</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+    <span class="n">betavf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nbond</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">bondf</span> <span class="o">=</span> <span class="n">BondFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">deltavf</span> <span class="o">=</span> <span class="n">DeltavFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbond</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ii</span> <span class="o">=</span> <span class="n">bondf</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">jj</span> <span class="o">=</span> <span class="n">bondf</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">betavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">*</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">jj</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">betavf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">BondFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1">#   This function calculates the bonds between the atoms for</span>
+    <span class="c1">#   molecule mol, obtained from SMILES</span>
+    <span class="c1">#</span>
+
+    <span class="n">nbond</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+    <span class="n">bondf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">nbond</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbond</span><span class="p">):</span>
+        <span class="n">bondf</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBondWithIdx</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span>
+        <span class="n">bondf</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBondWithIdx</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span>
+    <span class="c1"># defining the periodic bond between monomers</span>
+    <span class="n">bondf</span><span class="p">[</span><span class="n">nbond</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lin</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">bondf</span><span class="p">[</span><span class="n">nbond</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lin</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">bondf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">DeltaFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1">#   This function calculates the number of non-hydrogen atoms to</span>
+    <span class="c1">#   which a given non-hydrogen atom is bonded</span>
+    <span class="c1">#</span>
+
+    <span class="n">natom</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
+    <span class="n">nbond</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+    <span class="n">deltaf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natom</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">bondf</span> <span class="o">=</span> <span class="n">BondFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="c1"># calculating delta -&gt; number of non-hydrogen atoms bonded to the non-hydrogen atom</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">natom</span><span class="p">):</span>
+        <span class="n">nn</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbond</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">bondf</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">nn</span> <span class="o">=</span> <span class="n">nn</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">bondf</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">nn</span> <span class="o">=</span> <span class="n">nn</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span>
+
+    <span class="k">return</span> <span class="n">deltaf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">DeltavFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1">#   This function calculates deltav, the atom connectivity index</span>
+    <span class="c1">#   associated with the electronic environment</span>
+    <span class="c1">#</span>
+
+    <span class="n">natom</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
+    <span class="n">nbond</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+    <span class="n">deltavf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natom</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">nh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natom</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">bondf</span> <span class="o">=</span> <span class="n">BondFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="c1"># calculating the number of hydrogens</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">kk</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span>
+        <span class="n">nh</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetImplicitValence</span><span class="p">()</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">z</span> <span class="o">==</span> <span class="mi">14</span><span class="p">:</span>
+            <span class="n">nh</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">nh</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">kk</span> <span class="o">==</span> <span class="n">bondf</span><span class="p">[</span><span class="n">nbond</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">kk</span> <span class="o">==</span> <span class="n">bondf</span><span class="p">[</span><span class="n">nbond</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">nh</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">nh</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># calculating deltav</span>
+    <span class="n">valence_electron</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="mi">14</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="mi">15</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="mi">16</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="mi">17</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="mi">35</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+        <span class="mi">53</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="p">}</span>  <span class="c1"># dictionary relating atomic number : valence electron</span>
+    <span class="n">deltaf</span> <span class="o">=</span> <span class="n">DeltaFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">z</span> <span class="o">==</span> <span class="mi">14</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># replacing Si -&gt; C according to Table 2.3 Josef Bicerano&#39;s book</span>
+        <span class="k">if</span> <span class="n">z</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valence_electron</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">zv</span> <span class="o">=</span> <span class="n">valence_electron</span><span class="p">[</span><span class="n">z</span><span class="p">]</span>
+        <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">zv</span> <span class="o">-</span> <span class="n">nh</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">zv</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># deltav definition</span>
+        <span class="n">atom_charge</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetFormalCharge</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">7</span> <span class="ow">and</span> <span class="n">atom_charge</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># Nitrogen with +1 charge</span>
+            <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">8</span> <span class="ow">and</span> <span class="n">atom_charge</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># Oxygen with -1 charge</span>
+            <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">16</span> <span class="ow">and</span> <span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>  <span class="c1"># oxidation state +4 of Sulfur</span>
+            <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">16</span> <span class="ow">and</span> <span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>  <span class="c1"># oxidation state +6 of Sulfur</span>
+            <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">deltavf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ConnectivityIndex</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1">#   This function calculates the zero and first order connectivity</span>
+    <span class="c1">#   indices of a polymer monomer. This is the first step to</span>
+    <span class="c1">#   calculate polymer properties.</span>
+    <span class="c1">#</span>
+    <span class="c1">#   INPUT: m is a rdkit.Chem molecule class with informations based</span>
+    <span class="c1">#          on SMILES code.</span>
+    <span class="c1">#</span>
+    <span class="c1">#   OUTPUT: x0, x0v, x1, x1v</span>
+    <span class="c1">#</span>
+    <span class="c1">#   Ronaldo Giro  6, February 2019</span>
+
+    <span class="n">v_connec_indexf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">natom</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
+    <span class="n">nbond</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+    <span class="c1"># calculating x0 and x0v -&gt; zero order connectivity indices</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">x0v</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">deltaf</span> <span class="o">=</span> <span class="n">DeltaFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">deltavf</span> <span class="o">=</span> <span class="n">DeltavFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">natom</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">x0v</span> <span class="o">=</span> <span class="n">x0v</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># calculating x1 and x1v -&gt; first order connectivity indices</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">x1v</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">betaf</span> <span class="o">=</span> <span class="n">BetaFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">betavf</span> <span class="o">=</span> <span class="n">BetavFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbond</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">betaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">betavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">betaf</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">x1v</span> <span class="o">=</span> <span class="n">x1v</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">betavf</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">v_connec_indexf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x0</span>
+    <span class="n">v_connec_indexf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x0v</span>
+    <span class="n">v_connec_indexf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1</span>
+    <span class="n">v_connec_indexf</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1v</span>
+    <span class="k">return</span> <span class="n">v_connec_indexf</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">molextFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1"># This function add the head and tail atoms of a molecule to a new</span>
+    <span class="c1"># molecule in order to take into account the polymer periodicity</span>
+    <span class="c1"># effect. So, molpf is mol with two added atoms: the head and the</span>
+    <span class="c1"># tail atoms from mol</span>
+    <span class="c1">#</span>
+    <span class="c1"># smiles_string is the OPSIN: Open Parser for Systematic IUPAC</span>
+    <span class="c1"># nomenclature SMILES with the periodic markers: [*:1] and [*:2]</span>
+    <span class="c1"># for head and tail ghost atoms</span>
+    <span class="c1">#</span>
+    <span class="c1"># defining the molecule with periodic bonds to calculate fragments</span>
+    <span class="n">bi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lin</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">bf</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lin</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">atomi</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">bi</span><span class="p">)</span>
+    <span class="n">atomf</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">bf</span><span class="p">)</span>
+    <span class="n">sti</span> <span class="o">=</span> <span class="n">atomi</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span>
+    <span class="n">stf</span> <span class="o">=</span> <span class="n">atomf</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">sti</span> <span class="o">==</span> <span class="s1">&#39;Si&#39;</span><span class="p">:</span>
+        <span class="n">sti</span> <span class="o">=</span> <span class="s1">&#39;[Si]&#39;</span>
+    <span class="k">if</span> <span class="n">stf</span> <span class="o">==</span> <span class="s1">&#39;Si&#39;</span><span class="p">:</span>
+        <span class="n">stf</span> <span class="o">=</span> <span class="s1">&#39;[Si]&#39;</span>
+
+    <span class="c1"># replacing the head and tail ghost atoms [*:1] and [*:2] with the sti and stf atoms</span>
+    <span class="n">sttmp1</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">sttmp2</span> <span class="o">=</span> <span class="n">sttmp1</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">stf</span><span class="p">)</span>
+    <span class="n">st</span> <span class="o">=</span> <span class="n">sttmp2</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">sti</span><span class="p">)</span>
+    <span class="n">molpf</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">molpf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">RingsFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1"># This function return a tuple (ringstuple) with atom indexes belonging to</span>
+    <span class="c1"># all the rings of a molecule mol. To obtain the number of rings in a molecule</span>
+    <span class="c1"># just use len(ringstuple)</span>
+    <span class="c1">#</span>
+    <span class="c1"># Finding rings at molecule m</span>
+    <span class="n">ri</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetRingInfo</span><span class="p">()</span>
+    <span class="n">ringstuple</span> <span class="o">=</span> <span class="n">ri</span><span class="o">.</span><span class="n">AtomRings</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ringstuple</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">FusedRingsFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1"># This function return a tuple (fusedtupleindex) with the ring indexes belonging to</span>
+    <span class="c1"># all the fused rings of a molecule mol. To obtain the number of fused rings in a molecule</span>
+    <span class="c1"># just use len(fusedtupleindex)</span>
+    <span class="c1">#</span>
+    <span class="c1"># Finding fused rings</span>
+    <span class="n">ringstuple</span> <span class="o">=</span> <span class="n">RingsFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">nrings</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ringstuple</span><span class="p">)</span>
+    <span class="n">fusedtupleindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">1000</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">fusedtupleindex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">fusedtupleindex</span>
+    <span class="n">fused</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">nn</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nrings</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nrings</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ringstuple</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ringstuple</span><span class="p">[</span><span class="n">k</span><span class="p">])):</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">ringstuple</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">ringstuple</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">n</span><span class="p">]):</span>
+                            <span class="n">fusedtupleindex</span><span class="p">[</span><span class="n">nn</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                            <span class="n">fused</span><span class="p">[</span><span class="n">nn</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                            <span class="n">fused</span><span class="p">[</span><span class="n">nn</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                            <span class="n">nn</span> <span class="o">=</span> <span class="n">nn</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="n">fusedtupleindex</span><span class="p">[</span><span class="n">nn</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+                            <span class="n">fused</span><span class="p">[</span><span class="n">nn</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+                            <span class="n">fused</span><span class="p">[</span><span class="n">nn</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+                            <span class="n">nn</span> <span class="o">=</span> <span class="n">nn</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">fusedtupleindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">fusedtupleindex</span><span class="p">)</span>
+    <span class="n">fusedtupleindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">fusedtupleindex</span><span class="p">)</span>
+    <span class="n">fusedtupleindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">fusedtupleindex</span><span class="p">)</span>
+    <span class="n">fusedtupleindex</span> <span class="o">=</span> <span class="n">fusedtupleindex</span><span class="p">[</span><span class="n">fusedtupleindex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">fusedtupleindex</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">NmvFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">):</span>
+    <span class="c1"># ---------------------------------------------------------------------</span>
+    <span class="c1">#</span>
+    <span class="c1"># 	    Nmv is a group contribution correction term for Molar Volume</span>
+    <span class="c1">#</span>
+    <span class="c1"># ---------------------------------------------------------------------</span>
+    <span class="n">deltaf</span> <span class="o">=</span> <span class="n">DeltaFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">deltavf</span> <span class="o">=</span> <span class="n">DeltavFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">Nsi</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Ns</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Nsulfone</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Ncl</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Nbr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Nester</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Nether</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Ncarbonate</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Ncdouble</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Ncyc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">Nfused</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># calculating the number of Si (Silicon) atoms</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">14</span><span class="p">):</span>  <span class="c1"># atomic number of Si (Silicon)</span>
+            <span class="n">Nsi</span> <span class="o">=</span> <span class="n">Nsi</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># calculating the number of -S- (Sulfor) atoms</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">16</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">9</span><span class="p">):</span>
+                <span class="n">Ns</span> <span class="o">=</span> <span class="n">Ns</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="n">Ns</span> <span class="o">=</span> <span class="n">Ns</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># calculating the number of Sulfone groups</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">16</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">deltaf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">deltavf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">8</span> <span class="o">/</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="n">Nsulfone</span> <span class="o">=</span> <span class="n">Nsulfone</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># calculating the number of Cl (Chlorine) atoms</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">17</span><span class="p">):</span>  <span class="c1"># atomic number of Cl (Chlorine)</span>
+            <span class="n">Ncl</span> <span class="o">=</span> <span class="n">Ncl</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># calculating the number of Br (Bromine) atoms</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">35</span><span class="p">):</span>  <span class="c1"># atomic number of Br (Bromine)</span>
+            <span class="n">Nbr</span> <span class="o">=</span> <span class="n">Nbr</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># defining the molecule with periodic bonds to calculate fragments</span>
+    <span class="n">molp</span> <span class="o">=</span> <span class="n">mol</span>
+
+    <span class="c1"># calculating the number of backbone esters (R-C(=O)OR) groups</span>
+    <span class="n">Nester</span> <span class="o">=</span> <span class="n">Fragments</span><span class="o">.</span><span class="n">fr_ester</span><span class="p">(</span><span class="n">molp</span><span class="p">)</span>
+
+    <span class="c1"># calculating the number of ether (R-O-R) groups</span>
+    <span class="n">Nether</span> <span class="o">=</span> <span class="n">Fragments</span><span class="o">.</span><span class="n">fr_ether</span><span class="p">(</span><span class="n">molp</span><span class="p">)</span>
+
+    <span class="c1"># calculating the number of carbonate (-OCOO-) groups</span>
+    <span class="n">Ncarbonate</span> <span class="o">=</span> <span class="n">Fragments</span><span class="o">.</span><span class="n">fr_COO2</span><span class="p">(</span><span class="n">molp</span><span class="p">)</span>
+
+    <span class="n">nbond</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumBonds</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nbond</span><span class="p">):</span>
+        <span class="n">bi</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBondWithIdx</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span>
+        <span class="n">atomi</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">bi</span><span class="p">)</span>
+        <span class="n">zi</span> <span class="o">=</span> <span class="n">atomi</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="n">bf</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBondWithIdx</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span>
+        <span class="n">atomf</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">bf</span><span class="p">)</span>
+        <span class="n">zf</span> <span class="o">=</span> <span class="n">atomf</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
+        <span class="n">nbondtype</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBondWithIdx</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">GetBondTypeAsDouble</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">zi</span> <span class="o">==</span> <span class="mi">6</span> <span class="ow">and</span> <span class="n">zf</span> <span class="o">==</span> <span class="mi">6</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nbondtype</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">atomi</span><span class="o">.</span><span class="n">IsInRing</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">atomf</span><span class="o">.</span><span class="n">IsInRing</span><span class="p">():</span>
+                        <span class="n">Ncdouble</span> <span class="o">=</span> <span class="n">Ncdouble</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># calculating the number of saturated rings Ncyc</span>
+    <span class="n">Ncyc</span> <span class="o">=</span> <span class="n">rdcmd</span><span class="o">.</span><span class="n">CalcNumSaturatedRings</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="c1"># calculating the number of fused ring Nfuse</span>
+    <span class="n">fusedtupleindex</span> <span class="o">=</span> <span class="n">FusedRingsFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">Nfused</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fusedtupleindex</span><span class="p">)</span>
+
+    <span class="c1"># calculating Nmv</span>
+    <span class="k">if</span> <span class="n">Nfused</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">Nmvf</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="n">Nsi</span> <span class="o">-</span> <span class="mi">18</span> <span class="o">*</span> <span class="n">Ns</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">Nsulfone</span> <span class="o">-</span> <span class="mi">7</span> <span class="o">*</span> <span class="n">Ncl</span> <span class="o">-</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">Nbr</span>
+        <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Nester</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">Nether</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">Ncarbonate</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">Ncdouble</span> <span class="o">-</span> <span class="mi">11</span> <span class="o">*</span> <span class="n">Ncyc</span> <span class="o">-</span> <span class="mi">7</span> <span class="o">*</span> <span class="p">(</span><span class="n">Nfused</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Nmvf</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="n">Nsi</span> <span class="o">-</span> <span class="mi">18</span> <span class="o">*</span> <span class="n">Ns</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">Nsulfone</span> <span class="o">-</span> <span class="mi">7</span> <span class="o">*</span> <span class="n">Ncl</span> <span class="o">-</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">Nbr</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> \
+            <span class="n">Nester</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">Nether</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">Ncarbonate</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">Ncdouble</span> <span class="o">-</span> <span class="mi">11</span> <span class="o">*</span> <span class="n">Ncyc</span>
+
+    <span class="k">return</span> <span class="n">Nmvf</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">estimate_density</span><span class="p">(</span><span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+    <span class="n">attachments</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">attachments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">GetNeighbors</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attachments</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid SMILES: </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">attachments</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">lin</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">attachments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">attachments</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">v_connec_index</span> <span class="o">=</span> <span class="n">ConnectivityIndex</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">v_connec_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x0v</span> <span class="o">=</span> <span class="n">v_connec_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">v_connec_index</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">x1v</span> <span class="o">=</span> <span class="n">v_connec_index</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">Nmv</span> <span class="o">=</span> <span class="n">NmvFunction</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">lin</span><span class="p">)</span>
+    <span class="n">molar_volume</span> <span class="o">=</span> <span class="mf">3.642770</span> <span class="o">*</span> <span class="n">x0</span> <span class="o">+</span> <span class="mf">9.798697</span> <span class="o">*</span> <span class="n">x0v</span> <span class="o">-</span> \
+        <span class="mf">8.542819</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">+</span> <span class="mf">21.693912</span> <span class="o">*</span> <span class="n">x1v</span> <span class="o">+</span> <span class="mf">0.978655</span> <span class="o">*</span> <span class="n">Nmv</span> <span class="o">+</span> <span class="mi">20</span>
+    <span class="n">molar_mass</span> <span class="o">=</span> <span class="n">rdcd</span><span class="o">.</span><span class="n">ExactMolWt</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="n">density_monomer</span> <span class="o">=</span> <span class="n">molar_mass</span> <span class="o">/</span> <span class="n">molar_volume</span>
+    <span class="k">return</span> <span class="n">density_monomer</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

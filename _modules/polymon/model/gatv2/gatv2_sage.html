@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.model.gatv2.gatv2_sage &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.model.gatv2.gatv2_sage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.model.gatv2.gatv2_sage</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">GATv2Conv</span><span class="p">,</span> <span class="n">SAGEConv</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_init_params</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ReadoutPhase</span>
+
+
+<div class="viewcode-block" id="GATv2SAGE">
+<a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.gatv2_sage.GATv2SAGE">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GATv2SAGE</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;GATv2 with SAGEConv.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        num_atom_features (int): The number of atom features.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        num_heads (int): The number of heads. Default to :obj:`8`.</span>
+<span class="sd">        pred_hidden_dim (int): The number of hidden dimensions for the prediction </span>
+<span class="sd">            MLP. Default to :obj:`128`.</span>
+<span class="sd">        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.</span>
+<span class="sd">        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.</span>
+<span class="sd">        activation (str): The activation function. Default to :obj:`&#39;prelu&#39;`.</span>
+<span class="sd">        num_tasks (int): The number of tasks. Default to :obj:`1`.</span>
+<span class="sd">        bias (bool): Whether to use bias. Default to :obj:`True`.</span>
+<span class="sd">        dropout (float): The dropout rate. Default to :obj:`0.1`.</span>
+<span class="sd">        edge_dim (int): The number of edge dimensions.</span>
+<span class="sd">        sage_aggr (str): The aggregation function. Default to :obj:`&#39;mean&#39;`.</span>
+<span class="sd">        sage_normalize (bool): Whether to normalize the output. Default to :obj:`False`.</span>
+<span class="sd">        sage_project (bool): Whether to project the output. Default to :obj:`False`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> 
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> 
+        <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span> 
+        <span class="n">num_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+        <span class="n">edge_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sage_aggr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+        <span class="n">sage_normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">sage_project</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">num_atom_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">dropout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_tasks</span> <span class="o">=</span> <span class="n">num_tasks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_dim</span> <span class="o">=</span> <span class="n">edge_dim</span>
+
+        <span class="c1"># GAT layers</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">feature_per_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_atom_features</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">hidden_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_layers</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">GATv2Conv</span><span class="p">(</span>
+                <span class="n">in_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">num_heads</span><span class="p">),</span>
+                <span class="n">out_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">heads</span><span class="o">=</span><span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">concat</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_per_layer</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">edge_dim</span><span class="o">=</span><span class="n">edge_dim</span><span class="p">,</span>
+                <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+                <span class="n">bias</span><span class="o">=</span><span class="n">bias</span>
+            <span class="p">)</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+        
+        <span class="n">sage_layer</span> <span class="o">=</span> <span class="n">SAGEConv</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">aggr</span><span class="o">=</span><span class="n">sage_aggr</span><span class="p">,</span>
+            <span class="n">normalize</span><span class="o">=</span><span class="n">sage_normalize</span><span class="p">,</span>
+            <span class="n">project</span><span class="o">=</span><span class="n">sage_project</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sage_layer</span> <span class="o">=</span> <span class="n">sage_layer</span>
+
+        <span class="c1"># Readout phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readout_func</span> <span class="o">=</span> <span class="n">ReadoutPhase</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">)</span>
+
+        <span class="c1"># prediction phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="n">num_tasks</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="GATv2SAGE.forward">
+<a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.gatv2_sage.GATv2SAGE.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (Data): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">sort_by_row</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span>
+        
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sage_layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
+
+        <span class="n">mol_repr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readout_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">mol_repr</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

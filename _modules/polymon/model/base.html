@@ -1,0 +1,501 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.model.base &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.model.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.model.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Batch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.data.featurizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ComposeFeaturizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.data.polymer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polymer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.data.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogNormalizer</span><span class="p">,</span> <span class="n">Normalizer</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">polymon.estimator.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseEstimator</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        nn.Module (ABC): The base class of the model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">pass</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_init_params&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="KFoldModel">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.KFoldModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KFoldModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;K-Fold Model. The output is the average of the predictions of the models</span>
+<span class="sd">    trained on the different folds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_cls (str): The class of the model.</span>
+<span class="sd">        model_init_params (Dict[str, Any]): The initial parameters of the model.</span>
+<span class="sd">        n_fold (int): The number of folds.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_cls</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">model_init_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">n_fold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span> <span class="o">=</span> <span class="n">model_cls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_init_params</span> <span class="o">=</span> <span class="n">model_init_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_fold</span> <span class="o">=</span> <span class="n">n_fold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_fold</span><span class="p">):</span>
+            <span class="n">model_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;polymon.model&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">)</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">model_init_params</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="KFoldModel.from_models">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.KFoldModel.from_models">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_models</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;ModelWrapper&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;KFoldModel&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a K-Fold Model from a list of models.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            models (List[&#39;ModelWrapper&#39;]): The models.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &#39;KFoldModel&#39;: The K-Fold Model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_cls</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;model_cls&#39;</span><span class="p">]</span>
+        <span class="n">model_init_params</span> <span class="o">=</span> <span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;model_init_params&#39;</span><span class="p">]</span>
+        <span class="n">n_fold</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="n">kfold_model</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="n">model_init_params</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
+            <span class="n">kfold_model</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">kfold_model</span></div>
+
+    
+<div class="viewcode-block" id="KFoldModel.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.KFoldModel.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass. The output is the predictions of k-fold models stacked.</span>
+<span class="sd">        shape: (n_polymers, n_folds)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of polymers.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the initial parameters of the model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, Any]: The initial parameters of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;model_cls&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">,</span>
+            <span class="s1">&#39;model_init_params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_init_params</span><span class="p">,</span>
+            <span class="s1">&#39;n_fold&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_fold</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="ModelWrapper">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.ModelWrapper">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelWrapper</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Model Wrapper. This wrapper is used to wrap the model, normalizer, </span>
+<span class="sd">    featurizer, transform, and estimator, and make it easier to do inference.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (BaseModel): The model.</span>
+<span class="sd">        normalizer (Normalizer): The normalizer.</span>
+<span class="sd">        featurizer (ComposeFeaturizer): The featurizer.</span>
+<span class="sd">        transform_cls (str): The class of the transform.</span>
+<span class="sd">        transform_kwargs (Dict[str, Any]): The initial parameters of the transform.</span>
+<span class="sd">        estimator (BaseEstimator): The estimator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">model</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span>
+        <span class="n">normalizer</span><span class="p">:</span> <span class="s1">&#39;Normalizer&#39;</span><span class="p">,</span>
+        <span class="n">featurizer</span><span class="p">:</span> <span class="n">ComposeFeaturizer</span><span class="p">,</span>
+        <span class="n">transform_cls</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">estimator</span><span class="p">:</span> <span class="s1">&#39;BaseEstimator&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalizer</span> <span class="o">=</span> <span class="n">normalizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">featurizer</span> <span class="o">=</span> <span class="n">featurizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform_cls</span> <span class="o">=</span> <span class="n">transform_cls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform_kwargs</span> <span class="o">=</span> <span class="n">transform_kwargs</span>
+        <span class="k">if</span> <span class="n">transform_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">transform_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;polymon.data.utils&#39;</span><span class="p">),</span> <span class="n">transform_cls</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform_cls</span><span class="p">(</span><span class="o">**</span><span class="n">transform_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">estimator</span> <span class="o">=</span> <span class="n">estimator</span>
+
+<div class="viewcode-block" id="ModelWrapper.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.ModelWrapper.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">batch</span><span class="p">:</span> <span class="n">Batch</span><span class="p">,</span>
+        <span class="n">loss_fn</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Batch): The batch of polymers.</span>
+<span class="sd">            loss_fn (nn.Module): The loss function.</span>
+<span class="sd">            device (str): The device to use.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">y_true_transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true_transformed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+
+    
+<div class="viewcode-block" id="ModelWrapper.predict_batch">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.ModelWrapper.predict_batch">[docs]</a>
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict_batch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">batch</span><span class="p">:</span> <span class="n">Batch</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cuda&#39;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict the output of the model for a batch of polymers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Batch): The batch of polymers.</span>
+<span class="sd">            device (str): The device to use.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="s1">&#39;estimated_y&#39;</span><span class="p">):</span>
+            <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_pred</span> <span class="o">+</span> <span class="n">batch</span><span class="o">.</span><span class="n">estimated_y</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y_pred</span></div>
+
+
+<div class="viewcode-block" id="ModelWrapper.predict">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.ModelWrapper.predict">[docs]</a>
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">smiles_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
+        <span class="n">backup_model</span><span class="p">:</span> <span class="s1">&#39;ModelWrapper&#39;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict the output of the model for a list of polymer SMILES strings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            smiles_list (List[str]): The list of SMILES strings.</span>
+<span class="sd">            batch_size (int): The batch size.</span>
+<span class="sd">            device (str): The device to use.</span>
+<span class="sd">            backup_model (ModelWrapper): The backup model. If the model fails to </span>
+<span class="sd">                predict the output for a polymer, the backup model will be used </span>
+<span class="sd">                to predict the output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">backup_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">backup_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+            <span class="n">backup_model</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+        
+        <span class="n">polymers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">backup_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">smiles</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Featurizing&#39;</span><span class="p">)):</span>
+            <span class="n">rdmol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+            <span class="n">mol_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurizer</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
+            <span class="n">mol_dict</span><span class="p">[</span><span class="s1">&#39;smiles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">smiles</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">mol_dict</span> <span class="o">=</span> <span class="n">backup_model</span><span class="o">.</span><span class="n">featurizer</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
+                <span class="n">backup_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">polymer</span> <span class="o">=</span> <span class="n">Polymer</span><span class="p">(</span><span class="o">**</span><span class="n">mol_dict</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">polymer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">polymer</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">polymer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">polymer</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">backup_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">polymers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">polymer</span><span class="p">)</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">polymers</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+        
+        <span class="n">y_pred_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Predicting&#39;</span><span class="p">)):</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">backup_ids</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">backup_model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">smiles_list</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y_pred</span> <span class="o">=</span> <span class="n">backup_model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">smiles_list</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">y_pred_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_pred_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">y_pred_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">y_pred_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">y_pred_list</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span></div>
+
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the information of the model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict[str, Any]: The information of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;model_cls&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;normalizer&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalizer</span><span class="o">.</span><span class="n">init_params</span><span class="p">,</span>
+            <span class="s1">&#39;model_init_params&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">init_params</span><span class="p">,</span>
+            <span class="s1">&#39;featurizer_names&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurizer</span><span class="o">.</span><span class="n">names</span><span class="p">,</span>
+            <span class="s1">&#39;featurizer_config&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurizer</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+            <span class="s1">&#39;featurizer_add_hydrogens&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurizer</span><span class="o">.</span><span class="n">add_hydrogens</span><span class="p">,</span>
+            <span class="s1">&#39;transform_cls&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_cls</span><span class="p">,</span>
+            <span class="s1">&#39;transform_kwargs&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_kwargs</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s1">&#39;estimator_cls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="n">output</span><span class="p">[</span><span class="s1">&#39;estimator_init_params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">init_params</span>
+        <span class="k">return</span> <span class="n">output</span>
+    
+<div class="viewcode-block" id="ModelWrapper.write">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.ModelWrapper.write">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the model to a file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): The path to the file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The path to the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ModelWrapper.from_dict">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.ModelWrapper.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;ModelWrapper&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a ModelWrapper from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_info (Dict[str, Any]): The information of the model.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &#39;ModelWrapper&#39;: The ModelWrapper.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_cls</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;model_cls&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">model_cls</span> <span class="o">==</span> <span class="s1">&#39;KFoldModel&#39;</span><span class="p">:</span>
+            <span class="n">model_cls</span> <span class="o">=</span> <span class="n">KFoldModel</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;polymon.model&#39;</span><span class="p">),</span> <span class="n">model_cls</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;model_init_params&#39;</span><span class="p">])</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">&#39;mean&#39;</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;normalizer&#39;</span><span class="p">]:</span>
+            <span class="n">normalizer</span> <span class="o">=</span> <span class="n">Normalizer</span><span class="p">(</span>
+                <span class="n">mean</span><span class="o">=</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;normalizer&#39;</span><span class="p">][</span><span class="s1">&#39;mean&#39;</span><span class="p">],</span>
+                <span class="n">std</span><span class="o">=</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;normalizer&#39;</span><span class="p">][</span><span class="s1">&#39;std&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">normalizer</span> <span class="o">=</span> <span class="n">LogNormalizer</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;normalizer&#39;</span><span class="p">][</span><span class="s1">&#39;eps&#39;</span><span class="p">])</span>
+        <span class="n">featurizer</span> <span class="o">=</span> <span class="n">ComposeFeaturizer</span><span class="p">(</span>
+            <span class="n">names</span><span class="o">=</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;featurizer_names&#39;</span><span class="p">],</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;featurizer_config&#39;</span><span class="p">],</span>
+            <span class="n">add_hydrogens</span><span class="o">=</span><span class="n">model_info</span><span class="p">[</span><span class="s1">&#39;featurizer_add_hydrogens&#39;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">transform_cls</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;transform_cls&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">transform_kwargs</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;transform_kwargs&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        
+        <span class="n">estimator_cls</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;estimator_cls&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">estimator_kwargs</span> <span class="o">=</span> <span class="n">model_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;estimator_init_params&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">estimator_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">estimator_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;polymon.estimator&#39;</span><span class="p">),</span> <span class="n">estimator_cls</span><span class="p">)</span>
+            <span class="n">estimator</span> <span class="o">=</span> <span class="n">estimator_cls</span><span class="p">(</span><span class="o">**</span><span class="n">estimator_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">estimator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">normalizer</span><span class="p">,</span> <span class="n">featurizer</span><span class="p">,</span> <span class="n">transform_cls</span><span class="p">,</span> <span class="n">transform_kwargs</span><span class="p">,</span> <span class="n">estimator</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="ModelWrapper.from_file">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.base.ModelWrapper.from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> 
+        <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">map_location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span><span class="p">,</span>
+        <span class="n">weights_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ModelWrapper&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a ModelWrapper from a file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): The path to the file.</span>
+<span class="sd">            map_location (str): The map location.</span>
+<span class="sd">            weights_only (bool): Whether to load only the weights.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &#39;ModelWrapper&#39;: The ModelWrapper.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span> 
+            <span class="n">map_location</span><span class="o">=</span><span class="n">map_location</span><span class="p">,</span> 
+            <span class="n">weights_only</span><span class="o">=</span><span class="n">weights_only</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

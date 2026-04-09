@@ -1,0 +1,577 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.model.dmpnn &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.model.dmpnn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.model.dmpnn</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Batch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_init_params</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<div class="viewcode-block" id="DMPNN">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.dmpnn.DMPNN">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DMPNN</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Directed Message Passing Neural Network. The implementation is adapted </span>
+<span class="sd">    from `DeepChem &lt;https://github.com/deepchem/deepchem/blob/master/deepchem/models/torch_models/layers.py&gt;`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mode (str): The mode of the model. Default to :obj:`regression`.</span>
+<span class="sd">        n_classes (int): The number of classes. Default to :obj:`3`.</span>
+<span class="sd">        n_tasks (int): The number of tasks. Default to :obj:`1`.</span>
+<span class="sd">        global_features_size (int): The size of the global features. Default to </span>
+<span class="sd">            :obj:`0`.</span>
+<span class="sd">        atom_fdim (int): The number of atom features. Default to :obj:`133`.</span>
+<span class="sd">        bond_fdim (int): The number of bond features. Default to :obj:`14`.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions. Default to :obj:`300`.</span>
+<span class="sd">        num_layers (int): The number of layers. Default to :obj:`3`.</span>
+<span class="sd">        bias (bool): Whether to use bias. Default to :obj:`False`.</span>
+<span class="sd">        enc_activation (str): The activation function for the encoder. Default to </span>
+<span class="sd">            :obj:`relu`.</span>
+<span class="sd">        enc_dropout_p (float): The dropout rate for the encoder. Default to </span>
+<span class="sd">            :obj:`0.0`.</span>
+<span class="sd">        aggregation (str): The aggregation function. Default to :obj:`mean`.</span>
+<span class="sd">        aggregation_norm (Union[int, float]): The normalization factor for the </span>
+<span class="sd">            aggregation. Default to :obj:`100`.</span>
+<span class="sd">        ffn_hidden (int): The number of hidden dimensions for the FFN. Default to </span>
+<span class="sd">            :obj:`300`.</span>
+<span class="sd">        ffn_activation (str): The activation function for the FFN. Default to </span>
+<span class="sd">            :obj:`relu`.</span>
+<span class="sd">        ffn_layers (int): The number of layers for the FFN. Default to :obj:`3`.</span>
+<span class="sd">        ffn_dropout_p (float): The dropout rate for the FFN. Default to :obj:`0.0`.</span>
+<span class="sd">        ffn_dropout_at_input_no_act (bool): Whether to apply dropout at the input </span>
+<span class="sd">            without activation. Default to :obj:`True`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;regression&#39;</span><span class="p">,</span>
+        <span class="n">n_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">n_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">global_features_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">atom_fdim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">133</span><span class="p">,</span>
+        <span class="n">bond_fdim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">enc_activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+        <span class="n">enc_dropout_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">aggregation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+        <span class="n">aggregation_norm</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">ffn_hidden</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+        <span class="n">ffn_activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+        <span class="n">ffn_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">ffn_dropout_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">ffn_dropout_at_input_no_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DMPNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">n_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">n_tasks</span>
+
+        <span class="c1"># get encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">DMPNNEncoderLayer</span><span class="p">(</span>
+            <span class="n">atom_fdim</span><span class="o">=</span><span class="n">atom_fdim</span><span class="p">,</span>
+            <span class="n">bond_fdim</span><span class="o">=</span><span class="n">bond_fdim</span><span class="p">,</span>
+            <span class="n">d_hidden</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">depth</span><span class="o">=</span><span class="n">num_layers</span><span class="p">,</span>
+            <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">enc_activation</span><span class="p">,</span>
+            <span class="n">dropout_p</span><span class="o">=</span><span class="n">enc_dropout_p</span><span class="p">,</span>
+            <span class="n">aggregation</span><span class="o">=</span><span class="n">aggregation</span><span class="p">,</span>
+            <span class="n">aggregation_norm</span><span class="o">=</span><span class="n">aggregation_norm</span><span class="p">)</span>
+
+        <span class="c1"># get input size for ffn</span>
+        <span class="n">ffn_input</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">hidden_dim</span> <span class="o">+</span> <span class="n">global_features_size</span>
+
+        <span class="c1"># get output size for ffn</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;regression&#39;</span><span class="p">:</span>
+            <span class="n">ffn_output</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tasks</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;classification&#39;</span><span class="p">:</span>
+            <span class="n">ffn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tasks</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span>
+
+        <span class="c1"># get ffn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">PositionwiseFeedForward</span><span class="p">(</span>
+            <span class="n">d_input</span><span class="o">=</span><span class="n">ffn_input</span><span class="p">,</span>
+            <span class="n">d_hidden</span><span class="o">=</span><span class="n">ffn_hidden</span><span class="p">,</span>
+            <span class="n">d_output</span><span class="o">=</span><span class="n">ffn_output</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">ffn_activation</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">ffn_layers</span><span class="p">,</span>
+            <span class="n">dropout_p</span><span class="o">=</span><span class="n">ffn_dropout_p</span><span class="p">,</span>
+            <span class="n">dropout_at_input_no_act</span><span class="o">=</span><span class="n">ffn_dropout_at_input_no_act</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DMPNN.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.dmpnn.DMPNN.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">pyg_batch</span><span class="p">:</span> <span class="n">Batch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: Batch</span>
+<span class="sd">            A pytorch-geometric batch containing tensors for:</span>
+
+<span class="sd">            - atom_features</span>
+<span class="sd">            - f_ini_atoms_bonds</span>
+<span class="sd">            - atom_to_incoming_bonds</span>
+<span class="sd">            - mapping</span>
+<span class="sd">            - global_features</span>
+
+<span class="sd">        The `molecules_unbatch_key` is also derived from the batch.</span>
+<span class="sd">        (List containing number of atoms in various molecules of the batch)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output: Union[torch.Tensor, Sequence[torch.Tensor]]</span>
+<span class="sd">            Predictions for the graphs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">atom_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">pyg_batch</span><span class="p">[</span><span class="s1">&#39;atom_features&#39;</span><span class="p">]</span>
+        <span class="n">f_ini_atoms_bonds</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">pyg_batch</span><span class="p">[</span><span class="s1">&#39;f_ini_atoms_bonds&#39;</span><span class="p">]</span>
+        <span class="n">atom_to_incoming_bonds</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">pyg_batch</span><span class="p">[</span>
+            <span class="s1">&#39;atom_to_incoming_bonds&#39;</span><span class="p">]</span>
+        <span class="n">mapping</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">pyg_batch</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">]</span>
+        <span class="n">global_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">pyg_batch</span><span class="p">[</span><span class="s1">&#39;global_features&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Steps to get `molecules_unbatch_key`:</span>
+        <span class="c1"># 1. Get the tensor containing the indices of first atoms of each molecule</span>
+        <span class="c1"># 2. Get the tensor containing number of atoms of each molecule</span>
+        <span class="c1">#     by taking the difference between consecutive indices.</span>
+        <span class="c1"># 3. Convert the tensor to a list.</span>
+        <span class="n">molecules_unbatch_key</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span>
+            <span class="n">pyg_batch</span><span class="o">.</span><span class="n">_slice_dict</span><span class="p">[</span><span class="s1">&#39;atom_features&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c1"># num_molecules x (enc_hidden + global_features_size)</span>
+        <span class="n">encodings</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">atom_features</span><span class="p">,</span> <span class="n">f_ini_atoms_bonds</span><span class="p">,</span>
+                                               <span class="n">atom_to_incoming_bonds</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span>
+                                               <span class="n">global_features</span><span class="p">,</span>
+                                               <span class="n">molecules_unbatch_key</span><span class="p">)</span>
+
+        <span class="c1"># ffn_output (`self.n_tasks` or `self.n_tasks * self.n_classes`)</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="n">encodings</span><span class="p">)</span>
+
+        <span class="n">final_output</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;regression&#39;</span><span class="p">:</span>
+            <span class="n">final_output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;classification&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tasks</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span><span class="p">)</span>
+                <span class="n">final_output</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">output</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_tasks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span><span class="p">)</span>
+                <span class="n">final_output</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">output</span>
+
+        <span class="k">return</span> <span class="n">final_output</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DMPNNEncoderLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">atom_fdim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">133</span><span class="p">,</span>
+                 <span class="n">bond_fdim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span>
+                 <span class="n">d_hidden</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+                 <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                 <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+                 <span class="n">dropout_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">aggregation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+                 <span class="n">aggregation_norm</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DMPNNEncoderLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_fdim</span> <span class="o">=</span> <span class="n">atom_fdim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">concat_fdim</span> <span class="o">=</span> <span class="n">atom_fdim</span> <span class="o">+</span> <span class="n">bond_fdim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">aggregation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_norm</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">aggregation_norm</span>
+
+        <span class="k">if</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;relu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">activation</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;leakyrelu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;prelu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">PReLU</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;tanh&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;selu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">SELU</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;elu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ELU</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">dropout</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_p</span><span class="p">)</span>
+
+        <span class="c1"># Input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_i</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">concat_fdim</span><span class="p">,</span> <span class="n">d_hidden</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
+
+        <span class="c1"># Shared weight matrix across depths (default):</span>
+        <span class="c1"># For messages hidden states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_h</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_hidden</span><span class="p">,</span> <span class="n">d_hidden</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
+
+        <span class="c1"># For atom hidden states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W_o</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_fdim</span> <span class="o">+</span> <span class="n">d_hidden</span><span class="p">,</span> <span class="n">d_hidden</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_updated_atoms_hidden_state</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">atom_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">h_message</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+            <span class="n">atom_to_incoming_bonds</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to compute atom hidden states.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atom_features: torch.Tensor</span>
+<span class="sd">            Tensor containing atoms features.</span>
+<span class="sd">        h_message: torch.Tensor</span>
+<span class="sd">            Tensor containing hidden states of messages.</span>
+<span class="sd">        atom_to_incoming_bonds: torch.Tensor</span>
+<span class="sd">            Tensor containing mapping from atom index to list of indicies of incoming bonds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        atoms_hidden_states: torch.Tensor</span>
+<span class="sd">            Tensor containing atom hidden states.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">messages_to_atoms</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">h_message</span><span class="p">[</span><span class="n">atom_to_incoming_bonds</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">)</span>  <span class="c1"># num_atoms x hidden_size</span>
+        <span class="n">atoms_hidden_states</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_o</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">atom_features</span><span class="p">,</span> <span class="n">messages_to_atoms</span><span class="p">),</span>
+                      <span class="mi">1</span><span class="p">))</span>  <span class="c1"># num_atoms x hidden_size</span>
+        <span class="n">atoms_hidden_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span>
+            <span class="n">atoms_hidden_states</span><span class="p">)</span>  <span class="c1"># num_atoms x hidden_size</span>
+        <span class="n">atoms_hidden_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span>
+            <span class="n">atoms_hidden_states</span><span class="p">)</span>  <span class="c1"># num_atoms x hidden_size</span>
+        <span class="k">return</span> <span class="n">atoms_hidden_states</span>  <span class="c1"># num_atoms x hidden_size</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_readout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms_hidden_states</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                 <span class="n">molecules_unbatch_key</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method to execute the readout phase. (compute molecules encodings from atom hidden states)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atoms_hidden_states: torch.Tensor</span>
+<span class="sd">            Tensor containing atom hidden states.</span>
+<span class="sd">        molecules_unbatch_key: List</span>
+<span class="sd">            List containing number of atoms in various molecules of a batch</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        molecule_hidden_state: torch.Tensor</span>
+<span class="sd">            Tensor containing molecule encodings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mol_vecs</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">atoms_hidden_states_split</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+            <span class="n">atoms_hidden_states</span><span class="p">,</span> <span class="n">molecules_unbatch_key</span><span class="p">)</span>
+        <span class="n">mol_vec</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+        <span class="k">for</span> <span class="n">mol_vec</span> <span class="ow">in</span> <span class="n">atoms_hidden_states_split</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+                <span class="n">mol_vec</span> <span class="o">=</span> <span class="n">mol_vec</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">mol_vec</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;sum&#39;</span><span class="p">:</span>
+                <span class="n">mol_vec</span> <span class="o">=</span> <span class="n">mol_vec</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation</span> <span class="o">==</span> <span class="s1">&#39;norm&#39;</span><span class="p">:</span>
+                <span class="n">mol_vec</span> <span class="o">=</span> <span class="n">mol_vec</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_norm</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid aggregation&quot;</span><span class="p">)</span>
+            <span class="n">mol_vecs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mol_vec</span><span class="p">)</span>
+
+        <span class="n">molecule_hidden_state</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">mol_vecs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">molecule_hidden_state</span>  <span class="c1"># num_molecules x hidden_size</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                <span class="n">f_ini_atoms_bonds</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                <span class="n">atom_to_incoming_bonds</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                <span class="n">global_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                <span class="n">molecules_unbatch_key</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Output computation for the DMPNNEncoderLayer.</span>
+
+<span class="sd">        Steps:</span>
+
+<span class="sd">        - Get original bond hidden states from concatenation of initial atom and bond features. (``input``)</span>
+<span class="sd">        - Get initial messages hidden states. (``message``)</span>
+<span class="sd">        - Execute message passing step for ``self.depth - 1`` iterations.</span>
+<span class="sd">        - Get atom hidden states using atom features and message hidden states.</span>
+<span class="sd">        - Get molecule encodings.</span>
+<span class="sd">        - Concatenate global molecular features and molecule encodings.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        atom_features: torch.Tensor</span>
+<span class="sd">            Tensor containing atoms features.</span>
+<span class="sd">        f_ini_atoms_bonds: torch.Tensor</span>
+<span class="sd">            Tensor containing concatenated feature vector which contains concatenation of initial atom and bond features.</span>
+<span class="sd">        atom_to_incoming_bonds: torch.Tensor</span>
+<span class="sd">            Tensor containing mapping from atom index to list of indicies of incoming bonds.</span>
+<span class="sd">        mapping: torch.Tensor</span>
+<span class="sd">            Tensor containing the mapping that maps bond index to &#39;array of indices of the bonds&#39;</span>
+<span class="sd">            incoming at the initial atom of the bond (excluding the reverse bonds).</span>
+<span class="sd">        global_features: torch.Tensor</span>
+<span class="sd">            Tensor containing molecule features.</span>
+<span class="sd">        molecules_unbatch_key: List</span>
+<span class="sd">            List containing number of atoms in various molecules of a batch</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output: torch.Tensor</span>
+<span class="sd">            Tensor containing the encodings of the molecules.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_i</span><span class="p">(</span>
+            <span class="n">f_ini_atoms_bonds</span><span class="p">)</span>  <span class="c1"># num_bonds x hidden_size</span>
+        <span class="n">message</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span>
+            <span class="nb">input</span><span class="p">)</span>  <span class="c1"># num_bonds x hidden_size</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="n">mapping</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># num_bonds x hidden_size</span>
+            <span class="n">h_message</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_h</span><span class="p">(</span>
+                <span class="n">message</span><span class="p">)</span>  <span class="c1"># num_bonds x hidden_size</span>
+            <span class="n">h_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">h_message</span><span class="p">)</span>  <span class="c1"># num_bonds x hidden_size</span>
+            <span class="n">h_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">h_message</span><span class="p">)</span>  <span class="c1"># num_bonds x hidden_size</span>
+
+        <span class="c1"># num_atoms x hidden_size</span>
+        <span class="n">atoms_hidden_states</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_updated_atoms_hidden_state</span><span class="p">(</span>
+            <span class="n">atom_features</span><span class="p">,</span> <span class="n">h_message</span><span class="p">,</span> <span class="n">atom_to_incoming_bonds</span><span class="p">)</span>
+
+        <span class="c1"># num_molecules x hidden_size</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readout</span><span class="p">(</span><span class="n">atoms_hidden_states</span><span class="p">,</span>
+                                             <span class="n">molecules_unbatch_key</span><span class="p">)</span>
+
+        <span class="c1"># concat global features</span>
+        <span class="k">if</span> <span class="n">global_features</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">global_features</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">global_features</span> <span class="o">=</span> <span class="n">global_features</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">global_features</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span>  <span class="c1"># num_molecules x hidden_size</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PositionwiseFeedForward</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;PositionwiseFeedForward is a layer used to define the position-wise feed-forward (FFN) algorithm for the Molecular Attention Transformer [1]_</span>
+
+<span class="sd">    Each layer in the MAT encoder contains a fully connected feed-forward network which applies two linear transformations and the given activation function.</span>
+<span class="sd">    This is done in addition to the SublayerConnection module.</span>
+
+<span class="sd">    Note: This modified version of `PositionwiseFeedForward` class contains `dropout_at_input_no_act` condition to facilitate its use in defining</span>
+<span class="sd">        the feed-forward (FFN) algorithm for the Directed Message Passing Neural Network (D-MPNN) [2]_</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Lukasz Maziarka et al. &quot;Molecule Attention Transformer&quot; Graph Representation Learning workshop and Machine Learning and the Physical Sciences workshop at NeurIPS 2019. 2020. https://arxiv.org/abs/2002.08264</span>
+<span class="sd">    .. [2] Analyzing Learned Molecular Representations for Property Prediction https://arxiv.org/pdf/1904.01561.pdf</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from deepchem.models.torch_models.layers import PositionwiseFeedForward</span>
+<span class="sd">    &gt;&gt;&gt; feed_fwd_layer = PositionwiseFeedForward(d_input = 2, d_hidden = 2, d_output = 2, activation = &#39;relu&#39;, n_layers = 1, dropout_p = 0.1)</span>
+<span class="sd">    &gt;&gt;&gt; input_tensor = torch.tensor([[1., 2.], [5., 6.]])</span>
+<span class="sd">    &gt;&gt;&gt; output_tensor = feed_fwd_layer(input_tensor)</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">d_input</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+                 <span class="n">d_hidden</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+                 <span class="n">d_output</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+                 <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;leakyrelu&#39;</span><span class="p">,</span>
+                 <span class="n">n_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="n">dropout_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">dropout_at_input_no_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a PositionwiseFeedForward layer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        d_input: int</span>
+<span class="sd">            Size of input layer.</span>
+<span class="sd">        d_hidden: int (same as d_input if d_output = 0)</span>
+<span class="sd">            Size of hidden layer.</span>
+<span class="sd">        d_output: int (same as d_input if d_output = 0)</span>
+<span class="sd">            Size of output layer.</span>
+<span class="sd">        activation: str</span>
+<span class="sd">            Activation function to be used. Can choose between &#39;relu&#39; for ReLU, &#39;leakyrelu&#39; for LeakyReLU, &#39;prelu&#39; for PReLU,</span>
+<span class="sd">            &#39;tanh&#39; for TanH, &#39;selu&#39; for SELU, &#39;elu&#39; for ELU and &#39;linear&#39; for linear activation.</span>
+<span class="sd">        n_layers: int</span>
+<span class="sd">            Number of layers.</span>
+<span class="sd">        dropout_p: float</span>
+<span class="sd">            Dropout probability.</span>
+<span class="sd">        dropout_at_input_no_act: bool</span>
+<span class="sd">            If true, dropout is applied on the input tensor. For single layer, it is not passed to an activation function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PositionwiseFeedForward</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_at_input_no_act</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">dropout_at_input_no_act</span>
+
+        <span class="k">if</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;relu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;leakyrelu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;prelu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">PReLU</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;tanh&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;selu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">SELU</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s1">&#39;elu&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ELU</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">activation</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">n_layers</span>
+        <span class="n">d_output</span> <span class="o">=</span> <span class="n">d_output</span> <span class="k">if</span> <span class="n">d_output</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">d_input</span>
+        <span class="n">d_hidden</span> <span class="o">=</span> <span class="n">d_hidden</span> <span class="k">if</span> <span class="n">d_hidden</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">d_input</span>
+
+        <span class="k">if</span> <span class="n">n_layers</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_input</span><span class="p">,</span> <span class="n">d_output</span><span class="p">)]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linears</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_input</span><span class="p">,</span> <span class="n">d_hidden</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_hidden</span><span class="p">,</span> <span class="n">d_hidden</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_layers</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_hidden</span><span class="p">,</span> <span class="n">d_output</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">linears</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">)</span>
+        <span class="n">dropout_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_p</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">dropout_layer</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_layers</span><span class="p">)])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output Computation for the PositionwiseFeedForward layer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: torch.Tensor</span>
+<span class="sd">            Input tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_at_input_no_act</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout_p</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">x</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_p</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">x</span><span class="p">)))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_at_input_no_act</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_p</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout_p</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">x</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linears</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

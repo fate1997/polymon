@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>polymon.estimator &mdash; polymon 0.3.0 documentation</title>
+  <title>polymon.estimator &mdash; polymon 1.0.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/documentation_options.js?v=baaebd52"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
@@ -53,14 +53,38 @@
 <li class="toctree-l1"><a class="reference internal" href="model.html">polymon.model</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">polymon.estimator</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#available-estimators">Available Estimators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#atom-contribution-estimator">Atom Contribution Estimator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#density-estimator-van-der-waals">Density Estimator (van der Waals)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#density-estimator-fedors">Density Estimator (Fedors)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#density-estimator-ibm">Density Estimator (IBM)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#low-fidelity-estimator">Low Fidelity Estimator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#machine-learning-estimator">Machine Learning Estimator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#rg-estimator-networkx">Rg Estimator (NetworkX)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#rg-estimator-dfs">Rg Estimator (DFS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atom-contribution-estimator">Atom Contribution Estimator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.atom_contrib.AtomContribEstimator"><code class="docutils literal notranslate"><span class="pre">AtomContribEstimator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#density-estimator-van-der-waals">Density Estimator (van der Waals)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.density.DensityEstimator"><code class="docutils literal notranslate"><span class="pre">DensityEstimator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#density-estimator-fedors">Density Estimator (Fedors)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.density_Fedors.DensityFedorsEstimator"><code class="docutils literal notranslate"><span class="pre">DensityFedorsEstimator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#density-estimator-ibm">Density Estimator (IBM)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.density_ibm.DensityIBMEstimator"><code class="docutils literal notranslate"><span class="pre">DensityIBMEstimator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#low-fidelity-estimator">Low Fidelity Estimator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.low_fidelity.LowFidelityEstimator"><code class="docutils literal notranslate"><span class="pre">LowFidelityEstimator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#machine-learning-estimator">Machine Learning Estimator</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.ml.MLEstimator"><code class="docutils literal notranslate"><span class="pre">MLEstimator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rg-estimator-networkx">Rg Estimator (NetworkX)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.nx_rg.NxRgEstimator"><code class="docutils literal notranslate"><span class="pre">NxRgEstimator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rg-estimator-dfs">Rg Estimator (DFS)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#polymon.estimator.rg.RgEstimator"><code class="docutils literal notranslate"><span class="pre">RgEstimator</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -145,27 +169,383 @@
 </table>
 <section id="atom-contribution-estimator">
 <span id="estimator-atom-contrib"></span><h3>Atom Contribution Estimator<a class="headerlink" href="#atom-contribution-estimator" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.atom_contrib.AtomContribEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.atom_contrib.</span></span><span class="sig-name descname"><span class="pre">AtomContribEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_contrib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/atom_contrib.html#AtomContribEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.atom_contrib.AtomContribEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Atom contribution estimator. It is used to estimate the label of a
+polymer based on the atom composition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atom_contrib</strong> (<em>np.ndarray</em>) – The atom contribution coefficients.
+It is a 1D array of shape (MAX_NUM_ELEMENTS,).
+The i-th element is the contribution of the i-th element to the label.
+The i-th element is the number of atoms of the i-th element in the polymer.
+The MAX_NUM_ELEMENTS is 100.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.atom_contrib.AtomContribEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/atom_contrib.html#AtomContribEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.atom_contrib.AtomContribEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd><p>Estimate the label of a polymer based on the atom composition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES of the polymer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated label of the polymer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.atom_contrib.AtomContribEstimator.from_fitting">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_fitting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'SMILES'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'FFV'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polymon.estimator.atom_contrib.AtomContribEstimator" title="polymon.estimator.atom_contrib.AtomContribEstimator"><span class="pre">AtomContribEstimator</span></a></span></span><a class="reference internal" href="../_modules/polymon/estimator/atom_contrib.html#AtomContribEstimator.from_fitting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.atom_contrib.AtomContribEstimator.from_fitting" title="Link to this definition"></a></dt>
+<dd><p>Fit the atom contribution estimator from a dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – The dataframe containing the SMILES and label.</p></li>
+<li><p><strong>smiles_col</strong> (<em>str</em>) – The column name of the SMILES.</p></li>
+<li><p><strong>label_col</strong> (<em>str</em>) – The column name of the label.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The fitted atom contribution estimator.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#polymon.estimator.atom_contrib.AtomContribEstimator" title="polymon.estimator.atom_contrib.AtomContribEstimator">AtomContribEstimator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.atom_contrib.AtomContribEstimator.from_npy">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_npy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polymon.estimator.atom_contrib.AtomContribEstimator" title="polymon.estimator.atom_contrib.AtomContribEstimator"><span class="pre">AtomContribEstimator</span></a></span></span><a class="reference internal" href="../_modules/polymon/estimator/atom_contrib.html#AtomContribEstimator.from_npy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.atom_contrib.AtomContribEstimator.from_npy" title="Link to this definition"></a></dt>
+<dd><p>Load the atom contribution estimator from a npy file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The path to the npy file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded atom contribution estimator.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#polymon.estimator.atom_contrib.AtomContribEstimator" title="polymon.estimator.atom_contrib.AtomContribEstimator">AtomContribEstimator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.atom_contrib.AtomContribEstimator.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/atom_contrib.html#AtomContribEstimator.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.atom_contrib.AtomContribEstimator.write" title="Link to this definition"></a></dt>
+<dd><p>Write the atom contribution estimator to a npy file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The path to the npy file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="density-estimator-van-der-waals">
 <span id="estimator-density"></span><h3>Density Estimator (van der Waals)<a class="headerlink" href="#density-estimator-van-der-waals" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.density.DensityEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.density.</span></span><span class="sig-name descname"><span class="pre">DensityEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packing_coeff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/density.html#DensityEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.density.DensityEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Density estimator using the van der Waals method. This is a simple
+method that estimates the density of a polymer based on the van der Waals
+volume of the atoms in the molecule.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.density.DensityEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/density.html#DensityEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.density.DensityEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd><p>Estimate the density of a polymer based on the van der Waals method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES of the polymer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated density of the polymer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="density-estimator-fedors">
 <span id="estimator-density-fedors"></span><h3>Density Estimator (Fedors)<a class="headerlink" href="#density-estimator-fedors" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.density_Fedors.DensityFedorsEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.density_Fedors.</span></span><span class="sig-name descname"><span class="pre">DensityFedorsEstimator</span></span><a class="reference internal" href="../_modules/polymon/estimator/density_Fedors.html#DensityFedorsEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.density_Fedors.DensityFedorsEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Density estimator using the Fedors method. This is a group contribution
+method that assigns a contribution to each group of atoms in the molecule.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.density_Fedors.DensityFedorsEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/density_Fedors.html#DensityFedorsEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.density_Fedors.DensityFedorsEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd><p>Estimate the density of a polymer based on the Fedors method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES of the polymer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated density of the polymer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="density-estimator-ibm">
 <span id="estimator-density-ibm"></span><h3>Density Estimator (IBM)<a class="headerlink" href="#density-estimator-ibm" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.density_ibm.DensityIBMEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.density_ibm.</span></span><span class="sig-name descname"><span class="pre">DensityIBMEstimator</span></span><a class="reference internal" href="../_modules/polymon/estimator/density_ibm.html#DensityIBMEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.density_ibm.DensityIBMEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Density estimator using the IBM method. This is a group contribution
+method that assigns a contribution to each group of atoms in the molecule.
+The original implementation is from <a class="reference external" href="https://github.com/IBM/polymer_property_prediction">https://github.com/IBM/polymer_property_prediction</a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.density_ibm.DensityIBMEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/density_ibm.html#DensityIBMEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.density_ibm.DensityIBMEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="low-fidelity-estimator">
 <span id="estimator-low-fidelity"></span><h3>Low Fidelity Estimator<a class="headerlink" href="#low-fidelity-estimator" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.low_fidelity.LowFidelityEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.low_fidelity.</span></span><span class="sig-name descname"><span class="pre">LowFidelityEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/low_fidelity.html#LowFidelityEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.low_fidelity.LowFidelityEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Low fidelity estimator. This is a simple estimator that uses a model
+to estimate the label of a polymer. The model is a trained model on a low
+fidelity dataset. The model should be an object of
+<a class="reference internal" href="model.html#polymon.model.base.ModelWrapper" title="polymon.model.base.ModelWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">polymon.model.base.ModelWrapper</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.low_fidelity.LowFidelityEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/low_fidelity.html#LowFidelityEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.low_fidelity.LowFidelityEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd><p>Estimate the label of a polymer based on the low fidelity model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES of the polymer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated label of the polymer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.low_fidelity.LowFidelityEstimator.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="data.html#polymon.data.polymer.Polymer" title="polymon.data.polymer.Polymer"><span class="pre">Polymer</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="data.html#polymon.data.polymer.Polymer" title="polymon.data.polymer.Polymer"><span class="pre">Polymer</span></a></span></span><a class="reference internal" href="../_modules/polymon/estimator/low_fidelity.html#LowFidelityEstimator.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.low_fidelity.LowFidelityEstimator.forward" title="Link to this definition"></a></dt>
+<dd><p>Estimate the label of a polymer based on the low fidelity model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="data.html#polymon.data.polymer.Polymer" title="polymon.data.polymer.Polymer"><em>Polymer</em></a>) – The polymer data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The polymer data with the estimated label.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="data.html#polymon.data.polymer.Polymer" title="polymon.data.polymer.Polymer">Polymer</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="machine-learning-estimator">
 <span id="estimator-ml"></span><h3>Machine Learning Estimator<a class="headerlink" href="#machine-learning-estimator" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.ml.MLEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.ml.</span></span><span class="sig-name descname"><span class="pre">MLEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['rdkit2d']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/ml.html#MLEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.ml.MLEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Machine learning estimator. This is a simple estimator that uses a model
+to estimate the label of a polymer. The model is a trained model on a
+dataset. The model should be an object of sklearn model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.ml.MLEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/ml.html#MLEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.ml.MLEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd><p>Estimate the label of a polymer based on the machine learning model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES of the polymer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated label of the polymer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.ml.MLEstimator.from_pickle">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/ml.html#MLEstimator.from_pickle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.ml.MLEstimator.from_pickle" title="Link to this definition"></a></dt>
+<dd><p>Load the machine learning estimator from a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – The path to the pickle file.</p></li>
+<li><p><strong>feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The feature names.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded machine learning estimator.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#polymon.estimator.ml.MLEstimator" title="polymon.estimator.ml.MLEstimator">MLEstimator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.ml.MLEstimator.write_pickle">
+<span class="sig-name descname"><span class="pre">write_pickle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/ml.html#MLEstimator.write_pickle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.ml.MLEstimator.write_pickle" title="Link to this definition"></a></dt>
+<dd><p>Write the machine learning estimator to a pickle file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The path to the pickle file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="rg-estimator-networkx">
 <span id="estimator-nx-rg"></span><h3>Rg Estimator (NetworkX)<a class="headerlink" href="#rg-estimator-networkx" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.nx_rg.NxRgEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.nx_rg.</span></span><span class="sig-name descname"><span class="pre">NxRgEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">680</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_inf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solvent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theta'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/nx_rg.html#NxRgEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.nx_rg.NxRgEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Radius of gyration estimator using NetworkX. This is a simple estimator
+that uses NetworkX to estimate the radius of gyration of a polymer.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.nx_rg.NxRgEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/nx_rg.html#NxRgEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.nx_rg.NxRgEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd><p>Estimate the radius of gyration of a polymer based on the NetworkX method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES of the polymer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated radius of gyration of the polymer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.nx_rg.NxRgEstimator.kuhn_length">
+<span class="sig-name descname"><span class="pre">kuhn_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">char_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.154</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/nx_rg.html#NxRgEstimator.kuhn_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.nx_rg.NxRgEstimator.kuhn_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.nx_rg.NxRgEstimator.longest_backbone_path_length">
+<span class="sig-name descname"><span class="pre">longest_backbone_path_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/nx_rg.html#NxRgEstimator.longest_backbone_path_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.nx_rg.NxRgEstimator.longest_backbone_path_length" title="Link to this definition"></a></dt>
+<dd><p>Approximate the longest backbone path length using NetworkX.
+Finds the longest shortest path (diameter in weighted sense).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.nx_rg.NxRgEstimator.mol_to_nx">
+<span class="sig-name descname"><span class="pre">mol_to_nx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/nx_rg.html#NxRgEstimator.mol_to_nx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.nx_rg.NxRgEstimator.mol_to_nx" title="Link to this definition"></a></dt>
+<dd><p>Convert RDKit Mol to NetworkX weighted graph.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.nx_rg.NxRgEstimator.monomer_contour_length">
+<span class="sig-name descname"><span class="pre">monomer_contour_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/nx_rg.html#NxRgEstimator.monomer_contour_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.nx_rg.NxRgEstimator.monomer_contour_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.nx_rg.NxRgEstimator.radius_of_gyration">
+<span class="sig-name descname"><span class="pre">radius_of_gyration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/nx_rg.html#NxRgEstimator.radius_of_gyration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.nx_rg.NxRgEstimator.radius_of_gyration" title="Link to this definition"></a></dt>
+<dd><p>Estimate Rg from a monomer SMILES without using conformers.
+- N: degree of polymerization
+- C_inf: characteristic ratio (defaults ~6.7 for flexible chains)
+- solvent: ‘theta’ or ‘good’</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="rg-estimator-dfs">
 <span id="estimator-rg"></span><h3>Rg Estimator (DFS)<a class="headerlink" href="#rg-estimator-dfs" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="polymon.estimator.rg.RgEstimator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">polymon.estimator.rg.</span></span><span class="sig-name descname"><span class="pre">RgEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_inf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solvent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'theta'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/rg.html#RgEstimator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.rg.RgEstimator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>Radius of gyration estimator using DFS. This is a simple estimator
+that uses DFS to estimate the radius of gyration of a polymer.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.rg.RgEstimator.estimated_y">
+<span class="sig-name descname"><span class="pre">estimated_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/polymon/estimator/rg.html#RgEstimator.estimated_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.rg.RgEstimator.estimated_y" title="Link to this definition"></a></dt>
+<dd><p>Estimate the radius of gyration of a polymer based on the DFS method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES of the polymer.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The estimated radius of gyration of the polymer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.rg.RgEstimator.kuhn_length">
+<span class="sig-name descname"><span class="pre">kuhn_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">char_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.154</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/rg.html#RgEstimator.kuhn_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.rg.RgEstimator.kuhn_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.rg.RgEstimator.longest_backbone_path_length">
+<span class="sig-name descname"><span class="pre">longest_backbone_path_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/rg.html#RgEstimator.longest_backbone_path_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.rg.RgEstimator.longest_backbone_path_length" title="Link to this definition"></a></dt>
+<dd><p>Find the length of the longest simple path (approximate backbone).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.rg.RgEstimator.monomer_contour_length">
+<span class="sig-name descname"><span class="pre">monomer_contour_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/rg.html#RgEstimator.monomer_contour_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.rg.RgEstimator.monomer_contour_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polymon.estimator.rg.RgEstimator.radius_of_gyration">
+<span class="sig-name descname"><span class="pre">radius_of_gyration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/polymon/estimator/rg.html#RgEstimator.radius_of_gyration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polymon.estimator.rg.RgEstimator.radius_of_gyration" title="Link to this definition"></a></dt>
+<dd><p>Estimate Rg from a monomer SMILES without using conformers.
+- N: degree of polymerization
+- C_inf: characteristic ratio (defaults ~6.7 for flexible chains)
+- solvent: ‘theta’ or ‘good’</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 </section>

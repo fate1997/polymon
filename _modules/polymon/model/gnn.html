@@ -1,0 +1,1037 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.model.gnn &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.model.gnn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.model.gnn</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.nn</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">AttentiveFP</span><span class="p">,</span> <span class="n">BatchNorm</span><span class="p">,</span> <span class="n">DimeNetPlusPlus</span><span class="p">,</span>
+                                <span class="n">GATv2Conv</span><span class="p">,</span> <span class="n">GINConv</span><span class="p">,</span> <span class="n">PNAConv</span><span class="p">,</span> <span class="n">TransformerConv</span><span class="p">,</span>
+                                <span class="n">global_add_pool</span><span class="p">,</span> <span class="n">global_max_pool</span><span class="p">,</span> <span class="n">GCN</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">degree</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.data.polymer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polymer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ReadoutPhase</span><span class="p">,</span> <span class="n">init_weight</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_init_params</span>
+
+
+<div class="viewcode-block" id="GATv2">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GATv2">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GATv2</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;GATv2 model.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        num_atom_features (int): The number of atom features.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        num_heads (int): The number of heads. Default to :obj:`8`.</span>
+<span class="sd">        pred_hidden_dim (int): The number of hidden dimensions in the prediction </span>
+<span class="sd">            layer. Default to :obj:`128`.</span>
+<span class="sd">        pred_dropout (float): The dropout rate in the prediction layer. Default to </span>
+<span class="sd">            :obj:`0.2`.</span>
+<span class="sd">        pred_layers (int): The number of layers in the prediction layer. Default </span>
+<span class="sd">            to :obj:`2`.</span>
+<span class="sd">        activation (str): The activation function. Default to :obj:`prelu`.</span>
+<span class="sd">        num_tasks (int): The number of tasks. Default to :obj:`1`.</span>
+<span class="sd">        bias (bool): Whether to use bias in the GATv2Conv layers. Default to </span>
+<span class="sd">            :obj:`True`.</span>
+<span class="sd">        dropout (float): The dropout rate in the GATv2Conv layers. Default to </span>
+<span class="sd">            :obj:`0.1`.</span>
+<span class="sd">        edge_dim (int): The number of edge features. Default to :obj:`None`.</span>
+<span class="sd">        num_descriptors (int): The number of descriptors. If not zero, the </span>
+<span class="sd">            descriptors will be concatenated to the output of the model. Default </span>
+<span class="sd">            to :obj:`0`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> 
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> 
+        <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span> 
+        <span class="n">num_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+        <span class="n">edge_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_descriptors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_dim</span> <span class="o">=</span> <span class="n">hidden_dim</span>
+
+        <span class="c1"># update phase</span>
+        <span class="n">feature_per_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_atom_features</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">hidden_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_layers</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">GATv2Conv</span><span class="p">(</span>
+                <span class="n">in_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">num_heads</span><span class="p">),</span>
+                <span class="n">out_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">heads</span><span class="o">=</span><span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">concat</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_per_layer</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">edge_dim</span><span class="o">=</span><span class="n">edge_dim</span><span class="p">,</span>
+                <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+                <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">,</span>
+                <span class="n">add_self_loops</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+
+        <span class="c1"># readout phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_weighting</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_weighting</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">init_weight</span><span class="p">)</span>
+
+        <span class="c1"># prediction phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">num_descriptors</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="n">num_tasks</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_descriptors</span> <span class="o">=</span> <span class="n">num_descriptors</span>
+        
+<div class="viewcode-block" id="GATv2.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GATv2.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="c1"># if self.num_descriptors &gt; 0:</span>
+        <span class="c1">#     x = torch.cat([x, batch.descriptors[batch.batch]], dim=1)</span>
+
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_attr</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+        
+        <span class="n">batch_index</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span>
+        <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_weighting</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">output1</span> <span class="o">=</span> <span class="n">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">)</span>
+        <span class="n">output2</span> <span class="o">=</span> <span class="n">global_add_pool</span><span class="p">(</span><span class="n">weighted</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_descriptors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">descriptors</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="GATv2.get_embeddings">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GATv2.get_embeddings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_embeddings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get global graph embeddings.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The embeddings of the batch.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+        <span class="n">batch_index</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span>
+        <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_weighting</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">output1</span> <span class="o">=</span> <span class="n">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">)</span>
+        <span class="n">output2</span> <span class="o">=</span> <span class="n">global_add_pool</span><span class="p">(</span><span class="n">weighted</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AttentiveFPWrapper">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.AttentiveFPWrapper">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AttentiveFPWrapper</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;AttentiveFP model wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels (int): The number of input channels.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        edge_dim (int): The number of edge features.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        out_channels (int): The number of output channels. Default to :obj:`1`.</span>
+<span class="sd">        num_timesteps (int): The number of timesteps. Default to :obj:`2`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">edge_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_timesteps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AttentiveFPWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">attentivefp</span> <span class="o">=</span> <span class="n">AttentiveFP</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="n">in_channels</span><span class="p">,</span>
+            <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="n">out_channels</span><span class="p">,</span>
+            <span class="n">edge_dim</span><span class="o">=</span><span class="n">edge_dim</span><span class="p">,</span>
+            <span class="n">num_layers</span><span class="o">=</span><span class="n">num_layers</span><span class="p">,</span>
+            <span class="n">num_timesteps</span><span class="o">=</span><span class="n">num_timesteps</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="AttentiveFPWrapper.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.AttentiveFPWrapper.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attentivefp</span><span class="p">(</span>
+            <span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> 
+            <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> 
+            <span class="n">batch</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">,</span> 
+            <span class="n">batch</span><span class="o">.</span><span class="n">batch</span>
+        <span class="p">)</span></div>
+</div>
+
+        
+
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GCNWrapper</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;GCN model wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels (int): The number of input channels.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        edge_dim (int): The number of edge features.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        out_channels (int): The number of output channels. Default to :obj:`1`.</span>
+<span class="sd">        num_timesteps (int): The number of timesteps. Default to :obj:`2`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">pred_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;prelu&#39;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GCNWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcn</span> <span class="o">=</span> <span class="n">GCN</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="n">in_channels</span><span class="p">,</span>
+            <span class="n">hidden_channels</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">num_layers</span><span class="o">=</span><span class="n">num_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readout</span> <span class="o">=</span> <span class="n">ReadoutPhase</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcn</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> 
+            <span class="n">edge_index</span><span class="o">=</span><span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> 
+            <span class="n">edge_attr</span><span class="o">=</span><span class="n">batch</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">,</span> 
+            <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="o">.</span><span class="n">batch</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">readout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="DimeNetPP">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.DimeNetPP">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DimeNetPP</span><span class="p">(</span><span class="n">DimeNetPlusPlus</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;DimeNet++ model wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    :no-index:</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions. Default to :obj:`128`.</span>
+<span class="sd">        out_channels (int): The number of output channels. Default to :obj:`1`.</span>
+<span class="sd">        num_layers (int): The number of layers. Default to :obj:`3`.</span>
+<span class="sd">        int_emb_size (int): The number of embedding dimensions for the integer </span>
+<span class="sd">            features. Default to :obj:`64`.</span>
+<span class="sd">        basis_emb_size (int): The number of embedding dimensions for the basis </span>
+<span class="sd">            features. Default to :obj:`8`.</span>
+<span class="sd">        out_emb_channels (int): The number of output embedding channels. Default </span>
+<span class="sd">            to :obj:`256`.</span>
+<span class="sd">        num_spherical (int): The number of spherical harmonics. Default to :obj:`7`.</span>
+<span class="sd">        num_radial (int): The number of radial basis functions. Default to :obj:`6`.</span>
+<span class="sd">        cutoff (float): The cutoff radius. Default to :obj:`5.0`.</span>
+<span class="sd">        max_num_neighbors (int): The maximum number of neighbors. Default to </span>
+<span class="sd">            :obj:`32`.</span>
+<span class="sd">        envelope_exponent (int): The exponent of the envelope function. Default </span>
+<span class="sd">            to :obj:`5`.</span>
+<span class="sd">        num_before_skip (int): The number of layers before skip connections. </span>
+<span class="sd">            Default to :obj:`1`.</span>
+<span class="sd">        num_after_skip (int): The number of layers after skip connections. </span>
+<span class="sd">            Default to :obj:`2`.</span>
+<span class="sd">        num_output_layers (int): The number of output layers. Default to :obj:`2`.</span>
+<span class="sd">        act (str): The activation function. Default to :obj:`swish`.</span>
+<span class="sd">        output_initializer (str): The initializer for the output layer. Default to </span>
+<span class="sd">            :obj:`zeros`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">out_channels</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">int_emb_size</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+        <span class="n">basis_emb_size</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">out_emb_channels</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">num_spherical</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+        <span class="n">num_radial</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">max_num_neighbors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="n">envelope_exponent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="n">num_before_skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_after_skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">num_output_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">act</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;swish&#39;</span><span class="p">,</span>
+        <span class="n">output_initializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;zeros&#39;</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">hidden_dim</span><span class="p">,</span> 
+            <span class="n">out_channels</span><span class="p">,</span> 
+            <span class="n">num_layers</span><span class="p">,</span> 
+            <span class="n">int_emb_size</span><span class="p">,</span> 
+            <span class="n">basis_emb_size</span><span class="p">,</span>
+            <span class="n">out_emb_channels</span><span class="p">,</span> 
+            <span class="n">num_spherical</span><span class="p">,</span> 
+            <span class="n">num_radial</span><span class="p">,</span> 
+            <span class="n">cutoff</span><span class="p">,</span> 
+            <span class="n">max_num_neighbors</span><span class="p">,</span> 
+            <span class="n">envelope_exponent</span><span class="p">,</span> 
+            <span class="n">num_before_skip</span><span class="p">,</span> 
+            <span class="n">num_after_skip</span><span class="p">,</span> 
+            <span class="n">num_output_layers</span><span class="p">,</span> 
+            <span class="n">act</span><span class="p">,</span> 
+            <span class="n">output_initializer</span>
+        <span class="p">)</span>
+        
+<div class="viewcode-block" id="DimeNetPP.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.DimeNetPP.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (Polymer): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GATPort</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;GATPort model wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        num_atom_features (int): The number of atom features.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        num_heads (int): The number of heads. Default to :obj:`8`.</span>
+<span class="sd">        pred_hidden_dim (int): The number of hidden dimensions in the prediction </span>
+<span class="sd">            layer. Default to :obj:`128`.</span>
+<span class="sd">        pred_dropout (float): The dropout rate in the prediction layer. Default to </span>
+<span class="sd">            :obj:`0.2`.</span>
+<span class="sd">        pred_layers (int): The number of layers in the prediction layer. Default </span>
+<span class="sd">            to :obj:`2`.</span>
+<span class="sd">        activation (str): The activation function. Default to :obj:`prelu`.</span>
+<span class="sd">        num_tasks (int): The number of tasks. Default to :obj:`1`.</span>
+<span class="sd">        bias (bool): Whether to use bias in the GATv2Conv layers. Default to </span>
+<span class="sd">            :obj:`True`.</span>
+<span class="sd">        dropout (float): The dropout rate in the GATv2Conv layers. Default to </span>
+<span class="sd">            :obj:`0.1`.</span>
+<span class="sd">        edge_dim (int): The number of edge features. Default to :obj:`None`.</span>
+<span class="sd">        num_descriptors (int): The number of descriptors. If not zero, the </span>
+<span class="sd">            descriptors will be concatenated to the output of the model. Default </span>
+<span class="sd">            to :obj:`0`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> 
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> 
+        <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span> 
+        <span class="n">num_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+        <span class="n">edge_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_descriptors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># update phase</span>
+        <span class="n">feature_per_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_atom_features</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">hidden_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_layers</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">port_layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">GATv2Conv</span><span class="p">(</span>
+                <span class="n">in_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">num_heads</span><span class="p">),</span>
+                <span class="n">out_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">heads</span><span class="o">=</span><span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">concat</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_per_layer</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">edge_dim</span><span class="o">=</span><span class="n">edge_dim</span><span class="p">,</span>
+                <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+                <span class="n">bias</span><span class="o">=</span><span class="n">bias</span>
+            <span class="p">)</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">num_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">port_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span>
+                <span class="n">d_model</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">nhead</span><span class="o">=</span><span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">dim_feedforward</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+                <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">port_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">port_layer</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">port_layers</span><span class="p">)</span>
+
+        <span class="c1"># readout phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_weighting</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_weighting</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">init_weight</span><span class="p">)</span>
+
+        <span class="c1"># prediction phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">num_descriptors</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="n">num_tasks</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_descriptors</span> <span class="o">=</span> <span class="n">num_descriptors</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span> 
+        <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">port_mask</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">z</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_port_features</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">port_mask</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        
+        <span class="n">batch_index</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span>
+        <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_weighting</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">output1</span> <span class="o">=</span> <span class="n">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">)</span>
+        <span class="n">output2</span> <span class="o">=</span> <span class="n">global_add_pool</span><span class="p">(</span><span class="n">weighted</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_descriptors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">descriptors</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_port_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">batch</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">ith_layer</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">max_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">max_total</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="o">*</span> <span class="n">max_num</span>
+        
+        <span class="n">special_nodes</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">special_batches</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">sorted_batches</span><span class="p">,</span> <span class="n">perm</span> <span class="o">=</span> <span class="n">special_batches</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">special_nodes_sorted</span> <span class="o">=</span> <span class="n">special_nodes</span><span class="p">[</span><span class="n">perm</span><span class="p">]</span>
+
+        <span class="c1"># For each batch, create row indices to place the special nodes</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">special_batches</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">max_total</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">idx_in_batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">batch</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">])</span>
+        <span class="n">mask_keep</span> <span class="o">=</span> <span class="n">idx_in_batch</span> <span class="o">&lt;</span> <span class="n">max_num</span>  <span class="c1"># mask for truncating per batch</span>
+        <span class="n">valid_nodes</span> <span class="o">=</span> <span class="n">special_nodes_sorted</span><span class="p">[</span><span class="n">mask_keep</span><span class="p">]</span>
+        <span class="n">valid_batches</span> <span class="o">=</span> <span class="n">sorted_batches</span><span class="p">[</span><span class="n">mask_keep</span><span class="p">]</span>
+        <span class="n">idx_in_batch</span> <span class="o">=</span> <span class="n">idx_in_batch</span><span class="p">[</span><span class="n">mask_keep</span><span class="p">]</span>
+
+        <span class="n">flat_index</span> <span class="o">=</span> <span class="n">valid_batches</span> <span class="o">*</span> <span class="n">max_num</span> <span class="o">+</span> <span class="n">idx_in_batch</span>
+
+        <span class="n">output</span><span class="p">[</span><span class="n">flat_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_nodes</span>
+        <span class="n">port_features</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">max_num</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+        
+        <span class="c1"># Update port features</span>
+        <span class="n">row_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_num</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">counts</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">padding_mask</span> <span class="o">=</span> <span class="n">row_idx</span> <span class="o">&gt;=</span> <span class="n">counts</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">port_layers</span><span class="p">[</span><span class="n">ith_layer</span><span class="p">](</span>
+            <span class="n">port_features</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">src_key_padding_mask</span><span class="o">=</span><span class="n">padding_mask</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># (batch_size, max_num, dim)</span>
+
+        <span class="c1"># Assign port features to the original features</span>
+        <span class="n">special_indices</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (n_special,)</span>
+        <span class="n">valid_mask</span> <span class="o">=</span> <span class="n">idx_in_batch</span> <span class="o">&lt;</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">special_indices</span> <span class="o">=</span> <span class="n">special_indices</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">]</span>
+        <span class="n">special_batches</span> <span class="o">=</span> <span class="n">special_batches</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">]</span>
+        <span class="n">idx_in_batch</span> <span class="o">=</span> <span class="n">idx_in_batch</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">]</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">special_batches</span><span class="p">,</span> <span class="n">idx_in_batch</span><span class="p">]</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">special_indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">updated</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+
+<div class="viewcode-block" id="GATv2VirtualNode">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GATv2VirtualNode">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GATv2VirtualNode</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;GATv2VirtualNode model. Add virtual node as the graph node and use its</span>
+<span class="sd">    features as the graph embedding.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        num_atom_features (int): The number of atom features.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        num_heads (int): The number of heads. Default to :obj:`8`.</span>
+<span class="sd">        pred_hidden_dim (int): The number of hidden dimensions in the prediction </span>
+<span class="sd">            layer. Default to :obj:`128`.</span>
+<span class="sd">        pred_dropout (float): The dropout rate in the prediction layer. Default to </span>
+<span class="sd">            :obj:`0.2`.</span>
+<span class="sd">        pred_layers (int): The number of layers in the prediction layer. Default </span>
+<span class="sd">            to :obj:`2`.</span>
+<span class="sd">        activation (str): The activation function. Default to :obj:`prelu`.</span>
+<span class="sd">        num_tasks (int): The number of tasks. Default to :obj:`1`.</span>
+<span class="sd">        bias (bool): Whether to use bias in the GATv2Conv layers. Default to </span>
+<span class="sd">            :obj:`True`.</span>
+<span class="sd">        dropout (float): The dropout rate in the GATv2Conv layers. Default to </span>
+<span class="sd">            :obj:`0.1`.</span>
+<span class="sd">        edge_dim (int): The number of edge features. Default to :obj:`None`.</span>
+<span class="sd">        num_descriptors (int): The number of descriptors. If not zero, the </span>
+<span class="sd">            descriptors will be concatenated to the output of the model. Default </span>
+<span class="sd">            to :obj:`0`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> 
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> 
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> 
+        <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span> 
+        <span class="n">num_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+        <span class="n">edge_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_descriptors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># update phase</span>
+        <span class="n">feature_per_layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_atom_features</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">hidden_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_layers</span>
+        <span class="n">layers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">GATv2Conv</span><span class="p">(</span>
+                <span class="n">in_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">num_heads</span><span class="p">),</span>
+                <span class="n">out_channels</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">heads</span><span class="o">=</span><span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">concat</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">feature_per_layer</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">edge_dim</span><span class="o">=</span><span class="n">edge_dim</span><span class="p">,</span>
+                <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+                <span class="n">bias</span><span class="o">=</span><span class="n">bias</span>
+            <span class="p">)</span>
+            <span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_vn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_descriptors</span><span class="p">,</span> <span class="n">num_atom_features</span><span class="p">)</span>
+
+        <span class="c1"># prediction phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">feature_per_layer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="n">num_tasks</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="n">activation</span>
+        <span class="p">)</span>
+        
+<div class="viewcode-block" id="GATv2VirtualNode.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GATv2VirtualNode.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data. It should have :obj:`descriptors`</span>
+<span class="sd">                attribute.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">virtual_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_vn</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">descriptors</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_virtual_features</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">virtual_features</span><span class="p">)</span>
+        
+        <span class="c1"># Pass through GNN layers</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+
+        <span class="c1"># Get features of last atom in each molecule</span>
+        <span class="n">batch_idx</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">last_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique_consecutive</span><span class="p">(</span>
+            <span class="n">batch_idx</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">last_pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">last_indices</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># subtract 1 to get the index</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">last_pos</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="n">output</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_virtual_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">batch_indices</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">virtual_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add virtual features to the last element of each batch using vectorized operations.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            features: Input features tensor [num_elements, feature_dim]</span>
+<span class="sd">            batch_indices: Batch indices for each element [num_elements]</span>
+<span class="sd">            virtual_features: Virtual features to add [batch_size, feature_dim]</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Updated features tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_indices</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">device</span>
+        
+        <span class="c1"># Use scatter_reduce to find the maximum index for each batch</span>
+        <span class="n">element_range</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">batch_indices</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">last_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">last_indices</span><span class="o">.</span><span class="n">scatter_reduce_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">batch_indices</span><span class="p">,</span> <span class="n">element_range</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="s1">&#39;amax&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Create a mask for the last elements</span>
+        <span class="n">last_element_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">batch_indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">last_element_mask</span><span class="p">[</span><span class="n">last_indices</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="c1"># Add virtual features to the last elements</span>
+        <span class="n">features</span><span class="p">[</span><span class="n">last_element_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">last_element_mask</span><span class="p">]</span> <span class="o">+</span> <span class="n">virtual_features</span>
+        <span class="k">return</span> <span class="n">features</span></div>
+
+
+
+<div class="viewcode-block" id="GIN">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GIN">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GIN</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;GIN model wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        num_atom_features (int): The number of atom features.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        dropout (float): The dropout rate. Default to :obj:`0.2`.</span>
+<span class="sd">        n_mlp_layers (int): The number of layers in the MLP. Default to :obj:`2`.</span>
+<span class="sd">        pred_hidden_dim (int): The number of hidden dimensions in the prediction </span>
+<span class="sd">            layer. Default to :obj:`128`.</span>
+<span class="sd">        pred_dropout (float): The dropout rate in the prediction layer. Default to </span>
+<span class="sd">            :obj:`0.2`.</span>
+<span class="sd">        pred_layers (int): The number of layers in the prediction layer. Default </span>
+<span class="sd">            to :obj:`2`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">n_mlp_layers</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GIN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># GAT layers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">GINConv</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">=</span><span class="n">MLP</span><span class="p">(</span>
+                    <span class="n">input_dim</span><span class="o">=</span><span class="n">num_atom_features</span> <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">hidden_dim</span><span class="p">,</span> 
+                    <span class="n">hidden_dim</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span> 
+                    <span class="n">output_dim</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+                    <span class="n">n_layers</span><span class="o">=</span><span class="n">n_mlp_layers</span><span class="p">,</span>
+                    <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+                    <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+        
+        <span class="c1"># Readout phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readout</span> <span class="o">=</span> <span class="n">ReadoutPhase</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">)</span>
+
+        <span class="c1"># prediction phase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="GIN.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GIN.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
+
+        <span class="n">mol_repr_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">mol_repr_all</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PNA">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.PNA">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PNA</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;PNA model wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels (int): The number of input channels.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        deg (torch.Tensor): The degree tensor.</span>
+<span class="sd">        towers (int): The number of towers. Default to :obj:`1`.</span>
+<span class="sd">        edge_dim (int): The number of edge features. Default to :obj:`None`.</span>
+<span class="sd">        pred_hidden_dim (int): The number of hidden dimensions in the prediction </span>
+<span class="sd">            layer. Default to :obj:`128`.</span>
+<span class="sd">        pred_dropout (float): The dropout rate in the prediction layer. Default to </span>
+<span class="sd">            :obj:`0.2`.</span>
+<span class="sd">        pred_layers (int): The number of layers in the prediction layer. Default </span>
+<span class="sd">            to :obj:`2`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">deg</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">towers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">edge_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        
+        <span class="n">aggregators</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">]</span>
+        <span class="n">scalers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;identity&#39;</span><span class="p">,</span> <span class="s1">&#39;amplification&#39;</span><span class="p">,</span> <span class="s1">&#39;attenuation&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">convs</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_norms</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">conv</span> <span class="o">=</span> <span class="n">PNAConv</span><span class="p">(</span>
+                <span class="n">in_channels</span><span class="o">=</span><span class="n">in_channels</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hidden_dim</span><span class="p">,</span> 
+                <span class="n">out_channels</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
+                <span class="n">aggregators</span><span class="o">=</span><span class="n">aggregators</span><span class="p">,</span> 
+                <span class="n">scalers</span><span class="o">=</span><span class="n">scalers</span><span class="p">,</span>
+                <span class="n">deg</span><span class="o">=</span><span class="n">deg</span><span class="p">,</span>
+                <span class="n">edge_dim</span><span class="o">=</span><span class="n">edge_dim</span><span class="p">,</span> 
+                <span class="n">towers</span><span class="o">=</span><span class="n">towers</span><span class="p">,</span> 
+                <span class="n">pre_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+                <span class="n">post_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">divide_input</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">convs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conv</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_norms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BatchNorm</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">readout</span> <span class="o">=</span> <span class="n">ReadoutPhase</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="PNA.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.PNA.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data. It should have been preprocessed</span>
+<span class="sd">                by :class:`polymon.data.utils.AddRandomWalkPE`.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">for</span> <span class="n">conv</span><span class="p">,</span> <span class="n">batch_norm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">convs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_norms</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">batch_norm</span><span class="p">(</span><span class="n">conv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_attr</span><span class="o">.</span><span class="n">float</span><span class="p">())))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">readout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">))</span></div>
+
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_deg</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">train_loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the degree tensor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            train_loader (DataLoader): The training loader.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The degree tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_degree</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">train_loader</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+            <span class="n">max_degree</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_degree</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+
+        <span class="c1"># Compute the in-degree histogram tensor</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_degree</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">train_loader</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+            <span class="n">deg</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="n">deg</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">deg</span></div>
+
+
+
+<div class="viewcode-block" id="GraphTransformer">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GraphTransformer">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphTransformer</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;GraphTransformer model wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels (int): The number of input channels.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        num_heads (int): The number of heads. Default to :obj:`8`.</span>
+<span class="sd">        dropout (float): The dropout rate. Default to :obj:`0.2`.</span>
+<span class="sd">        pred_hidden_dim (int): The number of hidden dimensions in the prediction </span>
+<span class="sd">            layer. Default to :obj:`128`.</span>
+<span class="sd">        pred_dropout (float): The dropout rate in the prediction layer. Default to </span>
+<span class="sd">            :obj:`0.2`.</span>
+<span class="sd">        pred_layers (int): The number of layers in the prediction layer. Default </span>
+<span class="sd">            to :obj:`2`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">):</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="n">TransformerConv</span><span class="p">(</span>
+                <span class="n">in_channels</span><span class="o">=</span><span class="n">in_channels</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hidden_dim</span><span class="p">,</span>
+                <span class="n">out_channels</span><span class="o">=</span><span class="n">hidden_dim</span> <span class="o">//</span> <span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">heads</span><span class="o">=</span><span class="n">num_heads</span><span class="p">,</span>
+                <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">readout</span> <span class="o">=</span> <span class="n">ReadoutPhase</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">hidden_dim</span><span class="p">,</span>
+            <span class="n">hidden_dim</span><span class="o">=</span><span class="n">pred_hidden_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span>
+        <span class="p">)</span>
+    
+<div class="viewcode-block" id="GraphTransformer.forward">
+<a class="viewcode-back" href="../../../modules/model.html#polymon.model.gnn.GraphTransformer.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">readout</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>polymon.model.kan.fast_kan &mdash; polymon 1.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=baaebd52"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            polymon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Usage Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">polymon.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/model.html">polymon.model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/estimator.html">polymon.estimator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/exp.html">polymon.exp</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">CLI</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">Command-Line Interface</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">polymon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">polymon.model.kan.fast_kan</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for polymon.model.kan.fast_kan</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2024 Li, Ziyao</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#      http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1"># Adapted from https://github.com/ZiyaoLi/fast-kan/blob/master/fastkan/fastkan.py</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.data.polymer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polymer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ReadoutPhase</span><span class="p">,</span> <span class="n">init_weight</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_init_params</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SplineLinear</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">init_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_scale</span> <span class="o">=</span> <span class="n">init_scale</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">trunc_normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">init_scale</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RadialBasisFunction</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">grid_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span>
+        <span class="n">grid_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">,</span>
+        <span class="n">num_grids</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">denominator</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># larger denominators lead to smoother basis</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_min</span> <span class="o">=</span> <span class="n">grid_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_max</span> <span class="o">=</span> <span class="n">grid_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_grids</span> <span class="o">=</span> <span class="n">num_grids</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">grid_min</span><span class="p">,</span> <span class="n">grid_max</span><span class="p">,</span> <span class="n">num_grids</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">denominator</span> <span class="o">=</span> <span class="n">denominator</span> <span class="ow">or</span> <span class="p">(</span><span class="n">grid_max</span> <span class="o">-</span> <span class="n">grid_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">num_grids</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">denominator</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FastKANLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">output_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">grid_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span>
+        <span class="n">grid_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">,</span>
+        <span class="n">num_grids</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">use_base_update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">use_layernorm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">base_activation</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">silu</span><span class="p">,</span>
+        <span class="n">spline_weight_init_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="n">output_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layernorm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">use_layernorm</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">input_dim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Do not use layernorms on 1D inputs. Set `use_layernorm=False`.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layernorm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span> <span class="o">=</span> <span class="n">RadialBasisFunction</span><span class="p">(</span><span class="n">grid_min</span><span class="p">,</span> <span class="n">grid_max</span><span class="p">,</span> <span class="n">num_grids</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spline_linear</span> <span class="o">=</span> <span class="n">SplineLinear</span><span class="p">(</span><span class="n">input_dim</span> <span class="o">*</span> <span class="n">num_grids</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">spline_weight_init_scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_base_update</span> <span class="o">=</span> <span class="n">use_base_update</span>
+        <span class="k">if</span> <span class="n">use_base_update</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_activation</span> <span class="o">=</span> <span class="n">base_activation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">use_layernorm</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layernorm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">use_layernorm</span><span class="p">:</span>
+            <span class="n">spline_basis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layernorm</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">spline_basis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_linear</span><span class="p">(</span><span class="n">spline_basis</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">spline_basis</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_base_update</span><span class="p">:</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_activation</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span> <span class="o">+</span> <span class="n">base</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_curve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">output_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_pts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">num_extrapolate_bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;this function returns the learned curves in a FastKANLayer.</span>
+<span class="sd">        input_index: the selected index of the input, in [0, input_dim) .</span>
+<span class="sd">        output_index: the selected index of the output, in [0, output_dim) .</span>
+<span class="sd">        num_pts: num of points sampled for the curve.</span>
+<span class="sd">        num_extrapolate_bins (N_e): num of bins extrapolating from the given grids. The curve </span>
+<span class="sd">            will be calculate in the range of [grid_min - h * N_e, grid_max + h * N_e].</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ng</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span><span class="o">.</span><span class="n">num_grids</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span><span class="o">.</span><span class="n">denominator</span>
+        <span class="k">assert</span> <span class="n">input_index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span>
+        <span class="k">assert</span> <span class="n">output_index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_linear</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span>
+            <span class="n">output_index</span><span class="p">,</span> <span class="n">input_index</span> <span class="o">*</span> <span class="n">ng</span> <span class="p">:</span> <span class="p">(</span><span class="n">input_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">ng</span>
+        <span class="p">]</span>   <span class="c1"># num_grids,</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span><span class="o">.</span><span class="n">grid_min</span> <span class="o">-</span> <span class="n">num_extrapolate_bins</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span><span class="o">.</span><span class="n">grid_max</span> <span class="o">+</span> <span class="n">num_extrapolate_bins</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span>
+            <span class="n">num_pts</span>
+        <span class="p">)</span>   <span class="c1"># num_pts, num_grids</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rbf</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">dtype</span><span class="p">)))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FastKAN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">layers_hidden</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">grid_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span>
+        <span class="n">grid_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">,</span>
+        <span class="n">num_grids</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">use_base_update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">base_activation</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">silu</span><span class="p">,</span>
+        <span class="n">spline_weight_init_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">FastKANLayer</span><span class="p">(</span>
+                <span class="n">in_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span>
+                <span class="n">grid_min</span><span class="o">=</span><span class="n">grid_min</span><span class="p">,</span>
+                <span class="n">grid_max</span><span class="o">=</span><span class="n">grid_max</span><span class="p">,</span>
+                <span class="n">num_grids</span><span class="o">=</span><span class="n">num_grids</span><span class="p">,</span>
+                <span class="n">use_base_update</span><span class="o">=</span><span class="n">use_base_update</span><span class="p">,</span>
+                <span class="n">base_activation</span><span class="o">=</span><span class="n">base_activation</span><span class="p">,</span>
+                <span class="n">spline_weight_init_scale</span><span class="o">=</span><span class="n">spline_weight_init_scale</span><span class="p">,</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">in_dim</span><span class="p">,</span> <span class="n">out_dim</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">layers_hidden</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">layers_hidden</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AttentionWithFastKANTransform</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">q_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">k_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">v_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">head_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">gating</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AttentionWithFastKANTransform</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="n">total_dim</span> <span class="o">=</span> <span class="n">head_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gating</span> <span class="o">=</span> <span class="n">gating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_q</span> <span class="o">=</span> <span class="n">FastKANLayer</span><span class="p">(</span><span class="n">q_dim</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_k</span> <span class="o">=</span> <span class="n">FastKANLayer</span><span class="p">(</span><span class="n">k_dim</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_v</span> <span class="o">=</span> <span class="n">FastKANLayer</span><span class="p">(</span><span class="n">v_dim</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_o</span> <span class="o">=</span> <span class="n">FastKANLayer</span><span class="p">(</span><span class="n">total_dim</span><span class="p">,</span> <span class="n">q_dim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_g</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gating</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linear_g</span> <span class="o">=</span> <span class="n">FastKANLayer</span><span class="p">(</span><span class="n">q_dim</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
+        <span class="c1"># precompute the 1/sqrt(head_dim)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">head_dim</span><span class="o">**-</span><span class="mf">0.5</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">q</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">v</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>      <span class="c1"># additive attention bias</span>
+        <span class="n">mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>         
+
+        <span class="n">wq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_q</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">q</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span>     <span class="c1"># *q1hc</span>
+        <span class="n">wk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_k</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>    <span class="c1"># *1khc</span>
+        <span class="n">att</span> <span class="o">=</span> <span class="p">(</span><span class="n">wq</span> <span class="o">*</span> <span class="n">wk</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>     <span class="c1"># *qkh</span>
+        <span class="k">del</span> <span class="n">wq</span><span class="p">,</span> <span class="n">wk</span>
+        <span class="k">if</span> <span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">att</span> <span class="o">=</span> <span class="n">att</span> <span class="o">+</span> <span class="n">bias</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="n">wv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_v</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>     <span class="c1"># *1khc</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">wv</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="o">~</span><span class="n">mask</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+        
+        <span class="n">o</span> <span class="o">=</span> <span class="p">(</span><span class="n">att</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">wv</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>        <span class="c1"># *qhc</span>
+        <span class="k">del</span> <span class="n">att</span><span class="p">,</span> <span class="n">wv</span>
+
+        <span class="n">o</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">o</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>           <span class="c1"># *q(hc)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_g</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># gating, use raw query input</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_g</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">*</span> <span class="n">o</span>
+
+        <span class="c1"># merge heads</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear_o</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">o</span>
+
+
+<div class="viewcode-block" id="FastKANWrapper">
+<a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.fast_kan.FastKANWrapper">[docs]</a>
+<span class="nd">@register_init_params</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FastKANWrapper</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fast KAN wrapper.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels (int): The number of input channels.</span>
+<span class="sd">        hidden_dim (int): The number of hidden dimensions.</span>
+<span class="sd">        num_layers (int): The number of layers.</span>
+<span class="sd">        grid_min (float): The minimum value of the grid. Default to :obj:`-2.0`.</span>
+<span class="sd">        grid_max (float): The maximum value of the grid. Default to :obj:`2.0`.</span>
+<span class="sd">        num_grids (int): The number of grids. Default to :obj:`8`.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The implementation is adapted from `Fast KAN for descriptors </span>
+<span class="sd">        &lt;https://github.com/ZiyaoLi/fast-kan&gt;`_.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">grid_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span>
+        <span class="n">grid_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">,</span>
+        <span class="n">num_grids</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FastKANWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fastkan</span> <span class="o">=</span> <span class="n">FastKAN</span><span class="p">(</span>
+            <span class="n">layers_hidden</span><span class="o">=</span><span class="p">[</span><span class="n">in_channels</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">hidden_dim</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_layers</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">grid_min</span><span class="o">=</span><span class="n">grid_min</span><span class="p">,</span>
+            <span class="n">grid_max</span><span class="o">=</span><span class="n">grid_max</span><span class="p">,</span>
+            <span class="n">num_grids</span><span class="o">=</span><span class="n">num_grids</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FastKANWrapper.forward">
+<a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.fast_kan.FastKANWrapper.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch (Polymer): The batch of data. It should have :obj:`descriptors` </span>
+<span class="sd">                attribute.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">descriptors</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fastkan</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
