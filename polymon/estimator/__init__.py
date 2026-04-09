@@ -17,6 +17,10 @@ def get_estimator(label: str, **kwargs) -> BaseEstimator:
         return NxRgEstimator(**kwargs)
     elif label == 'Density':
         return DensityEstimator(**kwargs)
+    elif label == 'Tg':
+        return AtomContribEstimator.from_npy(
+            REPO_DIR / 'polymon' / 'estimator' / 'Tg_atom_contrib.npy'
+        )
     elif label == 'FFV':
         return AtomContribEstimator.from_npy(
             REPO_DIR / 'polymon' / 'estimator' / 'FFV_atom_contrib.npy'
