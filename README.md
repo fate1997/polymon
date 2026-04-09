@@ -223,11 +223,14 @@ print(predictions)
 If you use PolyMon in your research, please cite:
 
 ```bibtex
-@article{polymon2024,
-  title={PolyMon: A Unified Framework for Polymer Property Prediction},
-  author={Ren, Gaopeng and Yang, Yijie and Zhou, Jiajun and Jelfs, Kim E.},
-  journal={Journal of Chemical Information and Modeling},
-  year={2024}
+@misc{ren2026polymonunifiedframeworkpolymer,
+      title={PolyMon: A Unified Framework for Polymer Property Prediction}, 
+      author={Gaopeng Ren and Yijie Yang and Jiajun Zhou and Kim E. Jelfs},
+      year={2026},
+      eprint={2603.13303},
+      archivePrefix={arXiv},
+      primaryClass={cond-mat.soft},
+      url={https://arxiv.org/abs/2603.13303}, 
 }
 ```
 
