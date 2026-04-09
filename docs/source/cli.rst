@@ -1,15 +1,16 @@
-This document provides instructions on how to use the ``polymon`` command-line interface (CLI).
+Command-Line Interface
+======================
 
-The ``polymon`` CLI has three main modes:
+The ``polymon`` CLI provides three main commands for training, prediction, and active learning:
 
-- `Train`_: Train a machine learning or deep learning model.
-- `Merge`_: Merge two datasets.
-- `Predict`_: Predict labels for a given dataset.
+.. contents::
+   :local:
+   :depth: 1
 
-Train
-============
+Train Command
+-------------
 
-This command is used to train a model.
+The ``train`` command is used to train machine learning or deep learning models for polymer property prediction.
 
 **Usage:**
 
@@ -17,219 +18,203 @@ This command is used to train a model.
 
    polymon train [OPTIONS]
 
-**Arguments:**
+**Required Arguments:**
 
-.. list-table::
-   :widths: 50 10 20 50
-   :header-rows: 1
+``--labels``
+   Target property/properties to predict. Choices: ``Tg``, ``FFV``, ``Density``, ``Rg``, ``Tc``.
+   Multiple labels can be specified to train multiple models.
 
-   * - Supported Arguments in ``train``
-     - Type
-     - Default
-     - Description
-   * - ``--raw-csv``
-     - str
-     - ``database/database.csv``
-     - Path to the raw csv file.
-   * - ``--sources``
-     - str (multiple)
-     - ``['Kaggle']``
-     - Sources to use for training.
-   * - ``--tag``
-     - str
-     - ``debug``
-     - Tag to use for training.
-   * - ``--labels``
-     - str (multiple)
-     - **Required**
-     - Labels to use for training.
-   * - ``--feature-names``
-     - str (multiple)
-     - ``['rdkit2d']``
-     - Feature names to use for training.
-   * - ``--n-trials``
-     - int
-     - ``None``
-     - Number of trials to run for hyperparameter optimization.
-   * - ``--out-dir``
-     - str
-     - ``./results``
-     - Path to the output directory.
-   * - ``--hparams-from``
-     - str
-     - ``None``
-     - Path to the hparams file. Allowed formats: .json, .pt, .pkl.
-   * - ``--n-fold``
-     - int
-     - ``1``
-     - Number of folds to use for cross-validation.
-   * - ``--split-mode``
-     - str
-     - ``random``
-     - Mode to split the data into training, validation, and test sets.
-   * - ``--seed``
-     - int
-     - ``42``
-     - Seed to use for training.
-   * - ``--remove-hydrogens``
-     - bool
-     - ``False``
-     - Whether to remove hydrogens from the molecules.
-   * - ``--descriptors``
-     - str (multiple)
-     - ``None``
-     - Descriptors to use for training. For ML models, this must be specified.
-   * - ``--model``
-     - str
-     - ``rf``
-     - Model to use for training.
-   * - ``--hidden-dim``
-     - int
-     - ``32``
-     - Hidden dimension of the model.
-   * - ``--num-layers``
-     - int
-     - ``3``
-     - Number of layers of the model.
-   * - ``--batch-size``
-     - int
-     - ``128``
-     - Batch size to use for training.
-   * - ``--lr``
-     - float
-     - ``1e-3``
-     - Learning rate to use for training.
-   * - ``--num-epochs``
-     - int
-     - ``2500``
-     - Number of epochs to use for training.
-   * - ``--early-stopping-patience``
-     - int
-     - ``250``
-     - Number of epochs to wait before early stopping.
-   * - ``--device``
-     - str
-     - ``cuda``
-     - Device to use for training.
-   * - ``--run-production``
-     - bool
-     - ``False``
-     - Whether to run the training in production mode, which means train:val:test splits will be forced to 0.95:0.05:0.0.
-   * - ``--finetune``
-     - bool
-     - ``False``
-     - Whether to finetune the model.
-   * - ``--finetune-csv-path``
-     - str
-     - ``None``
-     - Path to the csv file to finetune the model on.
-   * - ``--pretrained-model``
-     - str
-     - ``None``
-     - Path to the pretrained model.
-   * - ``--n-estimator``
-     - int
-     - ``1``
-     - Number of estimators to use for training.
-   * - ``--additional-features``
-     - str (multiple)
-     - ``None``
-     - Additional features to use for training.
-   * - ``--skip-train``
-     - bool
-     - ``False``
-     - Whether to skip the training step.
-   * - ``--low-fidelity-model``
-     - str
-     - ``None``
-     - Path to the low fidelity model.
-   * - ``--estimator-name``
-     - str
-     - ``None``
-     - Name of the estimator to give base predictions.
-   * - ``--emb-model``
-     - str
-     - ``None``
-     - Name of the embedding model for base graph embeddings.
-   * - ``--ensemble-type``
-     - str
-     - ``voting``
-     - Type of ensemble to use for training.
-   * - ``--train-residual``
-     - bool
-     - ``False``
-     - Whether to train the residual of the model.
-   * - ``--normalizer-type``
-     - str
-     - ``normalizer``
-     - Type of normalizer to use for training. Choices: ``normalizer``, ``log_normalizer``, ``none``.
-   * - ``--augmentation``
-     - bool
-     - ``False``
-     - Whether to use data augmentation.
+**Common Optional Arguments:**
 
-Merge
-============
+``--raw-csv`` ``PATH``
+   Path to the raw CSV file containing polymer data (default: ``database/database.csv``)
 
-This command is used to merge two datasets.
+``--sources`` ``SOURCE [SOURCE ...]``
+   Data sources to filter from the dataset (default: ``['Kaggle']``)
+   Common sources: ``Kaggle``, ``PI1070``, ``PolyMetriX``, ``MAFA-exp``
+
+``--model`` ``NAME``
+   Model type to train:
+
+   *Tabular models (use with ``--feature-names``):*
+      - ``rf``: Random Forest
+      - ``xgb``: XGBoost
+      - ``lgbm``: LightGBM
+      - ``catboost``: CatBoost
+      - ``tabpfn``: TabPFN
+
+   *Graph Neural Networks:*
+      - ``gatv2``: Graph Attention Network v2
+      - ``gin``: Graph Isomorphism Network
+      - ``pna``: Principal Neighbourhood Aggregation
+      - ``attentivefp``: Attentive Fingerprinting
+      - ``dimenetpp``: DimeNet++
+      - ``gps``: Graph with Positional Encoding
+      - ``fastkan_gatv2``: KAN + GATv2
+      - ``kan_gps``: KAN + GPS
+
+``--feature-names`` ``FEATURE [FEATURE ...]``
+   Feature names for tabular models (default: ``['rdkit2d']``)
+   Choices: ``rdkit2d``, ``ecfp4``, ``mordred``, ``maccs``, ``xenonpy_desc``
+
+``--n-fold`` ``INT``
+   Number of folds for cross-validation (default: ``1``)
+   Use ``5`` or ``10`` for reliable performance estimates
+
+``--n-trials`` ``INT``
+   Number of trials for hyperparameter optimization (default: ``None``)
+   When specified, enables Optuna-based optimization
+
+``--out-dir`` ``PATH``
+   Directory to save training results (default: ``./results``)
+
+``--tag`` ``NAME``
+   Identifier for organizing this training run (default: ``debug``)
+
+**Deep Learning Specific Arguments:**
+
+``--descriptors`` ``FEATURE [FEATURE ...]``
+   Additional descriptors to concatenate with graph features
+
+``--hidden-dim`` ``INT``
+   Hidden dimension for neural networks (default: ``32``)
+
+``--num-layers`` ``INT``
+   Number of layers in the neural network (default: ``3``)
+
+``--num-epochs`` ``INT``
+   Maximum number of training epochs (default: ``2500``)
+
+``--lr`` ``FLOAT``
+   Learning rate (default: ``1e-3``)
+
+``--batch-size`` ``INT``
+   Batch size for training (default: ``128``)
+
+``--early-stopping-patience`` ``INT``
+   Patience for early stopping (default: ``250``)
+
+``--device`` ``NAME``
+   Device for training: ``cuda`` or ``cpu`` (default: ``cuda``)
+
+**Advanced Training Arguments:**
+
+``--hparams-from`` ``PATH``
+   Path to hyperparameters file (``.json``, ``.pt``, or ``.pkl``) to reuse from a previous run
+
+``--run-production``
+   Enable production mode (95:5 train:val split, no test set)
+
+``--finetune``
+   Enable fine-tuning of a pretrained model
+
+``--pretrained-model`` ``PATH``
+   Path to pretrained model for fine-tuning
+
+``--finetune-csv-path`` ``PATH``
+   Path to CSV file with fine-tuning data
+
+``--train-residual``
+   Train on residuals from a base estimator or low-fidelity model
+
+``--estimator-name`` ``NAME``
+   Name of empirical estimator for delta-learning (e.g., ``Density-IBM``, ``Rg-monomer``)
+
+``--low-fidelity-model`` ``PATH``
+   Path to low-fidelity model for residual learning
+
+``--emb-model`` ``PATH``
+   Path to embedding model for property knowledge transfer
+
+``--n-estimator`` ``INT``
+   Number of estimators for ensemble learning (default: ``1``, ``>1`` enables ensemble)
+
+``--ensemble-type`` ``TYPE``
+   Type of ensemble: ``voting``, ``bagging``, ``gradient_boosting``, ``snapshot``, ``soft_gradient_boosting``
+
+``--split-mode`` ``MODE``
+   Data splitting strategy: ``random``, ``source``, ``scaffold`` (default: ``random``)
+
+``--normalizer-type`` ``TYPE``
+   Label normalization: ``normalizer``, ``log_normalizer``, ``none`` (default: ``normalizer``)
+
+``--augmentation``
+   Enable data augmentation (oligomer building)
+
+``--remove-hydrogens``
+   Remove hydrogens from molecular graphs
+
+``--seed`` ``INT``
+   Random seed for reproducibility (default: ``42``)
+
+**Examples:**
+
+Train a Random Forest model with 5-fold cross-validation:
+
+.. code-block:: bash
+
+   polymon train --labels Tg --model rf --feature-names rdkit2d --n-fold 5
+
+Train a GNN with hyperparameter optimization:
+
+.. code-block:: bash
+
+   polymon train --labels Rg --model gatv2 --n-trials 15 --n-fold 5 --num-epochs 2500
+
+Fine-tune a pretrained model:
+
+.. code-block:: bash
+
+   polymon train --labels Density --model gatv2 --finetune \
+       --pretrained-model ./results/gatv2/Density/model.pt \
+       --finetune-csv-path ./experimental.csv
+
+Recommend Command
+-----------------
+
+The ``rec`` command recommends molecules for active learning based on acquisition functions.
 
 **Usage:**
 
 .. code-block:: bash
 
-   polymon merge [OPTIONS]
+   polymon rec [OPTIONS]
 
-**Arguments:**
+**Required Arguments:**
 
-.. list-table::
-   :widths: 30 10 20 50
-   :header-rows: 1
+``--pool-csv`` ``PATH``
+   Path to CSV file with candidate molecules (must contain a ``SMILES`` column)
 
-   * - Supported Arguments in ``merge``
-     - Type
-     - Default
-     - Description
-   * - ``--sources``
-     - str (multiple)
-     - **Required**
-     - Sources to merge.
-   * - ``--label``
-     - str
-     - **Required**
-     - Label to merge.
-   * - ``--hparams-from``
-     - str
-     - **Required**
-     - Path to the hparams file.
-   * - ``--acquisition``
-     - str
-     - **Required**
-     - Acquisition function to use for merging. Choices: ``epig``, ``uncertainty``, ``difference``.
-   * - ``--sample-size``
-     - int
-     - ``20``
-     - Sample size to use for merging.
-   * - ``--uncertainty-threshold``
-     - float
-     - ``0.1``
-     - Uncertainty threshold to use for merging.
-   * - ``--difference-threshold``
-     - float
-     - ``0.1``
-     - Difference threshold to use for merging.
-   * - ``--target-size``
-     - int
-     - ``1000``
-     - Target size to use for merging.
-   * - ``--base-csv``
-     - str
-     - ``None``
-     - Path to the base csv file.
+``--trained-model`` ``PATH``
+   Path to trained model file (``.pt`` or ``.pkl``)
 
-Predict
-============
+**Optional Arguments:**
 
-This command is used to predict labels for a given dataset.
+``--acquisition`` ``FUNCTION``
+   Acquisition function: ``epig`` (expected improvement), ``uncertainty``, or ``random`` (default: ``uncertainty``)
+
+``--model-type`` ``TYPE``
+   Type of model: ``kfold`` or ``ensemble`` (default: ``kfold``)
+
+``--sample-size`` ``INT``
+   Number of molecules to recommend (default: ``100``)
+
+``--save-path`` ``PATH``
+   Path to save recommended molecules as CSV (default: ``None``)
+
+**Examples:**
+
+Select 20 most uncertain samples:
+
+.. code-block:: bash
+
+   polymon rec --pool-csv pool.csv --trained-model model.pt \
+       --acquisition uncertainty --sample-size 20 --save-path recommended.csv
+
+Predict Command
+----------------
+
+The ``predict`` command makes predictions on new polymer data using a trained model.
 
 **Usage:**
 
@@ -237,25 +222,38 @@ This command is used to predict labels for a given dataset.
 
    polymon predict [OPTIONS]
 
-**Arguments:**
+**Required Arguments:**
 
-.. list-table::
-   :widths: 30 10 20 50
-   :header-rows: 1
+``--model-path`` ``PATH``
+   Path to trained model file (``.pt`` or ``.pkl``)
 
-   * - Argument
-     - Type
-     - Default
-     - Description
-   * - ``--model-path``
-     - str
-     - **Required**
-     - Path to the model.
-   * - ``--csv-path``
-     - str
-     - **Required**
-     - Path to the csv file.
-   * - ``--smiles-column``
-     - str
-     - **Required**
-     - Name of the smiles column.
+``--csv-path`` ``PATH``
+   Path to CSV file with molecules to predict
+
+``--smiles-column`` ``NAME``
+   Name of column containing SMILES strings
+
+**Examples:**
+
+Predict properties for new polymers:
+
+.. code-block:: bash
+
+   polymon predict --model-path ./results/gatv2/Tg/model.pt \
+       --csv-path ./new_data.csv --smiles-column SMILES
+
+Python API
+----------
+
+For more advanced usage, you can use the Python API directly:
+
+.. code-block:: python
+
+   from polymon.model.base import ModelWrapper
+
+   # Load a trained model
+   model = ModelWrapper.from_file('results/gatv2/Tg/model.pt')
+
+   # Make predictions
+   predictions = model.predict(['*C*', '*CC*', '*CCC*'])
+   print(predictions)

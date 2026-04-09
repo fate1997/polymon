@@ -1,3 +1,22 @@
+"""PolyMon Command-Line Interface.
+
+This module provides the main CLI entry point for the PolyMon framework.
+It supports three main modes:
+    - train: Train ML/DL models for polymer property prediction
+    - rec: Active learning - recommend molecules for labeling
+    - predict: Make predictions on new polymer data
+
+Example:
+    Train a model:
+        $ polymon train --labels Tg --model rf --n-fold 5
+
+    Make predictions:
+        $ polymon predict --model-path model.pt --csv-path data.csv --smiles-column SMILES
+
+    Recommend molecules:
+        $ polymon rec --pool-csv pool.csv --trained-model model.pt --acquisition uncertainty
+"""
+
 import argparse
 
 from polymon.cli.train_dl import main as main_dl
@@ -7,297 +26,329 @@ from polymon.cli.predict import main as main_predict
 from polymon.cli.recommend import main as main_recommend
 
 
-
 def parse_args():
-    parser = argparse.ArgumentParser()
+    """Parse command-line arguments for the PolyMon CLI.
+
+    Returns:
+        argparse.Namespace: Parsed arguments with the following attributes:
+            - mode (str): Subcommand to run ('train', 'rec', or 'predict')
+            - ... (additional arguments depend on the subcommand)
+    """
+    parser = argparse.ArgumentParser(
+        description='PolyMon - Polymer Property Prediction Framework',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     subparsers = parser.add_subparsers(dest='mode', required=True)
-    
-    # Train
-    train_parser = subparsers.add_parser('train', help='Train a ML/DL model')
+
+    # ============================================================================
+    # Train subcommand
+    # ============================================================================
+    train_parser = subparsers.add_parser(
+        'train',
+        help='Train a ML/DL model for polymer property prediction',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     train_parser.add_argument(
-        '--raw-csv', 
-        type=str, 
+        '--raw-csv',
+        type=str,
         default='database/database.csv',
-        help='Path to the raw csv file'
+        help='Path to the raw CSV file containing polymer data'
     )
     train_parser.add_argument(
-        '--sources', 
-        type=str, 
-        nargs='+', 
+        '--sources',
+        type=str,
+        nargs='+',
         default=['Kaggle'],
-        help='Sources to use for training'
+        help='Data sources to filter from the dataset (e.g., Kaggle, PI1070, PolyMetriX)'
     )
     train_parser.add_argument(
-        '--tag', 
-        type=str, 
+        '--tag',
+        type=str,
         default='debug',
-        help='Tag to use for training'
+        help='Tag for organizing this training run'
     )
     train_parser.add_argument(
-        '--labels', 
-        nargs='+', 
+        '--labels',
+        nargs='+',
         required=True,
-        help='Labels to use for training'
+        choices=['Tg', 'FFV', 'Density', 'Rg', 'Tc'],
+        help='Target property/properties to predict'
     )
     train_parser.add_argument(
-        '--feature-names', 
-        type=str, 
-        nargs='+', 
+        '--feature-names',
+        type=str,
+        nargs='+',
         default=['rdkit2d'],
-        help='Feature names to use for training'
+        help='Feature names for tabular models (rdkit2d, ecfp4, mordred, maccs, xenonpy_desc)'
     )
     train_parser.add_argument(
-        '--n-trials', 
-        type=int, 
+        '--n-trials',
+        type=int,
         default=None,
-        help='Number of trials to run for hyperparameter optimization.'
+        help='Number of trials for hyperparameter optimization (enables optimization if set)'
     )
     train_parser.add_argument(
-        '--out-dir', 
-        type=str, 
+        '--out-dir',
+        type=str,
         default='./results',
-        help='Path to the output directory'
+        help='Directory to save training results'
     )
     train_parser.add_argument(
-        '--hparams-from', 
-        type=str, 
+        '--hparams-from',
+        type=str,
         default=None,
-        help='Path to the hparams file. Allowed formats: .json, .pt, .pkl'
+        help='Path to hyperparameters file (.json, .pt, or .pkl) to reuse from previous run'
     )
     train_parser.add_argument(
-        '--n-fold', 
-        type=int, 
+        '--n-fold',
+        type=int,
         default=1,
-        help='Number of folds to use for cross-validation'
+        help='Number of folds for cross-validation (use 1 for single split)'
     )
     train_parser.add_argument(
-        '--split-mode', 
-        type=str, 
+        '--split-mode',
+        type=str,
         default='random',
-        help='Mode to split the data into training, validation, and test sets'
+        choices=['random', 'source', 'scaffold'],
+        help='Data splitting strategy: random, by source, or by molecular scaffold'
     )
     train_parser.add_argument(
-        '--seed', 
-        type=int, 
+        '--seed',
+        type=int,
         default=42,
-        help='Seed to use for training'
+        help='Random seed for reproducibility'
     )
     train_parser.add_argument(
-        '--remove-hydrogens', 
+        '--remove-hydrogens',
         action='store_true',
-        help='Whether to remove hydrogens from the molecules'
+        help='Remove hydrogens from molecular graphs (reduces computation)'
     )
     train_parser.add_argument(
-        '--descriptors', 
-        type=str, 
-        nargs='+', 
+        '--descriptors',
+        type=str,
+        nargs='+',
         default=None,
-        help='Descriptors to use for training DL models.'
+        help='Additional descriptors to concatenate with graph features for DL models'
     )
     train_parser.add_argument(
-        '--model', 
-        type=str, 
+        '--model',
+        type=str,
         default='rf',
-        help='Model to use for training'
+        help='Model type: tabular (rf, xgb, lgbm, catboost, tabpfn) or GNN (gatv2, gin, pna, etc.)'
     )
-    
-    # If not model in `MODELS.keys()`, add more arguments for DL models
     train_parser.add_argument(
-        '--hidden-dim', 
-        type=int, 
+        '--hidden-dim',
+        type=int,
         default=32,
-        help='Hidden dimension of the model'
+        help='Hidden dimension for neural network models'
     )
     train_parser.add_argument(
-        '--num-layers', 
-        type=int, 
+        '--num-layers',
+        type=int,
         default=3,
-        help='Number of layers of the model'
+        help='Number of layers for neural network models'
     )
-    
-    # DL Training arguments
     train_parser.add_argument(
-        '--batch-size', 
-        type=int, 
+        '--batch-size',
+        type=int,
         default=128,
-        help='Batch size to use for training'
+        help='Batch size for training neural networks'
     )
     train_parser.add_argument(
-        '--lr', 
-        type=float, 
+        '--lr',
+        type=float,
         default=1e-3,
-        help='Learning rate to use for training'
+        help='Learning rate for neural network training'
     )
     train_parser.add_argument(
-        '--num-epochs', 
-        type=int, 
+        '--num-epochs',
+        type=int,
         default=2500,
-        help='Number of epochs to use for training'
+        help='Maximum number of training epochs'
     )
     train_parser.add_argument(
-        '--early-stopping-patience', 
-        type=int, 
+        '--early-stopping-patience',
+        type=int,
         default=250,
-        help='Number of epochs to wait before early stopping'
+        help='Patience for early stopping (epochs without improvement)'
     )
     train_parser.add_argument(
-        '--device', 
-        type=str, 
+        '--device',
+        type=str,
         default='cuda',
-        help='Device to use for training'
+        help='Device for training (cuda or cpu)'
     )
     train_parser.add_argument(
-        '--run-production', 
+        '--run-production',
         action='store_true',
-        help=(
-            'Whether to run the training in production mode, which means '
-            'train:val:test splits will be forced to 0.95:0.05:0.0'
-        )
+        help='Run in production mode (95:5 train:val split, no test set)'
     )
     train_parser.add_argument(
-        '--finetune', 
+        '--finetune',
         action='store_true',
-        help='Whether to finetune the model'
+        help='Fine-tune a pretrained model on new data'
     )
     train_parser.add_argument(
-        '--finetune-csv-path', 
-        type=str, 
+        '--finetune-csv-path',
+        type=str,
         default=None,
-        help='Path to the csv file to finetune the model on'
+        help='Path to CSV file for fine-tuning data'
     )
     train_parser.add_argument(
-        '--pretrained-model', 
-        type=str, 
+        '--pretrained-model',
+        type=str,
         default=None,
-        help='Path to the pretrained model'
+        help='Path to pretrained model for fine-tuning'
     )
     train_parser.add_argument(
-        '--n-estimator', 
-        type=int, 
+        '--n-estimator',
+        type=int,
         default=1,
-        help='Number of estimators to use for training'
+        help='Number of estimators for ensemble learning (>1 enables ensemble mode)'
     )
     train_parser.add_argument(
-        '--additional-features', 
-        type=str, 
-        nargs='+', 
+        '--additional-features',
+        type=str,
+        nargs='+',
         default=None,
-        help='Additional features to use for training'
+        help='Additional graph features (monomer, periodic_bond, etc.)'
     )
     train_parser.add_argument(
-        '--skip-train', 
+        '--skip-train',
         action='store_true',
-        help='Whether to skip the training step'
+        help='Skip training step (use with --n-estimator to only build ensemble)'
     )
     train_parser.add_argument(
-        '--low-fidelity-model', 
-        type=str, 
+        '--low-fidelity-model',
+        type=str,
         default=None,
-        help='Path to the low fidelity model'
+        help='Path to low-fidelity model for residual learning'
     )
     train_parser.add_argument(
-        '--estimator-name', 
-        type=str, 
+        '--estimator-name',
+        type=str,
         default=None,
-        help='Name of the estimator to give base predictions'
+        help='Name of empirical estimator for delta-learning (e.g., Density-IBM, Rg-monomer)'
     )
     train_parser.add_argument(
-        '--emb-model', 
-        type=str, 
+        '--emb-model',
+        type=str,
         default=None,
-        help='Name of the embedding model for base graph embeddings'
+        help='Path to embedding model for knowledge transfer'
     )
     train_parser.add_argument(
-        '--ensemble-type', 
-        type=str, 
+        '--ensemble-type',
+        type=str,
         default='voting',
-        help='Type of ensemble to use for training'
+        choices=['voting', 'bagging', 'gradient_boosting', 'snapshot', 'soft_gradient_boosting'],
+        help='Type of ensemble to use'
     )
     train_parser.add_argument(
-        '--train-residual', 
+        '--train-residual',
         action='store_true',
-        help='Whether to train the residual of the model'
+        help='Train on residuals from base estimator or low-fidelity model'
     )
     train_parser.add_argument(
-        '--normalizer-type', 
-        type=str, 
-        default='normalizer', 
+        '--normalizer-type',
+        type=str,
+        default='normalizer',
         choices=['normalizer', 'log_normalizer', 'none'],
-        help='Type of normalizer to use for training'
+        help='Type of label normalization'
     )
     train_parser.add_argument(
-        '--augmentation', 
+        '--augmentation',
         action='store_true',
-        help='Whether to use data augmentation'
+        help='Use data augmentation (oligomer building)'
     )
-    
-    # Recommend 
-    recommend_parser = subparsers.add_parser('rec', help='Recommend molecules')
+
+    # ============================================================================
+    # Recommend subcommand
+    # ============================================================================
+    recommend_parser = subparsers.add_parser(
+        'rec',
+        help='Recommend molecules for active learning',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
     recommend_parser.add_argument(
-        '--pool-csv', 
-        type=str, 
+        '--pool-csv',
+        type=str,
         required=True,
-        help='Path to the pool data'
+        help='Path to CSV file with candidate molecules (must have SMILES column)'
     )
     recommend_parser.add_argument(
-        '--trained-model', 
-        type=str, 
+        '--trained-model',
+        type=str,
         required=True,
-        help='Path to the trained model'
+        help='Path to trained model (.pt or .pkl file)'
     )
     recommend_parser.add_argument(
-        '--model-type', 
-        type=str, 
+        '--model-type',
+        type=str,
         default='kfold',
         choices=['kfold', 'ensemble'],
-        help='Type of model to use for recommendation. Allowed values: kfold, ensemble'
+        help='Type of model: kfold or ensemble'
     )
     recommend_parser.add_argument(
-        '--acquisition', 
-        type=str, 
+        '--acquisition',
+        type=str,
         default='uncertainty',
         choices=['epig', 'uncertainty', 'random'],
-        help='Acquisition function to use for recommendation'
+        help='Acquisition function: epig (expected improvement), uncertainty, or random'
     )
     recommend_parser.add_argument(
-        '--sample-size', 
-        type=int, 
+        '--sample-size',
+        type=int,
         default=100,
-        help='Sample size to use for recommendation'
+        help='Number of molecules to recommend'
     )
     recommend_parser.add_argument(
-        '--save-path', 
-        type=str, 
+        '--save-path',
+        type=str,
         default=None,
-        help='Path to save the recommended molecules'
+        help='Path to save recommended molecules (CSV format)'
     )
-    
-    # Predict
-    predict_parser = subparsers.add_parser('predict', help='Predict labels')
-    predict_parser.add_argument(
-        '--model-path', 
-        type=str, 
-        required=True,
-        help='Path to the model'
-    )
-    predict_parser.add_argument(
-        '--csv-path', 
-        type=str, 
-        required=True,
-        help='Path to the csv file'
+
+    # ============================================================================
+    # Predict subcommand
+    # ============================================================================
+    predict_parser = subparsers.add_parser(
+        'predict',
+        help='Make predictions on new polymer data',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     predict_parser.add_argument(
-        '--smiles-column', 
-        type=str, 
+        '--model-path',
+        type=str,
         required=True,
-        help='Name of the smiles column'
-    )    
+        help='Path to trained model (.pt or .pkl file)'
+    )
+    predict_parser.add_argument(
+        '--csv-path',
+        type=str,
+        required=True,
+        help='Path to CSV file with molecules to predict'
+    )
+    predict_parser.add_argument(
+        '--smiles-column',
+        type=str,
+        required=True,
+        help='Name of column containing SMILES strings'
+    )
+
     return parser.parse_args()
 
 
 def main():
+    """Main entry point for the PolyMon CLI.
+
+    Parses command-line arguments and routes to the appropriate subcommand handler:
+    - train: Routes to ML or DL training based on model type
+    - rec: Active learning recommendations
+    - predict: Inference on new data
+    """
     args = parse_args()
     if args.mode == 'train':
+        # Route to appropriate training function
         if args.model in MODELS.keys():
             main_ml(args)
         else:
@@ -306,6 +357,7 @@ def main():
         main_recommend(args)
     elif args.mode == 'predict':
         main_predict(args)
+
 
 if __name__ == '__main__':
     main()

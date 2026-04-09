@@ -20,6 +20,7 @@ setup(
         ],
     },
     install_requires=[
+        "numpy<2",
         "mordredcommunity",
         "mordred==1.2.0",
         "rdkit==2023.09.6",
