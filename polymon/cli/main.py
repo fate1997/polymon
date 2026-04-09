@@ -1,10 +1,10 @@
 import argparse
 
-from polymon.cli.merge import main as main_merge
 from polymon.cli.train_dl import main as main_dl
 from polymon.cli.train_ml import MODELS
 from polymon.cli.train_ml import main as main_ml
 from polymon.cli.predict import main as main_predict
+from polymon.cli.recommend import main as main_recommend
 
 
 
@@ -92,7 +92,7 @@ def parse_args():
         type=str, 
         nargs='+', 
         default=None,
-        help='Descriptors to use for training. For ML models, this must be specified.'
+        help='Descriptors to use for training DL models.'
     )
     train_parser.add_argument(
         '--model', 
@@ -231,63 +231,45 @@ def parse_args():
         help='Whether to use data augmentation'
     )
     
-    # Merge
-    merge_parser = subparsers.add_parser('merge', help='Merge two datasets')
-    merge_parser.add_argument(
-        '--sources', 
-        type=str, 
-        required=True, 
-        nargs='+',
-        help='Sources to merge'
-    )
-    merge_parser.add_argument(
-        '--label', 
+    # Recommend 
+    recommend_parser = subparsers.add_parser('rec', help='Recommend molecules')
+    recommend_parser.add_argument(
+        '--pool-csv', 
         type=str, 
         required=True,
-        help='Label to merge'
+        help='Path to the pool data'
     )
-    merge_parser.add_argument(
-        '--hparams-from', 
+    recommend_parser.add_argument(
+        '--trained-model', 
         type=str, 
         required=True,
-        help='Path to the hparams file'
+        help='Path to the trained model'
     )
-    merge_parser.add_argument(
+    recommend_parser.add_argument(
+        '--model-type', 
+        type=str, 
+        default='kfold',
+        choices=['kfold', 'ensemble'],
+        help='Type of model to use for recommendation. Allowed values: kfold, ensemble'
+    )
+    recommend_parser.add_argument(
         '--acquisition', 
         type=str, 
-        required=True,
-        choices=['epig', 'uncertainty', 'difference'],
-        help='Acquisition function to use for merging'
+        default='uncertainty',
+        choices=['epig', 'uncertainty', 'random'],
+        help='Acquisition function to use for recommendation'
     )
-    merge_parser.add_argument(
+    recommend_parser.add_argument(
         '--sample-size', 
         type=int, 
-        default=20,
-        help='Sample size to use for merging'
+        default=100,
+        help='Sample size to use for recommendation'
     )
-    merge_parser.add_argument(
-        '--uncertainty-threshold', 
-        type=float, 
-        default=0.1,
-        help='Uncertainty threshold to use for merging'
-    )
-    merge_parser.add_argument(
-        '--difference-threshold', 
-        type=float, 
-        default=0.1,
-        help='Difference threshold to use for merging'
-    )
-    merge_parser.add_argument(
-        '--target-size', 
-        type=int, 
-        default=1000,
-        help='Target size to use for merging'
-    )
-    merge_parser.add_argument(
-        '--base-csv', 
+    recommend_parser.add_argument(
+        '--save-path', 
         type=str, 
         default=None,
-        help='Path to the base csv file'
+        help='Path to save the recommended molecules'
     )
     
     # Predict
@@ -320,11 +302,10 @@ def main():
             main_ml(args)
         else:
             main_dl(args)
-    elif args.mode == 'merge':
-        main_merge(args)
+    elif args.mode == 'rec':
+        main_recommend(args)
     elif args.mode == 'predict':
         main_predict(args)
-
 
 if __name__ == '__main__':
     main()

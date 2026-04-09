@@ -366,3 +366,65 @@ def main(args: argparse.Namespace):
 if __name__ == '__main__':
     args = arg_parser()
     main(args)
+
+
+
+def score(
+    train_file: str, 
+    model_file: str, 
+    smiles_cluster_file: str = None, 
+    model_type: str = 'ensemble', 
+    device: str = 'cuda', 
+    ordered_tasks: List[str] = ['Rg', 'Density', 'Bulk_modulus', 'FFV', 'PLD', 'CLD'],
+    acquisition_function: str = 'uncertainty',
+    all_clusters_file: str = 'all_clusters.npy',
+    n_sample: int = 50,
+):
+    if smiles_cluster_file is not None:
+        smiles_cluster_df = pd.read_csv(smiles_cluster_file)
+        cluster_smiles = smiles_cluster_df.groupby('cluster_id')['SMILES'].apply(list).to_dict()
+    else:
+        all_smiles = np.load(all_clusters_file, allow_pickle=True).item()
+        
+    train_df = pd.read_csv(train_file)
+    train_df = train_df[train_df['Source'].isin(INITIAL_SOURCES)]
+    train_smiles = train_df['SMILES'].tolist()
+    scorer = Acquisition(
+        acquisition_function= acquisition_function,
+        model_file = model_file,
+        model_type=model_type,
+        device=device,
+        ordered_tasks=ordered_tasks,
+    )
+    sampled_scores = defaultdict(list)
+    for cluster_id, smiles in tqdm(cluster_smiles.items(), desc='Scoring'):
+        score = scorer.score(
+            pool_smiles = smiles,
+            train_smiles = train_smiles,
+        )
+        sampled_scores[cluster_id] = score
+    
+    for cluster_id, scores in sampled_scores.items():
+        if isinstance(scores, list):
+            scores_np = []
+            for s in scores:
+                if hasattr(s, 'detach'):  # torch.Tensor
+                    s = s.detach().cpu().numpy()
+                scores_np.append(s)
+            sampled_scores[cluster_id] = np.array(scores_np)
+        elif hasattr(scores, 'detach'):
+            sampled_scores[cluster_id] = scores.detach().cpu().numpy()
+
+    all_scores = [score for scores in sampled_scores.values() for score in scores]
+    threshold = np.quantile(all_scores, 0.95)
+    best_cluster = max(
+        sampled_scores,
+        key=lambda c: sum(s > threshold for s in sampled_scores[c]) / len(sampled_scores[c])
+    )
+    all_clusters = np.load(all_clusters_file, allow_pickle=True)
+    cluster_smiles = all_clusters.item()[best_cluster]
+    cluster_scores = scorer.score(cluster_smiles, train_smiles)
+    cluster_scores = cluster_scores.detach().cpu()
+    top_n_sample = torch.topk(cluster_scores, n_sample).indices.tolist()
+    top_n_smiles = [cluster_smiles[i] for i in top_n_sample]
+    return dict(zip(top_n_smiles, cluster_scores[top_n_sample]))
