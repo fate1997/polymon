@@ -19,8 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="polymon.data" href="modules/data.html" />
-    <link rel="prev" title="Welcome to polymon’s documentation!" href="index.html" /> 
+    <link rel="next" title="Usage Examples" href="examples.html" />
+    <link rel="prev" title="Welcome to PolyMon’s documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,9 +42,20 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytorch-installation">PyTorch Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-polymon">Install PolyMon</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#verify-installation">Verify Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-dependencies">Optional Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Usage Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -55,9 +66,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">CLI</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Train</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html#merge">Merge</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html#predict">Predict</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command-Line Interface</a></li>
 </ul>
 
         </div>
@@ -86,25 +95,91 @@
              
   <section id="index-0">
 <span id="installation"></span><span id="id1"></span><h1>Installation<a class="headerlink" href="#index-0" title="Link to this heading"></a></h1>
-<p>You can simply install the package via PyPI:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pip install polymon
+<p>PolyMon requires Python 3.8+ and several dependencies including PyTorch and PyTorch Geometric.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<section id="pytorch-installation">
+<h3>PyTorch Installation<a class="headerlink" href="#pytorch-installation" title="Link to this heading"></a></h3>
+<p>PolyMon requires <code class="docutils literal notranslate"><span class="pre">torch&gt;=2.2.2</span></code> and <code class="docutils literal notranslate"><span class="pre">torch_geometric&gt;=2.5.3</span></code>. We recommend installing PyTorch first with CUDA support if available.</p>
+<p><strong>For CUDA 11.8:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span><span class="nv">pytorch</span><span class="o">==</span><span class="m">2</span>.3.0<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.18.0<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.3.0<span class="w"> </span><span class="se">\</span>
+<span class="w">                 </span>pytorch-cuda<span class="o">=</span><span class="m">11</span>.8<span class="w"> </span>-c<span class="w"> </span>pytorch<span class="w"> </span>-c<span class="w"> </span>nvidia
+pip<span class="w"> </span>install<span class="w"> </span>torch_geometric
+pip<span class="w"> </span>install<span class="w"> </span>torch_scatter<span class="w"> </span>torch_sparse<span class="w"> </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.3.0+cu118.html
 </pre></div>
 </div>
-<p>Alternatively, you can install the package from the source code:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/PolyMon/polymon.git
-cd polymon
-pip install -r requirements.txt
-pip install -e .
+<p><strong>For CPU only:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span><span class="nv">pytorch</span><span class="o">==</span><span class="m">2</span>.3.0<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.18.0<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.3.0<span class="w"> </span>-c<span class="w"> </span>pytorch
+pip<span class="w"> </span>install<span class="w"> </span>torch_geometric
+pip<span class="w"> </span>install<span class="w"> </span>torch_scatter<span class="w"> </span>torch_sparse<span class="w"> </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.3.0+cpu.html
 </pre></div>
 </div>
+<p><strong>For other CUDA versions</strong>, please refer to the <a class="reference external" href="https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html">PyTorch Geometric installation guide</a>.</p>
+</section>
+<section id="install-polymon">
+<h3>Install PolyMon<a class="headerlink" href="#install-polymon" title="Link to this heading"></a></h3>
+<p><strong>Via pip (recommended):</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># NumPy 2.x is not yet compatible with RDKit, so we install NumPy 1.x first</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;numpy&lt;2&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span>polymon
+</pre></div>
+</div>
+<p><strong>From source:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/fate1997/polymon.git
+<span class="nb">cd</span><span class="w"> </span>polymon
+pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;numpy&lt;2&#39;</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+</section>
+<section id="verify-installation">
+<h2>Verify Installation<a class="headerlink" href="#verify-installation" title="Link to this heading"></a></h2>
+<p>After installation, verify that PolyMon is working:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>polymon<span class="w"> </span>--help
+</pre></div>
+</div>
+<p>You should see the help message with available commands: <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">rec</span></code>, and <code class="docutils literal notranslate"><span class="pre">predict</span></code>.</p>
+</section>
+<section id="optional-dependencies">
+<h2>Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading"></a></h2>
+<p>For full functionality, the following packages are automatically installed:</p>
+<ul class="simple">
+<li><p><strong>RDKit</strong>: Chemical informatics and molecular featurization</p></li>
+<li><p><strong>Mordred</strong>: Additional molecular descriptors</p></li>
+<li><p><strong>XenonPy</strong>: Element-based descriptors</p></li>
+<li><p><strong>XGBoost/LightGBM/CatBoost</strong>: Gradient boosting frameworks</p></li>
+<li><p><strong>Optuna</strong>: Hyperparameter optimization</p></li>
+<li><p><strong>PyTorch Lightning</strong>: Training utilities</p></li>
+</ul>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<p><strong>Issue</strong>: <code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">No</span> <span class="pre">module</span> <span class="pre">named</span> <span class="pre">'torch_geometric'</span></code></p>
+<p><strong>Solution</strong>: Make sure you installed PyTorch Geometric after PyTorch. Reinstall if needed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>torch_geometric<span class="w"> </span>--force-reinstall
+</pre></div>
+</div>
+<p><strong>Issue</strong>: NumPy/AttributeError warnings when running polymon commands</p>
+<p><strong>Solution</strong>: RDKit is not yet compatible with NumPy 2.x. Downgrade NumPy:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;numpy&lt;2&#39;</span>
+</pre></div>
+</div>
+<p><strong>Issue</strong>: CUDA errors</p>
+<p><strong>Solution</strong>: Verify your PyTorch installation includes CUDA support:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import torch; print(torch.cuda.is_available())&quot;</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">False</span></code>, reinstall PyTorch with CUDA support using the commands above.</p>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to polymon’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="modules/data.html" class="btn btn-neutral float-right" title="polymon.data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to PolyMon’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Usage Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
