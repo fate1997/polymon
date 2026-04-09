@@ -1,9 +1,13 @@
-name: Deploy Sphinx docs (source/build layout)
+name: Deploy docs to GitHub Pages
 
 on:
   push:
     branches:
-      - main  # or master
+      - main
+
+# Allow the workflow to push to the gh-pages branch
+permissions:
+  contents: write
 
 jobs:
   build:
