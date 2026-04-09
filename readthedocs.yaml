@@ -11,6 +11,6 @@ sphinx:
 python:
   install:
     - requirements: requirements.txt     # your package deps
-    - requirements: requirements-docs.txt
+    - requirements: docs/requirements.txt
     - method: pip
       path: .   # install your package
