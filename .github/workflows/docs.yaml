@@ -22,7 +22,20 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install PyTorch
+        run: |
+          pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install PyTorch Geometric
+        run: |
+          pip install torch_geometric
+          pip install torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-2.3.0+cpu.html
+
+      - name: Install polymon
+        run: |
+          pip install -e .
+
+      - name: Install Sphinx dependencies
         run: |
           pip install -r docs/requirements.txt
 

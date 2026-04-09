@@ -2,5 +2,3 @@ sphinx
 sphinx-rtd-theme
 sphinx-autobuild
 sphinxcontrib-napoleon
-numpy
-pandas
