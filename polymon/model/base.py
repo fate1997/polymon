@@ -9,6 +9,7 @@ from rdkit import Chem
 from torch import nn
 from torch_geometric.data import Batch
 from torch_geometric.loader import DataLoader
+from tqdm import tqdm
 
 from polymon.data.featurizer import ComposeFeaturizer
 from polymon.data.polymer import Polymer
@@ -77,8 +78,8 @@ class KFoldModel(BaseModel):
         return kfold_model
     
     def forward(self, batch: Polymer) -> torch.Tensor:
-        """Forward pass. The output is the average of the predictions of the 
-        models trained on the different folds.
+        """Forward pass. The output is the predictions of k-fold models stacked.
+        shape: (n_polymers, n_folds)
 
         Args:
             batch (Polymer): The batch of polymers.
@@ -89,7 +90,7 @@ class KFoldModel(BaseModel):
         output = []
         for model in self.models:
             output.append(model(batch))
-        output = torch.stack(output, dim=0).mean(0)
+        output = torch.stack(output, dim=1).squeeze(-1)
         return output
 
     @property
@@ -219,7 +220,7 @@ class ModelWrapper(nn.Module):
         
         polymers = []
         backup_ids = []
-        for i, smiles in enumerate(smiles_list):
+        for i, smiles in enumerate(tqdm(smiles_list, desc='Featurizing')):
             rdmol = Chem.MolFromSmiles(smiles)
             mol_dict = self.featurizer(rdmol)
             mol_dict['smiles'] = smiles
@@ -238,7 +239,7 @@ class ModelWrapper(nn.Module):
         loader = DataLoader(polymers, batch_size=batch_size)
         
         y_pred_list = []
-        for i, batch in enumerate(loader):
+        for i, batch in enumerate(tqdm(loader, desc='Predicting')):
             batch = batch.to(device)
             if i not in backup_ids:
                 try:

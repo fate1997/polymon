@@ -121,13 +121,13 @@ def train(
         if hparams_from is not None:
             if hparams_from.endswith('.pkl') or hparams_from.endswith('.pickle'):
                 with open(hparams_from, 'rb') as f:
-                    hparams = pickle.load(f)
+                    model = pickle.load(f)
             elif hparams_from.endswith('.json'):
                 with open(hparams_from, 'r') as f:
                     hparams = json.load(f)
+                    model = MODELS[model](**hparams)
         else:
-            hparams = {}
-        model = MODELS[model](**hparams)
+            model = MODELS[model](**hparams)
         if model_type == 'tabpfn':
             model = TabPFNRegressor(
                 n_estimators=32,
@@ -148,7 +148,7 @@ def train(
                 logger.info(f'Training fold {fold+1}/{n_fold}...')
                 x_train_fold, x_val_fold = x_train[train_idx], x_train[val_idx]
                 y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx] 
-                model_fold = MODELS[model_type](**hparams)
+                model_fold = copy.deepcopy(model)
                 model_fold.fit(x_train_fold, y_train_fold)
                 y_hat = predict_batch(model_fold, x_val_fold, batch_size=PREDICT_BATCH_SIZE)
                 maes.append(mean_absolute_error(y_val_fold, y_hat))

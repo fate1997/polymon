@@ -307,7 +307,7 @@ class BondFeaturizer(Featurizer):
             edge_attr.append(torch.tensor(bond_type_one_hot_encoding))
             
         edge_attr = torch.stack(edge_attr, dim=0)
-        return {'edge_index': edge_index, 'edge_attr': edge_attr}
+        return {'edge_index': edge_index, 'edge_attr': edge_attr.float()}
     
     def periodic_bond(self, rdmol: Chem.Mol) -> Dict[str, torch.Tensor]:
         bond_info = self.bond(rdmol)
