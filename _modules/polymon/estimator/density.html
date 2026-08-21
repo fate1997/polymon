@@ -98,24 +98,24 @@
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.density.DensityEstimator">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DensityEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Density estimator using the van der Waals method. This is a simple</span>
+<span class="w">    </span><span class="sd">"""Density estimator using the van der Waals method. This is a simple</span>
 <span class="sd">    method that estimates the density of a polymer based on the van der Waals</span>
 <span class="sd">    volume of the atoms in the molecule.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">packing_coeff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_PACKING_COEFF</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">packing_coeff</span> <span class="o">=</span> <span class="n">packing_coeff</span>
 
 <div class="viewcode-block" id="DensityEstimator.estimated_y">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.density.DensityEstimator.estimated_y">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the density of a polymer based on the van der Waals method.</span>
+<span class="w">        </span><span class="sd">"""Estimate the density of a polymer based on the van der Waals method.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            smiles (str): The SMILES of the polymer.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The estimated density of the polymer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_density_vdw</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span></div>
 
     

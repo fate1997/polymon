@@ -159,12 +159,12 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </div>
 <p><strong>Issue</strong>: NumPy/AttributeError warnings when running polymon commands</p>
 <p><strong>Solution</strong>: RDKit is not yet compatible with NumPy 2.x. Downgrade NumPy:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;numpy&lt;2&#39;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'numpy&lt;2'</span>
 </pre></div>
 </div>
 <p><strong>Issue</strong>: CUDA errors</p>
 <p><strong>Solution</strong>: Verify your PyTorch installation includes CUDA support:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import torch; print(torch.cuda.is_available())&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import torch; print(torch.cuda.is_available())"</span>
 </pre></div>
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">False</span></code>, reinstall PyTorch with CUDA support using the commands above.</p>

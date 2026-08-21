@@ -98,15 +98,15 @@
 
 <span class="n">DEFAULT_N</span> <span class="o">=</span> <span class="mi">600</span>
 <span class="n">DEFAULT_C_INF</span> <span class="o">=</span> <span class="mf">6.7</span>
-<span class="n">DEFAULT_SOLVENT</span> <span class="o">=</span> <span class="s2">&quot;theta&quot;</span>
+<span class="n">DEFAULT_SOLVENT</span> <span class="o">=</span> <span class="s2">"theta"</span>
 
 <div class="viewcode-block" id="RgEstimator">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.rg.RgEstimator">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RgEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Radius of gyration estimator using DFS. This is a simple estimator</span>
+<span class="w">    </span><span class="sd">"""Radius of gyration estimator using DFS. This is a simple estimator</span>
 <span class="sd">    that uses DFS to estimate the radius of gyration of a polymer.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">N</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_N</span><span class="p">,</span> 
@@ -120,21 +120,21 @@
 <div class="viewcode-block" id="RgEstimator.estimated_y">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.rg.RgEstimator.estimated_y">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the radius of gyration of a polymer based on the DFS method.</span>
+<span class="w">        </span><span class="sd">"""Estimate the radius of gyration of a polymer based on the DFS method.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            smiles (str): The SMILES of the polymer.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The estimated radius of gyration of the polymer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius_of_gyration</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span></div>
 
     
 <div class="viewcode-block" id="RgEstimator.longest_backbone_path_length">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.rg.RgEstimator.longest_backbone_path_length">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">longest_backbone_path_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the length of the longest simple path (approximate backbone).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Find the length of the longest simple path (approximate backbone)."""</span>
         <span class="n">n_atoms</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
         <span class="n">best_len</span> <span class="o">=</span> <span class="mf">0.0</span>
 
@@ -163,7 +163,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">monomer_contour_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
         <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SMILES string&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid SMILES string"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">longest_backbone_path_length</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span></div>
 
 
@@ -176,12 +176,12 @@
 <div class="viewcode-block" id="RgEstimator.radius_of_gyration">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.rg.RgEstimator.radius_of_gyration">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">radius_of_gyration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Estimate Rg from a monomer SMILES without using conformers.</span>
 <span class="sd">        - N: degree of polymerization</span>
 <span class="sd">        - C_inf: characteristic ratio (defaults ~6.7 for flexible chains)</span>
-<span class="sd">        - solvent: &#39;theta&#39; or &#39;good&#39;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        - solvent: 'theta' or 'good'</span>
+<span class="sd">        """</span>
         <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
         <span class="n">C_inf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_inf</span>
         <span class="n">solvent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solvent</span>
@@ -191,13 +191,13 @@
         <span class="n">L_c</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">l_m</span>
         <span class="n">N_K</span> <span class="o">=</span> <span class="n">L_c</span> <span class="o">/</span> <span class="n">b</span>
 
-        <span class="k">if</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">&quot;theta&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">"theta"</span><span class="p">:</span>
             <span class="n">Rg</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_K</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">&quot;good&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">"good"</span><span class="p">:</span>
             <span class="n">nu</span> <span class="o">=</span> <span class="mf">0.588</span>
             <span class="n">Rg</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_K</span> <span class="o">**</span> <span class="n">nu</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;solvent must be &#39;theta&#39; or &#39;good&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"solvent must be 'theta' or 'good'"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Rg</span></div>
 </div>

@@ -97,7 +97,7 @@
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.kan_gatv2.KAN_GATv2">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">KAN_GATv2</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;KAN-augmented GATv2.</span>
+<span class="w">    </span><span class="sd">"""KAN-augmented GATv2.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        num_node_features (int): The number of node features.</span>
@@ -110,7 +110,7 @@
 <span class="sd">            MLP. Default to :obj:`128`.</span>
 <span class="sd">        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.</span>
 <span class="sd">        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">num_node_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
@@ -149,7 +149,7 @@
             <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
             <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
-            <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s1">'prelu'</span><span class="p">,</span>
             <span class="n">kan_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">grid_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
         <span class="p">)</span>
@@ -157,14 +157,14 @@
 <div class="viewcode-block" id="KAN_GATv2.forward">
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.kan_gatv2.KAN_GATv2.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Polymer): The batch of data.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_passing</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
@@ -222,7 +222,7 @@
         <span class="k">elif</span> <span class="n">bias</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">concat</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">output_dim</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">'bias'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">residual</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">num_node_features</span> <span class="o">==</span> <span class="n">num_heads</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">:</span>
@@ -230,7 +230,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">residual_linear</span> <span class="o">=</span> <span class="n">linear_cls</span><span class="p">(</span><span class="n">num_node_features</span><span class="p">,</span> <span class="n">num_heads</span> <span class="o">*</span> <span class="n">output_dim</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;residual_linear&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">'residual_linear'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># Some fixed function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">leakyReLU</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">negative_slope</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>

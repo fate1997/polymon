@@ -95,7 +95,7 @@
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.gin.KAN_GIN">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">KAN_GIN</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;KAN-augmented GIN.</span>
+<span class="w">    </span><span class="sd">"""KAN-augmented GIN.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        num_atom_features (int): The number of atom features.</span>
@@ -108,7 +108,7 @@
 <span class="sd">        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.</span>
 <span class="sd">        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.</span>
 <span class="sd">        grid_size (int): The number of grid points. Default to :obj:`10`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -133,7 +133,7 @@
                     <span class="n">output_dim</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>
                     <span class="n">n_layers</span><span class="o">=</span><span class="n">n_mlp_layers</span><span class="p">,</span>
                     <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
-                    <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span>
+                    <span class="n">activation</span><span class="o">=</span><span class="s1">'prelu'</span><span class="p">,</span>
                     <span class="n">kan_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">grid_size</span><span class="o">=</span><span class="n">grid_size</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -150,7 +150,7 @@
             <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
             <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
-            <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s1">'prelu'</span><span class="p">,</span>
             <span class="n">kan_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">grid_size</span><span class="o">=</span><span class="n">grid_size</span><span class="p">,</span>
         <span class="p">)</span>
@@ -158,14 +158,14 @@
 <div class="viewcode-block" id="KAN_GIN.forward">
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.gin.KAN_GIN.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Polymer): The batch of data.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
@@ -181,7 +181,7 @@
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.gin.FastKAN_GIN">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FastKAN_GIN</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fast KAN-augmented GIN.</span>
+<span class="w">    </span><span class="sd">"""Fast KAN-augmented GIN.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        num_atom_features (int): The number of atom features.</span>
@@ -194,7 +194,7 @@
 <span class="sd">        grid_min (float): The minimum value of the grid. Default to :obj:`-4.0`.</span>
 <span class="sd">        grid_max (float): The maximum value of the grid. Default to :obj:`3.0`.</span>
 <span class="sd">        num_grids (int): The number of grids. Default to :obj:`10`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -233,14 +233,14 @@
 <div class="viewcode-block" id="FastKAN_GIN.forward">
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.gin.FastKAN_GIN.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Polymer): The batch of data.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>

@@ -98,7 +98,7 @@
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.atom_contrib.AtomContribEstimator">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtomContribEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Atom contribution estimator. It is used to estimate the label of a </span>
+<span class="w">    </span><span class="sd">"""Atom contribution estimator. It is used to estimate the label of a </span>
 <span class="sd">    polymer based on the atom composition.</span>
 
 <span class="sd">    Args:</span>
@@ -107,7 +107,7 @@
 <span class="sd">            The i-th element is the contribution of the i-th element to the label.</span>
 <span class="sd">            The i-th element is the number of atoms of the i-th element in the polymer.</span>
 <span class="sd">            The MAX_NUM_ELEMENTS is 100.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">atom_contrib</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -120,10 +120,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">from_fitting</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-        <span class="n">smiles_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;SMILES&#39;</span><span class="p">,</span>
-        <span class="n">label_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;FFV&#39;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AtomContribEstimator&#39;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the atom contribution estimator from a dataframe.</span>
+        <span class="n">smiles_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'SMILES'</span><span class="p">,</span>
+        <span class="n">label_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'FFV'</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'AtomContribEstimator'</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Fit the atom contribution estimator from a dataframe.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            df (pd.DataFrame): The dataframe containing the SMILES and label.</span>
@@ -132,7 +132,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            AtomContribEstimator: The fitted atom contribution estimator.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">atom_nums</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">smiles</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">smiles_col</span><span class="p">]:</span>
             <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
@@ -156,15 +156,15 @@
 <div class="viewcode-block" id="AtomContribEstimator.from_npy">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.atom_contrib.AtomContribEstimator.from_npy">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_npy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;AtomContribEstimator&#39;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the atom contribution estimator from a npy file.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_npy</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'AtomContribEstimator'</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load the atom contribution estimator from a npy file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path (str): The path to the npy file.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            AtomContribEstimator: The loaded atom contribution estimator.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">atom_contrib</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">atom_contrib</span><span class="p">)</span></div>
 
@@ -172,25 +172,25 @@
 <div class="viewcode-block" id="AtomContribEstimator.write">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.atom_contrib.AtomContribEstimator.write">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the atom contribution estimator to a npy file.</span>
+<span class="w">        </span><span class="sd">"""Write the atom contribution estimator to a npy file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path (str): The path to the npy file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_contrib</span><span class="p">)</span></div>
 
     
 <div class="viewcode-block" id="AtomContribEstimator.estimated_y">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.atom_contrib.AtomContribEstimator.estimated_y">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the label of a polymer based on the atom composition.</span>
+<span class="w">        </span><span class="sd">"""Estimate the label of a polymer based on the atom composition.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            smiles (str): The SMILES of the polymer.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The estimated label of the polymer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
         <span class="n">atom_num</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()])</span>

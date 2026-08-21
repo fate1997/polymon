@@ -96,7 +96,7 @@
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.fastkan_gatv2.FastKAN_GATv2">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FastKAN_GATv2</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fast KAN-augmented GATv2.</span>
+<span class="w">    </span><span class="sd">"""Fast KAN-augmented GATv2.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        num_atom_features (int): The number of atom features.</span>
@@ -113,7 +113,7 @@
 <span class="sd">        dropout (float): The dropout rate. Default to :obj:`0.1`.</span>
 <span class="sd">        edge_dim (int): The number of edge dimensions.</span>
 <span class="sd">        num_descriptors (int): The number of descriptors. Default to :obj:`0`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
@@ -168,14 +168,14 @@
 <div class="viewcode-block" id="FastKAN_GATv2.forward">
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.fastkan_gatv2.FastKAN_GATv2.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span> 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Polymer): The batch of data.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_descriptors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">descriptors</span><span class="p">[</span><span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

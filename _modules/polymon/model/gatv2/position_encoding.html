@@ -102,7 +102,7 @@
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.position_encoding.GATv2_PE">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GATv2_PE</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;GATv2 with position encoding.</span>
+<span class="w">    </span><span class="sd">"""GATv2 with position encoding.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        num_atom_features (int): The number of atom features.</span>
@@ -113,15 +113,15 @@
 <span class="sd">            MLP. Default to :obj:`128`.</span>
 <span class="sd">        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.2`.</span>
 <span class="sd">        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.</span>
-<span class="sd">        activation (str): The activation function. Default to :obj:`&#39;prelu&#39;`.</span>
+<span class="sd">        activation (str): The activation function. Default to :obj:`'prelu'`.</span>
 <span class="sd">        num_tasks (int): The number of tasks. Default to :obj:`1`.</span>
 <span class="sd">        bias (bool): Whether to use bias. Default to :obj:`True`.</span>
 <span class="sd">        dropout (float): The dropout rate. Default to :obj:`0.1`.</span>
 <span class="sd">        edge_dim (int): The number of edge dimensions.</span>
 <span class="sd">        num_descriptors (int): The number of descriptors. Default to :obj:`0`.</span>
-<span class="sd">        position_encoding_type (Literal[&#39;sin&#39;, &#39;rope&#39;, &#39;learned&#39;]): The type of position encoding.</span>
-<span class="sd">            Default to :obj:`&#39;sin&#39;`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        position_encoding_type (Literal['sin', 'rope', 'learned']): The type of position encoding.</span>
+<span class="sd">            Default to :obj:`'sin'`.</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">num_atom_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
@@ -131,25 +131,25 @@
         <span class="n">pred_hidden_dim</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> 
         <span class="n">pred_dropout</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> 
         <span class="n">pred_layers</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span> 
+        <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">'prelu'</span><span class="p">,</span> 
         <span class="n">num_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
         <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
         <span class="n">edge_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_descriptors</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">position_encoding_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;sin&#39;</span><span class="p">,</span> <span class="s1">&#39;rope&#39;</span><span class="p">,</span> <span class="s1">&#39;learned&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sin&#39;</span><span class="p">,</span>
+        <span class="n">position_encoding_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">'sin'</span><span class="p">,</span> <span class="s1">'rope'</span><span class="p">,</span> <span class="s1">'learned'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'sin'</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         
-        <span class="k">if</span> <span class="n">position_encoding_type</span> <span class="o">==</span> <span class="s1">&#39;sin&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">position_encoding_type</span> <span class="o">==</span> <span class="s1">'sin'</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">position_encoding</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">sinusoidal_encoding</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">position_encoding_type</span> <span class="o">==</span> <span class="s1">&#39;rope&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">position_encoding_type</span> <span class="o">==</span> <span class="s1">'rope'</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">position_encoding</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">rope_encoding</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">position_encoding_type</span> <span class="o">==</span> <span class="s1">&#39;learned&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">position_encoding_type</span> <span class="o">==</span> <span class="s1">'learned'</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">position_encoding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">)</span>
             <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">position_encoding</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid position encoding type: </span><span class="si">{</span><span class="n">position_encoding_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Invalid position encoding type: </span><span class="si">{</span><span class="n">position_encoding_type</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">position_encoding_type</span> <span class="o">=</span> <span class="n">position_encoding_type</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_atom_features</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -192,7 +192,7 @@
 <div class="viewcode-block" id="GATv2_PE.forward">
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.gatv2.position_encoding.GATv2_PE.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span> 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Polymer): The batch of data. It should have :obj:`relative_position` </span>
@@ -200,12 +200,12 @@
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         
         <span class="c1"># x: [num_nodes, num_features]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_encoding_type</span> <span class="o">==</span><span class="s1">&#39;rope&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_encoding_type</span> <span class="o">==</span><span class="s1">'rope'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">rope_encoding</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">relative_position</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">position_encoding</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">relative_position</span><span class="p">)</span> <span class="o">+</span> <span class="n">x</span>
@@ -232,11 +232,11 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">sinusoidal_encoding</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    distances: tensor of shape (n_nodes,) with integer distances</span>
 <span class="sd">    dim: embedding dimension</span>
 <span class="sd">    returns: tensor of shape (n_nodes, dim)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n_nodes</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">pe</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="n">position</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (n_nodes, 1)</span>
@@ -248,13 +248,13 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rope_encoding</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">distances</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    x: (n_nodes, dim) input features</span>
 <span class="sd">    distances: (n_nodes,) integer relative distances</span>
 <span class="sd">    returns: (n_nodes, dim) features after rotary positional encoding</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n_nodes</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
-    <span class="k">assert</span> <span class="n">dim</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;dim must be even for RoPE&quot;</span>
+    <span class="k">assert</span> <span class="n">dim</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"dim must be even for RoPE"</span>
 
     <span class="c1"># compute frequencies</span>
     <span class="n">half_dim</span> <span class="o">=</span> <span class="n">dim</span> <span class="o">//</span> <span class="mi">2</span>

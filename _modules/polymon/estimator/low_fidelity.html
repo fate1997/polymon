@@ -95,11 +95,11 @@
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.low_fidelity.LowFidelityEstimator">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">LowFidelityEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Low fidelity estimator. This is a simple estimator that uses a model</span>
+<span class="w">    </span><span class="sd">"""Low fidelity estimator. This is a simple estimator that uses a model</span>
 <span class="sd">    to estimate the label of a polymer. The model is a trained model on a low</span>
 <span class="sd">    fidelity dataset. The model should be an object of</span>
 <span class="sd">    :class:`polymon.model.base.ModelWrapper`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -109,17 +109,17 @@
 <div class="viewcode-block" id="LowFidelityEstimator.forward">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.low_fidelity.LowFidelityEstimator.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Polymer</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the label of a polymer based on the low fidelity model.</span>
+<span class="w">        </span><span class="sd">"""Estimate the label of a polymer based on the low fidelity model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data (Polymer): The polymer data.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Polymer: The polymer data with the estimated label.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">estimated_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimated_y</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">smiles</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">estimated_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="n">estimated_y</span><span class="p">]])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">'y'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">estimated_y</span>
         <span class="k">return</span> <span class="n">data</span></div>
 
@@ -127,14 +127,14 @@
 <div class="viewcode-block" id="LowFidelityEstimator.estimated_y">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.low_fidelity.LowFidelityEstimator.estimated_y">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the label of a polymer based on the low fidelity model.</span>
+<span class="w">        </span><span class="sd">"""Estimate the label of a polymer based on the low fidelity model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            smiles (str): The SMILES of the polymer.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The estimated label of the polymer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">estimated_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">smiles</span><span class="p">])</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">estimated_y</span></div>
 </div>

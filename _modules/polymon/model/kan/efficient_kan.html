@@ -122,7 +122,7 @@
             <span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">"grid"</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">base_weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spline_weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
@@ -165,7 +165,7 @@
                 <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">kaiming_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spline_scaler</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_spline</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">b_splines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the B-spline bases for the given input tensor.</span>
 
 <span class="sd">        Args:</span>
@@ -173,7 +173,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: B-spline bases tensor of shape (batch_size, in_features, grid_size + spline_order).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span>
 
         <span class="n">grid</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="p">(</span>
@@ -200,7 +200,7 @@
         <span class="k">return</span> <span class="n">bases</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">curve2coeff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the coefficients of the curve that interpolates the given points.</span>
 
 <span class="sd">        Args:</span>
@@ -209,7 +209,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: Coefficients tensor of shape (out_features, in_features, grid_size + spline_order).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span>
         <span class="k">assert</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">)</span>
 
@@ -240,14 +240,14 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            x (torch.Tensor): The input tensor.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span>
         <span class="n">original_shape</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">)</span>
@@ -312,7 +312,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">spline_weight</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">curve2coeff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">unreduced_spline_output</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">regularization_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regularize_activation</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">regularize_entropy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the regularization loss.</span>
 
 <span class="sd">        This is a dumb simulation of the original L1 regularization as stated in the</span>
@@ -323,7 +323,7 @@
 <span class="sd">        The L1 regularization is now computed as mean absolute value of the spline</span>
 <span class="sd">        weights. The authors implementation also includes this term in addition to the</span>
 <span class="sd">        sample-based regularization.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">l1_fake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spline_weight</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">regularization_loss_activation</span> <span class="o">=</span> <span class="n">l1_fake</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">l1_fake</span> <span class="o">/</span> <span class="n">regularization_loss_activation</span>
@@ -386,7 +386,7 @@
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.efficient_kan.EfficientKANWrapper">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">EfficientKANWrapper</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Efficient KAN wrapper.</span>
+<span class="w">    </span><span class="sd">"""Efficient KAN wrapper.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): The number of input channels.</span>
@@ -405,7 +405,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        The implementation is adapted from `Fast KAN for descriptors </span>
 <span class="sd">        &lt;https://github.com/Blealtan/efficient-kan&gt;`_.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -436,7 +436,7 @@
 <div class="viewcode-block" id="EfficientKANWrapper.forward">
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.efficient_kan.EfficientKANWrapper.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Polymer): The batch of data. It should have :obj:`descriptors` </span>
@@ -444,7 +444,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">descriptors</span>
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficientkan</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">y</span></div>

@@ -106,7 +106,7 @@
                              <span class="n">GEOMETRY_VOCAB</span><span class="p">,</span> <span class="n">MAX_SEQ_LEN</span><span class="p">,</span> <span class="n">MORDRED_UNSTABLE_IDS</span><span class="p">,</span>
                              <span class="n">SMILES_VOCAB</span><span class="p">)</span>
 
-<span class="n">FEATURIZER_REGISTRY</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;Featurizer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">FEATURIZER_REGISTRY</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s1">'Featurizer'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">register_cls</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -126,7 +126,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
         <span class="k">for</span> <span class="n">feature_name</span> <span class="ow">in</span> <span class="n">feature_names</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">feature_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_avail_features</span><span class="p">,</span> \
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s1"> is not available in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">feature_name</span><span class="si">}</span><span class="s1"> is not available in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">'</span>
     
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
@@ -139,9 +139,9 @@
 
 <div class="viewcode-block" id="AtomFeaturizer">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.AtomFeaturizer">[docs]</a>
-<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">'x'</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtomFeaturizer</span><span class="p">(</span><span class="n">Featurizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Featurize atoms in a molecule. Default features can be found in </span>
+<span class="w">    </span><span class="sd">"""Featurize atoms in a molecule. Default features can be found in </span>
 <span class="sd">    :obj:`DEFAULT_ATOM_FEATURES`. We provide the following features:</span>
 <span class="sd">    </span>
 <span class="sd">    - :obj:`degree`: The degree of the atom.</span>
@@ -162,19 +162,19 @@
 <span class="sd">            :obj:`feature_names`, this parameter is required.</span>
 <span class="sd">    </span>
 <span class="sd">    The features are assigned to :obj:`x` in the output dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_avail_features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;degree&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;is_aromatic&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;chiral_tag&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;num_hydrogens&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;hybridization&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;mass&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;formal_charge&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;is_attachment&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;xenonpy_atom&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;cgcnn&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;source&#39;</span><span class="p">,</span>
+        <span class="s1">'degree'</span><span class="p">,</span> 
+        <span class="s1">'is_aromatic'</span><span class="p">,</span> 
+        <span class="s1">'chiral_tag'</span><span class="p">,</span> 
+        <span class="s1">'num_hydrogens'</span><span class="p">,</span> 
+        <span class="s1">'hybridization'</span><span class="p">,</span> 
+        <span class="s1">'mass'</span><span class="p">,</span> 
+        <span class="s1">'formal_charge'</span><span class="p">,</span> 
+        <span class="s1">'is_attachment'</span><span class="p">,</span>
+        <span class="s1">'xenonpy_atom'</span><span class="p">,</span>
+        <span class="s1">'cgcnn'</span><span class="p">,</span>
+        <span class="s1">'source'</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -194,7 +194,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize the atoms in a molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize the atoms in a molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -203,11 +203,11 @@
 <span class="sd">            Dict[str, torch.Tensor]: The dictionary containing the features. The </span>
 <span class="sd">            key is :obj:`x` and the value is the concatenated features with the </span>
 <span class="sd">            shape :obj:`[num_atoms, num_features]`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">atom_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_atom_num</span><span class="p">(</span><span class="n">rdmol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_atom_nums</span><span class="p">)</span>
         <span class="n">feature_names</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="n">feature_names</span><span class="p">:</span>
-            <span class="n">feature_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">'source'</span> <span class="ow">in</span> <span class="n">feature_names</span><span class="p">:</span>
+            <span class="n">feature_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">'source'</span><span class="p">)</span>
         
         <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
@@ -217,14 +217,14 @@
             <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">atom_features</span><span class="p">))</span>
         <span class="n">feature_exclude_atom_num</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">'source'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">:</span>
             <span class="n">source_feature</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_sources</span><span class="p">))</span>
-            <span class="n">source_feature</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_sources</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">rdmol</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s1">&#39;Source&#39;</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">source_feature</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_sources</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">rdmol</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s1">'Source'</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">feature_exclude_atom_num</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
                 <span class="n">feature_exclude_atom_num</span><span class="p">,</span> 
                 <span class="n">source_feature</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">feature_exclude_atom_num</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
             <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">atom_num</span><span class="p">,</span> <span class="n">feature_exclude_atom_num</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'x'</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">atom_num</span><span class="p">,</span> <span class="n">feature_exclude_atom_num</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()}</span></div>
 
     
     <span class="nd">@staticmethod</span>
@@ -307,16 +307,16 @@
     
     <span class="k">def</span><span class="w"> </span><span class="nf">cgcnn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="n">atom_num</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span>
-        <span class="n">CGCNN_ELEMENT_INFO</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">CGCNN_ELEMENT_INFO</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">])</span>
+        <span class="n">CGCNN_ELEMENT_INFO</span><span class="p">[</span><span class="s1">'0'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">CGCNN_ELEMENT_INFO</span><span class="p">[</span><span class="s1">'1'</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">CGCNN_ELEMENT_INFO</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">atom_num</span><span class="p">)])</span></div>
 
 
 
 <div class="viewcode-block" id="BondFeaturizer">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.BondFeaturizer">[docs]</a>
-<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">&#39;edge&#39;</span><span class="p">)</span>
+<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">'edge'</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">BondFeaturizer</span><span class="p">(</span><span class="n">Featurizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Featurize bonds in a molecule. This featurizer is used to obtain the </span>
+<span class="w">    </span><span class="sd">"""Featurize bonds in a molecule. This featurizer is used to obtain the </span>
 <span class="sd">    edge index and edge attributes. We provide the following features:</span>
 <span class="sd">    </span>
 <span class="sd">    - :obj:`fully_connected_edges`: The fully connected edges, which means all \</span>
@@ -329,18 +329,18 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        feature_names (List[str]): The features to use.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_avail_features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;fully_connected_edges&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;bond&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;periodic_bond&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;virtual_bond&#39;</span><span class="p">,</span>
+        <span class="s1">'fully_connected_edges'</span><span class="p">,</span> 
+        <span class="s1">'bond'</span><span class="p">,</span> 
+        <span class="s1">'periodic_bond'</span><span class="p">,</span>
+        <span class="s1">'virtual_bond'</span><span class="p">,</span>
     <span class="p">]</span>
     
 <div class="viewcode-block" id="BondFeaturizer.__call__">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.BondFeaturizer.__call__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize the bonds in a molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize the bonds in a molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -350,12 +350,12 @@
 <span class="sd">            The key is :obj:`edge_index` and :obj:`edge_attr` with the shape </span>
 <span class="sd">            :obj:`[2, num_edges]` and :obj:`[num_edges, num_features]` </span>
 <span class="sd">            respectively.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bond&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'bond'</span><span class="p">]</span>
         
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
-            <span class="s1">&#39;Only one feature name is supported for bond featurizer&#39;</span>
+            <span class="s1">'Only one feature name is supported for bond featurizer'</span>
         <span class="n">feature_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_name</span><span class="p">)(</span><span class="n">rdmol</span><span class="p">)</span></div>
 
@@ -364,7 +364,7 @@
         <span class="n">n_nodes</span> <span class="o">=</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
         <span class="n">edges</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">),</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">reversed_edges</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;edge_index&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edges</span><span class="p">,</span> <span class="n">reversed_edges</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'edge_index'</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edges</span><span class="p">,</span> <span class="n">reversed_edges</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)}</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">bond</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="n">adj</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">GetAdjacencyMatrix</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
@@ -401,17 +401,17 @@
             <span class="n">edge_attr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">bond_type_one_hot_encoding</span><span class="p">))</span>
             
         <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;edge_index&#39;</span><span class="p">:</span> <span class="n">edge_index</span><span class="p">,</span> <span class="s1">&#39;edge_attr&#39;</span><span class="p">:</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">float</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'edge_index'</span><span class="p">:</span> <span class="n">edge_index</span><span class="p">,</span> <span class="s1">'edge_attr'</span><span class="p">:</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">float</span><span class="p">()}</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">periodic_bond</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="n">bond_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bond</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
-        <span class="n">bond_index</span> <span class="o">=</span> <span class="n">bond_info</span><span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">]</span>
-        <span class="n">bond_attr</span> <span class="o">=</span> <span class="n">bond_info</span><span class="p">[</span><span class="s1">&#39;edge_attr&#39;</span><span class="p">]</span>
+        <span class="n">bond_index</span> <span class="o">=</span> <span class="n">bond_info</span><span class="p">[</span><span class="s1">'edge_index'</span><span class="p">]</span>
+        <span class="n">bond_attr</span> <span class="o">=</span> <span class="n">bond_info</span><span class="p">[</span><span class="s1">'edge_attr'</span><span class="p">]</span>
         
         <span class="c1"># Add bonds between attachment points</span>
         <span class="n">attachments</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetPropsAsDict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="s1">&#39;False&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetPropsAsDict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'attachment'</span><span class="p">,</span> <span class="s1">'False'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'True'</span><span class="p">:</span>
                 <span class="n">attachments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
         
         <span class="n">bond_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">bond_attr</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">bond_attr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -428,14 +428,14 @@
                 <span class="n">attach_bond_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">attach_bond_attr</span><span class="p">,</span> <span class="n">attach_bond_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">bond_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">bond_index</span><span class="p">,</span> <span class="n">attach_bond_index</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
                 <span class="n">bond_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">bond_attr</span><span class="p">,</span> <span class="n">attach_bond_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;edge_index&#39;</span><span class="p">:</span> <span class="n">bond_index</span><span class="p">,</span> <span class="s1">&#39;edge_attr&#39;</span><span class="p">:</span> <span class="n">bond_attr</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'edge_index'</span><span class="p">:</span> <span class="n">bond_index</span><span class="p">,</span> <span class="s1">'edge_attr'</span><span class="p">:</span> <span class="n">bond_attr</span><span class="p">}</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">virtual_bond</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add virtual bonds between virtual node and each other node&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Add virtual bonds between virtual node and each other node"""</span>
         <span class="n">n_nodes</span> <span class="o">=</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
         <span class="n">bonds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bond</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
-        <span class="n">bond_index</span> <span class="o">=</span> <span class="n">bonds</span><span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">]</span>
-        <span class="n">bond_attr</span> <span class="o">=</span> <span class="n">bonds</span><span class="p">[</span><span class="s1">&#39;edge_attr&#39;</span><span class="p">]</span>
+        <span class="n">bond_index</span> <span class="o">=</span> <span class="n">bonds</span><span class="p">[</span><span class="s1">'edge_index'</span><span class="p">]</span>
+        <span class="n">bond_attr</span> <span class="o">=</span> <span class="n">bonds</span><span class="p">[</span><span class="s1">'edge_attr'</span><span class="p">]</span>
         <span class="n">n_bonds</span> <span class="o">=</span> <span class="n">bond_index</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">n_bond_features</span> <span class="o">=</span> <span class="n">bond_attr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         
@@ -458,25 +458,25 @@
         <span class="n">bond_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">bond_attr</span><span class="p">,</span> <span class="n">virtual_bond_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">bond_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">bond_index</span><span class="p">,</span> <span class="n">virtual_bond_index</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;edge_index&#39;</span><span class="p">:</span> <span class="n">bond_index</span><span class="p">,</span> <span class="s1">&#39;edge_attr&#39;</span><span class="p">:</span> <span class="n">bond_attr</span><span class="p">}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'edge_index'</span><span class="p">:</span> <span class="n">bond_index</span><span class="p">,</span> <span class="s1">'edge_attr'</span><span class="p">:</span> <span class="n">bond_attr</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="PosFeaturizer">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.PosFeaturizer">[docs]</a>
-<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">&#39;pos&#39;</span><span class="p">)</span>
+<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">'pos'</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PosFeaturizer</span><span class="p">(</span><span class="n">Featurizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Featurize the positions of the atoms in a molecule. We first transform</span>
+<span class="w">    </span><span class="sd">"""Featurize the positions of the atoms in a molecule. We first transform</span>
 <span class="sd">    the polymer SMILES to a monomer SMILES and then embed the monomer SMILES with</span>
 <span class="sd">    RDKit and conduct geometry optimization with MMFF94s. The positions are then</span>
 <span class="sd">    normalized to the center of mass of the molecule. </span>
 <span class="sd">    </span>
 <span class="sd">    .. note::</span>
 <span class="sd">        This featurizer may fail to embed the molecule.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 <div class="viewcode-block" id="PosFeaturizer.__call__">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.PosFeaturizer.__call__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize the positions of the atoms in a molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize the positions of the atoms in a molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -484,15 +484,15 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Dict[str, torch.Tensor]: The dictionary containing the features.</span>
 <span class="sd">            The key is :obj:`pos` with the shape :obj:`[num_atoms, 3]`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">rdmol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_embeded_rdmol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">rdmol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">'pos'</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
         <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">rdmol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">()</span><span class="o">.</span><span class="n">GetPositions</span><span class="p">())</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
         <span class="n">pos</span> <span class="o">-=</span> <span class="n">pos</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="n">pos</span><span class="p">}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'pos'</span><span class="p">:</span> <span class="n">pos</span><span class="p">}</span></div>
 
     
     <span class="k">def</span><span class="w"> </span><span class="nf">get_embeded_rdmol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span> <span class="n">sanitize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">]:</span>
@@ -500,10 +500,10 @@
         <span class="c1"># If no conformer, load from geometry_vocab.sdf or generate one</span>
         <span class="n">smiles</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">GEOMETRY_VOCAB</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">hash_digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">smiles</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-        <span class="n">geometry_file</span> <span class="o">=</span> <span class="n">GEOMETRY_VOCAB</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">hash_digest</span><span class="si">}</span><span class="s1">.sdf&#39;</span>
+        <span class="n">hash_digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">smiles</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="n">geometry_file</span> <span class="o">=</span> <span class="n">GEOMETRY_VOCAB</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">hash_digest</span><span class="si">}</span><span class="s1">.sdf'</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">geometry_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="n">rdmol</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;smiles&#39;</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
+            <span class="n">rdmol</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">'smiles'</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
             <span class="n">rdmol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polymer2monomer</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">rdmol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">None</span>
@@ -532,31 +532,31 @@
             
             <span class="k">return</span> <span class="n">mol</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error initializing geometry for </span><span class="si">{</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error initializing geometry for </span><span class="si">{</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
     
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">polymer2monomer</span><span class="p">(</span><span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">:</span>
-        <span class="n">attachments</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">]</span>
+        <span class="n">attachments</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'*'</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attachments</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of attachments is not 2.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Number of attachments is not 2.'</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">rdmol</span><span class="o">.</span><span class="n">SetIntProp</span><span class="p">(</span><span class="s1">&#39;attachment1&#39;</span><span class="p">,</span> <span class="n">attachments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
-        <span class="n">rdmol</span><span class="o">.</span><span class="n">SetIntProp</span><span class="p">(</span><span class="s1">&#39;attachment2&#39;</span><span class="p">,</span> <span class="n">attachments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
+        <span class="n">rdmol</span><span class="o">.</span><span class="n">SetIntProp</span><span class="p">(</span><span class="s1">'attachment1'</span><span class="p">,</span> <span class="n">attachments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
+        <span class="n">rdmol</span><span class="o">.</span><span class="n">SetIntProp</span><span class="p">(</span><span class="s1">'attachment2'</span><span class="p">,</span> <span class="n">attachments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
         
         <span class="c1"># Get the neighbors of the attachments</span>
         <span class="n">attachment1</span><span class="p">,</span> <span class="n">attachment2</span> <span class="o">=</span> <span class="n">attachments</span>
         <span class="n">attachment1_nbrs</span> <span class="o">=</span> <span class="n">attachment1</span><span class="o">.</span><span class="n">GetNeighbors</span><span class="p">()</span>
         <span class="n">attachment2_nbrs</span> <span class="o">=</span> <span class="n">attachment2</span><span class="o">.</span><span class="n">GetNeighbors</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attachment1_nbrs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">attachment2_nbrs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Attachment has more than one neighbor.&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Attachment has more than one neighbor.'</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         
         <span class="c1"># Set the atomic numbers of the attachments based on neighbors</span>
         <span class="n">attachment1</span><span class="o">.</span><span class="n">SetAtomicNum</span><span class="p">(</span><span class="n">attachment2_nbrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">())</span>
         <span class="n">attachment2</span><span class="o">.</span><span class="n">SetAtomicNum</span><span class="p">(</span><span class="n">attachment1_nbrs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">())</span>
-        <span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdmol</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Attachment is not removed for </span><span class="si">{</span><span class="n">rdmol</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">'*'</span> <span class="ow">in</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdmol</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Attachment is not removed for </span><span class="si">{</span><span class="n">rdmol</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s2">"smiles"</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="n">rdmol</span></div>
 
@@ -564,19 +564,19 @@
 
 <div class="viewcode-block" id="AtomNumFeaturizer">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.AtomNumFeaturizer">[docs]</a>
-<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span>
+<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">'z'</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtomNumFeaturizer</span><span class="p">(</span><span class="n">Featurizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Featurize the atomic numbers of the atoms in a molecule. Although the </span>
+<span class="w">    </span><span class="sd">"""Featurize the atomic numbers of the atoms in a molecule. Although the </span>
 <span class="sd">    atomic numbers are already included in the :obj:`x` feature, this featurizer</span>
 <span class="sd">    is used to obtain the integer atomic numbers.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 <div class="viewcode-block" id="AtomNumFeaturizer.__call__">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.AtomNumFeaturizer.__call__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize the atomic numbers of the atoms in a molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize the atomic numbers of the atoms in a molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -584,28 +584,28 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Dict[str, torch.Tensor]: The dictionary containing the features.</span>
 <span class="sd">            The key is :obj:`z` with the shape :obj:`[num_atoms]`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">atom_nums</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()]</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">atom_nums</span><span class="p">)}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'z'</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">atom_nums</span><span class="p">)}</span></div>
 </div>
 
 
 
 <div class="viewcode-block" id="RelativePositionFeaturizer">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.RelativePositionFeaturizer">[docs]</a>
-<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">&#39;relative_position&#39;</span><span class="p">)</span>
+<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">'relative_position'</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RelativePositionFeaturizer</span><span class="p">(</span><span class="n">Featurizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Featurize the relative positions of the atoms in a molecule. The relative</span>
+<span class="w">    </span><span class="sd">"""Featurize the relative positions of the atoms in a molecule. The relative</span>
 <span class="sd">    position indicates the distance between the atom and the closest attachment </span>
 <span class="sd">    point. The value is 200 if there is no attachment point.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 <div class="viewcode-block" id="RelativePositionFeaturizer.__call__">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.RelativePositionFeaturizer.__call__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize the relative positions of the atoms in a molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize the relative positions of the atoms in a molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -614,23 +614,23 @@
 <span class="sd">            Dict[str, torch.Tensor]: The dictionary containing the features.</span>
 <span class="sd">            The key is :obj:`relative_position` with the shape </span>
 <span class="sd">            :obj:`[num_atoms]`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">attachments</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()</span> \
-                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span> <span class="ow">or</span> \
-                    <span class="n">atom</span><span class="o">.</span><span class="n">GetPropsAsDict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="s1">&#39;False&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;True&#39;</span>
+                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'*'</span> <span class="ow">or</span> \
+                    <span class="n">atom</span><span class="o">.</span><span class="n">GetPropsAsDict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'attachment'</span><span class="p">,</span> <span class="s1">'False'</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'True'</span>
         <span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attachments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No attachment point found in </span><span class="si">{</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;relative_position&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="mi">200</span><span class="p">]</span> <span class="o">*</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">())}</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No attachment point found in </span><span class="si">{</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">'relative_position'</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="mi">200</span><span class="p">]</span> <span class="o">*</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">())}</span>
         
         <span class="c1"># Find the length of the shortest path between atoms and their closest attachment</span>
         <span class="n">pe</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'*'</span><span class="p">:</span>
                 <span class="n">pe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+                <span class="n">min_dist</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span> <span class="o">==</span> <span class="n">attachment</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">():</span>
                         <span class="n">min_dist</span> <span class="o">=</span> <span class="mi">0</span>
@@ -644,31 +644,31 @@
                     <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">min_dist</span><span class="p">:</span>
                         <span class="n">min_dist</span> <span class="o">=</span> <span class="n">dist</span>
                 <span class="n">pe</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">min_dist</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;relative_position&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">pe</span><span class="p">)}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'relative_position'</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">pe</span><span class="p">)}</span></div>
 </div>
 
 
 
 <div class="viewcode-block" id="SeqFeaturizer">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.SeqFeaturizer">[docs]</a>
-<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">&#39;seq&#39;</span><span class="p">)</span>
+<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">'seq'</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SeqFeaturizer</span><span class="p">(</span><span class="n">Featurizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Featurize the sequence of a molecule. We first replace the double letters</span>
+<span class="w">    </span><span class="sd">"""Featurize the sequence of a molecule. We first replace the double letters</span>
 <span class="sd">    with a single token. The sequence is then encoded with the :obj:`SMILES_VOCAB`.</span>
 <span class="sd">    The sequence is then padded to the length of :obj:`MAX_SEQ_LEN`. The SOS, EOS,</span>
 <span class="sd">    and PAD tokens are added to the sequence.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Double tokens</span>
     <span class="n">DOUBLE_TOKEN_DICT</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;Br&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;Cl&#39;</span><span class="p">:</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;Si&#39;</span><span class="p">:</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span>
+        <span class="s1">'Br'</span><span class="p">:</span> <span class="s1">'R'</span><span class="p">,</span>
+        <span class="s1">'Cl'</span><span class="p">:</span> <span class="s1">'G'</span><span class="p">,</span>
+        <span class="s1">'Si'</span><span class="p">:</span> <span class="s1">'X'</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="c1"># Special tokens</span>
-    <span class="n">SOS</span> <span class="o">=</span> <span class="s1">&#39;$&#39;</span>
-    <span class="n">EOS</span> <span class="o">=</span> <span class="s1">&#39;!&#39;</span>
-    <span class="n">PAD</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span>
+    <span class="n">SOS</span> <span class="o">=</span> <span class="s1">'$'</span>
+    <span class="n">EOS</span> <span class="o">=</span> <span class="s1">'!'</span>
+    <span class="n">PAD</span> <span class="o">=</span> <span class="s1">' '</span>
     
 <div class="viewcode-block" id="SeqFeaturizer.__call__">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.SeqFeaturizer.__call__">[docs]</a>
@@ -676,7 +676,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize the sequence of a molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize the sequence of a molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -685,7 +685,7 @@
 <span class="sd">            Dict[str, torch.Tensor]: The dictionary containing the features.</span>
 <span class="sd">                The key is :obj:`seq` and :obj:`seq_len` with the shape </span>
 <span class="sd">                :obj:`[1, seq_len]` and :obj:`[1]` respectively.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">smiles</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DOUBLE_TOKEN_DICT</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">smiles</span> <span class="o">=</span> <span class="n">smiles</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
@@ -693,23 +693,23 @@
         <span class="c1"># Add special tokens (start, end, pad)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_SEQ_LEN</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">smiles</span> <span class="o">=</span> <span class="n">smiles</span><span class="p">[:</span><span class="n">MAX_SEQ_LEN</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span>
-        <span class="n">revised_smiles</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">SOS</span><span class="si">}{</span><span class="n">smiles</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">EOS</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">revised_smiles</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">SOS</span><span class="si">}{</span><span class="n">smiles</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">EOS</span><span class="si">}</span><span class="s2">"</span>
         <span class="n">revised_smiles</span> <span class="o">=</span> <span class="n">revised_smiles</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">MAX_SEQ_LEN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PAD</span><span class="p">)</span>
         
         <span class="c1"># Encode SMILES</span>
         <span class="n">seq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">SMILES_VOCAB</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">revised_smiles</span><span class="p">))</span>
         <span class="n">seq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">seq_len</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;seq&#39;</span><span class="p">:</span> <span class="n">seq</span><span class="p">,</span> <span class="s1">&#39;seq_len&#39;</span><span class="p">:</span> <span class="n">seq_len</span><span class="p">}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'seq'</span><span class="p">:</span> <span class="n">seq</span><span class="p">,</span> <span class="s1">'seq_len'</span><span class="p">:</span> <span class="n">seq_len</span><span class="p">}</span></div>
 </div>
 
 
 
 <div class="viewcode-block" id="DescFeaturizer">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.DescFeaturizer">[docs]</a>
-<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">&#39;desc&#39;</span><span class="p">)</span>
+<span class="nd">@register_cls</span><span class="p">(</span><span class="s1">'desc'</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DescFeaturizer</span><span class="p">(</span><span class="n">Featurizer</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Featurize descriptors of a molecule. Features shape should be </span>
+<span class="w">    </span><span class="sd">"""Featurize descriptors of a molecule. Features shape should be </span>
 <span class="sd">    :obj:`[1, num_features]`. We provide the following features:</span>
 <span class="sd">    </span>
 <span class="sd">    - :obj:`rdkit2d`: The RDKit 2D descriptors.</span>
@@ -726,20 +726,20 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        feature_names (List[str]): The features to use.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     
     <span class="n">_avail_features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;rdkit2d&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;ecfp4&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;rdkit3d&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;mordred&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;maccs&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;oligomer_rdkit2d&#39;</span><span class="p">,</span> 
-        <span class="s1">&#39;oligomer_mordred&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;oligomer_ecfp4&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;xenonpy_desc&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;mordred3d&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;fedors_density&#39;</span><span class="p">,</span>
+        <span class="s1">'rdkit2d'</span><span class="p">,</span> 
+        <span class="s1">'ecfp4'</span><span class="p">,</span> 
+        <span class="s1">'rdkit3d'</span><span class="p">,</span> 
+        <span class="s1">'mordred'</span><span class="p">,</span> 
+        <span class="s1">'maccs'</span><span class="p">,</span> 
+        <span class="s1">'oligomer_rdkit2d'</span><span class="p">,</span> 
+        <span class="s1">'oligomer_mordred'</span><span class="p">,</span>
+        <span class="s1">'oligomer_ecfp4'</span><span class="p">,</span>
+        <span class="s1">'xenonpy_desc'</span><span class="p">,</span>
+        <span class="s1">'mordred3d'</span><span class="p">,</span>
+        <span class="s1">'fedors_density'</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -756,7 +756,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize descriptors of a molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize descriptors of a molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -764,11 +764,11 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Dict[str, torch.Tensor]: The dictionary containing the features.</span>
 <span class="sd">            The key is :obj:`descriptors` with the shape :obj:`[1, num_features]`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">descriptors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">feature_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">:</span>
             <span class="n">descriptors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_name</span><span class="p">)(</span><span class="n">rdmol</span><span class="p">))</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;descriptors&#39;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">descriptors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'descriptors'</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">descriptors</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)}</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">rdkit2d</span><span class="p">(</span>
@@ -797,9 +797,9 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="w">        </span><span class="sd">'''</span>
 <span class="sd">        pip install mordred</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">mordred</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calculator</span><span class="p">,</span> <span class="n">descriptors</span>
         <span class="n">calc</span> <span class="o">=</span> <span class="n">Calculator</span><span class="p">(</span><span class="n">descriptors</span><span class="p">,</span> <span class="n">ignore_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">descs</span> <span class="o">=</span> <span class="n">calc</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
@@ -823,7 +823,7 @@
             <span class="n">rdmol</span> <span class="o">=</span> <span class="n">PosFeaturizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_embeded_rdmol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">rdmol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Descriptors3D</span><span class="o">.</span><span class="n">descList</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Descriptors3D</span><span class="o">.</span><span class="n">descList</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">))</span>
     
         <span class="n">desc_dict</span> <span class="o">=</span> <span class="n">Descriptors3D</span><span class="o">.</span><span class="n">CalcMolDescriptors3D</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
         <span class="n">descs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">desc_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
@@ -841,7 +841,7 @@
         <span class="n">calc</span> <span class="o">=</span> <span class="n">Calculator</span><span class="p">(</span><span class="n">descriptors</span><span class="p">,</span> <span class="n">ignore_3D</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">rdmol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">descriptors</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">calc</span><span class="o">.</span><span class="n">descriptors</span><span class="p">)),</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">))</span>
         <span class="n">descs</span> <span class="o">=</span> <span class="n">calc</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
         <span class="n">descs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">descs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">descs</span>
@@ -892,14 +892,14 @@
 <div class="viewcode-block" id="RDMolPreprocessor">
 <a class="viewcode-back" href="../../../modules/data.html#polymon.data.featurizer.RDMolPreprocessor">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RDMolPreprocessor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Preprocess the molecule. We provide the following preprocessors:</span>
+<span class="w">    </span><span class="sd">"""Preprocess the molecule. We provide the following preprocessors:</span>
 <span class="sd">    </span>
 <span class="sd">    - :obj:`monomer`: Remove the attachment points and set the attachment points</span>
 <span class="sd">    to the neighbors of the attachment points.</span>
 <span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">AVAIL_PREPROCESSORS</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-        <span class="p">[</span><span class="s1">&#39;monomer&#39;</span><span class="p">]</span>
+        <span class="p">[</span><span class="s1">'monomer'</span><span class="p">]</span>
     <span class="p">)</span>
     
 <div class="viewcode-block" id="RDMolPreprocessor.monomer">
@@ -908,22 +908,22 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">monomer</span><span class="p">(</span>
         <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Preprocess the molecule.</span>
+<span class="w">        </span><span class="sd">"""Preprocess the molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to preprocess.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Chem.Mol: The preprocessed molecule.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">rdmol</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
-        <span class="n">attachments</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">]</span>
+        <span class="n">attachments</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">rdmol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="o">==</span> <span class="s1">'*'</span><span class="p">]</span>
         
         <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="n">attachments</span><span class="p">:</span>
             <span class="n">attachment_nbrs</span> <span class="o">=</span> <span class="n">attachment</span><span class="o">.</span><span class="n">GetNeighbors</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">attachment_nbr</span> <span class="ow">in</span> <span class="n">attachment_nbrs</span><span class="p">:</span>
-                <span class="n">attachment_nbr</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="s1">&#39;True&#39;</span><span class="p">)</span>
+                <span class="n">attachment_nbr</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s1">'attachment'</span><span class="p">,</span> <span class="s1">'True'</span><span class="p">)</span>
             <span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attachment</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">())</span>
         
         <span class="n">ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -952,7 +952,7 @@
         <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
         <span class="n">add_hydrogens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose all the featurizers.</span>
+<span class="w">        </span><span class="sd">"""Compose all the featurizers.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            names (List[str]): The feature names. The feature names include both</span>
@@ -967,17 +967,17 @@
 <span class="sd">                .. code-block:: python</span>
 <span class="sd">                </span>
 <span class="sd">                    {</span>
-<span class="sd">                        &#39;atom&#39;: {&#39;unique_atom_nums&#39;: [1, 6, 7, 8, 9]}</span>
+<span class="sd">                        'atom': {'unique_atom_nums': [1, 6, 7, 8, 9]}</span>
 <span class="sd">                    }</span>
 <span class="sd">            add_hydrogens (bool): Whether to add hydrogens to the molecule.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_hydrogens</span> <span class="o">=</span> <span class="n">add_hydrogens</span>
         
         <span class="n">preprocessor</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">RDMolPreprocessor</span><span class="o">.</span><span class="n">AVAIL_PREPROCESSORS</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">preprocessor</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s1">&#39;Only one preprocessor is allowed, but got </span><span class="si">{</span><span class="n">preprocessor</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">'Only one preprocessor is allowed, but got </span><span class="si">{</span><span class="n">preprocessor</span><span class="si">}</span><span class="s1">'</span>
         <span class="k">if</span> <span class="n">preprocessor</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">preprocessor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">RDMolPreprocessor</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">preprocessor</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -986,7 +986,7 @@
         
         <span class="n">invalid_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">AVAIL_FEATURES</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">invalid_names</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid feature names: </span><span class="si">{</span><span class="n">invalid_names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Invalid feature names: </span><span class="si">{</span><span class="n">invalid_names</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1004,7 +1004,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">featurizers</span> <span class="o">=</span> <span class="n">featurizers</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdmol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Featurize the molecule.</span>
+<span class="w">        </span><span class="sd">"""Featurize the molecule.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rdmol (Chem.Mol): The molecule to featurize.</span>
@@ -1012,7 +1012,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Dict[str, torch.Tensor]: The dictionary containing the features to</span>
 <span class="sd">            initialize the polymer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_hydrogens</span><span class="p">:</span>
             <span class="n">rdmol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
         
@@ -1023,14 +1023,14 @@
         <span class="k">for</span> <span class="n">featurizer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">featurizers</span><span class="p">:</span>
             <span class="n">mol_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">featurizer</span><span class="p">(</span><span class="n">rdmol</span><span class="p">))</span>
         
-        <span class="k">if</span> <span class="s1">&#39;virtual_bond&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;x&#39;</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
-                <span class="n">mol_dict</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
-                    <span class="n">mol_dict</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mol_dict</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">'virtual_bond'</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">'x'</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
+                <span class="n">mol_dict</span><span class="p">[</span><span class="s1">'x'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                    <span class="n">mol_dict</span><span class="p">[</span><span class="s1">'x'</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">mol_dict</span><span class="p">[</span><span class="s1">'x'</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;z&#39;</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
-                <span class="n">mol_dict</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
-                    <span class="n">mol_dict</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">'z'</span> <span class="ow">in</span> <span class="n">mol_dict</span><span class="p">:</span>
+                <span class="n">mol_dict</span><span class="p">[</span><span class="s1">'z'</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span>
+                    <span class="n">mol_dict</span><span class="p">[</span><span class="s1">'z'</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 <span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="n">mol_dict</span>

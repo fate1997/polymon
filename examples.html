@@ -483,13 +483,13 @@ polymon<span class="w"> </span>train<span class="w"> </span><span class="se">\</
 <span class="kn">from</span><span class="w"> </span><span class="nn">polymon.model.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleModelWrapper</span>
 
 <span class="c1"># Single model or K-fold model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">ModelWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;results/mlp/Rg/train/mlp_Rg-KFold.pt&#39;</span><span class="p">)</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="s1">&#39;*C*&#39;</span><span class="p">,</span> <span class="s1">&#39;*CCC*&#39;</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ModelWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">'results/mlp/Rg/train/mlp_Rg-KFold.pt'</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="s1">'*C*'</span><span class="p">,</span> <span class="s1">'*CCC*'</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>  <span class="c1"># Shape: [N, 1] for single, [N, k] for k-fold</span>
 
 <span class="c1"># Ensemble model</span>
-<span class="n">ensemble</span> <span class="o">=</span> <span class="n">EnsembleModelWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;results/gatv2/Rg/ensemble/gatv2_Rg-ensemble.pt&#39;</span><span class="p">)</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="s1">&#39;*C*&#39;</span><span class="p">,</span> <span class="s1">&#39;*CC*&#39;</span><span class="p">])</span>
+<span class="n">ensemble</span> <span class="o">=</span> <span class="n">EnsembleModelWrapper</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">'results/gatv2/Rg/ensemble/gatv2_Rg-ensemble.pt'</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="s1">'*C*'</span><span class="p">,</span> <span class="s1">'*CC*'</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
 </pre></div>
 </div>

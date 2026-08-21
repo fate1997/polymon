@@ -119,7 +119,7 @@
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.gcn.KAN_GCN">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">KAN_GCN</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;KAN-GCN wrapper.</span>
+<span class="w">    </span><span class="sd">"""KAN-GCN wrapper.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        num_node_features (int): The number of node features.</span>
@@ -130,7 +130,7 @@
 <span class="sd">            MLP. Default to :obj:`128`.</span>
 <span class="sd">        pred_dropout (float): The dropout rate for the prediction MLP. Default to :obj:`0.0`.</span>
 <span class="sd">        pred_layers (int): The number of layers for the prediction MLP. Default to :obj:`2`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_node_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
@@ -166,7 +166,7 @@
             <span class="n">output_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">n_layers</span><span class="o">=</span><span class="n">pred_layers</span><span class="p">,</span>
             <span class="n">dropout</span><span class="o">=</span><span class="n">pred_dropout</span><span class="p">,</span>
-            <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;prelu&#39;</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s1">'prelu'</span><span class="p">,</span>
             <span class="n">kan_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">grid_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_size</span><span class="p">,</span>
         <span class="p">)</span>
@@ -174,14 +174,14 @@
 <div class="viewcode-block" id="KAN_GCN.forward">
 <a class="viewcode-back" href="../../../../modules/model.html#polymon.model.kan.gcn.KAN_GCN.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Polymer</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass.</span>
+<span class="w">        </span><span class="sd">"""Forward pass.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Polymer): The batch of data.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: The output tensor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">x</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_passing</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
@@ -213,7 +213,7 @@
     <span class="n">num_nodes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">improved</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">add_self_loops</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="n">flow</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;source_to_target&quot;</span><span class="p">,</span>
+    <span class="n">flow</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"source_to_target"</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="n">fill_value</span> <span class="o">=</span> <span class="mf">2.</span> <span class="k">if</span> <span class="n">improved</span> <span class="k">else</span> <span class="mf">1.</span>
@@ -230,7 +230,7 @@
 
         <span class="n">deg</span> <span class="o">=</span> <span class="n">torch_sparse</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">adj_t</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">deg_inv_sqrt</span> <span class="o">=</span> <span class="n">deg</span><span class="o">.</span><span class="n">pow_</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">deg_inv_sqrt</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">deg_inv_sqrt</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
         <span class="n">adj_t</span> <span class="o">=</span> <span class="n">torch_sparse</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">adj_t</span><span class="p">,</span> <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="n">adj_t</span> <span class="o">=</span> <span class="n">torch_sparse</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">adj_t</span><span class="p">,</span> <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
@@ -240,8 +240,8 @@
         <span class="k">assert</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">layout</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_csc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Sparse CSC matrices are not yet &quot;</span>
-                                      <span class="s2">&quot;supported in &#39;gcn_norm&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Sparse CSC matrices are not yet "</span>
+                                      <span class="s2">"supported in 'gcn_norm'"</span><span class="p">)</span>
 
         <span class="n">adj_t</span> <span class="o">=</span> <span class="n">edge_index</span>
         <span class="k">if</span> <span class="n">add_self_loops</span><span class="p">:</span>
@@ -250,14 +250,14 @@
         <span class="n">edge_index</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">to_edge_index</span><span class="p">(</span><span class="n">adj_t</span><span class="p">)</span>
         <span class="n">col</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">deg</span> <span class="o">=</span> <span class="n">scatter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">scatter</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="s1">'sum'</span><span class="p">)</span>
         <span class="n">deg_inv_sqrt</span> <span class="o">=</span> <span class="n">deg</span><span class="o">.</span><span class="n">pow_</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">deg_inv_sqrt</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">deg_inv_sqrt</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">deg_inv_sqrt</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">value</span> <span class="o">*</span> <span class="n">deg_inv_sqrt</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">set_sparse_value</span><span class="p">(</span><span class="n">adj_t</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="kc">None</span>
 
-    <span class="k">assert</span> <span class="n">flow</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;source_to_target&#39;</span><span class="p">,</span> <span class="s1">&#39;target_to_source&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">flow</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'source_to_target'</span><span class="p">,</span> <span class="s1">'target_to_source'</span><span class="p">]</span>
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">add_self_loops</span><span class="p">:</span>
@@ -269,18 +269,18 @@
                                  <span class="n">device</span><span class="o">=</span><span class="n">edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
     <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">flow</span> <span class="o">==</span> <span class="s1">&#39;source_to_target&#39;</span> <span class="k">else</span> <span class="n">row</span>
-    <span class="n">deg</span> <span class="o">=</span> <span class="n">scatter</span><span class="p">(</span><span class="n">edge_weight</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">flow</span> <span class="o">==</span> <span class="s1">'source_to_target'</span> <span class="k">else</span> <span class="n">row</span>
+    <span class="n">deg</span> <span class="o">=</span> <span class="n">scatter</span><span class="p">(</span><span class="n">edge_weight</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="s1">'sum'</span><span class="p">)</span>
     <span class="n">deg_inv_sqrt</span> <span class="o">=</span> <span class="n">deg</span><span class="o">.</span><span class="n">pow_</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
-    <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">deg_inv_sqrt</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">deg_inv_sqrt</span><span class="o">.</span><span class="n">masked_fill_</span><span class="p">(</span><span class="n">deg_inv_sqrt</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">edge_weight</span> <span class="o">=</span> <span class="n">deg_inv_sqrt</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">edge_weight</span> <span class="o">*</span> <span class="n">deg_inv_sqrt</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_weight</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">KAN_GCNConv</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The graph convolutional operator from the `&quot;Semi-supervised</span>
-<span class="sd">    Classification with Graph Convolutional Networks&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The graph convolutional operator from the `"Semi-supervised</span>
+<span class="sd">    Classification with Graph Convolutional Networks"</span>
 <span class="sd">    &lt;https://arxiv.org/abs/1609.02907&gt;`_ paper.</span>
 
 <span class="sd">    .. math::</span>
@@ -336,7 +336,7 @@
 <span class="sd">          or sparse matrix :math:`(|\mathcal{V}|, |\mathcal{V}|)`,</span>
 <span class="sd">          edge weights :math:`(|\mathcal{E}|)` *(optional)*</span>
 <span class="sd">        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_cached_edge_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">OptPairTensor</span><span class="p">]</span>
     <span class="n">_cached_adj_t</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SparseTensor</span><span class="p">]</span>
 
@@ -352,16 +352,16 @@
         <span class="n">grid_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;aggr&#39;</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">'aggr'</span><span class="p">,</span> <span class="s1">'add'</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">add_self_loops</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">add_self_loops</span> <span class="o">=</span> <span class="n">normalize</span>
 
         <span class="k">if</span> <span class="n">add_self_loops</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">normalize</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; does not support &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;adding self-loops to the graph when no &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;on-the-fly normalization is applied&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">' does not support "</span>
+                             <span class="sa">f</span><span class="s2">"adding self-loops to the graph when no "</span>
+                             <span class="sa">f</span><span class="s2">"on-the-fly normalization is applied"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
@@ -378,7 +378,7 @@
         <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">out_channels</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">'bias'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
@@ -392,11 +392,11 @@
                 <span class="n">edge_weight</span><span class="p">:</span> <span class="n">OptTensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; received a tuple &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;of node features as input while this layer &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;does not support bipartite message passing. &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;Please try other layers such as &#39;SAGEConv&#39; or &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;&#39;GraphConv&#39; instead&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">' received a tuple "</span>
+                             <span class="sa">f</span><span class="s2">"of node features as input while this layer "</span>
+                             <span class="sa">f</span><span class="s2">"does not support bipartite message passing. "</span>
+                             <span class="sa">f</span><span class="s2">"Please try other layers such as 'SAGEConv' or "</span>
+                             <span class="sa">f</span><span class="s2">"'GraphConv' instead"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>

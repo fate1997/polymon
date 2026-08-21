@@ -108,16 +108,16 @@
 <span class="p">}</span>
 <span class="n">DEFAULT_N</span> <span class="o">=</span> <span class="mi">680</span>
 <span class="n">DEFAULT_C_INF</span> <span class="o">=</span> <span class="mf">6.7</span>
-<span class="n">DEFAULT_SOLVENT</span> <span class="o">=</span> <span class="s2">&quot;theta&quot;</span>
+<span class="n">DEFAULT_SOLVENT</span> <span class="o">=</span> <span class="s2">"theta"</span>
 
 
 <div class="viewcode-block" id="NxRgEstimator">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator">[docs]</a>
 <span class="nd">@register_init_params</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NxRgEstimator</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Radius of gyration estimator using NetworkX. This is a simple estimator</span>
+<span class="w">    </span><span class="sd">"""Radius of gyration estimator using NetworkX. This is a simple estimator</span>
 <span class="sd">    that uses NetworkX to estimate the radius of gyration of a polymer.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> 
         <span class="n">N</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_N</span><span class="p">,</span> 
@@ -131,21 +131,21 @@
 <div class="viewcode-block" id="NxRgEstimator.estimated_y">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.estimated_y">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimated_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the radius of gyration of a polymer based on the NetworkX method.</span>
+<span class="w">        </span><span class="sd">"""Estimate the radius of gyration of a polymer based on the NetworkX method.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            smiles (str): The SMILES of the polymer.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The estimated radius of gyration of the polymer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius_of_gyration</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span></div>
 
     
 <div class="viewcode-block" id="NxRgEstimator.mol_to_nx">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.mol_to_nx">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mol_to_nx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert RDKit Mol to NetworkX weighted graph.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert RDKit Mol to NetworkX weighted graph."""</span>
         <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
             <span class="n">a1</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtom</span><span class="p">()</span>
@@ -161,16 +161,16 @@
 <div class="viewcode-block" id="NxRgEstimator.longest_backbone_path_length">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.longest_backbone_path_length">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">longest_backbone_path_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Approximate the longest backbone path length using NetworkX.</span>
 <span class="sd">        Finds the longest shortest path (diameter in weighted sense).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol_to_nx</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
         
         <span class="c1"># All-pairs shortest paths weighted by bond lengths</span>
-        <span class="n">lengths</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">all_pairs_dijkstra_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;weight&quot;</span><span class="p">))</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">all_pairs_dijkstra_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">"weight"</span><span class="p">))</span>
         
         <span class="c1"># Find maximum among all shortest path lengths (graph diameter)</span>
         <span class="n">best_len</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -187,7 +187,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">monomer_contour_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
         <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SMILES string&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid SMILES string"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">longest_backbone_path_length</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span></div>
 
 
@@ -200,12 +200,12 @@
 <div class="viewcode-block" id="NxRgEstimator.radius_of_gyration">
 <a class="viewcode-back" href="../../../modules/estimator.html#polymon.estimator.nx_rg.NxRgEstimator.radius_of_gyration">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">radius_of_gyration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Estimate Rg from a monomer SMILES without using conformers.</span>
 <span class="sd">        - N: degree of polymerization</span>
 <span class="sd">        - C_inf: characteristic ratio (defaults ~6.7 for flexible chains)</span>
-<span class="sd">        - solvent: &#39;theta&#39; or &#39;good&#39;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        - solvent: 'theta' or 'good'</span>
+<span class="sd">        """</span>
         <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
         <span class="n">C_inf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_inf</span>
         <span class="n">solvent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solvent</span>
@@ -215,13 +215,13 @@
         <span class="n">L_c</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">l_m</span>
         <span class="n">N_K</span> <span class="o">=</span> <span class="n">L_c</span> <span class="o">/</span> <span class="n">b</span>
 
-        <span class="k">if</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">&quot;theta&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">"theta"</span><span class="p">:</span>
             <span class="n">Rg</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_K</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">&quot;good&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">solvent</span> <span class="o">==</span> <span class="s2">"good"</span><span class="p">:</span>
             <span class="n">nu</span> <span class="o">=</span> <span class="mf">0.588</span>
             <span class="n">Rg</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="mi">6</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_K</span> <span class="o">**</span> <span class="n">nu</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;solvent must be &#39;theta&#39; or &#39;good&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"solvent must be 'theta' or 'good'"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Rg</span></div>
 </div>
