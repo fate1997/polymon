@@ -218,22 +218,6 @@ predictions = model.predict(['*C*', '*CC*', '*CCC*'])
 print(predictions)
 ```
 
-## Citation
-
-If you use PolyMon in your research, please cite:
-
-```bibtex
-@misc{ren2026polymonunifiedframeworkpolymer,
-      title={PolyMon: A Unified Framework for Polymer Property Prediction}, 
-      author={Gaopeng Ren and Yijie Yang and Jiajun Zhou and Kim E. Jelfs},
-      year={2026},
-      eprint={2603.13303},
-      archivePrefix={arXiv},
-      primaryClass={cond-mat.soft},
-      url={https://arxiv.org/abs/2603.13303}, 
-}
-```
-
 ## License
 
 This project is licensed under the MIT License.
